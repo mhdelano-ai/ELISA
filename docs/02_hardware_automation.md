@@ -1,5 +1,11 @@
 # 02 — Hardware, fluidics and automation
 
+> **Status note (orchestrator, after final review).** Written before the user stated the installed configuration.
+> Superseded here: the system has a **100 µL loop injected in full** (not a 250 µL loop with partial-loop injection);
+> the BSM is usable to **1 µL/min** per the user (not 10 µL/min); **no reagent may be placed in the sample vial**, so
+> the pre-filled-vial option is out; and the A1 wash line must be **phosphate-free** (Tris-buffered saline), because
+> phosphate inhibits alkaline phosphatase. See docs/00 (decisions), docs/05 (design) and docs/08 (review).
+
 Task 2 of the automated electrochemical ELISA project (human IgG in buffer, LOD ≤ 1 pg/mL, ≤ 100 µL sample,
 ≤ 60 min, reusable capture surface). Scope: instruments, fluidics, flow cells, capture reactors, control and
 synchronisation. Chemistry and immunology (antibodies, label, substrate kinetics) belong to the parallel

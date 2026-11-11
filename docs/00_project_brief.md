@@ -25,7 +25,7 @@ electrochemically. In a 100 µL sample that is ≈ 4 × 10^5 molecules (≈ 0.67
 - Waters ACQUITY **SM-FL** (Sample Manager, **Fixed Loop** — not the flow-through-needle SM-FTN) — sample and reagent injection
 - **Gamry Reference 600+** potentiostat — electrochemical detection
 - Waters **Empower** CDS
-- An extra externally triggerable **switching valve** (6- or 10-port)
+- Switching valve(s): **none in hand yet** — to be specified by the design and purchased
 - A Waters **optical detector** (TUV/PDA/FLR) for orthogonal checks during development
 
 ## Installed configuration (stated by the user, 2026-11-11)
@@ -35,8 +35,7 @@ These statements take precedence over generic vendor figures in docs/02 and para
 - System is an **ACQUITY UPLC I-Class PLUS**. The user states the BSM can flow down to **1 µL/min**
   (docs/02 lists 10 µL/min for I-Class from vendor documents — use the user's figure, confirm at the bench).
 - SM-FL has a **100 µL sample loop**; the user injects the **full 100 µL by full-loop injection with 2× overfill**
-  (so about 200 µL of sample is drawn per injection; 100 µL is the injected volume — whether the ≤ 100 µL limit
-  applies to injected or consumed volume is to be confirmed with the user).
+  (so about 200 µL of sample is drawn per injection; the user has confirmed the 100 µL limit is the injected volume).
 - The **external switching valve is not yet in hand**; model and port count are open and can be specified by the design
   (more than one valve may be purchased).
 - **Empower Toolkit licence: yes.** Empower version unknown (to be checked later).

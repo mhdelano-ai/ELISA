@@ -35,7 +35,7 @@ pip install -e .                       # model package
 python -m pytest -q                    # model tests (64 passed at the end of the in silico phase)
 python scripts/final_designs.py        # re-evaluate the final designs (see docs/05 §6 for every script)
 pip install -e automation              # orchestration package (simulation works on any OS)
-python -m pytest -q automation/tests   # automation tests (31 passed at hand-over)
+python -m pytest -q automation/tests   # automation tests (32 passed after the final review)
 python -m elisa_auto.run_sim --cycle automation/config/cycle_primary.yaml   # simulated cycle, virtual clock
 python -m elisa_auto.analyze bench/<folder>         # gate quantities from bench results
 python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the model with bench values

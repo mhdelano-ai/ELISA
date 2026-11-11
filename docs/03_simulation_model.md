@@ -1,5 +1,10 @@
 # 03 — Simulation model (Task 3)
 
+> **Status note (orchestrator, after final review).** The baseline results and the conclusion in this document
+> ("no architecture reaches 1 pg/mL") are **superseded** by the model audit: see docs/04 for the corrections and
+> docs/05 for current predictions. The equations and structure described here remain valid; the test count is now
+> 64 passed, with no expected failures.
+
 Status: first complete version, 2026-11-11. Package `src/elisa_sim/`, tests `tests/`, driver
 `scripts/run_baseline.py`, outputs `results/`, added parameters `params/model_assumptions.yaml`.
 

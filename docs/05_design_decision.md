@@ -1,5 +1,10 @@
 # 05 — Design optimisation and architecture decision (Task 4)
 
+> **Status note (orchestrator, after final review).** The Monte Carlo defect described in §1.1 and §7 has since been
+> fixed in `src/elisa_sim/params.py` with a regression test (64 passed); the reviewer confirmed the numbers in this
+> document are unchanged by the fix. docs/08 lists open findings on this design — in particular the shared
+> bead + conjugate reservoir (B4), the G1 decision rule (B3) and the phosphate-containing A1 buffer (B1).
+
 Status: 2026-11-11. Inputs: docs/00–04, `params/*.yaml`, `src/elisa_sim/` (audited model, docs/04). This task did
 **not** change model physics. It added scripts under `scripts/`, outputs under `results/design/`, and a
 `design_levers` section to `params/model_assumptions.yaml`. Every number below is a model prediction unless it is
