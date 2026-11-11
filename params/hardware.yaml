@@ -1,0 +1,883 @@
+# Hardware / fluidics / control parameter database for the electrochemical ELISA simulation (Task 2)
+# Companion document: docs/02_hardware_automation.md (source keys resolve in its §9 reference list)
+#
+# Conventions
+#   - value = best estimate; low/high = plausible bounds (not statistical intervals).
+#   - Units stated on every entry. Volumes in uL (microlitre), flows in uL/min, pressures in psi or MPa as
+#     noted, currents in A, times in min or s as noted.
+#   - source = reference key (docs/02 §9), "derived: ..." (formula in note), or UNVERIFIED.
+#   - confidence: high (read from vendor document this session), medium (search summary, previous-session
+#     check not repeated, or different instrument generation), low (derived with assumptions / UNVERIFIED).
+#   - The sample manager is the fixed-loop SM-FL. No flow-through-needle values are used.
+#
+# Created 2026-11-11 by Task 2.
+
+meta:
+  version: 1
+  date: "2026-11-11"
+  sample_manager_type: "SM-FL (fixed loop, 6-port injection valve)"
+  system_generation: "UNKNOWN (ACQUITY UPLC / I-Class / I-Class PLUS / Premier) - see docs/02 Q1"
+
+bsm:
+  flow_min:
+    value: 10
+    low: 1
+    high: 10
+    unit: uL/min
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "I-Class BSM 0.010 mL/min; Premier BSM 0.001 mL/min (firmware >= 1.71). Use 10 unless generation confirmed."
+  flow_max:
+    value: 2000
+    low: 2000
+    high: 2000
+    unit: uL/min
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "Both generations."
+  flow_step:
+    value: 1
+    low: 1
+    high: 1
+    unit: uL/min
+    source: WAT_ICLASS_SPEC
+    confidence: high
+    note: "0.001 mL/min increments."
+  flow_precision_rsd_spec_range:
+    value: 0.075
+    low: 0.075
+    high: 0.075
+    unit: percent RSD
+    source: WAT_ICLASS_SPEC
+    confidence: high
+    note: "Specified only for 0.2-2.0 mL/min (or 0.01 min SD, whichever greater)."
+  flow_precision_rsd_low_flow:
+    value: 1.0
+    low: 0.2
+    high: 5.0
+    unit: percent RSD
+    source: UNVERIFIED
+    confidence: low
+    note: "Precision at 10-100 uL/min not specified by Waters; engineering guess. Measure gravimetrically (R6)."
+  flow_accuracy:
+    value: 1.0
+    low: 1.0
+    high: 3.0
+    unit: percent of set flow
+    source: WAT_ICLASS_SPEC
+    confidence: medium
+    note: "+/-1.0 % specified at 0.500 mL/min only; upper bound for low flows is a guess."
+  pressure_max_to_1mLmin:
+    value: 15000
+    low: 15000
+    high: 18000
+    unit: psi
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "I-Class 18000 psi; Premier 15000 psi; original ACQUITY 15000 psi [S]."
+  min_backpressure_recommended:
+    value: 1000
+    low: 1000
+    high: 1000
+    unit: psi
+    source: WKB32564
+    confidence: high
+    note: "'Generally, the back pressure is expected to be above 1000 psi.'"
+  restrictor_dp_per_flow:
+    value: 12
+    low: 9
+    high: 16
+    unit: psi per (uL/min)
+    source: "derived: Hagen-Poiseuille dP = 8*mu*L*Q/(pi*r^4), r = 20 um, L = 0.35 m, mu = 0.89 mPa s (WKB5084 dimensions)"
+    confidence: medium
+    note: "Waters restrictor 205000547, 40 um x 35 cm PEEKsil, installed mixer->injector. ~1200 psi at 100 uL/min; bounds cover viscosity/ID tolerance. Need 2-3 in series at 20-50 uL/min."
+  restrictor_volume:
+    value: 0.44
+    low: 0.4
+    high: 0.5
+    unit: uL
+    source: "derived: pi*(20e-6 m)^2*0.35 m"
+    confidence: medium
+    note: "Negligible."
+  delay_volume_to_injector_outlet:
+    value: 90
+    low: 60
+    high: 110
+    unit: uL
+    source: WAT_PREMIER_SPEC; WAT_ICLASS_SPEC
+    confidence: medium
+    note: "Premier FL default: gradient delay <=85 uL, dwell <=110 uL; I-Class system delay <100 uL. Loop offline assumed. Add external tubing/valve volumes."
+  mixer_volume:
+    value: 50
+    low: 50
+    high: 380
+    unit: uL
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "Standard 50 uL; options 100/380 (I-Class) or 340 (Premier)."
+  pressure_pulsation:
+    value: 0.4
+    low: 0.4
+    high: 1.0
+    unit: percent (or 25 psi, whichever greater)
+    source: WAT_PREMIER_SPEC
+    confidence: medium
+    note: "Premier spec; not stated for I-Class."
+  solvent_lines:
+    value: 4
+    low: 4
+    high: 4
+    unit: "count (two pumped at a time - A1 or A2 with B1 or B2)"
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "Line change within a channel needs pump-head/mixer flush; A<->B composition change only needs delay volume."
+  line_change_flush_volume:
+    value: 500
+    low: 200
+    high: 1000
+    unit: uL
+    source: UNVERIFIED
+    confidence: low
+    note: "Volume to flush pump head, mixer and lines after an A1->A2 or B1->B2 switch; estimate."
+  ph_min:
+    value: 2
+    low: 1
+    high: 2
+    unit: pH
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: "I-Class pH 2-12; Premier pH 1-12.5."
+  ph_max:
+    value: 12
+    low: 12
+    high: 12.5
+    unit: pH
+    source: WAT_ICLASS_SPEC; WAT_PREMIER_SPEC
+    confidence: high
+    note: ""
+  zero_flow_step_allowed:
+    value: 0
+    low: 0
+    high: 1
+    unit: boolean (1 = yes)
+    source: UNVERIFIED
+    confidence: low
+    note: "Whether 0.000 mL/min is accepted in the gradient table is unknown; schemes do not rely on it."
+
+smfl:
+  loop_volume_standard:
+    value: 10
+    low: 10
+    high: 10
+    unit: uL
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: "Optional loops 1, 2, 5, 20, 50, 100, 250 uL (I-Class PLUS / Premier SM-FL)."
+  loop_volume_recommended:
+    value: 250
+    low: 100
+    high: 250
+    unit: uL
+    source: WAT_PREMIER_SPEC; WKB2345
+    confidence: high
+    note: "250 uL loop needs 500 uL syringe; 50/100 uL loops need 250 uL syringe (WKB2345). Kit 176001780 = 500 uL syringe + 250 uL loop (WKB3589)."
+  loop_inner_diameter:
+    value: 0.5
+    low: 0.25
+    high: 0.76
+    unit: mm
+    source: UNVERIFIED
+    confidence: low
+    note: "Not found in any document; needed for loop-flush model and adsorption area. Ask/measure (Q2)."
+  sample_syringe_volume_standard:
+    value: 100
+    low: 100
+    high: 100
+    unit: uL
+    source: WKB110704
+    confidence: high
+    note: "P/N 700002570. 250 and 500 uL syringes available in loop kits (WKB3589)."
+  plno_max_fraction_of_loop:
+    value: 0.75
+    low: 0.75
+    high: 0.75
+    unit: fraction
+    source: WKB2345
+    confidence: high
+    note: "e.g. 100 uL loop -> 75 uL; 250 uL loop -> 188 uL. Linearity >=0.999 from 20 to 75 % of loop (WAT_PREMIER_SPEC)."
+  plno_overhead_volume:
+    value: 15
+    low: 8
+    high: 15
+    unit: uL
+    source: WKB11277; WKB2345
+    confidence: high
+    note: "Sample consumed = injection + 15 uL (14 uL pre-sample + 1 uL post) with default 'automatic' setting; 8 or 11 uL for 10/20 uL needle variants."
+  plpa_max_fraction_of_loop:
+    value: 0.5
+    low: 0.5
+    high: 0.5
+    unit: fraction
+    source: WKB2345
+    confidence: high
+    note: "100 uL loop -> 50 uL; 250 uL loop -> 125 uL. Sample consumed = injected volume."
+  plpa_overhead_volume:
+    value: 0
+    low: 0
+    high: 0
+    unit: uL
+    source: WKB2345
+    confidence: high
+    note: "But loop contents incl. air gaps and weak wash are injected (WAT_INJ_MODES)."
+  plpa_air_gap_volume:
+    value: 1.0
+    low: 0.5
+    high: 5.0
+    unit: uL (at atmospheric pressure, each of two gaps)
+    source: UNVERIFIED
+    confidence: low
+    note: "Not stated in any document reached; PLNO slide shows ~1 uL air gap. Bubble risk in reactor/cell."
+  full_loop_overfill_factor_100uL:
+    value: 2.0
+    low: 2.0
+    high: 4.0
+    unit: dimensionless (sample used = factor x loop)
+    source: WKB2345; WKB198538
+    confidence: medium
+    note: "Table gives 2.0 (100 uL loop) and 1.5 (250 uL loop); WKB198538 states 'sample volume plus four times'. Full loop is infeasible within 100 uL budget."
+  vial_residual_volume:
+    value: 3
+    low: 3
+    high: 10
+    unit: uL
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: "3 uL residual in Waters Total Recovery 2 mL vial (zero offset); higher bound for other vials (UNVERIFIED)."
+  delivered_fraction_plno_250loop:
+    value: 0.82
+    low: 0.80
+    high: 0.83
+    unit: fraction of 100 uL sample injected
+    source: "derived: (100 - 15 - 3)/100 from WKB11277, WAT_PREMIER_SPEC"
+    confidence: medium
+    note: "Excludes surface adsorption (see chemistry.yaml adsorptive_loss_fraction)."
+  delivered_fraction_plpa_250loop:
+    value: 0.97
+    low: 0.93
+    high: 0.97
+    unit: fraction of 100 uL sample injected
+    source: "derived: (100 - 3)/100 from WKB2345, WAT_PREMIER_SPEC"
+    confidence: medium
+    note: "Max PLPA 125 uL in 250 uL loop; lower accuracy than PLNO (WAT_INJ_MODES)."
+  delivered_fraction_plno_100loop:
+    value: 0.75
+    low: 0.75
+    high: 0.75
+    unit: fraction of 100 uL sample injected
+    source: "derived: PLNO max 75 uL in 100 uL loop (WKB2345)"
+    confidence: high
+    note: "Uses 90 uL."
+  injection_precision_rsd_large:
+    value: 0.5
+    low: 0.25
+    high: 1.0
+    unit: percent RSD
+    source: WAT_PREMIER_SPEC
+    confidence: medium
+    note: "<=0.25 % specified for 5-50 uL; 75-100 uL injections and PLPA not specified (upper bound UNVERIFIED)."
+  carryover_small_molecule:
+    value: 1.0e-5
+    low: 5.0e-6
+    high: 4.0e-5
+    unit: fraction
+    source: WAT_PREMIER_SPEC; WAT_CARRYOVER_APPNOTE
+    confidence: medium
+    note: "<=0.001 % caffeine (Premier SM-FL); 0.00052 % omeprazole measured on I-Class FL [S]."
+  carryover_protein_conjugate:
+    value: 1.0e-4
+    low: 1.0e-5
+    high: 1.0e-3
+    unit: fraction of previous injection carried into next injection
+    source: UNVERIFIED
+    confidence: low
+    note: "No protein carryover data for SM-FL found; small-molecule spec is a lower bound. Key blank driver if substrate is injected after conjugate (R2)."
+  loop_flush_volumes_for_transfer:
+    value: 3
+    low: 2
+    high: 5
+    unit: loop volumes
+    source: "derived: 2-D convection-diffusion in loop, IgG D=3.9e-11 m2/s (docs/02 §2.4c)"
+    confidence: medium
+    note: ">=99.5 % of plug out after 3 loop volumes for 0.25-0.76 mm ID, 50-200 uL/min; pure convection limit recovery = 1 - V_loop/(4V)."
+  loop_offline_supported:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: "'Load Ahead and Loop Offline mode, valve cycle timed event'."
+  auto_addition_supported:
+    value: 0
+    low: 0
+    high: 0
+    unit: boolean
+    source: WKB13017
+    confidence: high
+    note: "Not compatible with SM-FL. Sample, conjugate, substrate are separate injections / Empower lines."
+  injection_overhead_time:
+    value: 1.0
+    low: 0.25
+    high: 2.0
+    unit: min
+    source: UNVERIFIED
+    confidence: low
+    note: "Aspiration of 20-100 uL + wash + Empower set-up between lines. Spec '<=15 s inject-to-inject for FL' applies to small injections (WAT_PREMIER_SPEC)."
+  valve_cycle_event_duration:
+    value: 2
+    low: 2
+    high: 2
+    unit: s
+    source: WKB9108
+    confidence: high
+    note: "'Allow approximately two seconds for the double-click.'"
+  internal_valve_passage_volume:
+    value: 0.1
+    low: 0.1
+    high: 0.1
+    unit: uL
+    source: WAT_INJ_MODES
+    confidence: high
+    note: ""
+  compartment_temp_min:
+    value: 4.0
+    low: 4.0
+    high: 4.0
+    unit: degC
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: "Range 4.0-40.0 C, 0.1 C steps; holds 19 C below ambient; +/-0.5 C accuracy, +/-1.0 C stability."
+  compartment_temp_max:
+    value: 40.0
+    low: 40.0
+    high: 40.0
+    unit: degC
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: ""
+  capacity_2mL_vials:
+    value: 96
+    low: 96
+    high: 96
+    unit: vials
+    source: WAT_PREMIER_SPEC
+    confidence: high
+    note: "Two 48-vial plates (+4 extra positions)."
+
+gamry:
+  current_range_min_full_scale:
+    value: 6.0e-11
+    low: 6.0e-11
+    high: 6.0e-11
+    unit: A
+    source: GAMRY_REF600P_DS
+    confidence: high
+    note: "11 ranges 60 pA-600 mA (13 with 10x/100x gain)."
+  current_resolution_min:
+    value: 2.0e-17
+    low: 2.0e-17
+    high: 2.0e-17
+    unit: A
+    source: GAMRY_REF600P_LEGACY
+    confidence: high
+    note: "0.003 % full scale per bit."
+  current_accuracy_offset:
+    value: 1.0e-11
+    low: 1.0e-11
+    high: 1.0e-11
+    unit: A
+    source: GAMRY_REF600P_LEGACY
+    confidence: high
+    note: "+/-10 pA +/-0.05 % range +/-0.2 % value (6 nA-600 mA ranges); 0.75 % (600 pA), 1.5 % (60 pA) of value."
+  min_time_base:
+    value: 3.333e-6
+    low: 3.333e-6
+    high: 3.333e-6
+    unit: s
+    source: GAMRY_REF600P_DS
+    confidence: high
+    note: ""
+  potential_noise_rms:
+    value: 2.0e-6
+    low: 1.0e-6
+    high: 2.0e-6
+    unit: V
+    source: GAMRY_REF600P_DS
+    confidence: high
+    note: "<2 uV rms typical."
+  floating:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean
+    source: GAMRY_REF600P_DS
+    confidence: high
+    note: "Isolated from earth."
+  digital_inputs:
+    value: 4
+    low: 4
+    high: 4
+    unit: count (TTL 0/5 V)
+    source: GAMRY_IO_APPNOTE
+    confidence: high
+    note: "Also 4 digital outputs (pins 7-10); input load must be <10 uA; User I/O insulated from earth and floating ground."
+  analog_out_range:
+    value: 5
+    low: 5
+    high: 5
+    unit: V (0 to value)
+    source: GAMRY_IO_APPNOTE
+    confidence: high
+    note: "Reference family; pin 1."
+  noise_rms_flow:
+    value: 3.0e-12
+    low: 5.0e-13
+    high: 2.0e-11
+    unit: A
+    source: UNVERIFIED
+    confidence: low
+    note: "Cell-limited baseline noise for 2-3 mm carbon thin-layer/wall-jet cell in flow (bandwidth ~1 Hz). Instrument floor << 1 pA."
+  noise_rms_stopped_flow:
+    value: 1.0e-12
+    low: 3.0e-13
+    high: 5.0e-12
+    unit: A
+    source: UNVERIFIED
+    confidence: low
+    note: "Quiescent cell; scale with electrode capacitance (LARSEN2012)."
+  noise_capacitive_per_uV_per_uF:
+    value: 6.3e-12
+    low: 6.3e-12
+    high: 6.3e-12
+    unit: A rms per (uV rms * uF) at 1 Hz
+    source: "derived: i = 2*pi*f*e_n*C"
+    confidence: medium
+    note: "Use with electrode double-layer capacitance (UNVERIFIED ~20 uF/cm2)."
+  baseline_drift:
+    value: 5.0e-12
+    low: 1.0e-12
+    high: 1.0e-11
+    unit: A/min
+    source: UNVERIFIED
+    confidence: low
+    note: "Engineering estimate; measure."
+  antec_decade_floor_pp:
+    value: 2.0e-12
+    low: 2.0e-12
+    high: 2.0e-12
+    unit: A peak-to-peak
+    source: ANTEC_DECADE
+    confidence: medium
+    note: "Dummy cell, 1 nA range, filter off; best-case LC-EC amplifier floor (search summary)."
+
+flow_cells:
+  thin_layer_basi:
+    we_area:
+      value: 7.07e-6
+      low: 7.07e-6
+      high: 1.41e-5
+      unit: m^2
+      source: "derived: 3 mm GC disk (BASI_GASKETS [S]); dual WE doubles"
+      confidence: medium
+      note: ""
+    channel_height:
+      value: 51
+      low: 13
+      high: 127
+      unit: um
+      source: BASI_GASKETS
+      confidence: medium
+      note: "Gaskets 13, 51, 127 um (search summary)."
+    pressure_limit:
+      value: 0.5
+      low: 0.2
+      high: 1.0
+      unit: MPa
+      source: UNVERIFIED
+      confidence: low
+      note: "Typical thin-layer gasket cell."
+    collection_efficiency:
+      value: 0.05
+      low: 0.01
+      high: 0.5
+      unit: fraction converted
+      source: UNVERIFIED
+      confidence: low
+      note: "Compute from channel-electrode theory (depends on h^2 U/(D L)); higher at low flow/thin gasket."
+  metrohm_thin_layer:
+    volume:
+      value: 0.35
+      low: 0.18
+      high: 0.35
+      unit: uL
+      source: METROHM_TL_MANUAL
+      confidence: high
+      note: "<0.35 uL (50 um spacer); <0.18 uL (25 um)."
+    pressure_limit:
+      value: 0.8
+      low: 0.8
+      high: 0.8
+      unit: MPa
+      source: METROHM_TL_MANUAL
+      confidence: high
+      note: "Manual prints '0.8 MPa (200 psi)' - inconsistent; use 0.8 MPa. Stainless-steel CE (grounding)."
+  antec_sencell:
+    working_volume:
+      value: 0.1
+      low: 0.025
+      high: 0.3
+      unit: uL
+      source: ANTEC_SENCELL
+      confidence: high
+      note: "Adjustable ~0-300 nL; do not run at position 0 [S]."
+    we_diameter:
+      value: 2
+      low: 2
+      high: 2
+      unit: mm
+      source: ANTEC_SENCELL
+      confidence: medium
+      note: "2 mm listed (search summary)."
+    collection_efficiency:
+      value: 0.03
+      low: 0.005
+      high: 0.2
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: "Wall-jet partial conversion."
+  thermo_6011rs_coulometric:
+    volume:
+      value: 4.3
+      low: 4.3
+      high: 4.3
+      unit: uL
+      source: THERMO_6011RS
+      confidence: high
+      note: "Dual porous graphite WEs in series; Pd reference."
+    pressure_limit:
+      value: 4.0
+      low: 4.0
+      high: 4.0
+      unit: MPa
+      source: THERMO_6011RS
+      confidence: high
+      note: "40 bar at inlet."
+    min_flow:
+      value: 300
+      low: 300
+      high: 300
+      unit: uL/min
+      source: THERMO_6011RS
+      confidence: high
+      note: "'Usable flow rate greater than 0.3 mL/min'."
+    collection_efficiency:
+      value: 0.95
+      low: 0.8
+      high: 1.0
+      unit: fraction
+      source: THERMO_6011RS
+      confidence: medium
+      note: "'Near 100 % (coulometric) conversion'. Third-party potentiostat wiring UNVERIFIED."
+  dropsens_spe_walljet:
+    we_diameter:
+      value: 4
+      low: 1.6
+      high: 4
+      unit: mm
+      source: UNVERIFIED
+      confidence: low
+      note: "Standard DropSens SPE WE (4 mm typical, UNVERIFIED; C223AT 1.6 mm [P])."
+    pressure_limit:
+      value: 0.2
+      low: 0.1
+      high: 0.5
+      unit: MPa
+      source: UNVERIFIED
+      confidence: low
+      note: "Magnetic clamp; not stated by Metrohm."
+    collection_efficiency:
+      value: 0.02
+      low: 0.005
+      high: 0.1
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: "Wall-jet, low conversion. Connects to any potentiostat via DRP-CAC (METROHM_FLWCL)."
+  ida_redox_cycling:
+    gap:
+      value: 5
+      low: 2
+      high: 10
+      unit: um
+      source: BASI_IDA
+      confidence: medium
+      note: "Commercial thin-film IDAs 5/5 and 10/10 um (previous-session check)."
+    amplification:
+      value: 10
+      low: 3
+      high: 100
+      unit: fold vs single electrode
+      source: HAN2014; KIM2004; SHARMA2018
+      confidence: low
+      note: "Open 2-D IDA modest; closed/3-D IDA ~100x (HAN2014). Requires bipotentiostat (second channel)."
+    channel_volume:
+      value: 0.2
+      low: 0.05
+      high: 0.5
+      unit: uL
+      source: UNVERIFIED
+      confidence: low
+      note: "Custom cell design target (10-25 um channel)."
+
+reactors:
+  packed_microbed_10uL:
+    bed_volume:
+      value: 10
+      low: 4
+      high: 20
+      unit: uL
+      source: "derived: 1 mm ID x 12.7 mm"
+      confidence: medium
+      note: "Hardware/part not selected (UNVERIFIED)."
+    void_fraction:
+      value: 0.4
+      low: 0.35
+      high: 0.6
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: "Interparticle porosity of packed beads."
+    bead_diameter:
+      value: 20
+      low: 5
+      high: 50
+      unit: um
+      source: UNVERIFIED
+      confidence: low
+      note: ""
+    pressure_limit:
+      value: 10
+      low: 5
+      high: 40
+      unit: MPa
+      source: UNVERIFIED
+      confidence: low
+      note: "Typical micro-column hardware."
+  monolith_cimac_100uL:
+    bed_volume:
+      value: 100
+      low: 100
+      high: 100
+      unit: uL
+      source: SARTORIUS_CIMAC
+      confidence: medium
+      note: "5.2 mm ID x 4.95 mm; channels 1.3-6 um (search summary)."
+    pressure_limit:
+      value: 15
+      low: 5
+      high: 15
+      unit: MPa
+      source: SARTORIUS_CIMAC
+      confidence: low
+      note: "15 MPa listed for CIMac QA; others UNVERIFIED."
+    void_fraction:
+      value: 0.6
+      low: 0.5
+      high: 0.7
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: ""
+  poros_proteinA_2p1x30:
+    bed_volume:
+      value: 104
+      low: 100
+      high: 105
+      unit: uL
+      source: "derived: pi*(1.05 mm)^2*30 mm (THERMO_POROS_A)"
+      confidence: medium
+      note: "Pressure 2400 psi stainless [S]; 20 um perfusive particles."
+  thermostat_available:
+    value: 0
+    low: 0
+    high: 1
+    unit: boolean
+    source: project_brief
+    confidence: medium
+    note: "No column heater in fixed equipment list; reactor temperature control is a purchase."
+
+tubing:
+  id_standard:
+    value: 127
+    low: 63.5
+    high: 254
+    unit: um
+    source: UNVERIFIED
+    confidence: medium
+    note: "0.005 in PEEK recommended downstream of injector (design choice)."
+  volume_per_length_127um:
+    value: 12.7
+    low: 12.7
+    high: 12.7
+    unit: uL/m
+    source: "derived: pi*(63.5e-6 m)^2"
+    confidence: high
+    note: "63.5 um ID: 3.17 uL/m; 254 um ID: 50.7 uL/m."
+  injector_to_reactor_length:
+    value: 0.15
+    low: 0.1
+    high: 0.3
+    unit: m
+    source: UNVERIFIED
+    confidence: low
+    note: "Layout target; 1.9 uL at 127 um."
+  reactor_to_cell_length:
+    value: 0.1
+    low: 0.05
+    high: 0.3
+    unit: m
+    source: UNVERIFIED
+    confidence: low
+    note: "Layout target incl. passage through external valve(s)."
+  external_valve_passage_volume:
+    value: 0.5
+    low: 0.1
+    high: 1.0
+    unit: uL per pass
+    source: UNVERIFIED
+    confidence: low
+    note: "Depends on valve model (Q7)."
+  peek_isolation_length_each_side_of_cell:
+    value: 0.3
+    low: 0.3
+    high: 1.0
+    unit: m
+    source: "derived: R = L/(kappa*A), ~15 MOhm per 0.3 m of 127 um PBS (docs/02 §4.4)"
+    confidence: low
+    note: "Grounding recommendation."
+  buffer_conductivity:
+    value: 1.6
+    low: 1.0
+    high: 2.0
+    unit: S/m
+    source: UNVERIFIED
+    confidence: low
+    note: "PBS-like buffer."
+  product_plug_sigma_reactor_to_cell:
+    value: 1.0
+    low: 0.5
+    high: 1.5
+    unit: uL
+    source: "derived: laminar convection-diffusion estimate, small molecule D ~1e-9 m2/s (UNVERIFIED D)"
+    confidence: low
+    note: "Bed void and bed dispersion dominate readout peak width."
+
+timing:
+  # Baseline cycle: Scheme B, 250 uL loop, PLNO 82 uL sample, substrate from BSM line B1, glycine regeneration by injection.
+  sample_load_flow:
+    value: 100
+    low: 25
+    high: 200
+    unit: uL/min
+    source: "design choice (docs/02 §7.4)"
+    confidence: medium
+    note: "Load time = 3*V_loop/Q (7.5 min at 100 uL/min, 250 uL loop)."
+  sample_load_time:
+    value: 7.5
+    low: 1.5
+    high: 15
+    unit: min
+    source: "derived: 3*V_loop/Q"
+    confidence: medium
+    note: "Low bound: 100 uL loop at 200 uL/min; high: 250 uL loop at 50 uL/min."
+  conjugate_stopped_flow_incubation:
+    value: 5
+    low: 2
+    high: 15
+    unit: min
+    source: "design choice"
+    confidence: low
+    note: "Optimise in simulation."
+  wash_after_conjugate:
+    value: 2
+    low: 1
+    high: 4
+    unit: min
+    source: "design choice"
+    confidence: low
+    note: "500 uL at 250 uL/min (~50 bed volumes of 10 uL bed)."
+  substrate_fill:
+    value: 1
+    low: 0.5
+    high: 2.5
+    unit: min
+    source: "design choice; delay volume WAT_PREMIER_SPEC"
+    confidence: medium
+    note: "BSM step to B1 at 200 uL/min; injected-substrate variant adds ~6 min (cleaning injection + substrate line)."
+  accumulation_time:
+    value: 10
+    low: 2
+    high: 15
+    unit: min
+    source: "design choice"
+    confidence: low
+    note: "Reactor isolated by 10-port valve."
+  readout_time:
+    value: 2
+    low: 1
+    high: 3
+    unit: min
+    source: "design choice"
+    confidence: medium
+    note: "Sweep at 50 uL/min (>=25 bed void volumes)."
+  regeneration_and_reequilibration:
+    value: 6.5
+    low: 4
+    high: 10
+    unit: min
+    source: "design choice"
+    confidence: low
+    note: "Includes 1 min injection overhead, 2.5 min glycine plug + loop flush at 300 uL/min, 3 min re-equilibration."
+  cycle_time_baseline:
+    value: 38
+    low: 36.5
+    high: 61.5
+    unit: min
+    source: "derived: docs/02 §7.4 timeline"
+    confidence: medium
+    note: "High bound = injected substrate + 50 uL/min loading + 5 min sample incubation + 15 min accumulation (exceeds 60 min)."
+  contact_closure_latency:
+    value: 0.05
+    low: 0.01
+    high: 0.1
+    unit: s
+    source: UNVERIFIED
+    confidence: low
+    note: "Not specified by Waters; irrelevant for minute-scale steps."
+  empower_interline_overhead:
+    value: 0.5
+    low: 0.1
+    high: 1.5
+    unit: min
+    source: UNVERIFIED
+    confidence: low
+    note: "Acquisition set-up between sample-set lines; included in injection_overhead_time; measure."
+  plug_arrival_delay_injector_to_reactor:
+    value: 0.03
+    low: 0.01
+    high: 0.2
+    unit: min
+    source: "derived: (1.9 uL tubing + 0.1 uL valve) / Q at 50-200 uL/min"
+    confidence: medium
+    note: "Excludes loop flush (sample leaves loop over ~3 loop volumes)."
