@@ -17,15 +17,21 @@ potentiostat channels, and ALP/hydroquinone-diphosphate (HQDP) chemistry. Beads 
   detection reagent with t½ ≥ 1 h is found.
 * **Backup design:** a bead-free **fixed packed micro-bed** (0.5 µL, regenerated), in case bead handling fails.
 
-The answer to the pre-filled-vial question does not change this. Pre-filled sample vials do not give a controlled
-incubation time once more than one sample is queued (section 4.3). The calibration slope changes by ±6 % per
-±2 min of incubation and doubles between 35 and 120 min. So pre-filled vials are only a bench-development route.
+**User decisions applied (docs/00, "Decisions by the user").** (1) Sample vials contain sample only; reagent may
+not be supplied in vials or added by the end user, so mixing must be done by the instrument. The modelled one-step
+in-vial format (beads + conjugate pre-dispensed in the sample vial) and the sequential in-vial format are therefore
+**inadmissible** and appear below only as reference points. (2) The 100 µL limit is the injected volume, so the
+installed full-loop injection (100 µL injected, about 200 µL drawn) is the design basis; the PLNO 75 µL variant is no
+longer needed. Section 4.0 shows that the one-step format's advantage (sample, beads and conjugate incubated together)
+can be recovered by automated means: a timed, stirred in-line chamber fed by an added bead/conjugate dispenser. That
+is the primary design. Independently of decision 1, in-vial pre-mixing would also have failed on timing: the
+calibration slope changes by ±6 % per ±2 min of incubation and doubles between 35 and 120 min (section 4.3).
 
 **Predicted performance.** Monte Carlo, n = 2000. Success means LOD ≤ 1 pg/mL **and** ULOQ ≥ 1000 pg/mL.
 
 | Design | Before optimisation: nominal / median [5–95 %] / P(success) | After optimisation: nominal / median [5–95 %] / P(success) | With reagent and substrate screening (L6 + L7) | Time to result |
 |---|---|---|---|---|
-| One-step beads, pre-filled vial (reference) | 0.56 / 2.1 [0.44–36] / 0.21 | 0.32 / 1.3 [0.30–21] / 0.35 | 0.80 median, P 0.57 | 59.5 min |
+| One-step beads in the sample vial (**reference only, inadmissible**) | 0.56 / 2.1 [0.44–36] / 0.21 | 0.32 / 1.3 [0.30–21] / 0.35 | 0.80 median, P 0.57 | 59.5 min |
 | **Primary: one-step, timed in-line chamber** | (same chemistry as above) | 0.56 / 2.0 [0.36–73] / ~0.28 | 0.93 median, P ~0.55 | 56.1 min |
 | In-platform fallback: sequential mode, chamber | 2.6 / 13 [1.4–150] / 0.02 (sequential beads, baseline) | 0.36 / 1.7 [0.39–15] / ~0.28 | 1.2 median, P ~0.38 | 58.1 min |
 | **Backup: fixed packed micro-bed** | 19 / 49 [5.1–600] / 0.00 | 0.74 / 2.8 [0.52–31] / 0.16 | 2.2 median, P 0.21 | 51.5 min |
@@ -37,14 +43,15 @@ mode starts from the baseline sequential-bead row (B-mag-IDA). Sources:
 **Honest probability.**
 * The model gives the primary about 0.28 as specified today, and about 0.55 if the detection reagent and the
   substrate lot pass screening.
-* My judgement of the real-world probability, given what the model does not capture (section 4.8), is **about 15 %
+* My judgement of the real-world probability, given what the model does not capture (section 4.5), is **about 15 %
   today**. It rises to **about 40–50 % if the three gating measurements U1–U3 come back favourable**.
 * **1 pg/mL is unlikely unless two levers are confirmed at the bench:**
   1. the IgG–ALP conjugate NSB on blocked streptavidin beads is at or below the published plate anchor (label
      factor ≤ 0.04, i.e. blank-equivalent ≤ ~1 pg/mL on beads);
   2. the free hydroquinone in the HQDP lot is ≤ 10⁻⁵ mol/mol.
-* If either fails by more than ~3×, no format reaches 1 pg/mL in the model (scenarios S1 and S4a). Recovery would
-  then need an immune-complex transfer step (lever L4).
+* At the kill thresholds of section 5 (label factor 0.15, or free HQ 10⁻⁴) P(success) falls to 0.02–0.15 for every
+  admissible design (`results/design/kill_thresholds.md`); at the S1/S4a levels (NSB ×25, free HQ 10⁻³) it is
+  ≤ 0.03. Recovery would then need an immune-complex transfer step (lever L4).
 
 ## 1. Design optimisation with the model
 
@@ -52,7 +59,7 @@ mode starts from the baseline sequential-bead row (B-mag-IDA). Sources:
 
 **Formats optimised.** Each is an existing registry architecture with ALP/HQDP:
 
-| Key | Format | Starting architecture | Needs pre-filled vials? | Needs bead handling? |
+| Key | Format | Starting architecture | Reagent in the sample vial (as modelled)? | Needs bead handling? |
 |---|---|---|---|---|
 | OS | One-step beads | B-mag1-IDA | yes (as modelled) | yes |
 | SQ | Sequential beads | B-mag-IDA | yes (beads in vial) | yes |
@@ -60,7 +67,9 @@ mode starts from the baseline sequential-bead row (B-mag-IDA). Sources:
 | FRC | Fixed chip bead bed, Scheme C | C-bed-IDA | no | no |
 | CAP | Fixed open capillary | B-cap-TL | no | no |
 
-Note that the sequential bead format also captures in the vial, so it also needs pre-filled vials. The only
+Note that the sequential bead format also captures in the vial, so as modelled it also puts reagent (beads) in the
+sample vial; after the user's decision, OS and SQ as modelled are reference points and their admissible versions
+are the in-line chamber modes of section 4.0. The only
 formats needing neither are the fixed reactors.
 
 **Objective.** Median over n = 300 Monte Carlo draws (fixed seed, so all designs see the same random numbers) of
@@ -82,7 +91,7 @@ Re-evaluated with n = 2000. The Monte Carlo sampling error on P at n = 2000 is a
 | Washes | post-capture wash ≥ 1 min; wash after conjugate ≥ 2 min | wash efficiency is not modelled, so shorter washes would gain by artefact |
 | Chip channel | ≥ 3 mm | IDA plus margins |
 | Bed pressure drop | ≤ 10 MPa (Kozeny–Carman) | `hw.reactors.packed_microbed_10uL.pressure_limit` |
-| Injection | installed 100 µL loop, full-loop injection (`FL_100`) | brief, installed configuration; the PLNO 75 µL alternative is scenario S5 |
+| Injection | installed 100 µL loop, full-loop injection (`FL_100`), 100 µL injected | brief, installed configuration; user decision 2: the limit applies to the injected volume |
 
 **Model bug found and worked around.** `elisa_sim.montecarlo.used_keys` records parameter accesses on the copy
 made by `apply_design`. For any architecture with a non-empty `with_design(...)`, it therefore returns no keys.
@@ -222,7 +231,7 @@ to src: no lever had a sourced quantitative parameter that would justify a model
 
 `results/design/robustness.md` and `final_designs.md`, n = 2000. Values are median LOD (pg/mL) / P(success).
 
-| Scenario | One-step, pre-filled vial (optimised) | **Primary: one-step, chamber** | Sequential mode, chamber | Sequential beads, vial | **Backup: packed micro-bed** |
+| Scenario | One-step in sample vial (reference, inadmissible) | **Primary: one-step, chamber** | Sequential mode, chamber | Sequential beads in vial (reference, inadmissible) | **Backup: packed micro-bed** |
 |---|---|---|---|---|---|
 | S0 audited | 1.3 / 0.35 | 2.0 / ~0.28 | 1.7 / ~0.28 | 1.5 / 0.31 | 2.8 / 0.16 |
 | S1 old NSB rate (×25) | 23 / 0.01 | 32 / 0 | 32 / ~0 | 28 / 0 | 62 / 0 |
@@ -232,11 +241,11 @@ to src: no lever had a sourced quantitative parameter that would justify a model
 | S3b NSB irreversible, tubing factor 30 | 1.7 / 0.29 | 2.5 / ~0.23 | 4.0 / ~0.10 | 3.5 / 0.10 | 4.2 / 0.09 |
 | S4a free HQ 10⁻³ | 11 / 0.03 | 23 / ~0 | 9.3 / ~0.01 | 8.5 / 0.02 | 9.2 / 0.01 |
 | S4b free HQ 10⁻⁷ | 1.1 / 0.42 | 1.4 / ~0.35 | 1.4 / ~0.34 | 1.3 / 0.36 | 2.6 / 0.19 |
-| S5 ≤ 100 µL drawn (PLNO 75 µL) | 1.4 / 0.35 | 2.1 / ~0.26 | 1.9 / ~0.25 | 1.7 / 0.28 | 3.7 / 0.12 |
+| S5 ≤ 100 µL drawn (PLNO 75 µL) — settled by user decision 2, shown for completeness | 1.4 / 0.35 | 2.1 / ~0.26 | 1.9 / ~0.25 | 1.7 / 0.28 | 3.7 / 0.12 |
 | L6 + L7 (screening passed) | 0.80 / 0.57 | **0.93 / ~0.55** | 1.2 / ~0.38 | 1.1 / 0.41 | 2.2 / 0.21 |
 | L1 + L3 + L6 + L7 | 0.61 / 0.73 | 0.70 / ~0.72 | 0.76 / ~0.66 | 0.67 / 0.68 | 1.2 / 0.37 |
 | L4 immune-complex transfer | 0.75 / 0.63 | 0.95 / ~0.53 | 0.76 / ~0.63 | 0.71 / 0.66 | 0.94 / 0.49 |
-| pre-filled vials acceptable? | needed, but queue timing breaks calibration (§4.3) | not needed | not needed | needed | not needed |
+| admissible under user decision 1? | no (reagent in sample vial) | **yes** | yes | no (beads in sample vial) | **yes** |
 
 "~": chamber approximation (`scripts/inline_chamber.py`). Sequential-mode chamber rows are design `S-chamb` in
 `results/design/final_designs.md`.
@@ -246,18 +255,40 @@ to src: no lever had a sourced quantitative parameter that would justify a model
   (95th percentile 73 pg/mL). The cause is the 6.6-min emptying of the chamber, during which a t½ ≈ 13 min
   detection antibody dissociates. The sequential mode has a 95th percentile of 15 and the same P. With a screened
   reagent, one-step wins (P 0.44 vs 0.32). That is why the platform supports both modes and U2 picks the mode.
-  Neither mode wins only in the favourable scenario: they differ by ≤ 0.12 in P everywhere, and the bead platform
-  beats the fixed bed by 1.5–2× in median in every scenario.
+  Neither mode wins only in the favourable scenario: they differ by ≤ 0.17 in P in every scenario run. The bead
+  platform beats the fixed bed in median in every scenario except S4a (free HQ 10⁻³: one-step chamber 23 vs fixed
+  bed 9.2 pg/mL, both failing) — a further reason why U3 gates the design.
 * **Wall NSB scenario (S3b).** The sequential modes lose most (P 0.10), because their conjugate contacts the trap
   walls. One-step loses least. This is a further reason to prefer one-step once U2 passes.
 * **S1 (old NSB) and S4a (free HQ 10⁻³) kill every design,** the fixed bed included. These are the two measurements
   that decide whether the project can reach 1 pg/mL at all, not which design to build.
-* **S5 (drawn-volume reading of the 100 µL limit)** costs ≤ 0.02 in P for beads and 0.04 for the fixed bed. The
-  decision does not depend on it. With the chamber design, the sample vial holds only sample, so PLNO 75 µL
-  (90 µL drawn) is the drop-in setting if the user confirms the stricter reading.
-* **Pre-filled vials:** see §4.3. The answer does not change the primary design.
+* **S5 (drawn-volume reading)** is settled by user decision 2 (injected volume counts). It would have cost ≤ 0.02 in
+  P for beads and 0.04 for the fixed bed, so the decision never depended on it.
+* **Admissibility (user decision 1)** removes the two in-vial reference columns. Among admissible designs the ranking
+  is: one-step chamber ≈ sequential chamber > fixed micro-bed, in every scenario except S4a.
 
 ## 4. Decision
+
+### 4.0 Recovering simultaneous incubation by automated means (user decision 1)
+
+The one-step format led because sample, beads and conjugate incubate together for ~30 min in a small volume at full
+conjugate concentration (labelled fraction 0.1–0.3, against 0.01–0.06 for labelling in flow). The routes below keep
+that while leaving the sample vial untouched. `scripts/recovery_options.py` → `results/design/recovery_options.md`
+(n = 2000; "~" = chamber approximation of `scripts/inline_chamber.py`, LOD × 1/0.96 for the extra transfer).
+
+| Route | Added hardware | Unattended with Empower + Python? | Model: median [5–95 %], P(success), today | Same after U1–U3 (L6 + L7) | Verdict |
+|---|---|---|---|---|---|
+| **A. Dispenser + stirred in-line cup** (SIA: syringe pump + 8-port selection valve doses beads + conjugate from a stirred, cooled reservoir; the SM-FL/BSM pushes the sample into the cup; the syringe pump empties the cup through the trap) | SIA module, cup (~0.5 mL, vented, low-bind), V4 (6-port) | **Yes.** Empower runs one sample line (injection + BSM programme); Python, triggered by Inject Start, drives the SIA module (serial), V2–V4, magnet and Gamry. Proven concept: sequential-injection immunoassay with magnetic beads (Pollema1992) | 2.0 [0.36–73], ~0.28 | 0.93 [0.23–4.9], ~0.55 | **Primary** |
+| B. Second SM-FL injection from a **shared** bead/conjugate reagent vial into the cup, then the sample | cup, V4, a pump to empty the cup (the SM-FL/BSM cannot aspirate) | Yes in principle, but the SM-FL cannot resuspend beads (docs/02 §2.3), so the bead dose drifts as beads settle over a run. Modelled as bead-dose CV at its high bound 0.15 | 2.6 [0.44–86], ~0.20 | 1.1 [0.30–8.0], ~0.43 | Fallback for A only if the SIA reservoir fails; test in U5 |
+| C. Held-up zone: sample and reagent plugs parked in an unstirred holding coil | one valve + coil | Yes, but no mixing: capture relies on diffusion and settling. Modelled as capture factor 0.09 (YAML low bound 0.2 / 2.2 dilution) | 8.8 [0.95–350], ~0.06 | 2.8 [0.56–23], ~0.16 | Rejected |
+| D. Merge with a bead/conjugate stream from a BSM line | none | **No**: protein and bead suspensions must not pass BSM pump heads, check valves and mixer (docs/02 §1.2: adsorption, hold-up, blockage) | not evaluated | – | Inadmissible |
+| E. External dispenser adding reagent to sample vials in the SM-FL tray | liquid handler | No: the SM-FL compartment is closed, and reagent in the sample vial is excluded by decision 1 anyway | – | – | Inadmissible |
+| S. Route A hardware, **sequential mode** (beads only into the cup; conjugate injected from a shared SM-FL vial onto the trapped beads) | as A | Yes (conjugate injection is an ordinary Empower line) | 1.7 [0.39–15], ~0.28 | 1.2 [0.31–8.5], ~0.38 | In-platform fallback |
+
+**Conclusion.** Route A recovers most of the one-step advantage: P ~0.28 against 0.35 for the inadmissible in-vial
+reference. The loss comes from the longer emptying of the cup (6.6 min), during which an unscreened detection
+antibody (t½ ≈ 13 min) dissociates. With a screened detection reagent the gap closes (0.93 vs 0.80 median). The
+sequential mode on the same hardware has the same P today with a much shorter upper tail.
 
 ### 4.1 Primary design: timed one-step bead assay with an in-line chamber, integrated trap and flow IDA
 
@@ -314,7 +345,7 @@ and the Gamry. Empower owns the BSM programme and the SM-FL.
 | t (min) | Step | V4 / V2 / V3 | Flow, solvent | Notes |
 |---|---|---|---|---|
 | −1 → 0 | SIA doses 20 µL of bead + conjugate concentrate into the clean cup (gives 0.3 nM conjugate and 5×10⁵ beads in the final ~220 µL) | – | SIA | can overlap the previous cycle |
-| 0 → 1 | SM-FL aspirates the sample (full loop, 2× overfill; or PLNO 75 µL) | A / isolate / bypass | BSM 100 µL/min A1 | Empower line L1 starts |
+| 0 → 1 | SM-FL aspirates the sample (full loop, 2× overfill: ~200 µL drawn, 100 µL injected) | A / isolate / bypass | BSM 100 µL/min A1 | Empower line L1 starts |
 | 1 → 3 | Inject Start t₀: 2 loop volumes (200 µL) of sample pushed into the cup | A / isolate / bypass | 100 µL/min A1 | sample transfer ~0.96 |
 | 3 → 33 | **Incubation 30 min**, mixed by SIA aspirate/dispense (50 µL every 2 min) | B / isolate / bypass | BSM free (previous sample's readout can run here) | timed exactly; same for every sample in the queue |
 | 33 → 39.6 | Magnet on; SIA pushes the cup contents plus 2 rinses (660 µL) through the trap | – / perfuse / bypass | SIA 100 µL/min | bead capture in trap |
@@ -344,7 +375,7 @@ is stopped on the trapped beads for 3 min, followed by a 2 min wash. Accumulatio
 * With reagent screening and substrate QC passed (L6 + L7): median 0.93 [0.23–4.9], P ~0.55.
 * With the F(ab′)₂ label and coated trap as well: median 0.70, P ~0.72.
 
-### 4.2 Backup design: fixed packed micro-bed (no beads, no pre-filled vials)
+### 4.2 Backup design: fixed packed micro-bed (no beads, no reagent mixing with the sample)
 
 **Capture.**
 * 0.5 µL bed of 50 µm non-porous particles carrying covalently oriented anti-human-Fc capture antibody (particle
@@ -379,9 +410,11 @@ is stopped on the trapped beads for 3 min, followed by a 2 min wash. Accumulatio
 **When to use it:** if bead dosing or trapping fails its acceptance (U5), or if the SIA module cannot be made
 reliable.
 
-### 4.3 The pre-filled-vial question
+### 4.3 Why in-vial pre-mixing would fail anyway (timing), and what it is still useful for
 
-`scripts/incubation_queue.py` → `results/design/incubation_queue.md`, optimised one-step design, nominal:
+User decision 1 rules out reagent in the sample vial. Independently, the timing analysis shows the in-vial format
+could not have worked unattended. `scripts/incubation_queue.py` → `results/design/incubation_queue.md`, optimised
+one-step design, nominal:
 
 | In-vial time (min) | 20 | 30 | 35 (design) | 60 | 120 | 240 |
 |---|---|---|---|---|---|---|
@@ -389,19 +422,14 @@ reliable.
 | Blank mean relative to design | 0.61 | 0.87 | 1.00 | 1.65 | 3.20 | 6.30 |
 | LOD (blanks at the same time, pg/mL) | 0.39 | 0.33 | 0.32 | 0.34 | 0.50 | 0.89 |
 
-A ±2 min timing error changes the slope by −5.8 %/+5.6 %. When a customer adds sample to 20 pre-filled vials and
-loads them, the k-th sample incubates about (k−1) × 25 min longer than the first. Its result would be biased by up
-to 2× unless calibrators sit at the same queue positions, which is not workable. The capture and labelling are not
-near equilibrium within any time compatible with 60 min.
+A ±2 min timing error changes the slope by −5.8 %/+5.6 %. With 20 queued vials, the k-th sample would incubate
+about (k−1) × 25 min longer than the first, biasing its result by up to 2×. Capture and labelling are not near
+equilibrium within any time compatible with 60 min. The chamber of section 4.0 fixes this because its incubation
+starts at injection and is identical for every sample.
 
-* **If pre-filled vials are acceptable:** use them **only for bench development and single-sample runs**. Design
-  "P-vial" (median 1.3, P 0.35, 59.5 min) needs no SIA module, so it is the fastest way to measure U1, U5 and the
-  integrated LOD in Stage 1. The product configuration is still the primary design of §4.1.
-* **If pre-filled vials are not acceptable:** the primary design of §4.1 is unchanged (the sample vial holds only
-  sample). The backup is unchanged too.
-* A pre-filled single-use **reagent** vial (beads + conjugate, separate from the sample vial) that the SM-FL injects
-  into the cup just before the sample would remove the SIA bead reservoir. Its weakness is bead settling in the
-  vial, because the SM-FL cannot mix (docs/02 §2.3). Treat it as an option for U5 to test, not as the plan.
+The in-vial format remains useful **only as a bench tool** (the developer, not a customer, mixes and times one vial):
+it needs no dispenser, so it is the quickest way to measure U1, U5 and an integrated LOD early in Stage 1. Its model
+numbers (median 1.3, P 0.35) are a reference for what the chamber should approach, not a deliverable.
 
 ### 4.4 Predicted LOD and probability, in one place
 
@@ -410,6 +438,7 @@ near equilibrium within any time compatible with 60 min.
 | Primary as specified today (unscreened detection reagent, unknown HQDP lot) | 2.0 [0.36–73] | ~0.28 | **~15 %** |
 | Primary after U1–U3 pass (L6 + L7, NSB ≤ anchor) | 0.93 [0.23–4.9] | ~0.55 | **~40–50 %** |
 | Primary plus F(ab′)₂ label and coated trap | 0.70 [0.16–2.4] | ~0.72 | ~50–60 % |
+| In-platform fallback (sequential mode, same hardware) | 1.7 [0.39–15]; 1.2 after U1–U3 | ~0.28; ~0.38 | ~15 %; ~35 % |
 | Backup as specified | 2.8 [0.52–31] | 0.16 | ~8 % |
 | Backup plus immune-complex transfer | 0.94 [0.23–6.5] | 0.49 | ~25 % |
 
@@ -444,7 +473,7 @@ Ordered by value of information per unit bench effort. Each item becomes a Stage
   * Convert to the label factor: k_eff = N_ALP / (A_beads · ∫C dt · N_A), factor = k_eff / 4×10⁻¹¹ m/s.
 * **Confirm primary:** factor ≤ 0.04 (nominal), linear or sub-linear in exposure.
 * **Kill the 1 pg/mL target** (all formats; go to the L4 transfer development): factor > 0.15, which is about
-  blank-equivalent > 4 pg/mL on beads.
+  blank-equivalent > 4 pg/mL on beads (model at 0.15: primary median 5.9, P 0.06; backup 9.8, P 0.02).
 * Also: ≥ 30 % removed by stringent washes → add the wash step (S3a). The F(ab′)₂/IgG ratio sets L3.
 
 **U2. Capture and detection antibody k_on and k_off (BLI/SPR).**
@@ -462,7 +491,7 @@ Ordered by value of information per unit bench effort. Each item becomes a Stage
   B1 line.
 * **Confirm:** ≤ 10⁻⁵ mol/mol and ≤ 10⁻⁹ s⁻¹.
 * **Purify or change lot:** 10⁻⁵ to 10⁻⁴.
-* **Kill the substrate:** > 10⁻⁴ after purification. Then test AAP or p-hydroxyphenyl phosphate in the same way.
+* **Kill the substrate:** > 10⁻⁴ after purification (model at 10⁻⁴: primary median 3.8, P 0.12; at 10⁻⁵: 1.7, P 0.30). Then test AAP or p-hydroxyphenyl phosphate in the same way.
 
 **U4. NSB on the trap and stub materials (PEEK vs coated) and the clean-zone effect.**
 * Value: sets L1/L2; matters most for sequential mode.
@@ -513,6 +542,8 @@ python scripts/robustness.py                                # robustness.md / le
 python scripts/inline_chamber.py                            # inline_chamber.md (chamber approximation)
 python scripts/final_designs.py                             # final_designs.md (sections 0, 3, 4)
 python scripts/incubation_queue.py                          # incubation_queue.md (section 4.3)
+python scripts/recovery_options.py                          # recovery_options.md (section 4.0)
+python scripts/kill_thresholds.py                           # kill_thresholds.md (section 5 thresholds)
 ```
 
 All outputs are in `results/design/`. Seed 20261111. The calibration grid is refined to 61 points: a numerical
