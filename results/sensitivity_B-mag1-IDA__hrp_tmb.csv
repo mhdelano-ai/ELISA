@@ -1,50 +1,50 @@
 parameter,unit,low,nominal,high,dlog10_LOD_at_low,dlog10_LOD_at_high,spearman_vs_logLOD,first_order_index
-chem.antibodies.koff_capture,1/s,3e-06,0.0001,0.0083,-0.0613,3.33,0.348,0.209
-chem.antibodies.koff_detection,1/s,3e-06,0.00086,0.0083,-0.49,2.83,0.468,0.351
-chem.nsb.nsb_effective_rate_constant,m/s,8e-12,4e-11,4e-10,-0.691,0.999,0.417,0.177
-ma.nsb.surface_factor_tubing,fold,1,3,30,-0.122,0.635,0.147,0.0628
-chem.surfaces.igg_surface_density_monolayer,molecules/m^2,2e+15,1e+16,1.5e+16,0.587,-0.116,-0.196,0.0497
-chem.antibodies.kon_detection,1/(M*s),9e+04,3.9e+05,1.2e+06,0.556,-0.309,-0.189,0.05
-ma.nsb.label_factor_igg_enzyme_conjugate,fold,0.3,1,3,-0.519,0.476,0.239,0.075
-ma.labelling.detection_on_capture_residual_factor,fold,1,1,3,0,0.476,0.0987,0.0193
-chem.antibodies.kon_capture,1/(M*s),9e+04,3e+05,1.2e+06,0.426,-0.318,-0.243,0.0744
-ma.nsb.surface_factor_magnetic_beads,fold,1,1,3,0,0.354,0.0663,0.0135
-ma.noise.electrode_sensitivity_cv_fouling,fraction,0.03,0.1,0.3,-0.133,0.351,0.127,0.0336
-ma.capture.in_vial_unstirred_rate_factor,fraction,0.2,0.5,1,0.349,-0.224,-0.169,0.0474
-ma.delivery.adsorptive_loss_fraction_with_carrier,fraction lost,0.02,0.2,0.6,-0.0881,0.301,0.0763,0.0113
-chem.nsb.blank_CV_analog_electrochemical,fraction,0.03,0.1,0.2,-0.13,0.198,0.107,0.0216
-chem.surfaces.active_fraction_oriented,fraction,0.5,0.85,0.95,0.176,-0.0336,-0.0794,0.0139
-ma.chemistries.hrp_tmb.hydrolysis_rate,1/s,1e-10,1e-08,1e-06,-0.00173,0.17,-0.00685,0.0141
-ma.chemistries.hrp_tmb.free_product_impurity,mol/mol,1e-06,0.0001,0.01,-2.13e-05,0.137,0.0969,0.0227
-ma.capture.magnetic_trap_efficiency,fraction,0.5,0.9,0.99,0.113,-0.0149,-0.0594,0.0255
-hw.tubing.id_standard,um,63.5,127,254,-0.0611,0.101,0.0489,0.019
-chem.enzymes.hrp.kcat_TMB,1/s,300,2e+03,4e+03,0.0109,-0.000818,-0.0412,0.0145
-chem.regeneration.residual_label_carryover_fraction,fraction of previous run's bound label,1e-06,0.0001,0.01,-2.12e-05,0.00241,0.0161,0.00831
-chem.antibodies.enzyme_to_antibody_ratio_HRP,mol/mol,1,2,4,0.00179,-0.000823,-0.0662,0.0253
-hw.smfl.injection_precision_rsd_large,percent RSD,0.25,0.5,1,-0.000202,0.000805,0.00603,0.0273
-ma.nsb.blank_igg_contamination_equivalent,M,0,0,3e-15,0,0.00069,-0.00938,0.0245
-ma.noise.background_current_relative_noise,fraction,0.002,0.01,0.05,-2.05e-05,0.000512,0.00801,0.022
-chem.enzymes.hrp.Km_TMB,M,0.0001,0.000434,0.0008,-0.000459,0.000471,0.0241,0.0236
-hw.smfl.delivered_fraction_plno_250loop,fraction of 100 uL sample injected,0.8,0.82,0.83,0.00027,-2.08e-05,-0.0194,0.0107
-ma.capture.bead_dose_cv,fraction,0.02,0.05,0.15,-3.64e-06,3.47e-05,0.0341,0.0207
-hw.flow_cells.ida_redox_cycling.amplification,fold vs single electrode,3,10,100,2.71e-05,-2.66e-06,0.0445,0.021
-ma.noise.substrate_background_cv,fraction,0.01,0.05,0.2,-1.66e-06,2.59e-05,0.0461,0.0205
-ma.noise.drift_residual_fraction,fraction,0.05,0.2,0.5,-2.51e-06,1.41e-05,-0.011,0.0162
-chem.substrates.TMB.n_electrons,e-/molecule,1,2,2,8.05e-06,0,-0.0175,0.0171
-hw.gamry.baseline_drift,A/min,1e-12,5e-12,1e-11,-2.57e-06,8.04e-06,0.0559,0.0314
-ma.chemistries.hrp_tmb.product_diffusion_coefficient,m^2/s,4e-10,6e-10,8e-10,1.88e-06,-8.4e-07,0.0194,0.0159
-hw.smfl.loop_inner_diameter,mm,0.25,0.5,0.76,-1.72e-06,7.86e-07,-0.00131,0.0181
-ma.delivery.tubing_dilution_factor,fraction,0.7,0.9,1,-1.65e-06,9.86e-07,-0.0235,0.026
-ma.chemistries.hrp_tmb.product_half_life,s,3.6e+03,3.6e+04,1e+05,-5e-07,4.31e-08,0.00654,0.0199
-chem.antibodies.diffusion_coefficient_IgG_ALP_conjugate,m^2/s,2.5e-11,3.1e-11,3.6e-11,2.89e-07,-1.95e-07,-0.0232,0.0144
-hw.gamry.noise_rms_flow,A,5e-13,3e-12,2e-11,0,1.54e-07,-0.0862,0.0359
-ma.noise.carryover_cv,fraction,0.2,0.5,1,-2.2e-08,7.86e-08,-0.0458,0.018
-ma.noise.area_exponent,dimensionless,0.25,0.5,1,2.32e-08,0,-0.0229,0.0136
-hw.smfl.carryover_protein_conjugate,fraction of previous injection carried into next injection,1e-05,0.0001,0.001,-2.03e-10,2.03e-08,0.0289,0.0141
-ma.noise.pp_to_rms,dimensionless,5,5,6,0,-1.96e-11,-0.0541,0.0163
-hw.tubing.product_plug_sigma_reactor_to_cell,uL,0.5,1,1.5,0,0,-0.00962,0.0117
-ma.correlations.wilson_geankoplis_coefficient,dimensionless,0.9,1.09,1.3,0,0,-0.00624,0.0205
-ma.fluid.density,kg/m^3,995,997,1e+03,0,0,0.0255,0.0113
-ma.fluid.viscosity,Pa*s,0.00085,0.00089,0.001,0,0,0.0285,0.0213
-ma.readout.tanks_trap,tanks,1,1,3,0,0,-0.029,0.0134
-ma.reuse.electrode_sensitivity_loss_per_cycle_fouling,fraction per cycle,0.001,0.01,0.05,0,0,-0.0365,0.0165
+chem.antibodies.koff_detection,1/s,3e-06,0.00086,0.0083,-0.39,1.96,0.464,0.353
+ma.chemistries.hrp_tmb.free_product_impurity,mol/mol,1e-06,0.0001,0.01,-0.00656,1.21,0.122,0.0429
+ma.chemistries.hrp_tmb.hydrolysis_rate,1/s,1e-10,1e-08,1e-06,-0.0322,1.07,0.204,0.0602
+chem.nsb.nsb_effective_rate_constant,m/s,8e-12,4e-11,4e-10,-0.492,0.963,0.382,0.149
+chem.surfaces.igg_surface_density_monolayer,molecules/m^2,2e+15,1e+16,1.5e+16,0.587,-0.116,-0.255,0.0845
+ma.nsb.surface_factor_tubing,fold,1,3,30,-0.0955,0.578,0.11,0.0491
+chem.antibodies.kon_detection,1/(M*s),9e+04,3.9e+05,1.2e+06,0.556,-0.309,-0.238,0.0801
+ma.nsb.label_factor_igg_enzyme_conjugate,fold,0.01,0.04,0.15,-0.445,0.543,0.258,0.0829
+ma.labelling.detection_on_capture_residual_factor,fold,1,1,3,0,0.449,0.0536,0.0164
+chem.antibodies.kon_capture,1/(M*s),9e+04,3e+05,1.2e+06,0.426,-0.318,-0.278,0.0895
+ma.noise.electrode_sensitivity_cv_fouling,fraction,0.03,0.1,0.3,-0.142,0.359,0.145,0.0424
+ma.capture.in_vial_unstirred_rate_factor,fraction,0.2,0.5,1,0.349,-0.224,-0.119,0.0295
+ma.nsb.surface_factor_magnetic_beads,fold,1,1,3,0,0.343,0.0473,0.0156
+ma.delivery.adsorptive_loss_fraction_with_carrier,fraction lost,0.02,0.2,0.6,-0.0881,0.301,0.0411,0.0252
+ma.nsb.blank_igg_contamination_equivalent,M,0,0,3e-15,0,0.29,0.0276,0.0171
+chem.enzymes.hrp.kcat_TMB,1/s,300,2e+03,4e+03,0.283,-0.0219,-0.144,0.0298
+chem.surfaces.active_fraction_oriented,fraction,0.5,0.85,0.95,0.176,-0.0336,-0.118,0.0258
+chem.nsb.blank_CV_analog_electrochemical,fraction,0.03,0.1,0.2,-0.0964,0.169,0.0597,0.0149
+ma.capture.magnetic_trap_efficiency,fraction,0.5,0.9,0.99,0.124,-0.0163,-0.0744,0.0273
+ma.noise.background_current_relative_noise,fraction,0.002,0.01,0.05,-0.00632,0.117,0.0492,0.0164
+hw.tubing.id_standard,um,63.5,127,254,-0.0488,0.0847,0.0524,0.0164
+ma.capture.bead_dose_cv,fraction,0.02,0.05,0.15,-0.00767,0.062,0.0124,0.016
+chem.antibodies.enzyme_to_antibody_ratio_HRP,mol/mol,1,2,4,0.0504,-0.022,-0.117,0.0413
+chem.antibodies.koff_capture,1/s,3e-06,0.0001,0.00019,-0.0499,0.0454,0.0817,0.0265
+chem.enzymes.hrp.Km_TMB,M,0.0001,0.000434,0.0008,-0.0106,0.0122,0.0118,0.0232
+hw.flow_cells.ida_redox_cycling.amplification,fold vs single electrode,3,10,100,0.00809,-0.000809,0.031,0.0155
+ma.noise.substrate_background_cv,fraction,0.01,0.05,0.2,-0.000505,0.00774,0.0406,0.0155
+ma.noise.drift_residual_fraction,fraction,0.05,0.2,0.5,-0.000765,0.00423,-0.019,0.0196
+chem.substrates.TMB.n_electrons,e-/molecule,1,2,2,0.00243,0,-0.0347,0.0149
+hw.gamry.baseline_drift,A/min,1e-12,5e-12,1e-11,-0.000783,0.00243,0.0406,0.0255
+ma.delivery.delivered_fraction_full_loop_100,fraction of the 100 uL injected sample,0.97,1,1,0.0019,0,0.00387,0.0127
+chem.regeneration.residual_label_carryover_fraction,fraction of previous run's bound label,1e-06,0.0001,0.01,-6.9e-06,0.000719,0.0295,0.00591
+hw.smfl.injection_precision_rsd_large,percent RSD,0.25,0.5,1,-0.00016,0.00064,-0.0159,0.0119
+ma.chemistries.hrp_tmb.product_diffusion_coefficient,m^2/s,4e-10,6e-10,8e-10,0.00057,-0.000255,-0.0148,0.0146
+ma.chemistries.hrp_tmb.product_half_life,s,3.6e+03,3.6e+04,1e+05,-0.000524,3.95e-05,-0.0257,0.0149
+hw.gamry.noise_rms_flow,A,5e-13,3e-12,2e-11,0,4.69e-05,-0.0482,0.0194
+ma.noise.area_exponent,dimensionless,0.25,0.5,1,7.03e-06,0,0.0231,0.0208
+hw.smfl.carryover_protein_conjugate,fraction of previous injection carried into next injection,1e-05,0.0001,0.001,-3.67e-09,3.67e-07,0.0195,0.02
+ma.noise.carryover_cv,fraction,0.2,0.5,1,-2.23e-09,7.96e-09,-0.0134,0.0201
+ma.noise.pp_to_rms,dimensionless,5,5,6,0,-5.95e-09,-0.0347,0.0187
+chem.antibodies.diffusion_coefficient_IgG_ALP_conjugate,m^2/s,2.5e-11,3.1e-11,3.6e-11,0,0,-0.0234,0.0136
+hw.smfl.loop_inner_diameter,mm,0.25,0.5,0.76,0,0,0.0299,0.0298
+hw.tubing.product_plug_sigma_reactor_to_cell,uL,0.5,1,1.5,0,0,-0.00552,0.0172
+ma.correlations.wilson_geankoplis_coefficient,dimensionless,0.9,1.09,1.3,0,0,0.0135,0.0217
+ma.delivery.tubing_dilution_factor,fraction,0.7,0.9,1,0,0,0.0314,0.0198
+ma.fluid.density,kg/m^3,995,997,1e+03,0,0,-0.0058,0.0171
+ma.fluid.viscosity,Pa*s,0.00085,0.00089,0.001,0,0,0.0247,0.0141
+ma.readout.tanks_trap,tanks,1,1,3,0,0,0.00838,0.015
+ma.reuse.electrode_sensitivity_loss_per_cycle_fouling,fraction per cycle,0.001,0.01,0.05,0,0,-0.0445,0.0141

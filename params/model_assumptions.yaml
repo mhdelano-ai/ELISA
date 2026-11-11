@@ -52,7 +52,44 @@ monte_carlo:
     - "hw.bsm.flow_min"
     - "hw.tubing.*_length"
 
-overrides: {}
+overrides:
+  # Corrections / replacements of chem.* and hw.* values (the originals stay in chemistry.yaml / hardware.yaml
+  # and are reported next to the override by ParameterSet.params[key].overridden_from).
+  # Added 2026-11-11 by the model audit (docs/04_model_audit.md); each entry states source and confidence.
+  hw.smfl.loop_volume_recommended:
+    value: 100
+    low: 100
+    high: 100
+    unit: uL
+    source: "project_brief (Installed configuration, stated by the user 2026-11-11)"
+    confidence: high
+    note: >
+      AUDIT OVERRIDE. Installed SM-FL loop is 100 uL (hardware.yaml baseline assumed a 250 uL loop with partial-loop
+      injection). Changes the loop-transfer time (3 loop volumes = 300 uL), the sample plug fraction (full loop = 1.0)
+      and the dispersion of the 20 uL conjugate plug (plug fraction 0.2 instead of 0.08).
+  hw.bsm.flow_min:
+    value: 1
+    low: 1
+    high: 10
+    unit: uL/min
+    source: "project_brief (Installed configuration: user states the I-Class PLUS BSM flows down to 1 uL/min)"
+    confidence: medium
+    note: >
+      AUDIT OVERRIDE. docs/02 lists 10 uL/min for I-Class from vendor documents (WAT_ICLASS_SPEC); the user's figure is
+      used and must be confirmed at the bench. Used by the model only as a feasibility check on pumped flows.
+  chem.antibodies.koff_capture:
+    value: 1.0e-4
+    low: 3.0e-6
+    high: 1.9e-4
+    unit: 1/s
+    source: "Chang2012 (generic range, V-full); acceptance criterion docs/01 section f (t1/2 >= 1 h)"
+    confidence: medium
+    note: >
+      AUDIT OVERRIDE of the UPPER BOUND only (chemistry.yaml: 8.3e-3 /s from Kamat2020's fast commercial anti-Fc mAb).
+      docs/01 f specifies that capture reagents with t1/2 < 1 h are rejected at screening, so a reagent with
+      koff > ln2/3600 = 1.9e-4 /s is not part of the design that would be built; sampling it mixed a reagent-selection
+      failure into the parameter uncertainty. The unscreened range is kept as a separate scenario in
+      scripts/run_baseline.py ("unscreened capture reagent").
 
 fluid:
   viscosity:
@@ -93,6 +130,18 @@ delivery:
       low-bind vials (the design assumption). chem.analyte.adsorptive_loss_fraction_untreated_tube (0.5, 0.1-0.9)
       is the untreated case and can be selected per architecture (sample_treatment = "untreated"). Measure by
       spike-recovery through the SM-FL (docs/02 R1). Scales signal only, not the blank.
+  delivered_fraction_full_loop_100:
+    value: 1.0
+    low: 0.97
+    high: 1.0
+    unit: fraction of the 100 uL injected sample
+    source: "project_brief (Installed configuration: full-loop, 100 uL loop, 2x overfill); WKB2345; WAT_INJ_MODES"
+    confidence: medium
+    note: >
+      Full-loop injection: the loop contains only sample and is injected completely, so the injected volume equals the
+      loop volume (100 uL); ~200 uL is DRAWN from the vial (2x overfill). Whether the brief's <= 100 uL limit applies to
+      the injected or the drawn volume is open (docs/00); variants named */PLNO75 give the drawn-volume-limited case.
+      Low bound 0.97 allows for loop-volume tolerance (UNVERIFIED).
   plug_at_outlet_end:
     value: 0
     low: 0
@@ -411,13 +460,23 @@ nsb:
     confidence: low
     note: "PEEK tubing and valve passages exposed to conjugate and later to substrate."
   label_factor_igg_enzyme_conjugate:
-    value: 1.0
-    low: 0.3
-    high: 3.0
+    value: 0.04
+    low: 0.01
+    high: 0.15
     unit: fold
-    source: UNVERIFIED
+    source: "derived (audit, docs/04 section 3.1): Rissin2010 + Chang2012 (V-full, re-read in the audit); Rissin2010 85 fM plate anchor"
     confidence: low
-    note: "NSB of a direct IgG-ALP / IgG-HRP conjugate relative to SbG on the same surface."
+    note: >
+      NSB of an IgG-enzyme conjugate (or biotinylated IgG) per unit exposure, relative to the SbG-derived
+      chem.nsb.nsb_effective_rate_constant (4e-11 m/s). Was 1.0 (0.3-3), UNVERIFIED, which is inconsistent with the
+      very experiment k_nsb comes from: in Rissin2010 the beads also saw ~1 nM biotinylated detection antibody for
+      45 min (67x the molar exposure of 15 pM SbG x 30 min x 1.5); with factor 1 that dAb alone, labelled at the 13 %
+      efficiency Chang2012 reports, would light ~19 % of beads, against ~1 % (Rissin2010) / ~0.3 % (Chang2012) observed
+      for the whole blank. Upper bounds from that experiment (all background from dAb): 0.052 (1 % active) and 0.016
+      (0.3 %). Independent anchor: Rissin2010's best commercial ELISA blank, 85 fM TNF-a equivalent, needs
+      k = 1.2e-12 (10 nM label) to 4.4e-12 m/s (1 nM), i.e. factor 0.029-0.11. Value 0.04 (k_eff 1.6e-12 m/s);
+      bounds 0.01-0.15 span both anchors. The previous assumption (factor 1) is kept as the pessimistic
+      scenario "SbG-equivalent NSB" in scripts/run_baseline.py.
   label_factor_polyhrp:
     value: 3.0
     low: 1.0
@@ -1149,6 +1208,22 @@ validation:
     source: "Rissin2010 (docs/01 table a.1)"
     confidence: high
     note: ""
+  simoa_sbg_labelling_efficiency:
+    value: 0.13
+    low: 0.09
+    high: 0.13
+    unit: fraction
+    source: "Chang2012 (V-full, re-read in the audit: '30 min incubation with [SbG] = 15 pM ... only 13% of the complexes are labeled'; Table 1: 9.42 % overall at 40 pM)"
+    confidence: high
+    note: "Fraction of bead-bound biotinylated detection antibody labelled by SbG in the Simoa protocol."
+  simoa_blank_active_bead_fraction:
+    value: 0.01
+    low: 0.003
+    high: 0.015
+    unit: fraction
+    source: "Rissin2010 (V-full, audit: 'typical background signal of 1% active beads'); Chang2012 (~0.3 %, 'noise floor of about 100 active beads in ... 25,000')"
+    confidence: medium
+    note: "Observed blank of the experiment from which chem.nsb.nsb_effective_rate_constant was derived."
   task1_labels:
     value: 1.0e+5
     low: 1.0e+5

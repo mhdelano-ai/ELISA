@@ -51,8 +51,11 @@ def dellaciana_alp_lod(ps: ParameterSet, kcat_key="chem.enzymes.alp.kcat_conjuga
     model = float(convert(hq_lod / (float(Pe) / E_probe), "mol/m^3", "M"))
     pub = g("chem.enzymes.alp.detection_limit_FIA_EC_free_enzyme", "M")
     implied_kcat = kcat * model / pub
+    # The published enzyme LOD can only be limited by the product-detector LOD or by something larger (substrate
+    # blank: free HQ / hydrolysis), so the kcat that puts exactly the detector-LOD of product at the enzyme LOD is a
+    # LOWER BOUND on the effective kcat, not an estimate (audit, docs/04).  model/published < 1 is expected.
     return dict(name="DellaCiana1996 free-ALP LOD (10 min, HQ)", model=model, published=pub, unit="M",
-                ratio=model / pub, implied_kcat=implied_kcat)
+                ratio=model / pub, implied_kcat=implied_kcat, implied_kcat_lower_bound=implied_kcat)
 
 
 def dellaciana_hq_fia_lod(ps: ParameterSet) -> dict:
@@ -88,8 +91,10 @@ def thompson_alp_lod(ps: ParameterSet) -> dict:
     model_ugL = convert(E_lod * g("chem.enzymes.alp.molar_mass", "g/mol"), "g/m^3", "ug/L")
     pub = g("chem.enzymes.alp.detection_limit_LC_EC_pAPP", "ug/L ALP")
     implied_kcat = kcat * model_ugL / pub
+    # lower bound only (see dellaciana_alp_lod); Thompson1991 also does not state the ALP source/grade, so the mass
+    # unit (ug/L of a commercial preparation of unknown specific activity) adds a further unknown factor.
     return dict(name="Thompson1991 ALP LOD (15 min, pAPP, LC-EC 7 nM pAP)", model=model_ugL, published=pub,
-                unit="ug/L", ratio=model_ugL / pub, implied_kcat=implied_kcat)
+                unit="ug/L", ratio=model_ugL / pub, implied_kcat=implied_kcat, implied_kcat_lower_bound=implied_kcat)
 
 
 def chang_bead_capture(ps: ParameterSet) -> dict:
@@ -168,13 +173,44 @@ def conventional_elisa_blank(ps: ParameterSet, label_conc_M: float | None = None
     t_lab = g("ma.validation.plate_label_time", "s")
     f_lab = kin.reversible_binding_fraction(g("chem.antibodies.kon_detection", "m^3/(mol*s)") * C_lab,
                                             g("chem.antibodies.koff_detection", "1/s"), t_lab)
-    N_nsb = g("chem.nsb.nsb_effective_rate_constant", "m/s") * A * C_lab * t_lab * NA
+    k_eff = g("chem.nsb.nsb_effective_rate_constant", "m/s") * g("ma.nsb.label_factor_igg_enzyme_conjugate", "fold")
+    N_nsb = k_eff * A * C_lab * t_lab * NA
     B = _beq_from_counts(N_nsb, V, f_cap * f_lab)
     pub = g("chem.nsb.background_equivalent_conventional_ELISA", "M")
-    return dict(name="Conventional plate ELISA blank equivalent (Rissin2010 85 fM)", model=float(B),
+    return dict(name=f"Conventional plate ELISA blank equivalent (Rissin2010 85 fM), "
+                     f"{convert(C_lab, 'mol/m^3', 'nM'):g} nM label", model=float(B),
                 published=pub, unit="M", ratio=float(B) / pub, capture_fraction=f_cap,
                 label_fraction=float(f_lab), label_conc_M=convert(C_lab, "mol/m^3", "M"),
-                implied_k_nsb=g("chem.nsb.nsb_effective_rate_constant", "m/s") * pub / float(B))
+                k_nsb_effective=k_eff, implied_k_nsb=k_eff * pub / float(B))
+
+
+def simoa_detection_antibody_consistency(ps: ParameterSet) -> dict:
+    """Internal consistency of the NSB sub-model with its own source experiment (audit, docs/04 section 3.1).
+
+    In Rissin2010 the beads were exposed to ~1 nM biotinylated detection antibody for 45 min before the SbG
+    step, and Chang2012 reports that only ~13 % of bead-bound biotinylated dAb is labelled by 15 pM SbG in
+    30 min.  The blank (active-bead fraction) predicted from BOTH reagents with the model's NSB rates must not
+    exceed the observed blank: ~1 % active beads (Rissin2010) or ~0.3 % (Chang2012).
+    """
+    g = ps.get
+    V = g("ma.delivery.sample_volume", "m^3")
+    n_b = g("ma.validation.simoa_beads_per_100uL", "beads/m^3") * V
+    a = 0.5 * g("ma.validation.simoa_bead_diameter", "m")
+    A = n_b * 4 * np.pi * a ** 2
+    k = g("chem.nsb.nsb_effective_rate_constant", "m/s")
+    f_igg = g("ma.nsb.label_factor_igg_enzyme_conjugate", "fold")
+    N_sbg = k * A * g("chem.antibodies.conc_streptavidin_enzyme_typical", "mol/m^3") * g("ma.validation.simoa_sbg_time", "s") * NA
+    N_dab = k * f_igg * A * g("chem.antibodies.conc_detection_antibody_typical", "mol/m^3") \
+        * g("ma.validation.simoa_dab_time", "s") * NA
+    lab = g("ma.validation.simoa_sbg_labelling_efficiency", "fraction")
+    active_sbg = float(N_sbg / n_b)
+    active_dab = float(N_dab * lab / n_b)
+    total = active_sbg + active_dab
+    pub = g("ma.validation.simoa_blank_active_bead_fraction", "fraction")
+    return dict(name="Simoa blank incl. detection-antibody NSB (Rissin2010 ~1 % active beads)", model=total,
+                published=pub, unit="fraction of beads active", ratio=total / pub, from_sbg=active_sbg,
+                from_dab=active_dab,
+                max_igg_factor_if_all_from_dab=float(pub / (N_dab / f_igg * lab / n_b)))
 
 
 def task2_loop_table() -> list[dict]:
@@ -201,5 +237,6 @@ def task2_loop_table() -> list[dict]:
 
 def all_validations(ps: ParameterSet) -> list[dict]:
     return [task1_product_estimate(ps), dellaciana_alp_lod(ps), dellaciana_hq_fia_lod(ps), thompson_alp_lod(ps),
-            chang_bead_capture(ps), simoa_blank(ps), conventional_elisa_blank(ps),
+            chang_bead_capture(ps), simoa_blank(ps), simoa_detection_antibody_consistency(ps),
+            conventional_elisa_blank(ps),
             conventional_elisa_blank(ps, label_conc_M=ps.get("chem.antibodies.conc_detection_antibody_typical", "M"))]

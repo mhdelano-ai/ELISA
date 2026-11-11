@@ -240,6 +240,24 @@ def _detector(arch, p, D_prod, Q):
 # ----------------------------------------------------------------------------------------------------
 # main evaluation
 # ----------------------------------------------------------------------------------------------------
+def _check_loop_and_flows(arch, p, ps):
+    """Plumbing consistency: the injection mode must belong to the loop that is fitted, and every pumped
+    flow must be programmable on the BSM (hw.bsm.flow_min).  Raises ValueError otherwise."""
+    loop_uL = np.asarray(p("hw.smfl.loop_volume_recommended", "uL"), float)
+    need = INJECTIONS[arch.injection][2]
+    if not np.allclose(loop_uL, need):
+        raise ValueError(f"{arch.name}: injection mode {arch.injection} needs a {need:g} uL loop, "
+                         f"loop fitted is {np.unique(loop_uL)} uL")
+    q_min = float(np.min(p("hw.bsm.flow_min", "uL/min")))
+    flows = {"hw.timing.sample_load_flow": "uL/min", "ma.readout.sweep_flow": "uL/min"}
+    if arch.scheme == "A":
+        flows["ma.readout.continuous_flow"] = "uL/min"
+    for k, u in flows.items():
+        q = float(np.min(p(k, u)))
+        if q < q_min - 1e-9:
+            raise ValueError(f"{arch.name}: {k} = {q:g} uL/min is below the BSM minimum {q_min:g} uL/min")
+
+
 def calibration_grid(p):
     n = int(p("ma.numerics.calibration_points", "count"))
     lo = p("ma.numerics.calibration_min", "pg/mL")
@@ -271,6 +289,7 @@ def evaluate(arch: Architecture, ps: ParameterSet, conc_pgml: np.ndarray | None 
     f_del = p(INJECTIONS[arch.injection][0], "fraction")
     V_inj = f_del * V_s
     V_loop = p("hw.smfl.loop_volume_recommended", "m^3")
+    _check_loop_and_flows(arch, p, ps)
     r_loop = 0.5 * p("hw.smfl.loop_inner_diameter", "m")
     Q_load = p("hw.timing.sample_load_flow", "m^3/s")
     n_flush = p("hw.smfl.loop_flush_volumes_for_transfer", "loop volumes")
@@ -393,7 +412,10 @@ def evaluate(arch: Architecture, ps: ParameterSet, conc_pgml: np.ndarray | None 
     if two_step:
         label_factor = p(chem["label_nsb_factor"], "fold") if chem["label_nsb_factor"] else 1.0
         dab_lab = p("ma.nsb.biotin_dab_nsb_labelling_fraction", "fraction")
-        eff_exposure = exposure2 * label_factor + exposure1 * f_sa * dab_lab
+        # the non-specifically bound biotinylated dAb is an IgG: it takes the IgG NSB factor, not the
+        # streptavidin-enzyme one (audit fix; before, the SbG-derived rate was applied to it unscaled)
+        igg_factor = p("ma.nsb.label_factor_igg_enzyme_conjugate", "fold")
+        eff_exposure = exposure2 * label_factor + exposure1 * f_sa * dab_lab * igg_factor
     else:
         label_factor = p(chem["label_nsb_factor"], "fold")
         eff_exposure = exposure1 * label_factor
@@ -413,8 +435,14 @@ def evaluate(arch: Architecture, ps: ParameterSet, conc_pgml: np.ndarray | None 
         A_w = (geo["A_trap_wall"] + geo["A_tubing_isolated"]) * geo["sf_tubing"]
         N_nsb = k_nsb * cross * label_factor * enz_per_label * NA * (
             A_b * exposure_vial + A_w * C_conj_vial * V_inj / Q_load)
-    N_nsb_beads_part = (k_nsb * cross * label_factor * enz_per_label * NA * eff_exposure * geo["A_capture"]
-                        * p("ma.nsb.surface_factor_magnetic_beads", "fold")) if arch.capture == "magnetic_beads" else 0.0
+    if arch.capture == "magnetic_beads":
+        # bead share of the NSB (sets the bead-dose CV term and what leaves with the beads).  Audit fix: in the
+        # one-step format the beads see the conjugate in the vial (exposure_vial), not the in-flow exposure1.
+        bead_exposure = exposure_vial * label_factor if arch.labelling_format == "one_step_in_vial" else eff_exposure
+        N_nsb_beads_part = (k_nsb * cross * enz_per_label * NA * bead_exposure * geo["A_capture"]
+                            * p("ma.nsb.surface_factor_magnetic_beads", "fold"))
+    else:
+        N_nsb_beads_part = 0.0
 
     # ---------------- 6. carry-over (blank) ----------------
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
@@ -613,6 +641,7 @@ def evaluate(arch: Architecture, ps: ParameterSet, conc_pgml: np.ndarray | None 
         signal_at_1pg_C=_interp_at(conc, net, 1.0),
         blank_equivalent_pgml=_blank_equiv(conc, net, blank_mean),
         capture_area_m2=geo.get("A_capture", np.nan), nsb_area_eff_m2=A_nsb_eff,
+        bead_share_of_nsb=bead_share,
         timeline_min=tl["steps_min"],
     )
     diag = {k: (np.squeeze(v) if isinstance(v, np.ndarray) else v) for k, v in diag.items()}

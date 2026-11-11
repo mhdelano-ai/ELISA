@@ -10,6 +10,7 @@ Outputs (all small):
   results/validation.csv             model vs published values
   results/sensitivity_<arch>.csv     one-at-a-time and global indices for the leading architectures
   results/reuse.csv                  reuse / regeneration projection
+  results/scenarios.md               leading architectures under the open scenarios (docs/04 section 6)
   results/fig_lod_intervals.png, fig_calibration.png, fig_blank_breakdown.png, fig_tornado.png
 """
 from __future__ import annotations
@@ -72,10 +73,13 @@ def main():
         for name, why in skipped:
             w.writerow([name, "; ".join(why)])
 
-    # NSB scenario: rate constant rescaled so that the plate-ELISA blank matches Rissin2010 (1 nM label)
-    v_plate = validation.conventional_elisa_blank(
-        ps, label_conc_M=ps.get("chem.antibodies.conc_detection_antibody_typical", "M"))
-    ps_plate = ps.with_values({"chem.nsb.nsb_effective_rate_constant": v_plate["implied_k_nsb"]})
+    # Open scenarios (docs/04 section 6).  Pessimistic NSB: the pre-audit assumption that an IgG-enzyme conjugate
+    # binds non-specifically at the SbG-derived rate (factor 1); this contradicts the Simoa dAb exposure and the
+    # plate anchor but is kept so the decision can see what it costs if the bench NSB is that high.
+    ps_sbg = ps.with_values({"ma.nsb.label_factor_igg_enzyme_conjugate": 1.0})
+    # unscreened capture reagent: koff sampled up to Kamat2020's fast commercial anti-Fc mAb (chemistry.yaml)
+    ps_unscr = _with_bounds(ps, "chem.antibodies.koff_capture",
+                            high=ps.params["chem.antibodies.koff_capture"].overridden_from.high)
 
     rows, mcs = [], {}
     t0 = time.time()
@@ -85,7 +89,7 @@ def main():
         s = mc.summary(target, tlim, top)
         nom = mc.nominal
         d = nom.diagnostics
-        lod_plate = float(evaluate(a, ps_plate).lod_pgml)
+        lod_sbg = float(evaluate(a, ps_sbg).lod_pgml)
         row = dict(
             architecture=a.name, scheme=a.scheme, capture=a.capture, chemistry=a.chemistry, detector=a.detector,
             injection=a.injection, substrate_delivery=a.substrate_delivery, labelling_format=a.labelling_format,
@@ -93,7 +97,7 @@ def main():
             lod_nominal_pgml=s["lod_nominal"], lod_median_pgml=s["lod_median"], lod_p05_pgml=s["lod_p05"],
             lod_p95_pgml=s["lod_p95"], p_lod_le_1pgml=s["p_lod_le_target"],
             p_lod_and_range=s["p_lod_and_range"],
-            lod_nominal_nsb_plate_calibrated_pgml=lod_plate,
+            lod_nominal_nsb_sbg_equivalent_pgml=lod_sbg,
             blank_equiv_nominal_pgml=d["blank_equivalent_pgml"], blank_equiv_median_pgml=s["blank_equiv_median"],
             uloq_nominal_pgml=nom.uloq_pgml, dynamic_range_decades_nominal=nom.dynamic_range_decades,
             cycle_time_min=s["cycle_time_min"], time_to_result_min=s["time_to_result_min"],
@@ -127,14 +131,31 @@ def main():
     # condensed markdown table
     with open(RES / "baseline_table.md", "w") as fh:
         fh.write("| Architecture | LOD nominal (pg/mL) | LOD median [5-95 %] (pg/mL) | P(LOD<=1) | "
-                 "LOD, plate-calibrated NSB (pg/mL) | Blank equiv. B (pg/mL) | ULOQ (pg/mL) | Cycle / to result (min) "
+                 "LOD, SbG-equivalent NSB (pre-audit, pg/mL) | Blank equiv. B (pg/mL) | ULOQ (pg/mL) | Cycle / to result (min) "
                  "| Limiting term |\n|---|---|---|---|---|---|---|---|---|\n")
         for r in rows:
             fh.write(f"| {r['architecture']} | {fmt(r['lod_nominal_pgml'], 2)} | {fmt(r['lod_median_pgml'], 2)} "
                      f"[{fmt(r['lod_p05_pgml'], 2)}-{fmt(r['lod_p95_pgml'], 2)}] | {r['p_lod_le_1pgml']:.3f} | "
-                     f"{fmt(r['lod_nominal_nsb_plate_calibrated_pgml'], 2)} | {fmt(r['blank_equiv_nominal_pgml'], 2)} | "
+                     f"{fmt(r['lod_nominal_nsb_sbg_equivalent_pgml'], 2)} | {fmt(r['blank_equiv_nominal_pgml'], 2)} | "
                      f"{fmt(r['uloq_nominal_pgml'], 2)} | {r['cycle_time_min']:.1f} / {r['time_to_result_min']:.1f} | "
                      f"{r['limiting_term_nominal']} |\n")
+
+    # scenario table for the leading architectures (Monte Carlo under each open scenario)
+    lead_names = [r["architecture"] for r in rows[:6]]
+    if "B-bed-TL/alp_hqdp" not in lead_names:
+        lead_names.append("B-bed-TL/alp_hqdp")
+    with open(RES / "scenarios.md", "w") as fh:
+        fh.write("| Architecture | Scenario | LOD nominal (pg/mL) | LOD median [5-95 %] (pg/mL) | P(LOD<=1) |\n"
+                 "|---|---|---|---|---|\n")
+        for name in lead_names:
+            a = A.get(name)
+            for label, pset in (("audited baseline", ps), ("SbG-equivalent NSB (pre-audit factor 1)", ps_sbg),
+                                ("unscreened capture reagent (koff to 8.3e-3 /s)", ps_unscr)):
+                m = mcs[name] if pset is ps else montecarlo.run(a, pset, n=args.n, seed=args.seed)
+                sm = m.summary(target, tlim, top)
+                fh.write(f"| {name} | {label} | {fmt(sm['lod_nominal'], 2)} | {fmt(sm['lod_median'], 2)} "
+                         f"[{fmt(sm['lod_p05'], 2)}-{fmt(sm['lod_p95'], 2)}] | {sm['p_lod_le_target']:.3f} |\n")
+            print(f"scenarios done: {name}", flush=True)
 
     # validation
     vals = validation.all_validations(ps)
@@ -195,6 +216,17 @@ def main():
     if not args.no_figures:
         figures(rows, mcs, sens_all, target, ps)
     print(f"\nWrote results to {RES} ({time.time() - t0:.0f} s)")
+
+
+def _with_bounds(ps, key, low=None, high=None):
+    """Copy of a ParameterSet whose parameter `key` has different sampling bounds (scenario runs)."""
+    from dataclasses import replace as _r
+    params = dict(ps.params)
+    p0 = params[key]
+    params[key] = _r(p0, low=p0.low if low is None else low, high=p0.high if high is None else high)
+    out = ParameterSet(params, ps.extra, dict(ps.values), ps.n)
+    out.pinned = set(ps.pinned)          # keep values pinned by with_values (else they would be re-sampled)
+    return out
 
 
 def _style(ax):

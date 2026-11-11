@@ -33,10 +33,13 @@ DETECTORS = {
 }
 
 INJECTIONS = {
-    # mode: (delivered-fraction key, description)
-    "PLNO_250": ("hw.smfl.delivered_fraction_plno_250loop", "250 uL loop, PLNO 82 uL"),
-    "PLPA_250": ("hw.smfl.delivered_fraction_plpa_250loop", "250 uL loop, PLPA 97 uL"),
-    "PLNO_100": ("hw.smfl.delivered_fraction_plno_100loop", "100 uL loop, PLNO 75 uL"),
+    # mode: (delivered-fraction key, description, loop volume in uL that the mode requires)
+    # FL_100 is the INSTALLED configuration (docs/00 "Installed configuration"): 100 uL loop filled by
+    # full-loop injection with 2x overfill (100 uL injected, ~200 uL drawn from the vial).
+    "FL_100": ("ma.delivery.delivered_fraction_full_loop_100", "100 uL loop, full loop 100 uL (2x overfill)", 100.0),
+    "PLNO_100": ("hw.smfl.delivered_fraction_plno_100loop", "100 uL loop, PLNO 75 uL", 100.0),
+    "PLNO_250": ("hw.smfl.delivered_fraction_plno_250loop", "250 uL loop, PLNO 82 uL", 250.0),
+    "PLPA_250": ("hw.smfl.delivered_fraction_plpa_250loop", "250 uL loop, PLPA 97 uL", 250.0),
 }
 
 _ALP = "chem.enzymes.alp"
@@ -146,7 +149,7 @@ class Architecture:
     capture: str                       # key of CAPTURES
     chemistry: str                     # key of CHEMISTRIES
     detector: str                      # key of DETECTORS
-    injection: str = "PLNO_250"        # key of INJECTIONS
+    injection: str = "FL_100"          # key of INJECTIONS (installed configuration)
     substrate_delivery: str = "bsm"    # "bsm" (B1 line) or "injected" (from a vial through the loop)
     labelling_format: str = "sequential"   # or "one_step_in_vial" (magnetic beads only)
     chemical_cycling: bool = False     # TCEP/hydrazine cycling (only chemistries with a cycling entry)
@@ -246,11 +249,16 @@ def registry(include_variants: bool = True) -> tuple[list[Architecture], list[tu
         base = Architecture(name="B-bed-TL/alp_hqdp", scheme="B", capture="packed_bed", chemistry="alp_hqdp",
                             detector="thin_layer")
         archs.append(replace(base, name="B-bed-TL/alp_hqdp/injected-substrate", substrate_delivery="injected"))
-        archs.append(replace(base, name="B-bed-TL/alp_hqdp/PLPA97", injection="PLPA_250"))
+        # sample-consumption-limited variant: if the <= 100 uL budget applies to the volume DRAWN (full loop
+        # draws ~200 uL), the 100 uL loop allows at most PLNO 75 uL (90 uL drawn)
+        archs.append(replace(base, name="B-bed-TL/alp_hqdp/PLNO75", injection="PLNO_100"))
         archs.append(replace(base, name="B-bed-TL/alp_hqdp/untreated-sample", sample_treatment="untreated"))
         mag = Architecture(name="B-mag-IDA/alp_hqdp", scheme="B", capture="magnetic_beads", chemistry="alp_hqdp",
                            detector="ida_flow")
-        archs.append(replace(mag, name="B-mag-IDA/alp_hqdp/PLPA97", injection="PLPA_250"))
+        archs.append(replace(mag, name="B-mag-IDA/alp_hqdp/PLNO75", injection="PLNO_100"))
+        mag1 = Architecture(name="B-mag1-IDA/alp_hqdp", scheme="B", capture="magnetic_beads", chemistry="alp_hqdp",
+                            detector="ida_flow", labelling_format="one_step_in_vial")
+        archs.append(replace(mag1, name="B-mag1-IDA/alp_hqdp/PLNO75", injection="PLNO_100"))
     # de-duplicate names
     seen, out = set(), []
     for a in archs:
