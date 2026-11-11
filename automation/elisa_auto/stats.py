@@ -117,6 +117,16 @@ def carryover(high, blank_after, blank_second) -> dict:
     return {"carryover": (b1 - b2) / (h - b2), "mean_high": h, "mean_b1": b1, "mean_b2": b2}
 
 
+def carryover_challenge(blank_after, blank_second, slope, challenge_pgml) -> dict:
+    """Carry-over after a challenge ABOVE the calibrated range (docs/06 s7.6 revised after the final review, S6):
+    the excess of B1 over B2 is converted to pg/mL through the low-range slope and divided by the NOMINAL challenge
+    concentration (10 ng/mL: a 1e-4 carry-over then gives 1 pg/mL in B1, ~5 SD of the B1-B2 difference at n = 5)."""
+    b1, b2 = float(np.mean(blank_after)), float(np.mean(blank_second))
+    excess = (b1 - b2) / float(slope)
+    return {"carryover": excess / float(challenge_pgml), "excess_pgml": excess, "mean_b1": b1, "mean_b2": b2,
+            "challenge_pgml": float(challenge_pgml)}
+
+
 def cv_by_level(conc, signal) -> dict:
     c = np.asarray(conc, float)
     s = np.asarray(signal, float)

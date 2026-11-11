@@ -380,12 +380,19 @@ G1_GO_MIN = 0.30
 G1_LEVER_MIN = 0.10
 
 
-def g1_decision(p_no_lever: dict, p_with_l4: dict) -> str:
-    """p_*: {design: P(success)} over the ADMISSIBLE designs (P-chamb, S-chamb, B-bed)."""
-    p0 = max(p_no_lever.values())
-    pl = max([p0] + list(p_with_l4.values()))
-    if p0 >= G1_GO_MIN:
+def g1_decision(p_no_lever: dict, p_measured_l4: dict | None = None) -> str:
+    """p_no_lever: {design: P(success)} over the ADMISSIBLE designs (P-chamb, S-chamb, B-bed) with all Stage-1
+    bench values entered. p_measured_l4: the same with lever L4 entered at its MEASURED Stage-1C factors (G1'
+    only). The modelled, unmeasured L4 magnitude (x0.1/0.7, UNVERIFIED) never counts toward a decision: it would
+    make STOP unreachable below a label factor of ~0.3.
+      GO            P >= G1_GO_MIN                      -> order Stage 2
+      GO-WITH-LEVER G1_LEVER_MIN <= P < G1_GO_MIN       -> order Stage 2 and run Stage 1C (L4) in parallel
+      STOP          P < G1_LEVER_MIN                    -> no hardware purchase; Stage 1C in tubes, then G1'"""
+    p = max(p_no_lever.values())
+    if p_measured_l4:
+        p = max([p] + list(p_measured_l4.values()))
+    if p >= G1_GO_MIN:
         return "GO"
-    if pl >= G1_LEVER_MIN:
-        return "GO-WITH-LEVER" if p0 >= G1_LEVER_MIN else "GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1')"
+    if p >= G1_LEVER_MIN:
+        return "GO-WITH-LEVER"
     return "STOP"

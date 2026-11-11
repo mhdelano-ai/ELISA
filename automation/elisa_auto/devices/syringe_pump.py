@@ -28,7 +28,8 @@ class CavroTypeSIA(SIAModule):
 
     def execute(self, command):
         action = command.get("action")
-        if action not in ("dispense", "mix", "empty_cup_through_trap", "rinse_cup", "aspirate"):
+        if action not in ("dispense", "mix", "empty_cup_through_trap", "rinse_cup", "aspirate", "flush_channel",
+                          "flush_trap"):
             raise DeviceError(f"unknown SIA action {action}")
         # TODO: translate each action into the vendor's command sequence (see module docstring).
         self._send(repr(command))

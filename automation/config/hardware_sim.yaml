@@ -4,6 +4,9 @@ valves:
   V2: {positions: [isolate, perfuse], initial: isolate}   # 10-port, 2-position reactor isolation (docs/05 s4.1)
   V3: {positions: [bypass, detect], initial: bypass}      # 6-port, EC cell in / bypass
   V4: {positions: [A, B], initial: B}                     # 6-port: A = SM-FL -> cup, B = SM-FL -> tee -> V2
+sia:                           # same port names as hardware_lab.example.yaml (docs/08 B4: separate bead and conjugate ports)
+  valve_ports: 8
+  ports: {beads: 1, cup: 2, wash: 3, waste: 4, to_trap: 5, conjugate: 6}
 sim:
   seed: 20261111
   inject_delay_s: 0.0          # extra delay of each simulated Inject Start relative to schedule

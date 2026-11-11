@@ -1,0 +1,62 @@
+{
+  "sample": {
+    "type": "blank",
+    "conc_pgml": 0.0,
+    "order": 8,
+    "sample_id": "S008"
+  },
+  "cycle": {
+    "name": "primary_one_step",
+    "mode": "one_step",
+    "file": "automation/config/cycle_primary.yaml",
+    "sha256": "b39689db429509f47cdadf4cf8453ed7a01a87191e61033f8f1a4b45882108b9",
+    "source": "docs/05_design_decision.md section 4.1 (per-cycle step table)"
+  },
+  "devices": {
+    "empower": "simulated Empower (schedules Inject Start edges)",
+    "potentiostat": "SimPotentiostat",
+    "valves": {
+      "V2": "SimValve",
+      "V3": "SimValve",
+      "V4": "SimValve"
+    }
+  },
+  "clock": "simulated",
+  "host": "vm",
+  "python": "3.13.18",
+  "true_charge_C": 4.6236635229348795e-09,
+  "trace_sha256": "8de40fa1a0b4415760f141da6ef54b4a3bdb197ec4059668299fd46ed93a7ea7",
+  "trace_marks": [
+    [
+      29904.0,
+      "start"
+    ],
+    [
+      29964.0,
+      "accumulation"
+    ],
+    [
+      30564.0,
+      "readout"
+    ],
+    [
+      30624.0,
+      "post_baseline"
+    ],
+    [
+      30654.0,
+      "stop"
+    ]
+  ],
+  "status": "ok",
+  "fault": null,
+  "valid": true,
+  "invalid_reason": null,
+  "fault_latch": {
+    "set": false,
+    "history": []
+  },
+  "anchors_clock_s": {
+    "sample": 27528.0
+  }
+}

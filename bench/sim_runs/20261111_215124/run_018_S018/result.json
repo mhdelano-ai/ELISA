@@ -1,0 +1,37 @@
+{
+  "S_C": 2.978275365381255e-08,
+  "signal": {
+    "generator": {
+      "charge_C": 2.978275365381255e-08,
+      "baseline_slope_A_per_s": 1.0110936642622482e-14,
+      "baseline_at_readout_start_A": 5.65883181672103e-11,
+      "baseline_rms_A": 3.9830529376275365e-13,
+      "readout_width_s": 60.0,
+      "n_readout": 601
+    },
+    "S": 2.978275365381255e-08
+  },
+  "sample": {
+    "type": "standard",
+    "conc_pgml": 5.0,
+    "order": 18,
+    "sample_id": "S018"
+  },
+  "time_to_result_min": 52.1,
+  "windows_clock_s": {
+    "pre_baseline": [
+      64794.0,
+      64824.0
+    ],
+    "readout": [
+      64824.0,
+      64884.0
+    ],
+    "post_baseline": [
+      64884.0,
+      64914.0
+    ]
+  },
+  "valid": true,
+  "invalid_reason": null
+}

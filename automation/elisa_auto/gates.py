@@ -46,8 +46,26 @@ def verdict(g: dict, value: float) -> str:
 
 
 def detection_t_half_verdict(g: dict, t_half_min: float) -> str:
+    """Mode choice on the detection reagent's effective (on-bead, E1.5) half-life. Between one_step_min and
+    lod_neutral_max the two modes differ by less than the model's sampling noise in P (docs/08 S4): one-step is
+    chosen there because it keeps conjugate out of the SM-FL needle and loop (no conjugate carry-over)."""
     if t_half_min >= g["one_step_min"]:
+        if "lod_neutral_max" in g and t_half_min < g["lod_neutral_max"]:
+            return (f"ONE-STEP MODE ({g['one_step_min']}-{g['lod_neutral_max']} min: LOD-neutral band, chosen for "
+                    f"no conjugate in the SM-FL path; {g['source']})")
         return f"ONE-STEP MODE (t1/2 >= {g['one_step_min']} min; {g['source']})"
     if t_half_min >= g["sequential_min"]:
         return f"SEQUENTIAL MODE ({g['sequential_min']}-{g['one_step_min']} min; {g['source']})"
     return f"REJECT PAIR (t1/2 < {g['sequential_min']} min; {g['source']})"
+
+
+def g1_rule_verdict(gates: dict, p_by_design: dict) -> str:
+    """The G1 decision rule (gates.yaml G1_rule; docs/06 s4.11): on the model P(success) of the admissible designs
+    with all Stage-1 values entered (model_feedback). Same thresholds as scripts/design_lib.g1_decision."""
+    r = gates["G1_rule"]
+    p = max(p_by_design.values())
+    if p >= r["p_go_min"]:
+        return f"GO (P = {p:.2f} >= {r['p_go_min']:g})"
+    if p >= r["p_lever_min"]:
+        return f"GO-WITH-LEVER (P = {p:.2f} in [{r['p_lever_min']:g}, {r['p_go_min']:g}); Stage 2 + Stage 1C)"
+    return f"STOP (P = {p:.2f} < {r['p_lever_min']:g}; no hardware purchase, Stage 1C in tubes, then G1')"

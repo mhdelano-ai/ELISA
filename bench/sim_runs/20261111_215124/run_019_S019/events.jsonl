@@ -1,0 +1,74 @@
+{"t": 65094.0, "wall": "virtual+65094.000s", "kind": "arm", "cycle_min": -1.0, "sample": {"type": "standard", "conc_pgml": 10.0, "order": 19, "sample_id": "S019"}, "cycle": "primary_one_step"}
+{"t": 65094.0, "wall": "virtual+65094.000s", "kind": "step_start", "cycle_min": -1.0, "step": "dose_beads", "role": null, "duration_min": 0.4}
+{"t": 65094.0, "wall": "virtual+65094.000s", "kind": "sia", "cycle_min": -1.0, "step": "dose_beads", "command": {"action": "dispense", "from": "beads", "to": "cup", "volume_uL": 10}}
+{"t": 65118.0, "wall": "virtual+65118.000s", "kind": "step_start", "cycle_min": -0.6, "step": "flush_sia_channel", "role": null, "duration_min": 0.19999999999999996}
+{"t": 65118.0, "wall": "virtual+65118.000s", "kind": "sia", "cycle_min": -0.6, "step": "flush_sia_channel", "command": {"action": "flush_channel", "from": "wash", "to": "waste", "volume_uL": 50}}
+{"t": 65130.0, "wall": "virtual+65130.000s", "kind": "step_start", "cycle_min": -0.4, "step": "dose_conjugate", "role": null, "duration_min": 0.4}
+{"t": 65130.0, "wall": "virtual+65130.000s", "kind": "sia", "cycle_min": -0.4, "step": "dose_conjugate", "command": {"action": "dispense", "from": "conjugate", "to": "cup", "volume_uL": 10}}
+{"t": 65154.0, "wall": "virtual+65154.000s", "kind": "step_start", "cycle_min": 0.0, "step": "aspirate_sample", "role": null, "duration_min": 1.0}
+{"t": 65154.0, "wall": "virtual+65154.000s", "kind": "valve", "cycle_min": 0.0, "step": "aspirate_sample", "valve": "V4", "position": "A"}
+{"t": 65154.0, "wall": "virtual+65154.000s", "kind": "valve", "cycle_min": 0.0, "step": "aspirate_sample", "valve": "V2", "position": "isolate"}
+{"t": 65154.0, "wall": "virtual+65154.000s", "kind": "valve", "cycle_min": 0.0, "step": "aspirate_sample", "valve": "V3", "position": "bypass"}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "inject_start", "cycle_min": 1.0, "inject": "sample", "line_code": 1, "deviation_s": 0.0}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "wait_inject", "cycle_min": 1.0, "inject": "sample", "deadline_s": 3600.0}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "step_start", "cycle_min": 1.0, "step": "transfer_sample_to_cup", "role": null, "duration_min": 2.0}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "valve", "cycle_min": 1.0, "step": "transfer_sample_to_cup", "valve": "V4", "position": "A"}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "valve", "cycle_min": 1.0, "step": "transfer_sample_to_cup", "valve": "V2", "position": "isolate"}
+{"t": 65214.0, "wall": "virtual+65214.000s", "kind": "valve", "cycle_min": 1.0, "step": "transfer_sample_to_cup", "valve": "V3", "position": "bypass"}
+{"t": 65334.0, "wall": "virtual+65334.000s", "kind": "step_start", "cycle_min": 3.0, "step": "incubation", "role": "incubation", "duration_min": 30.0}
+{"t": 65334.0, "wall": "virtual+65334.000s", "kind": "valve", "cycle_min": 3.0, "step": "incubation", "valve": "V4", "position": "B"}
+{"t": 65334.0, "wall": "virtual+65334.000s", "kind": "valve", "cycle_min": 3.0, "step": "incubation", "valve": "V2", "position": "isolate"}
+{"t": 65334.0, "wall": "virtual+65334.000s", "kind": "valve", "cycle_min": 3.0, "step": "incubation", "valve": "V3", "position": "bypass"}
+{"t": 65334.0, "wall": "virtual+65334.000s", "kind": "sia", "cycle_min": 3.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 65454.0, "wall": "virtual+65454.000s", "kind": "sia", "cycle_min": 5.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 65574.0, "wall": "virtual+65574.000s", "kind": "sia", "cycle_min": 7.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 65694.0, "wall": "virtual+65694.000s", "kind": "sia", "cycle_min": 9.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 65814.0, "wall": "virtual+65814.000s", "kind": "sia", "cycle_min": 11.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 65934.0, "wall": "virtual+65934.000s", "kind": "sia", "cycle_min": 13.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66054.0, "wall": "virtual+66054.000s", "kind": "sia", "cycle_min": 15.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66174.0, "wall": "virtual+66174.000s", "kind": "sia", "cycle_min": 17.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66294.0, "wall": "virtual+66294.000s", "kind": "sia", "cycle_min": 19.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66414.0, "wall": "virtual+66414.000s", "kind": "sia", "cycle_min": 21.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66534.0, "wall": "virtual+66534.000s", "kind": "sia", "cycle_min": 23.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66654.0, "wall": "virtual+66654.000s", "kind": "sia", "cycle_min": 25.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66774.0, "wall": "virtual+66774.000s", "kind": "sia", "cycle_min": 27.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 66894.0, "wall": "virtual+66894.000s", "kind": "sia", "cycle_min": 29.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 67014.0, "wall": "virtual+67014.000s", "kind": "sia", "cycle_min": 31.0, "step": "incubation", "command": {"action": "mix", "port": "cup", "volume_uL": 50, "every_min": 2.0}}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "step_start", "cycle_min": 33.0, "step": "load_trap", "role": null, "duration_min": 6.600000000000001}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "valve", "cycle_min": 33.0, "step": "load_trap", "valve": "V4", "position": "B"}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "valve", "cycle_min": 33.0, "step": "load_trap", "valve": "V2", "position": "perfuse"}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "valve", "cycle_min": 33.0, "step": "load_trap", "valve": "V3", "position": "bypass"}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "magnet", "cycle_min": 33.0, "step": "load_trap", "on": true}
+{"t": 67134.0, "wall": "virtual+67134.000s", "kind": "sia", "cycle_min": 33.0, "step": "load_trap", "command": {"action": "empty_cup_through_trap", "from": "cup", "to": "to_trap", "volume_uL": 653, "flow_uL_min": 99}}
+{"t": 67530.0, "wall": "virtual+67530.000s", "kind": "step_start", "cycle_min": 39.6, "step": "wash", "role": null, "duration_min": 1.0}
+{"t": 67530.0, "wall": "virtual+67530.000s", "kind": "valve", "cycle_min": 39.6, "step": "wash", "valve": "V4", "position": "B"}
+{"t": 67530.0, "wall": "virtual+67530.000s", "kind": "valve", "cycle_min": 39.6, "step": "wash", "valve": "V2", "position": "perfuse"}
+{"t": 67530.0, "wall": "virtual+67530.000s", "kind": "valve", "cycle_min": 39.6, "step": "wash", "valve": "V3", "position": "bypass"}
+{"t": 67590.0, "wall": "virtual+67590.000s", "kind": "step_start", "cycle_min": 40.6, "step": "substrate_fill", "role": null, "duration_min": 1.0}
+{"t": 67590.0, "wall": "virtual+67590.000s", "kind": "valve", "cycle_min": 40.6, "step": "substrate_fill", "valve": "V4", "position": "B"}
+{"t": 67590.0, "wall": "virtual+67590.000s", "kind": "valve", "cycle_min": 40.6, "step": "substrate_fill", "valve": "V2", "position": "perfuse"}
+{"t": 67590.0, "wall": "virtual+67590.000s", "kind": "valve", "cycle_min": 40.6, "step": "substrate_fill", "valve": "V3", "position": "bypass"}
+{"t": 67590.0, "wall": "virtual+67590.000s", "kind": "potentiostat", "cycle_min": 40.6, "step": "substrate_fill", "action": "start_acquisition", "label": "substrate_fill"}
+{"t": 67650.0, "wall": "virtual+67650.000s", "kind": "step_start", "cycle_min": 41.6, "step": "accumulation", "role": "accumulation", "duration_min": 10.0}
+{"t": 67650.0, "wall": "virtual+67650.000s", "kind": "valve", "cycle_min": 41.6, "step": "accumulation", "valve": "V4", "position": "B"}
+{"t": 67650.0, "wall": "virtual+67650.000s", "kind": "valve", "cycle_min": 41.6, "step": "accumulation", "valve": "V2", "position": "isolate"}
+{"t": 67650.0, "wall": "virtual+67650.000s", "kind": "valve", "cycle_min": 41.6, "step": "accumulation", "valve": "V3", "position": "detect"}
+{"t": 67650.0, "wall": "virtual+67650.000s", "kind": "potentiostat", "cycle_min": 41.6, "step": "accumulation", "action": "mark", "label": "accumulation"}
+{"t": 68250.0, "wall": "virtual+68250.000s", "kind": "step_start", "cycle_min": 51.6, "step": "readout", "role": "readout", "duration_min": 1.0}
+{"t": 68250.0, "wall": "virtual+68250.000s", "kind": "valve", "cycle_min": 51.6, "step": "readout", "valve": "V4", "position": "B"}
+{"t": 68250.0, "wall": "virtual+68250.000s", "kind": "valve", "cycle_min": 51.6, "step": "readout", "valve": "V2", "position": "perfuse"}
+{"t": 68250.0, "wall": "virtual+68250.000s", "kind": "valve", "cycle_min": 51.6, "step": "readout", "valve": "V3", "position": "detect"}
+{"t": 68250.0, "wall": "virtual+68250.000s", "kind": "potentiostat", "cycle_min": 51.6, "step": "readout", "action": "mark", "label": "readout"}
+{"t": 68310.0, "wall": "virtual+68310.000s", "kind": "step_start", "cycle_min": 52.6, "step": "post_baseline", "role": "post_baseline", "duration_min": 0.5}
+{"t": 68310.0, "wall": "virtual+68310.000s", "kind": "valve", "cycle_min": 52.6, "step": "post_baseline", "valve": "V4", "position": "B"}
+{"t": 68310.0, "wall": "virtual+68310.000s", "kind": "valve", "cycle_min": 52.6, "step": "post_baseline", "valve": "V2", "position": "isolate"}
+{"t": 68310.0, "wall": "virtual+68310.000s", "kind": "valve", "cycle_min": 52.6, "step": "post_baseline", "valve": "V3", "position": "detect"}
+{"t": 68310.0, "wall": "virtual+68310.000s", "kind": "potentiostat", "cycle_min": 52.6, "step": "post_baseline", "action": "mark", "label": "post_baseline"}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "step_start", "cycle_min": 53.1, "step": "clean", "role": null, "duration_min": 3.0}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "valve", "cycle_min": 53.1, "step": "clean", "valve": "V4", "position": "B"}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "valve", "cycle_min": 53.1, "step": "clean", "valve": "V2", "position": "perfuse"}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "valve", "cycle_min": 53.1, "step": "clean", "valve": "V3", "position": "bypass"}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "magnet", "cycle_min": 53.1, "step": "clean", "on": false}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "sia", "cycle_min": 53.1, "step": "clean", "command": {"action": "rinse_cup", "port": "cup", "repeats": 3}}
+{"t": 68340.0, "wall": "virtual+68340.000s", "kind": "potentiostat", "cycle_min": 53.1, "step": "clean", "action": "stop_acquisition", "label": "clean"}
+{"t": 68520.0, "wall": "virtual+68520.000s", "kind": "cycle_end", "cycle_min": 56.1}

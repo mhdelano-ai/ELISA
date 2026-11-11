@@ -20,7 +20,9 @@ Every number carries a source (DOI/URL/vendor document) and a confidence. Anythi
 marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API call.
 
 ## Repository layout
-- `docs/00–05` — brief, literature, hardware, model, audit, design decision (in silico phase; do not edit).
+- `docs/00–05` — brief, literature, hardware, model, audit, design decision (in silico phase; do not edit; docs/05
+  carries a few passages marked "(revised after final review)").
+- `docs/08_final_review.md` — final review, corrections to earlier documents (§9), resolution of findings (§10).
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
 - `params/*.yaml` — model parameters (`chem.*`, `hw.*`, `ma.*`; schema in the file headers).
 - `src/elisa_sim/` — simulation package; `tests/` — its tests; `scripts/` — design scripts (`design_lib.py`).
@@ -32,10 +34,11 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 ## How to run
 ```bash
 pip install -e .                       # model package
-python -m pytest -q                    # model tests (64 passed at the end of the in silico phase)
+python -m pytest -q                    # model tests (71 passed after the review findings were resolved)
 python scripts/final_designs.py        # re-evaluate the final designs (see docs/05 §6 for every script)
+python scripts/g1_decision_table.py    # the G1 decision table (docs/06 §4.11; ~8 min)
 pip install -e automation              # orchestration package (simulation works on any OS)
-python -m pytest -q automation/tests   # automation tests (32 passed after the final review)
+python -m pytest -q automation/tests   # automation tests (50 passed after the review findings were resolved)
 python -m elisa_auto.run_sim --cycle automation/config/cycle_primary.yaml   # simulated cycle, virtual clock
 python -m elisa_auto.analyze bench/<folder>         # gate quantities from bench results
 python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the model with bench values
@@ -43,9 +46,16 @@ python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the mo
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
 
 ## Status (2026-11-11)
-In silico phase complete pending final review. **Next: bench Stage 0 (instrument facts, ordering) and Stage 1
-(U1 conjugate NSB on beads, U3 free hydroquinone in HQDP, U2 antibody off-rates)** — no flow hardware needed;
-Gate G1 decides whether 1 pg/mL is reachable before any custom hardware is bought (docs/06 §2–3).
+In silico phase complete; the final review's findings are resolved or listed as open in docs/08 §10. **Next:
+bench Stage 0 (instrument facts, ordering) and Stage 1A (E1.1 readout, E1.2 U3 free HQ, E1.3 U1 conjugate NSB with
+the reservoir-ageing arm)** — no flow hardware needed. **G1a (week 5)** applies the G1 rule to U1 + U3; BLI/SPR and
+NISTmAb are ordered only after it. **G1 rule (fixed before data, docs/06 §4.11, `gates.yaml` G1_rule):** model
+P(success) with all Stage-1 values entered by `model_feedback` — GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30 (Stage 2 +
+Stage 1C), STOP < 0.10 (no hardware; Stage 1C, then G1′). Current model (thin-layer default cell, review corrections):
+primary median 3.5 pg/mL, P 0.16 as specified; 1.3 pg/mL, P 0.32 after reagent + substrate screening (docs/08 §10).
+Design changes from the review: separate bead and conjugate reservoirs; commercial single-channel thin-layer cell
+by default (IDA + second channel only if Stage 2 shows a need); carry-over criterion 1×10⁻⁴ with a 10 ng/mL
+challenge; fault latch + recovery cycle in the sequencer; phosphate K_i UNVERIFIED (0.2 µM–1 mM).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

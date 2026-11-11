@@ -40,13 +40,19 @@ def _find(folder: Path, name: str) -> list[Path]:
 
 
 # ---- automated runs -----------------------------------------------------------------------------------------
-def collect_runs(folder: Path) -> list[dict]:
+def collect_runs(folder: Path, invalid: list | None = None) -> list[dict]:
+    """Completed, VALID automated runs. Runs flagged invalid by the fault latch (docs/08 S12) are excluded and, if
+    a list is passed, appended to it as (run dir, reason)."""
     runs = []
     for r in _find(folder, "result.json"):
         m = r.parent / "metadata.json"
         res = json.loads(r.read_text())
         meta = json.loads(m.read_text()) if m.exists() else {}
         if meta.get("status", "ok") != "ok":
+            continue
+        if meta.get("valid", True) is False or res.get("valid", True) is False:
+            if invalid is not None:
+                invalid.append((str(r.parent), meta.get("invalid_reason") or res.get("invalid_reason")))
             continue
         smp = res.get("sample") or meta.get("sample") or {}
         runs.append({"dir": str(r.parent), "S": float(res["S_C"]), "type": smp.get("type"),
@@ -88,16 +94,32 @@ def blanks_calibration(rows: list[dict], label: str, gates: dict, out: list[str]
     return L
 
 
-def carryover_from_sequence(rows: list[dict], out: list[str], gates: dict, top: float = 1000.0):
-    H, B1, B2 = [], [], []
-    for i, r in enumerate(rows):
-        if r["type"] == "standard" and r["conc"] >= top and i + 2 < len(rows):
-            if rows[i + 1]["type"] == "blank" and rows[i + 2]["type"] == "blank":
-                H.append(r["S"]); B1.append(rows[i + 1]["S"]); B2.append(rows[i + 2]["S"])
-    if H:
-        co = S.carryover(H, B1, B2)
-        out.append(f"[runs] carry-over after {top:g} pg/mL (n={len(H)}): {co['carryover']:.2e} -> "
-                   f"{G.verdict(gates['G3']['carryover'], co['carryover'])}")
+CHALLENGE_PGML = 10000.0   # carry-over challenge level (docs/06 s7.6, revised after the final review, S6)
+
+
+def carryover_from_sequence(rows: list[dict], out: list[str], gates: dict, top: float = 1000.0,
+                            slope: float | None = None):
+    """H -> B1 -> B2 triplets. Standards at >= 10 ng/mL are the S6 challenge: evaluated through the low-range slope
+    against the nominal concentration (their own signal is above the calibrated range). Standards at 1000 pg/mL
+    are still reported with the signal ratio, but 1e-4 x 1000 pg/mL = 0.1 pg/mL is below what that test resolves."""
+    for lo, hi in ((top, CHALLENGE_PGML), (CHALLENGE_PGML, float("inf"))):
+        H, B1, B2, C = [], [], [], []
+        for i, r in enumerate(rows):
+            if r["type"] == "standard" and lo <= r["conc"] < hi and i + 2 < len(rows):
+                if rows[i + 1]["type"] == "blank" and rows[i + 2]["type"] == "blank":
+                    H.append(r["S"]); B1.append(rows[i + 1]["S"]); B2.append(rows[i + 2]["S"]); C.append(r["conc"])
+        if not H:
+            continue
+        if lo >= CHALLENGE_PGML and slope:
+            co = S.carryover_challenge(B1, B2, slope, float(np.mean(C)))
+            out.append(f"[runs] carry-over after a {np.mean(C):g} pg/mL challenge (n={len(H)}): {co['carryover']:.2e} "
+                       f"(B1 excess {co['excess_pgml']:.3g} pg/mL) -> {G.verdict(gates['G3']['carryover'], co['carryover'])}")
+        elif lo < CHALLENGE_PGML:
+            co = S.carryover(H, B1, B2)
+            out.append(f"[runs] carry-over after {lo:g} pg/mL (n={len(H)}): {co['carryover']:.2e} -> "
+                       f"{G.verdict(gates['G3']['carryover'], co['carryover'])} (indicative only: at 1e-4 the B1 "
+                       f"excess is {1e-4 * float(np.mean(C)):.2g} pg/mL; the criterion is tested with a "
+                       f"{CHALLENGE_PGML:g} pg/mL challenge, docs/06 s7.6)")
 
 
 # ---- Stage-1 templates ---------------------------------------------------------------------------------------
@@ -127,6 +149,16 @@ def u1(p: Path, gates: dict, out: list[str]):
         factors_at_design[conj] = gm
         out.append(f"[U1] {conj}: label factor (geometric mean of {len(fac)} standard-wash points) = {gm:.3g} "
                    f"[{min(fac):.3g}-{max(fac):.3g}] -> {G.verdict(g['label_factor'], gm)}")
+        # design cell (0.3 nM x 30 min, standard wash): the value to enter at G1a/G1 (docs/08 W2: if NSB is not
+        # linear in exposure the all-points mean differs from it)
+        cell = [x["label_factor"] for x in std_wash if abs(_f(x["conc_nM"]) - 0.3) < 1e-9
+                and abs(_f(x["time_min"]) - 30) < 1e-9 and x["label_factor"] > 0]
+        if cell:
+            gc = float(math.exp(np.mean(np.log(cell))))
+            factors_at_design[conj] = gc
+            out.append(f"[U1] {conj}: label factor at the DESIGN CELL 0.3 nM x 30 min (n={len(cell)}) = {gc:.3g} "
+                       f"-> {G.verdict(g['label_factor'], gc)}; enter this value in measured_values.yaml "
+                       "(the G1 rule is on model P, docs/06 s4.11)")
         pos = [x for x in std_wash if x["n_alp"] > 0]
         if len({x['exposure_mol_s_m3'] for x in pos}) >= 3:
             pl = S.power_law_fit([x["exposure_mol_s_m3"] for x in pos], [x["n_alp"] / x["area_m2"] for x in pos])
@@ -263,11 +295,19 @@ def analyze_folder(folder, gates_path=None) -> list[str]:
         rows = [{"S": _f(r["signal"]), "type": r.get("sample_type"), "conc": _f(r.get("conc_pgml"), 0.0)}
                 for r in _rows(p)]
         blanks_calibration(rows, f"manual {p.parent.name}", gates, out, gate_key="G2")
-    runs = collect_runs(folder)
+    invalid = []
+    runs = collect_runs(folder, invalid)
+    if invalid:
+        out.append(f"[runs] {len(invalid)} run(s) EXCLUDED as invalid (fault latch set, no recovery cycle yet; "
+                   f"docs/08 S12): " + "; ".join(f"{Path(d).name}: {why}" for d, why in invalid))
+    for lp in _find(folder, "fault_latch.json"):
+        st = json.loads(lp.read_text())
+        out.append(f"[runs] fault latch {lp}: {'SET since run ' + str(st.get('since_run')) if st.get('set') else 'clear'}"
+                   f" ({len(st.get('history', []))} events)")
     if runs:
         out.append(f"[runs] {len(runs)} completed automated runs")
-        blanks_calibration(runs, "runs", gates, out, gate_key="G3")
-        carryover_from_sequence(runs, out, gates)
+        Lr = blanks_calibration(runs, "runs", gates, out, gate_key="G3")
+        carryover_from_sequence(runs, out, gates, slope=Lr["slope"] if Lr else None)
         ttr = [r["ttr"] for r in runs if r["ttr"] is not None]
         if ttr:
             out.append(f"[runs] time to result max = {max(ttr):.2f} min -> "

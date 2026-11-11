@@ -18,6 +18,7 @@ from .analyze import analyze_folder
 from .clock import SimClock
 from .cycle import load_cycle
 from .hardware import build_sim, load_hw
+from .latch import FaultLatch
 from .sequencer import Sequencer
 
 CFG = Path(__file__).resolve().parents[1] / "config"
@@ -40,23 +41,34 @@ def parse_samples(spec: str) -> list[dict]:
 
 
 def simulate(cycle_path, samples, out_dir, hw_path=None, seed=20261111, q_blank=5.0e-9, q_per_pg=5.2e-9,
-             cv_blank=0.10, carryover=1e-4):
+             cv_blank=0.10, carryover=1e-4, auto_recover=True, fault_at=None, devices=None, clock=None):
+    """Simulated sequence. A fault latch lives in out_dir (docs/08 S12): after a fault every run is flagged invalid
+    until the recovery cycle (config/cycle_recovery.yaml) completes; with auto_recover it is run right after the
+    faulted run. fault_at = set of sample orders whose Inject Start is withheld (fault-injection for tests)."""
     cycle = load_cycle(cycle_path)
+    recovery = load_cycle(CFG / "cycle_recovery.yaml")
     hw = load_hw(hw_path or CFG / "hardware_sim.yaml")
-    clock = SimClock(0.0)
-    dev = build_sim(clock, hw)
+    clock = clock or SimClock(0.0)
+    dev = devices or build_sim(clock, hw)
     rng = np.random.default_rng(seed)
     out_dir = Path(out_dir)
+    latch = FaultLatch(out_dir)
     results, prev_q = [], 0.0
     for s in samples:
         q = q_blank * (1 + cv_blank * rng.standard_normal()) + q_per_pg * s["conc_pgml"] * (1 + 0.05 * rng.standard_normal())
         q += carryover * prev_q
         prev_q = q
         dev.potentiostat.set_true_charge(q)
-        dev.empower.plan_cycle(cycle, t_arm=clock.now())
+        omit = {cycle.injects[0].name} if (fault_at and s["order"] in fault_at) else None
+        dev.empower.plan_cycle(cycle, t_arm=clock.now(), omit=omit)
         seq = Sequencer(cycle, dev, clock, out_dir / f"run_{s['order']:03d}_{s['sample_id']}",
-                        metadata={"true_charge_C": q})
-        results.append(seq.run(s))
+                        metadata={"true_charge_C": q}, latch=latch,
+                        watchdog_overrides={"first_inject_max_wait_s": 300} if omit else None)
+        r = seq.run(s)
+        results.append(r)
+        if r.status != "ok" and auto_recover:
+            rec = Sequencer(recovery, dev, clock, out_dir / f"run_{s['order']:03d}_recovery", latch=latch)
+            rec.run({"type": "recovery", "after_run": s["sample_id"]})
     return results
 
 
@@ -70,8 +82,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     out = a.out or f"bench/sim_runs/{datetime.now():%Y%m%d_%H%M%S}"
     res = simulate(a.cycle, parse_samples(a.samples), out, a.hw, a.seed)
-    n_ok = sum(r.status == "ok" for r in res)
-    print(f"{n_ok}/{len(res)} simulated cycles completed; runs in {out}")
+    n_ok = sum(r.status == "ok" and r.valid for r in res)
+    print(f"{n_ok}/{len(res)} simulated cycles completed and valid; runs in {out}")
     print("\n".join(analyze_folder(out)))
 
 

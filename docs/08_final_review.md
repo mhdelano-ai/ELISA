@@ -495,3 +495,147 @@ CLAUDE.md still says "31 passed at hand-over". The orchestrator may update that;
 CLAUDE.md.
 
 Nothing was committed or pushed.
+
+---
+
+## 9. Corrections to earlier documents
+
+Added 2026-11-11 by the session that resolved the findings (finding S10 and related sourcing items). docs/01–05 are
+not rewritten (CLAUDE.md); each correction below supersedes the passage named. Where a parameter rested on the
+misquoted source, the change is made in `params/model_assumptions.yaml` (`overrides`, with source and confidence).
+
+| # | Where | Statement as written | Correction | Parameter / model consequence |
+|---|---|---|---|---|
+| C1 | docs/05 §4.1 (detection criteria), §4.5 point 2; docs/06 E1.4 (fixed there) | Detection-on-capture "up to 15× when not suppressed (Qu1998)" | Qu1998 (PubMed 9618193) supports the mechanism ("specific aspecificity", suppressed by 0.25 % mouse serum). Its 39 → 2.5 pg/mL is the **overall** LOD change, which also includes an electrochemical readout upgrade and blocking changes. There is no quantitative detection-on-capture factor in it. | None: `ma.labelling.detection_on_capture_residual_factor` (1–3) does not cite the 15×. E1.4 measures the ratio. |
+| C2 | docs/05 §2 lever L3; `ma.design_levers.fab_conjugate_nsb_factor` source | "Purified Fab′ conjugates gave lower background (Hashida1985)" | Hashida1985 (PubMed 3926824) compares an improved with an older conjugation method, **both Fab′**; it is not a Fab′-vs-IgG comparison. Ruan1986 (PubMed 3532911: LOD 0.1 → 0.02 mU/L with Fab′-HRP plus normal F(ab′)₂) holds but has no IgG arm. **The L3 magnitude (NSB ×0.5, 0.2–1) has no quantitative support.** | Already tagged UNVERIFIED, confidence low in the YAML; L3 is a scenario, not a default. No numeric change. E1.3 (D1 vs D2 arm) measures it. |
+| C3 | docs/05 §4.1 (generator potential) | "+0.35 V vs Ag/AgCl (DellaCiana1996 and Wilson2004b)" | DellaCiana1996 (PubMed 8690930) used +350 mV and supports the value. Wilson2004b (PubMed 14709387) used **+420 mV on IrOx** and does not. The value rests on DellaCiana1996 alone (glassy carbon, p-hydroxyphenyl phosphate → HQ). | None (potential is set from a CV at the bench, E1.1/E3.1). |
+| C4 | `chem.enzymes.alp.phosphate_inhibition_Ki` (chemistry.yaml), docs/05 §1.5, docs/06 E1.7 | K_i 2 µM (1–540 µM), "OBrien2002; Coburn1998 (INHERITED)" | O'Brien2002 (PubMed 11863460) measured **E. coli** alkaline phosphatase. The conjugate carries calf-intestinal ALP. Fernley & Walker 1967 (Biochem J 104:1011, doi:10.1042/bj1041011; abstract read in this session) show that Pi inhibition of calf-intestinal ALP is mainly competitive with a K_i that changes about 100-fold between pH 8 and 10 (values not in the abstract). Coburn1998 was not reached. | **Override added** in `params/model_assumptions.yaml`: value 2 µM kept, bounds widened to 0.2 µM–1 mM, source UNVERIFIED, confidence low. Effect on the range: see §10 (B1/S10 row and headline). |
+| C5 | docs/05 §4.0 route A ("Proven concept … Pollema1992") | "proven concept" | Pollema1992 (PubMed 1503215) shows sequential-injection bead renewal with an electromagnet at **155 ng/mL with a competitive fluorescence readout**. It supports the concept, not fM sandwich performance. | None. |
+| C6 | docs/05 §4.5 point 1 | "Human-IgG contamination at 100 fg per sample (Parry1997)" | Parry1997 (PubMed 9126687) reports human IgG in at least a third of tip-cone eluates in every one of 19 labs; it gives **no amount**. "100 fg" has no source. | The default bound (0–3 fM) is unchanged; a scenario C1 up to 1 pg/mL-equivalent (6.7 fM) is now evaluated in `final_designs.md` (S5). |
+| C7 | docs/05 §4.1 ("HQ does not foul the electrode (Wilson2004), so the electrode is reused") | — | Wilson2004 (PubMed 15308232) supports this qualitatively on IrOx; reuse for a day on Au/Pt or carbon is an extrapolation (UNVERIFIED). | None; E2.6/E3.6 log electrode drift. |
+| C8 | docs/05 §4.2 ("Kamat2021 reports 300 cycles") | — | 300 capture–regeneration cycles hold for Biacore anti-Fc surfaces; transfer to pH 2 regeneration of a streptavidin–biotin bed is UNVERIFIED. | None (backup only). |
+| C9 | docs/05 §4.1 / `chem.antibodies.koff_detection` | nominal 8.6×10⁻⁴ s⁻¹ "Chang2012; Kamat2020" | The nominal is Chang2012's **solution** value for a PSA mAb; its on-bead fit is ~10⁻⁴ s⁻¹. The nominal is the conservative choice and should be stated as such. Polyclonal reagents: S4. | None. |
+| C10 | docs/05 §1.1 ("reproduces the baseline exactly (median 2.32, P 0.21)") | — | Mixes the n = 1000 median (2.32) with the n = 2000, 61-point P(success). At n = 2000 the median is 2.1 (§3.4). | None. |
+| C11 | docs/07 §3 and §6, docs/06 §0, §11, §13, `automation/elisa_auto/gamry_worker.py` (fixed there) | "Gamry lists 620+620 and 620+3000 pairs only; the 600+ is not listed" | Re-read in this session (https://www.gamry.com/potentiostats/bipotentiostat/): the page lists Interface 1010 + 1010, Interface 5000 + 5000, 1010 + 5000, **Reference 620 + 620, Reference 3000 + 3000, Reference 620 + 3000**. The Reference 600+ is named (linked) in the page's specifications section without values, and a video is captioned **"Bipotentiostat with 2 600+ Potentiostats"**. So a **600+ pair** appears possible; a 600+/620 mixed pair is not shown. Ask Gamry (S0.2). | None. |
+
+---
+
+## 10. Resolution of findings
+
+Status of each finding after the resolution session of 2026-11-11 (no item is in progress). Tests as run at the end:
+see §10.3.
+
+| Finding | Action taken | Files changed | Status |
+|---|---|---|---|
+| B1 remainder | A1 defined as TBS + 0.05 % Tween, no phosphate, in the docs/05 plumbing and step table and in the automation step tables; SIA wash port the same; M-280 PBS stock washed 3× in TBS (docs/06 §4.0). No other phosphate buffer found in docs/07 or `automation/` (only the E1.7 phosphate salts, which are the inhibitor being titrated) | docs/05 §4.1, docs/06 §4.0, automation/config/cycle_*.yaml (+ test) | resolved (docs/02 §1.2 still says "PBS or Tris"; docs/02 may not be edited, superseded here) |
+| B3 | One rule fixed before data on model P(success) with bench values entered as model_feedback enters them: GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30, STOP < 0.10; unmeasured L4 never counts. Script and table; gates file, model_feedback verdict, docs/06 §4.11, E1.3 | scripts/design_lib.py, g1_decision_table.py, kill_thresholds.py, results/design/g1_decision_table.md, kill_thresholds.md, automation/config/gates.yaml, elisa_auto/gates.py, model_feedback.py, tests, docs/06 | resolved |
+| B4 | Primary changed to separate bead (port 1) and conjugate (port 6) reservoirs on the 8-port SIA valve (6 of 8 ports used, 2 spare); step tables, BOM (§2 new conjugate reservoir) and reservoir specification (docs/07 §5.5) updated; E1.3 reservoir-ageing arm (capture/non-immune beads, 3.3 nM, 4/22 °C, 0/2/8/24 h; plus conjugate-only ageing) decided at G1a; counterfactual cost quantified | docs/05 §4.1, docs/06 E1.3, E2.2, docs/07 §2, §5.5, automation/config/cycle_*.yaml, hardware_*.yaml, cycle.py, devices/sim.py, devices/syringe_pump.py, hardware.py, tests, scripts/shared_reservoir_cost.py, results/design/shared_reservoir_cost.md | resolved |
+| S2 | BSM programmed to 1 µL/min A1 during trap loading, SIA 99 µL/min, so the trap sees 100 µL/min; structured `bsm` per step; validator rejects a trap flow > 100 µL/min at the tee or an undeclared BSM flow; E2.1 measures trap flow and BSM pressure | docs/05 §4.1, docs/06 E2.1, cycle_*.yaml, cycle.py, test_final_review.py | resolved (BSM behaviour at 1 µL/min and its pressure: bench, S0.6/E2.1) |
+| S3 | Cleaning injection replaced by SM-FL needle wash + 300 µL/min BSM flush through the in-line loop; structured `smfl` per step; validator rejects an injection step that is not a declared inject; E2.8 uses the needle wash | docs/05 §4.1, docs/06 E2.8, cycle_*.yaml, cycle.py, test_final_review.py | resolved |
+| S12 | Fault latch file per sequence (`latch.py`); runs after a fault are executed but flagged invalid (metadata, result, run log) until a recovery cycle (`cycle_recovery.yaml`: magnet off, 300 µL/min SIA flush of the trap, cup rinse) completes; `run_sim` runs it automatically; `analyze` excludes invalid runs and reports the latch; E2.1/E3.6 test it | latch.py, sequencer.py, run_sim.py, analyze.py, cycle.py, config/cycle_recovery.yaml, test_final_review.py, docs/05 §4.1, docs/06 | resolved (real-hardware behaviour of the recovery flush: bench) |
+| S5 | "100 fg" recorded as unsourced (§9 C6); scenario C1 (contamination up to 1 pg/mL-eq.) added to `final_designs.py`: primary P 0.16 → 0.09; reagent-borne IgG covered by the E1.3 ageing arm and E1.9 arm (d); E1.4 background rows | scripts/final_designs.py, results/design/final_designs*.md, docs/06 E1.4, E1.9 | resolved (default bound unchanged; the scenario is reported) |
+| S6 | Carry-over criterion 1×10⁻⁴ for the analyte path, tested with a 10 ng/mL challenge evaluated through the low-range slope (E1.10, E2.7, E3.4, §7.6, §8.4, §12.5, G2); gates and `analyze` updated | docs/06, gates.yaml, stats.py, analyze.py, test_final_review.py | resolved |
+| S7 | E1.8 at 0.3 mM HQDP, 25 µL, 120 min (≈ 1.8–2.4 nM on ≈ 3 nM); E1.8 is a consistency check only, U1 rests on E1.3; E1.4 at 5×10⁶ beads and 1 nM by default | docs/06 E1.4, E1.8, §4.11, gates.yaml | resolved |
+| S8 | G1a at week 5 on U1 + U3 + reservoir-ageing arm with the same rule; BLI/SPR booking and NISTmAb order after G1a | docs/06 §0, §2, §3 S0.8, §4.10, §10, docs/07, gates.yaml (`G1_rule.applies_at`) | resolved (E1.6 may finish in week 8 instead of 7: small slip risk to G1) |
+| S11 | E1.2 extended to 0, 1, 2, 4, 8, 24, 30 h plus a pumped BSM/loop aliquot | docs/06 E1.2 | resolved |
+| S4 | `scripts/mode_choice.py` (thin-layer default, S13 corrections): modes cross at detection t½ ≈ 25 min (P one-step − sequential −0.06 at 13 min, +0.02 at 30, +0.05 at 45, +0.07 at 60, +0.10 at 120). Boundary moved to 30 min on the **E1.5 on-bead t½**, which is now the decisive U2 measurement; 30–45 min is declared LOD-neutral and one-step is chosen there for no conjugate in the SM-FL path; BLI for k_on screening and monoclonals, heterogeneous fits for polyclonals | scripts/mode_choice.py, results/design/mode_choice.md, docs/06 E1.5, E1.6, §4.11, docs/07 §1.3, gates.yaml, gates.py, test_final_review.py | resolved (docs/05 §4.1/§5 U2 keep "1 h"; superseded by docs/06) |
+| S9 | Commercial single-channel thin-layer cell is the Stage-3 default (`final_designs.designs()` default; IDA kept as variant `review_ida`); IDA + second channel bought only if G2 shows the electrochemical noise ≥ 30 % of the blank SD (new G2 row); "order at G1 at the user's risk" removed; cycle step tables use one channel by default. Gamry page re-read: lists Interface 1010/5000 pairs, Reference 620+620, 3000+3000, 620+3000; 600+ named in the specifications section and a video "Bipotentiostat with 2 600+ Potentiostats"; no 600+/620 pair (§9 C11). **Model: the IDA gains 0.02–0.05 in P as specified, but 0.07–0.09 (primary) and up to 0.18 (sequential, all levers) in the favourable scenarios** — larger than the review's "≤ 0.04" once Stage 1 goes well, so the G2 decision matters | scripts/final_designs.py, results/design/final_designs.md, final_designs_ida.md, docs/06 §0, §2, S0.2, §5 G2, §6, E3.1, §11, §13, docs/07 §3, §6, cycle_*.yaml, gamry_worker.py, README | resolved |
+| S13 | Stirred-capture factor sampled log-triangular on [0.2, 1.0]/2.2 (mode 0.45); 1/0.96 applied to every draw before P (`design_lib.mc(lod_scale=…)`) in final_designs, inline_chamber, recovery_options, kill_thresholds, g1_decision_table, mode_choice and `model_feedback`; E3.3 now measures the factor. Effect: see attribution below | scripts/design_lib.py, final_designs.py, inline_chamber.py, recovery_options.py, kill_thresholds.py, model_feedback.py, results/design/*, docs/06 E3.3, tests | resolved |
+| S10 | §9 above; K_i override (value 2 µM, bounds 0.2 µM–1 mM, UNVERIFIED, low) with tests | docs/08 §9, params/model_assumptions.yaml, tests/test_final_review.py | resolved (effect: headline below) |
+| W1 | docs/06 §7.8 states the definition used (Inject Start → end of post-baseline, 52.1 min) next to docs/05's 56.1 min | docs/06 §7.8 | resolved |
+| W2 | `analyze.u1` reports the design-cell factor (0.3 nM × 30 min) and uses it for the gate line; docs/06 E1.3 says to enter it | analyze.py, test_final_review.py, docs/06 E1.3 | resolved |
+| W3 | TUV taken out of the bead path (V3 bypass → waste; TUV only for bead-free tracer runs) | docs/05 §4.1, docs/06 E2.1 | resolved |
+| W4 | E2.1 checks the A1 → B1 switch at the trap with a dye; "loop off-line" named as an UNVERIFIED Empower option | docs/06 E2.1, cycle_primary.yaml (note) | partly resolved (fill time unchanged until E2.1 data exist) |
+| W5 | Accumulation shunt fixed at 10 µL/min (= readout flow) | docs/05 §4.1, cycle_*.yaml, test | resolved |
+| W6 | E3.1 (IDA, conditional) measures the collector O₂ background and sensitivity to reference drift | docs/06 E3.1 | resolved |
+| W7 | docs/06 §12.6 states ±0.02 (n = 2000) / ±0.03 (n = 1000) and that ΔP < 0.05 is not decision-grade; `model_feedback` prints the same caution | docs/06 §12.6, model_feedback.py | resolved |
+| W8 | Non-immune beads made with normal goat F(ab′)₂ | docs/06 §4.0, docs/07 §1.1 | resolved |
+| W9 | p-hydroxyphenyl phosphate (one Pi per HQ) remains the alternative; no supplier found | — | left open (supplier search; docs/06 §11) |
+| W10 | docs/05 step table says overlap needs a second cup | docs/05 §4.1 | resolved |
+
+**Observations made while resolving (not in the review).**
+* `design_lib.mc` defines success as L_eff = LOD × max(1, 1000/ULOQ) ≤ 1, which also counts draws with LOD < 1 and
+  ULOQ < 1000 when ULOQ/LOD ≥ 1000. Its docstring calls this "exactly P(LOD ≤ 1 and ULOQ ≥ 1000)"; it is not. The
+  strict definition gives 0.01–0.02 lower P (primary 0.147 vs 0.156; sequential 0.116 vs 0.134; backup 0.078 vs
+  0.085). Left as is (it is the docs/05 convention, the G1 thresholds are set against it); recorded so it is not
+  rediscovered as an error.
+* `model_feedback` applied the chamber designs' parameter modifier after the bench values, so a bench-measured
+  chamber stirring factor (E3.3) would have been overwritten by the prior. Fixed (bench values are applied last) with
+  a test; it did not affect any number reported so far.
+* docs/02 §1.2 still offers "PBS or Tris" for A1 and docs/05 §5 U2/U7 keep the 1-h mode boundary and the 10⁻³
+  carry-over; these documents may not be edited and are superseded by docs/06 and this section.
+
+**Left open, with reason.** W4 (needs E2.1 data); W9 (no supplier); the BSM at 1 µL/min during trap loading and
+its pressure (bench, S0.6/E2.1); real-hardware behaviour of the recovery flush; the K_i of the actual conjugate at
+pH 9.5 (E1.7); the reservoir-ageing result (E1.3 arm) — the design no longer depends on it.
+
+### 10.1 Updated headline numbers
+
+Model, n = 2000, seed 20261111, `results/design/final_designs.md` (thin-layer cell = Stage-3 default) and
+`final_designs_ida.md` (optional IDA). Old values: docs/05 (flow IDA, before the S13 and K_i corrections). Success =
+the docs/05 L_eff criterion.
+
+| Design | Scenario | docs/05 (old): median [5–95 %] / P | Revised, thin-layer default: nominal; median [5–95 %] / P | Revised with the optional IDA: median / P |
+|---|---|---|---|---|
+| Primary: one-step chamber | as specified (S0) | 2.0 [0.36–73] / ~0.28 | 0.60; **3.5 [0.51–158] / 0.16** | 3.0 / 0.18 |
+| Primary | after U1–U3 screening (L6 + L7) | 0.93 [0.23–4.9] / ~0.55 | 0.19; **1.3 [0.34–9.3] / 0.32** | 1.2 / 0.39 |
+| Primary | L1 + L3 + L6 + L7 | 0.70 [0.16–2.4] / ~0.72 | 0.11; 0.98 [0.25–4.9] / 0.48 | 0.82 / 0.58 |
+| Primary | L4 immune-complex transfer | 0.95 / ~0.53 | 0.29; 1.5 [0.28–70] / 0.33 | 1.2 / 0.42 |
+| Sequential fallback: chamber | S0 | 1.7 [0.39–15] / ~0.28 | 0.42; **3.0 [0.56–26] / 0.13** | 2.4 / 0.18 |
+| Sequential fallback | L6 + L7 | 1.2 [0.31–8.5] / ~0.38 | 0.34; **2.1 [0.49–16] / 0.17** | 1.7 / 0.25 |
+| Backup: packed micro-bed | S0 | 2.8 [0.52–31] / 0.16 | 0.85; **3.4 [0.65–33] / 0.09** | 2.8 / 0.14 |
+| Backup | L6 + L7 | 2.2 / 0.21 | 0.71; **2.8 [0.59–23] / 0.11** | 2.2 / 0.20 |
+| Backup | L4 | 0.94 / 0.49 | 0.44; 1.4 [0.36–10] / 0.26 | 0.94 / 0.44 |
+| Primary | C1 contamination up to 1 pg/mL-eq. (new, S5) | – | 3.6 / 0.09 | 3.3 / 0.09 |
+
+**The corrections make every prediction worse, and the primary's model P as specified roughly halves (0.28 →
+0.16).** Nothing was tuned to recover it. The time to result is unchanged (primary 56.1 min from aspiration, 52.1 min
+from Inject Start; sequential 58.1; backup 51.5). The shared-reservoir counterfactual (B4,
+`results/design/shared_reservoir_cost.md`): under the model's linear, irreversible NSB a mean hold of 30 min in a
+shared 3.3-nM reservoir already multiplies the bead NSB ×10 and takes the primary's P from 0.16 to 0.01; 2 h or more
+gives P ≈ 0 even with an illustrative ×4 slowing at 4 °C. That is an upper estimate (saturation and reversibility are
+outside the model), but it confirms that the separate reservoirs are required, not optional.
+
+### 10.2 Where the change in the predictions comes from
+
+`scripts/review_changes.py` → `results/design/review_changes.md` (n = 2000, cumulative steps; step (a) reproduces
+docs/05 exactly). P(success):
+
+| Design / scenario | (a) docs/05 | (b) + 1/0.96 before P | (c) + stirring factor sampled | (d) + thin-layer cell | (e) + K_i UNVERIFIED = revised |
+|---|---|---|---|---|---|
+| Primary, S0 | 0.28 | 0.27 | 0.19 | 0.17 | 0.16 |
+| Primary, L6 + L7 | 0.55 | 0.53 | 0.41 | 0.34 | 0.32 |
+| Sequential, S0 | 0.28 | 0.27 | 0.19 | 0.14 | 0.13 |
+| Sequential, L6 + L7 | 0.38 | 0.36 | 0.28 | 0.19 | 0.17 |
+| Backup bed, S0 | 0.16 | 0.16 | 0.16 | 0.10 | 0.09 |
+| Backup bed, L6 + L7 | 0.21 | 0.21 | 0.21 | 0.12 | 0.11 |
+
+The largest single change is sampling the chamber's stirred-capture factor (S13; median 2.0 → 3.0 pg/mL for the
+primary): the review's "a few hundredths" underestimated it, because the factor's lower bound (0.2/2.2) puts a long
+tail on capture. The thin-layer default (S9) costs 0.02–0.09 more; the K_i override and the transfer-before-P
+correction cost 0.01–0.02 each. The nominal ULOQ is unchanged (the K_i nominal is unchanged); the wider K_i bound
+moves P only through draws near the range limit.
+
+### 10.3 Tests as run
+
+Run in /home/user/ELISA at the end of the resolution session (Python 3.13):
+* `python -m pytest -q` → **71 passed** (64 + 7 in `tests/test_final_review.py`).
+* `python -m pytest -q automation/tests` → **50 passed** (32 + 18: 15 in `automation/tests/test_final_review.py`,
+  3 new in `test_model_feedback.py`).
+* Not re-run: `optimise_designs.py`, `edge_checks.py`, `gain_decomposition.py`, `robustness.py` (their committed
+  outputs are pre-review: IDA, pinned stirring factor, old K_i bounds; their optima still feed `final_designs.py`).
+
+### 10.4 Can Stage 1 start?
+
+**Yes. Stage 0 and Stage 1 can start now**: all four blocking items are resolved (B1, B2 by the review; B3, B4 here),
+the G1/G1a rule is written down before any data, every Stage-1 experiment it needs is specified, and nothing in
+Stage 1 depends on an open item. Stage 1 still buys no instrument-class item.
+
+What changes for the user's expectations: with the corrections, the model's P(success) for the design as
+specified is 0.16 (thin-layer cell) and 0.32 if the detection reagent and substrate lot pass screening. Under the
+pre-registered rule, the nominal prior label factor (0.04) would give **GO-WITH-LEVER**, not GO: a GO at G1 needs a
+measured label factor of about ≤ 0.02 (or better-than-prior values elsewhere), and a label factor ≥ 0.10 (or free
+HQ > 10⁻⁴ with a typical label factor) means STOP before any hardware is bought. My judgement of the real-world
+probability of reaching 1 pg/mL with this platform is correspondingly lower than docs/05's "about 15 % today":
+about 10 % today, rising to about 30 % if U1–U3 come back favourable. Stage 1 is the cheapest way to replace these
+priors with data, which is why it should start.

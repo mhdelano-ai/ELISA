@@ -2,8 +2,8 @@
 
 Reads measured model inputs (YAML: key: {value, low, high, source}), narrows each parameter to the measured
 value and interval ON A COPY of the parameter set (params/*.yaml are never edited), and re-evaluates the final
-designs of docs/05 exactly as scripts/final_designs.py does (same designs, same chamber approximation, same
-Monte Carlo work-around in scripts/design_lib.mc). Prints nominal LOD, median [5-95 %] and P(success) before and
+designs exactly as scripts/final_designs.py does (default variant after the final review: thin-layer cell, sampled
+chamber stirring factor, transfer factor before P; docs/08 S9, S13) and prints the G1 verdict of docs/06 s4.11. Prints nominal LOD, median [5-95 %] and P(success) before and
 after, for the primary (P-chamb, one-step chamber), the sequential mode (S-chamb) and the backup bed (B-bed).
 --rank lists the remaining sampled parameters by their one-at-a-time effect on the primary's nominal LOD: the top
 entry is the most informative next measurement (docs/06 s9.3).
@@ -46,34 +46,15 @@ def load_measured(path) -> dict:
     return d
 
 
-# A bench measurement of the label factor is a measurement of the absolute k_eff on the actual beads
-# (docs/06 E1.3: factor = k_eff / 4e-11 m/s). The model computes k_eff = label factor x
-# chem.nsb.nsb_effective_rate_constant x ma.nsb.surface_factor_magnetic_beads, and the Monte Carlo samples the
-# last two as well. Left free, they would re-spread the measured value over ~50x (8e-12 to 4e-10 m/s) and the bench
-# information would be lost. So when the label factor is measured, the reference rate and the bead surface factor
-# are pinned at their nominal values (4e-11 m/s and 1), unless they are themselves given.
+# The coupling rule (label factor measured -> reference NSB rate and bead surface factor pinned at nominal) lives in
+# scripts/design_lib.apply_bench_values since the final review (docs/08 B3), so that the G1 decision table
+# (scripts/g1_decision_table.py) and this feedback use the same code.
 COUPLED = {"ma.nsb.label_factor_igg_enzyme_conjugate": ("chem.nsb.nsb_effective_rate_constant",
                                                         "ma.nsb.surface_factor_magnetic_beads")}
 
 
 def apply_measured(L, ps, measured: dict, notes: list | None = None):
-    for key, partners in COUPLED.items():
-        if key in measured:
-            for k2 in partners:
-                if k2 not in measured and k2 in ps.params:
-                    v = ps.params[k2].value
-                    ps = L.with_bounds(ps, k2, value=v, low=v, high=v)
-                    if notes is not None:
-                        notes.append(f"{k2} pinned at {v:g} because {key} was measured on the actual beads")
-    for key, v in measured.items():
-        if key not in ps.params:
-            raise KeyError(f"unknown model parameter {key!r} (see params/*.yaml)")
-        val = float(v["value"])
-        lo, hi = float(v.get("low", val)), float(v.get("high", val))
-        if not (lo <= val <= hi):
-            raise ValueError(f"{key}: low <= value <= high violated")
-        ps = L.with_bounds(ps, key, value=val, low=lo, high=hi)
-    return ps
+    return L.apply_bench_values(ps, measured, notes)
 
 
 def evaluate(measured: dict, n: int = 1000, designs=DESIGNS) -> list[dict]:
@@ -87,13 +68,24 @@ def evaluate(measured: dict, n: int = 1000, designs=DESIGNS) -> list[dict]:
     for dkey, arch, pmod, f in F.designs(ps0):
         if dkey not in designs:
             continue
-        for label, ps in (("before (docs/05)", ps0), ("with bench values", ps1)):
-            s = L.mc(arch, pmod(ps), n=n)
-            rows.append({"design": dkey, "case": label, "lod_nominal": s["lod_nominal"] * f,
-                         "lod_median": s["lod_median"] * f, "lod_p05": s["lod_p05"] * f,
-                         "lod_p95": s["lod_p95"] * f, "p_success": s["p_success"],
+        # bench values are applied AFTER the design's parameter modifier, so a measured value (e.g. the chamber
+        # stirring factor from E3.3) is not overwritten by the modifier's prior
+        for label, ps in (("before (priors)", pmod(ps0)), ("with bench values", apply_measured(L, pmod(ps0), measured))):
+            # LOD scale applied per draw before P (docs/08 S13)
+            s = L.mc(arch, ps, n=n, lod_scale=f)
+            rows.append({"design": dkey, "case": label, "lod_nominal": s["lod_nominal"],
+                         "lod_median": s["lod_median"], "lod_p05": s["lod_p05"],
+                         "lod_p95": s["lod_p95"], "p_success": s["p_success"],
                          "uloq_nominal": s["uloq_nominal"], "approx": f != 1.0})
     return rows
+
+
+def g1_verdict(rows: list[dict]) -> tuple[str, float]:
+    """The G1 rule fixed before any data (docs/06 s4.11; design_lib.g1_decision): on the 'with bench values' P of
+    the admissible designs. Returns (verdict, P used)."""
+    L, _ = _import_model()
+    p = {r["design"]: r["p_success"] for r in rows if r["case"] == "with bench values"}
+    return L.g1_decision(p), max(p.values())
 
 
 def rank_remaining(measured: dict, top: int = 12) -> list[tuple]:
@@ -101,9 +93,9 @@ def rank_remaining(measured: dict, top: int = 12) -> list[tuple]:
     L, F = _import_model()
     from elisa_sim import montecarlo
     from elisa_sim.model import evaluate as ev
-    ps1 = apply_measured(L, L.load_ps(), measured)
-    dkey, arch, pmod, f = next(x for x in F.designs(ps1) if x[0] == "P-chamb")
-    ps_d = pmod(ps1).with_values(dict(arch.design))
+    ps0 = L.load_ps()
+    dkey, arch, pmod, f = next(x for x in F.designs(ps0) if x[0] == "P-chamb")
+    ps_d = apply_measured(L, pmod(ps0), measured).with_values(dict(arch.design))
     a0 = replace(arch, design=())
     keys = ps_d.sampleable(montecarlo.used_keys(a0, ps_d))
     base = ev(a0, ps_d).lod_pgml
@@ -131,11 +123,18 @@ def main(argv=None):
     print(f"bench values: {', '.join(measured) or '(none)'}")
     print("| design | case | LOD nominal | median [5-95 %] (pg/mL) | P(success) | ULOQ nominal |")
     print("|---|---|---|---|---|---|")
-    for r in evaluate(measured, a.n):
+    rows = evaluate(measured, a.n)
+    for r in rows:
         ap_ = "~" if r["approx"] else ""
         print(f"| {r['design']} | {r['case']} | {r['lod_nominal']:.2g} | {r['lod_median']:.2g} "
               f"[{r['lod_p05']:.2g}-{r['lod_p95']:.2g}] | {ap_}{r['p_success']:.2f} | {r['uloq_nominal']:.3g} |")
     print("'~' = chamber approximation (docs/05 s7). Intervals are scenario ranges, not confidence intervals.")
+    if set(DESIGNS) <= {r["design"] for r in rows}:
+        v, p = g1_verdict(rows)
+        L, _ = _import_model()
+        print(f"G1 rule (docs/06 s4.11, fixed before data; GO >= {L.G1_GO_MIN}, GO-WITH-LEVER >= {L.G1_LEVER_MIN}): "
+              f"max P(success) = {p:.2f} -> {v}. Monte Carlo noise about +/-0.03 at n = 1000: re-run with --n 2000 "
+              f"if P is within 0.03 of a threshold.")
     if a.rank:
         print("\nRemaining one-at-a-time sensitivity of the primary (log10 span of nominal LOD, low->high bound):")
         for k, span, lo, hi, meas in rank_remaining(measured):

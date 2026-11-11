@@ -34,20 +34,21 @@ HQ_KEY = "ma.chemistries.alp_hqdp.free_product_impurity"
 
 def evaluate_point(entries, ps0, measured: dict, n: int, with_l4: bool = True) -> dict:
     """{design: {'p', 'median', 'p_l4', 'median_l4'}} for one set of bench values."""
-    ps1 = L.apply_bench_values(ps0, measured)
     out = {}
     for dkey, arch, pmod, f in entries:
-        s = L.mc(arch, pmod(ps1), n=n, lod_scale=f)
+        ps1 = L.apply_bench_values(pmod(ps0), measured)      # bench values last (as model_feedback)
+        s = L.mc(arch, ps1, n=n, lod_scale=f)
         r = {"p": s["p_success"], "median": s["lod_median"], "nominal": s["lod_nominal"]}
         if with_l4:
-            s4 = L.mc(arch, pmod(L.l4_transfer(ps1)), n=n, lod_scale=f)
+            s4 = L.mc(arch, L.l4_transfer(ps1), n=n, lod_scale=f)
             r.update(p_l4=s4["p_success"], median_l4=s4["lod_median"])
         out[dkey] = r
     return out
 
 
 def decision(point: dict) -> str:
-    return L.g1_decision({d: v["p"] for d, v in point.items()}, {d: v.get("p_l4", 0.0) for d, v in point.items()})
+    """G1 rule on the lever-free P (the L4 columns are informative: L4 counts only once measured, at G1')."""
+    return L.g1_decision({d: v["p"] for d, v in point.items()})
 
 
 def main(argv=None):
@@ -89,12 +90,16 @@ def main(argv=None):
            "Designs: `final_designs.designs()` default (thin-layer cell; chamber stirring factor sampled; 1/0.96 "
            "before P). L4 = immune-complex transfer, label factor x 0.1/0.7 (UNVERIFIED lever magnitude). Monte "
            "Carlo sampling noise on P: about +/-0.02 (95 %) at n = 2000, +/-0.03 at n = 1000.\n\n"
-           f"Rule (design_lib.g1_decision, fixed before data): GO if max P over admissible designs >= {L.G1_GO_MIN}; "
-           f"GO-WITH-LEVER if below that but max P including L4 >= {L.G1_LEVER_MIN}; STOP otherwise.\n\n"
+           f"Rule (design_lib.g1_decision, fixed before data): P = max P(success) over the admissible designs with all "
+           f"Stage-1 values entered. GO if P >= {L.G1_GO_MIN}; GO-WITH-LEVER (Stage 2 + Stage 1C in parallel) if "
+           f"{L.G1_LEVER_MIN} <= P < {L.G1_GO_MIN}; STOP (no hardware; Stage 1C in tubes, then G1') if P < "
+           f"{L.G1_LEVER_MIN}. The L4 columns use the UNVERIFIED modelled lever and do NOT enter the rule; at G1' "
+           "the measured L4 factors are entered instead.\n\n"
            "## Table 1 - P(success) and median LOD (pg/mL) against the measured label factor\n\n"
            + "\n".join(t1) + "\n\n"
-           f"Label-factor screen implied by Table 1 (other Stage-1 values at their priors): GO up to "
-           f"{max(go) if go else 'none'}; STOP from {min(stop) if stop else 'none in the grid'}.\n\n"
+           f"Label-factor screen implied by Table 1 (other Stage-1 values at their priors; fast screen only, the rule "
+           f"is on P): GO up to {max(go) if go else 'none'}; STOP from {min(stop) if stop else 'none in the grid'}."
+           "\n\n"
            "## Table 2 - G1a (U1 + U3): P(success) of P-chamb / S-chamb against label factor and free HQ\n\n"
            + "\n".join(t2) + "\n")
     (L.OUT / "g1_decision_table.md").write_text(txt)

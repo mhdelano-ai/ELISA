@@ -31,12 +31,17 @@ class SimValve(Valve):
 
 
 class SimSIA(SIAModule):
-    def __init__(self, clock=None):
+    def __init__(self, clock=None, ports=None):
         self.clock = clock
         self.commands = []
         self.stopped = False
+        self.ports = dict(ports or {})      # name -> selection-valve port number (empty = not checked)
 
     def execute(self, command):
+        if self.ports:
+            for k in ("from", "to", "port"):
+                if command.get(k) and command[k] not in self.ports:
+                    raise DeviceError(f"SIA: no selection-valve port named {command[k]!r}")
         self.commands.append((self.clock.now() if self.clock else None, dict(command)))
 
     def stop(self):

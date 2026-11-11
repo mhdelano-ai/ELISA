@@ -1,0 +1,32 @@
+# Recovery cycle run after any fault (final review docs/08 S12). Python-only: no SM-FL injection and no Empower
+# action is needed; the SIA pushes wash buffer through the trap. Until this cycle has completed and been logged, the
+# fault latch (automation/elisa_auto/latch.py) flags every subsequent run invalid.
+# The fault safe state leaves the magnet ON (beads kept in the trap rather than sent downstream); this cycle releases
+# them to waste, flushes the trap and rinses the cup, then leaves the trap isolated.
+name: recovery_after_fault
+mode: recovery
+source: "docs/08 S12 (fault latch and recovery cycle)"
+time_limit_min: 60
+injects: []
+constraints:
+  max_trap_loading_flow_uL_min: 300   # beads are being RELEASED here (magnet off), not captured
+watchdog:
+  inject_tolerance_s: 30
+  step_overrun_warn_s: 2
+safe_state:
+  valves: {V2: isolate, V3: bypass, V4: B}
+  magnet: "on"
+  sia: stop
+  potentiostat: cell_off
+potentiostat: {channels: {}, sample_period_s: 0.1}
+signal: {}
+steps:
+  - {name: release_and_flush_trap, start_min: 0.0, end_min: 3.0, magnet: "off",
+     valves: {V4: A, V2: perfuse, V3: bypass},
+     sia: {action: flush_trap, from: wash, to: to_trap, volume_uL: 900, flow_uL_min: 300},
+     note: "V4 = A so the BSM flow (whatever Empower runs) goes to the cup, not to the tee; 300 uL/min through the trap to waste"}
+  - {name: rinse_cup, start_min: 3.0, end_min: 4.5,
+     valves: {V4: A, V2: isolate, V3: bypass},
+     sia: {action: rinse_cup, port: cup, repeats: 3}}
+  - {name: park, start_min: 4.5, end_min: 5.0, magnet: "on",
+     valves: {V4: B, V2: isolate, V3: bypass}}

@@ -13,10 +13,12 @@ yet verified (they raise `NotImplementedError` instead of guessing a command).
 |---|---|
 | `config/cycle_primary.yaml` | step table of the primary design, one-step mode (docs/05 §4.1), 56.1 min |
 | `config/cycle_sequential.yaml` | in-platform fallback, sequential mode (docs/05 §4.1), 58.1 min |
+| `config/cycle_recovery.yaml` | recovery cycle after a fault (magnet off, 300 µL/min trap flush, cup rinse; docs/08 S12) |
 | `config/hardware_sim.yaml` | all-simulated devices (used by tests and `run_sim`) |
 | `config/hardware_lab.example.yaml` | template for the real instrument (fill in after Stage 0) |
-| `config/gates.yaml` | gate thresholds of docs/06 with their sources |
-| `elisa_auto/cycle.py` | loads and checks a step table (no gaps, valid valve positions, ≤ 60 min) |
+| `config/gates.yaml` | gate thresholds of docs/06 with their sources; `G1_rule` = the G1 decision rule (docs/06 §4.11) |
+| `elisa_auto/cycle.py` | loads and checks a step table (no gaps, valid valve positions, ≤ 60 min; since the final review also: trap flow where SIA and BSM meet at the tee ≤ 100 µL/min, every SM-FL injection declared, SIA ports exist) |
+| `elisa_auto/latch.py` | fault latch: after a fault, runs are flagged invalid until the recovery cycle completes (docs/08 S12) |
 | `elisa_auto/sequencer.py` | runs a cycle: timing from each Inject Start, watchdog, safe state, run log |
 | `elisa_auto/devices/` | interfaces (`base.py`), simulators (`sim.py`), stubs (`idex_mx.py`, `syringe_pump.py`, `daq.py`, `empower.py`), Gamry client (`gamry_client.py`) |
 | `elisa_auto/gamry_worker.py` | the Gamry worker that runs in **Gamry's own Python** (see below) |
@@ -37,13 +39,13 @@ Gamry's Echem ToolkitPy installs its own **Python 3.7.9, 32-bit** and must be th
 
 ```
 orchestrator (Python 3.10+ 64-bit)  <-- JSON lines over TCP 127.0.0.1 -->  gamry_worker.py (Gamry Python 3.7 32-bit)
- sequencer, valves, pump, DAQ, data                                          ToolkitPy -> Reference 600+ (+ 2nd channel)
+ sequencer, valves, pump, DAQ, data                                          ToolkitPy -> Reference 600+ (+ optional 2nd channel)
 ```
 
 `gamry_worker.py` uses only the Python standard library (nothing to install in Gamry's Python) and only Python 3.7
 syntax; a test checks both. Its `sim` backend works today; its `toolkitpy` backend is a stub listing what must be
 written once the ToolkitPy manual is at hand (open the instruments, set potentials, continuous chronoamperometry,
-cell off). Pairing the 600+ with a Reference 620 as a bipotentiostat is UNVERIFIED (docs/07 §3).
+cell off). A second channel is needed only for the optional IDA (docs/08 S9); pairing the 600+ with a second instrument is UNVERIFIED (docs/07 §3).
 
 ## Setup on the lab PC (Windows) — step by step
 
@@ -110,7 +112,8 @@ On Linux/macOS (for desk work) the same commands work with `python3 -m venv .ven
   python -m elisa_auto.model_feedback bench\measured_values.yaml --rank
   ```
   It prints the model's LOD and P(success) for the primary, the sequential mode and the backup before and after
-  your values, and which remaining parameter matters most (the next experiment). It never changes `params/`.
+  your values, **the G1 verdict** (GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30, STOP < 0.10; docs/06 §4.11), and which
+  remaining parameter matters most (the next experiment). It never changes `params/`.
 * **Stage 2 onwards (real devices):** copy `config/hardware_lab.example.yaml` to `config/hardware_lab.yaml`, fill in
   COM ports and DAQ lines, and implement the stubs (below). `python -m elisa_auto.watch_inject --hw
   automation\config\hardware_lab.yaml` checks the Inject Start wiring (docs/06 S0.3).
@@ -126,6 +129,10 @@ On Linux/macOS (for desk work) the same commands work with `python3 -m venv .ven
   recorded so far is still saved. Python never starts or stops Empower; the BSM keeps flowing to waste through the
   shunt and the bypass. If the PC itself crashes the valves stay where they are — a hardware heartbeat is a Stage-2
   TODO (docs/06 E2.1).
+* **Fault latch** (docs/08 S12): a fault sets `fault_latch.json` in the sequence folder; every later run is still
+  executed but flagged `valid: false` (metadata, result, log) and excluded by `analyze` until the recovery cycle
+  (`config/cycle_recovery.yaml`) has completed. `run_sim` runs the recovery automatically after a fault; on the lab
+  PC the same call is made by the orchestrator before the next cycle is armed.
 * Writes the run log and raw data, computes the signal (generator charge minus a straight baseline fitted to the
   windows before and after the readout) and the time to result.
 
@@ -145,7 +152,8 @@ On Linux/macOS (for desk work) the same commands work with `python3 -m venv .ven
   post-readout windows (`config/cycle_*.yaml`, `signal:`).
 * Threshold = mean(blank S) + 3·SD (n − 1); LOD = 3·SD / b, with b the slope of the 0–10 pg/mL linear calibration
   through the blank mean. Also reported: free-intercept value, value with the 95 % upper bound of SD, 4PL inverse.
-* Carry-over = (mean B1 − mean B2)/(mean H − mean B2) for sequences H(1000 pg/mL) → B1 → B2.
+* Carry-over: for a 10 ng/mL challenge H → B1 → B2 (the criterion's test since the final review, S6),
+  ((mean B1 − mean B2)/b)/10 000 pg/mL; after 1000 pg/mL standards (mean B1 − mean B2)/(mean H − mean B2), indicative.
 * Hand-computed examples of each are in `tests/test_stats.py` and `tests/test_signal.py`.
 
 ## Deviation from docs/05 in the step tables

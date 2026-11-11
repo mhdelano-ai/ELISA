@@ -1,8 +1,17 @@
 # 06 — Staged bench plan (Task 5)
 
+> **Revised after the final review (docs/08 §10).** The G1 decision rule is now one rule on the model P(success)
+> evaluated with the bench values entered, fixed before any data (§4.11, B3); an early gate G1a at week 5 applies it
+> to U1 + U3 (§4.10, S8); beads and conjugate have separate reservoirs and E1.3 has a reservoir-ageing arm (B4); the
+> Stage-3 default detector is a commercial single-channel thin-layer cell, the IDA and second channel are bought only
+> if Stage 2 shows a need (S9); the carry-over criterion is 1×10⁻⁴ with a 10 ng/mL challenge (S6). Revised passages
+> are marked "(revised after final review)". Model numbers quoted here are the revised ones (thin-layer cell, S13
+> corrections, K_i override); docs/05 numbers are kept only where marked "docs/05".
+
 Status: 2026-11-11. Inputs: docs/00–05, `params/*.yaml`, `results/design/`, `src/elisa_sim/`. This document plans
 the bench phase for the design chosen in docs/05 (primary: renewable streptavidin magnetic beads, SIA dispenser
-and stirred in-line cup, bead trap on the 10-port isolation valve, ALP/HQDP, flow IDA on two potentiostat channels;
+and stirred in-line cup, bead trap on the 10-port isolation valve, ALP/HQDP, a commercial single-channel thin-layer
+cell by default (flow IDA on two potentiostat channels only if Stage 2 shows a need — revised after final review);
 in-platform fallback: sequential mode; backup: fixed packed micro-bed). Purchases are listed by stage in
 `docs/07_bill_of_materials.md`; the lab-PC software is in `automation/`.
 
@@ -20,15 +29,17 @@ Tiers: **T0** = no flow system (tubes, magnet, rotator, a drop on a screen-print
 | Stage | Tier | Weeks (from start) | Resolves | Gate | Bought only after the gate passes |
 |---|---|---|---|---|---|
 | 0 Set-up and facts | T0/T1 | 0–2 | instrument facts, noise floor, PC, vendor answers | G0: lab PC runs the simulated cycle; Inject Start seen; Stage-1 reagents in hand | Stage-1 reagents are ordered in week 0 (they gate everything) |
-| **1 Reachability** | **T0 + T1** | 2–8 | **U1** conjugate NSB, **U3** free HQ, **U2** off-rates, detection-on-capture, U6, U9, SM-FL recovery, a tube-format integrated blank-equivalent | **G1: go / switch mode / L4 only / stop** | valves, SIA pump, magnet actuator, prototype cup and trap parts (Stage 2) |
+| **1 Reachability** | **T0 + T1** | 2–8 | **U1** conjugate NSB (+ reservoir ageing), **U3** free HQ, **U2** off-rates, detection-on-capture, U6, U9, SM-FL recovery, a tube-format integrated blank-equivalent | **G1a (wk 5, U1 + U3) and G1 (wk 7–8): GO / GO-WITH-LEVER / STOP on model P(success)** (revised after final review) | valves, SIA pump, magnet actuator, prototype cup and trap parts (Stage 2); BLI/SPR service and NISTmAb only after G1a |
 | 1C Immune-complex transfer (conditional) | T0 | +3–4 | U8 | adopt / abandon L4 | second trap position, elution line |
-| 2 Flow path on the Waters | T2 | 8–16 | U5 dosing/trap, U4 wall NSB, cup transfer, first in-flow blanks | **G2: build primary / go to backup** | custom IDA cell, Reference 620, machined cup, integrated trap (Stage 3) — or the backup bed parts |
-| 3 Full primary platform | T3 | 16–28 | IDA gain, two-channel readout, **U7** integrated blank statistics, unattended operation | G3: start validation | nothing new (validation consumables) |
+| 2 Flow path on the Waters | T2 | 8–16 | U5 dosing/trap, U4 wall NSB, cup transfer, first in-flow blanks | **G2: build primary / go to backup** | commercial thin-layer cell, machined cup, integrated trap (Stage 3) — or the backup bed parts; custom IDA cell and second potentiostat channel **only if** G2 shows electrochemical noise is a material part of the blank SD (revised after final review, S9) |
+| 3 Full primary platform | T3 | 16–28 | **U7** integrated blank statistics, unattended operation; IDA gain and two-channel readout only if bought | G3: start validation | nothing new (validation consumables) |
 | 4 Validation | T3 | 28–32 | the success criteria of docs/00 | final report | — |
 
 **What Stage 1 decides.** docs/05 §0 and §3 show that two measurements decide whether 1 pg/mL is reachable at all,
-for every format: the IgG–ALP conjugate NSB on blocked streptavidin beads (U1; kill at label factor > 0.15) and the
-free hydroquinone in the HQDP lot (U3; kill at > 10⁻⁴ after purification). Both are measured in Stage 1 in tubes,
+for every format: the IgG–ALP conjugate NSB on blocked streptavidin beads (U1) and the free hydroquinone in the HQDP
+lot (U3). They are entered into the model at G1a (week 5) and the single decision rule of §4.11 is applied to the
+resulting P(success): GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30, STOP < 0.10 (revised after final review, B3/S8; fast
+screens: label factor ≤ 0.02 GO, > 0.10 STOP; free HQ ≤ 10⁻⁵ accept, > 10⁻⁴ after purification STOP). Both are measured in Stage 1 in tubes,
 with a magnet and the Gamry, plus the Waters stack only as a flow-injection electrochemical (FIA-EC) reader with a
 purchased wall-jet cell. No valve, pump, cup, trap or custom cell is bought before G1.
 
@@ -41,10 +52,17 @@ quotes): NISTmAb ≈ 1 900 USD, magnet rack ≈ 880 USD, M-280 beads 2 mL ≈ 59
 50 g ≈ 570 USD; all other prices (antibodies, HQDP, electrodes, flow cell, DAQ, BLI service) were not checked.
 No instrument-class item is bought in Stage 1.
 
-**Long-lead items** (quote in Stage 0, order at the gate): custom IDA flow cell (thin-film fabrication; lead time
-UNVERIFIED, plan 8–12 weeks), Gamry Reference 620 (lead time UNVERIFIED; 600+/620 pairing UNVERIFIED — Gamry lists
-620+620 and 620+3000 bipotentiostat pairs only, docs/07 §3), machined stirred cup and integrated trap (4–6 weeks,
-UNVERIFIED), IDEX valves and Hamilton/Tecan syringe pump (lead time UNVERIFIED).
+**Long-lead items** (quote in Stage 0, order at the gate): machined stirred cup and integrated trap (4–6 weeks,
+UNVERIFIED), IDEX valves and Hamilton/Tecan syringe pump (lead time UNVERIFIED), a commercial thin-layer flow cell
+(lead time UNVERIFIED). The custom IDA flow cell (8–12 weeks, UNVERIFIED) and a second potentiostat channel are
+**conditional** Stage-3 items: quoted in Stage 2, ordered only if G2 data show that electrochemical noise is a
+material part of the blank SD (model, `results/design/final_designs_ida.md` vs `final_designs.md`: the IDA gains
+0.02–0.05 in P over a thin-layer cell as specified today, but 0.07–0.09 for the one-step chamber and up to 0.18 for
+the sequential chamber once reagent screening and the other levers pass; so the IDA is worth more if Stage 1 goes
+well, and the G2 noise data decide). Gamry's bipotentiostat page (re-read 2026-11-11) lists Interface
+1010/5000 pairs, Reference 620 + 620, 3000 + 3000 and 620 + 3000; it names the Reference 600+ in its specifications
+section and shows a video "Bipotentiostat with 2 600+ Potentiostats"; a 600+/620 mixed pair is not shown (docs/08
+§9 C11; ask Gamry, S0.2) (revised after final review, S9).
 
 ---
 
@@ -77,25 +95,28 @@ Stage 0 (wk 0-2) --order Stage-1 reagents (wk 0)--> Stage 1A T0 tubes/drop (wk 2
         \--quotes only for Stage 2/3 items           Stage 1B T1 FIA-EC on Waters (wk 3-7)
          \--BLI/SPR service booked (wk 0)  --------> U2 results (wk 4-7)
                                                       |
-                                                    G1 (wk 7-8) --kill--> stop or Stage 1C (L4 in tubes) --> G1'
-                                                      | go (one-step or sequential mode chosen)
+                         G1a (wk 5: U1 + U3 + reservoir ageing) --STOP--> Stage 1C (L4 in tubes) --> G1'
+                                                      | GO / GO-WITH-LEVER: book BLI/SPR, order NISTmAb
+                                                    G1 (wk 7-8) --STOP--> Stage 1C (L4 in tubes) --> G1'
+                                                      | GO (or GO-WITH-LEVER + Stage 1C in parallel); mode chosen
                                     order Stage 2 parts (valves, SIA pump, magnet actuator, trap/cup prototypes)
                                                       v
                                     Stage 2 T2 (wk 9-16): plumbing+automation, U5, U4, cup, first flow blanks
                                                       |
                                                     G2 (wk 16) --U5 fail--> backup bed parts --> Stage 3B
                                                       | go
-                                    order Stage 3: custom IDA cell, Ref 620 (or matched pair), machined cup, trap
+                                    order Stage 3: commercial thin-layer cell, machined cup, trap
+                                    (custom IDA + 2nd channel only if G2 shows EC noise matters)
                                                       v
-                                    Stage 3 T3 (wk 17-28): IDA, two channels, U7, unattended runs
+                                    Stage 3 T3 (wk 17-28): U7, unattended runs (IDA only if bought)
                                                       |
                                                     G3 (wk 28) --> Stage 4 validation (wk 28-32) --> report
 ```
 
-Critical path: Stage-1 reagent delivery → U1/U3 → G1 → valve/pump delivery → U5 → G2 → custom IDA cell
-fabrication → U7 → validation. The IDA cell is the longest single lead; its design and quote are done during Stage 2
-so it can be ordered the day G2 passes (or earlier at the user's risk: it is needed by every bead and bed variant,
-so it is the one Stage-3 item whose purchase does not depend on which branch G2 takes — only on G1).
+Critical path: Stage-1 reagent delivery → U1/U3 → G1a → G1 → valve/pump delivery → U5 → G2 → machined cup and
+trap → U7 → validation. The custom IDA cell is no longer on the critical path: it is designed and quoted during
+Stage 2 and ordered only if the G2 data show that electrochemical noise is a material part of the blank SD
+(revised after final review, S9; the earlier invitation to order it at G1 is withdrawn).
 
 ---
 
@@ -107,13 +128,13 @@ in place. Bench time ≈ 5 days.
 | ID | Task | How | Output / acceptance |
 |---|---|---|---|
 | S0.1 | Installed facts (docs/02 §8 Q1–Q10) | Read Empower version (Help → About), BSM/SM-FL firmware (Empower instrument console), photograph BSM and SM-FL rear panels, confirm loop 100 µL and syringe size, list Gamry software version and licences (Gamry Framework → About) | A filled `bench/S0_facts/facts.md`. Needed by automation config (§9) |
-| S0.2 | Vendor questions | Gamry: (a) can a Reference 600+ and a Reference 620 be synchronised as a bipotentiostat? (b) is a separate ToolkitPy licence needed? (c) can ToolkitPy run two instruments from one process? Waters: (d) can the Empower Toolkit start a sample set and report run state on this Empower version? (e) event I/O of BSM/SM-FL | Written answers filed. (a) decides docs/07 §3 option A vs B |
+| S0.2 | Vendor questions | Gamry: (a) can a Reference 600+ be synchronised as a bipotentiostat with a second 600+ (the bipotentiostat page shows a video "Bipotentiostat with 2 600+ Potentiostats") or with a Reference 620 (not listed)? — needed only if the IDA option is taken (revised after final review, S9) (b) is a separate ToolkitPy licence needed? (c) can ToolkitPy run two instruments from one process? Waters: (d) can the Empower Toolkit start a sample set and report run state on this Empower version? (e) event I/O of BSM/SM-FL | Written answers filed. (a) decides docs/07 §3 option A vs B |
 | S0.3 | Inject Start wiring | Wire SM-FL Inject Start (connector 1, pins 1–2, docs/02 §3.1 [V: WKB55803]) to an isolated digital input of the USB DAQ (docs/07 §0). Run `python -m elisa_auto.watch_inject` (README) and make 10 injections of buffer | Every injection logged with time stamp; pulse width recorded (UNVERIFIED today) |
 | S0.4 | Lab PC | Install per `automation/README.md`; run `python -m pytest -q automation/tests` and the simulated cycle | Tests pass on the lab PC (gate G0) |
 | S0.5 | Electrochemical floor | Gamry 600+: (i) dummy cell, (ii) carbon SPE with a 50 µL drop of substrate buffer, (iii) same SPE in the DropSens wall-jet cell at 50 µL/min from the BSM. Chronoamperometry at +0.35 V vs on-strip Ag, 10 min, Faraday cage | RMS noise and drift per configuration → compare with `ma.noise` and docs/02 §4.5 (3 pA in flow, 1 pA stopped; UNVERIFIED) |
 | S0.6 | BSM low-flow check (the primary also depends on it: readout sweep at 10 µL/min and accumulation shunt at 10–50 µL/min, docs/05 §4.1; the backup loads at 10 µL/min — corrected by the final review, docs/08) | Gravimetric: 1, 10, 20, 100 µL/min into a weighed vial, 30 min each, 3 repeats, with the restrictor fitted | Flow error and CV; confirms or refutes `hw.bsm.flow_min` = 1 µL/min (docs/00 user statement) |
 | S0.7 | Clean-handling set-up | §8.1: dedicated pipettes, filter tips, LoBind tubes, "IgG-free" bench area, glove changes, sealed blank stock | SOP written into `bench/SOP_clean_handling.md` |
-| S0.8 | Orders and quotes | Order all Stage-1 items (docs/07 §1); book BLI/SPR; ask for quotes and lead times for Stage 2/3 items without ordering | Purchase log |
+| S0.8 | Orders and quotes | Order the Stage-1A items needed for E1.1–E1.3 and E1.7 (docs/07 §1); ask the BLI/SPR provider for a quote and slot, and ask for quotes and lead times for Stage 2/3 items, without ordering. **The BLI/SPR booking and the NISTmAb order wait for G1a** (week 5): both are useless if U1 or U3 stops the project (revised after final review, S8) | Purchase log |
 
 **G0 (week 2):** automation tests pass on the lab PC; Inject Start edges are logged; Stage-1 reagents delivered or
 dated. G0 has no "stop" outcome.
@@ -140,7 +161,10 @@ dated. G0 has no "stop" outcome.
 * **Bead loading:** load biotinylated antibody at ≈ 80 % of the stated capacity (10 µg biotin-IgG per mg beads,
   `chem.surfaces.magnetic_bead_M280_SA_capacity_biotinylated_IgG`, INHERITED) for 30 min at 22 °C rotating, wash 3×
   in AB, quench free streptavidin with 10 µM free D-biotin 10 min, wash 3×, block 30 min in AB. **Non-immune beads**
-  are made identically with biotinylated non-immune IgG of the capture antibody's species at the same mass loading.
+  are made identically with biotinylated **normal goat F(ab′)₂** (the capture reagent's species and fragment format,
+so that non-immune beads differ from capture beads only in specificity; was "non-immune IgG" — revised after final
+review, W8) at the same mass loading. The M-280 stock is supplied in PBS: wash the beads 3× in AB (TBS) before
+loading so no phosphate is carried into any step (revised after final review, B1).
 * **Temperature:** 22 ± 1 °C, recorded (no thermostat exists; docs/05 §4.5 point 5). Use a rotator, not a shaker,
   for bead suspensions.
 * **Readout (chosen in E1.1):** either R-drop (T0: 50 µL drop on a carbon SPE, chronoamperometry or square-wave
@@ -197,7 +221,10 @@ dated. G0 has no "stop" outcome.
      each; intercept/slope gives [HQ]₀. Repeat with 0.3 mM to confirm linear scaling with HQDP (impurity, not
      electrode artefact).
   3. Time course at 22 °C in (a) amber glass, (b) a PEEK tube filled and capped (B1-line surrogate), (c) the BSM B1
-     reservoir bottle if the solvent line is used: 0, 1, 2, 4, 8 h, triplicate reads.
+     reservoir bottle if the solvent line is used: 0, 1, 2, 4, 8, **24 and 30 h**, triplicate reads (sequences run
+     > 24 h, §7.7). (d) **Pumped aliquot:** HQDP in the B1 line pumped through the BSM heads and mixer and the loop at
+     10 µL/min, sampled at the outlet at 0, 8, 24 and 30 h (steel and mixer contact, docs/02 §1.1 wetted materials)
+     (revised after final review, S11; T1).
   4. HQ stability: HQ 30 nM spiked into SB without HQDP and into 1 mM HQDP, same time points (oxidation
      half-life, `ma.chemistries.alp_hqdp.product_half_life`, UNVERIFIED 2 h).
   5. Controls: SB alone at every time point (electrode drift); a sealed, N₂-purged HQDP aliquot (does oxygen drive the
@@ -213,7 +240,8 @@ dated. G0 has no "stop" outcome.
 * **Model expectation.** Prior f_free 10⁻⁵ (10⁻⁷–10⁻³), i.e. 10 nM (0.1 nM–1 µM) HQ in 1 mM; k_h 10⁻¹⁰ s⁻¹
   (10⁻¹²–10⁻⁸), i.e. +0.3 nM (0.003–29 nM) per 8 h in 1 mM before oxidation losses. Wilson2004 reports "excellent
   hydrolytic stability" without a number.
-* **Time.** 3 days per lot (time course over one day; the rest is preparation and repeats).
+* **Time.** 3 days per lot plus the 24/30-h reads (the time course spans two days; the pumped arm runs on the T1
+  set-up alongside E1.1).
 * **Outcomes.** Confirm → G1 U3 item passed. Purify range → ask the vendor for a lower-HQ lot and try a clean-up
   (UNVERIFIED route; for example recrystallisation or removal of the phenolic impurity by solid-phase extraction,
   to be designed with a chemist), re-run E1.2 on the purified material. Kill → E1.2 on the alternative substrates
@@ -255,10 +283,28 @@ dated. G0 has no "stop" outcome.
   * L3 ratio = factor(D1 F(ab′)₂) / factor(D2 IgG) → `ma.design_levers.fab_conjugate_nsb_factor`.
   * Note: the factor measured after the chosen wash protocol already contains the reversible part removed by that
     protocol. Enter it as the label factor and **do not** also apply S3a, or the wash gain is counted twice.
-* **Acceptance (docs/05 §5 U1).** Confirm primary: factor ≤ 0.04, linear or sub-linear in exposure (β ≤ 1.1, derived
-  here as "not super-linear" within the CI). Kill the 1 pg/mL target for all formats (go to L4 transfer, Stage
-  1C): factor > 0.15. Between: proceed with L4 development in parallel (U8). Add the stringent wash step if ≥ 30 %
-  is removed by stringent washes (S3a). The F(ab′)₂/IgG ratio sets L3.
+* **Acceptance (revised after final review, B3).** The decision is the G1a/G1 rule of §4.11 on the model P(success)
+  with the measured factor entered. Fast screen (other values at their priors, `results/design/g1_decision_table.md`):
+  factor ≤ 0.02 → GO; 0.03–0.08 → GO-WITH-LEVER (Stage 1C in parallel); ≥ 0.10 → STOP (Stage 1C in tubes, then G1′).
+  The docs/05 levels 0.04 / 0.15 are superseded: evaluated the way a bench value is entered, factor 0.04 gives P 0.23
+  for the primary (not a "confirm") and 0.15 gives P 0.05. Linearity: β ≤ 1.1 ("not super-linear" within the CI,
+  derived here). Add the stringent wash step if ≥ 30 % is removed by stringent washes (S3a). The F(ab′)₂/IgG ratio
+  sets L3. The U1 decision rests on this experiment (well resolved: ≈ 8 nM over ≈ 3 nM), not on E1.8 (S7).
+* **Reservoir-ageing arm (added after final review, B4; decided at G1a).** Purpose: measure what holding beads with
+  conjugate does to the blank, and whether reagent-borne human IgG builds complete sandwiches. Capture beads and
+  non-immune beads (5×10⁶ each) held with **3.3 nM** D1 in AB (the conjugate concentration a shared 20-µL dose
+  reservoir would hold) at **4 °C and 22 °C** for **0, 2, 8 and 24 h**, rotating; then diluted 11× into AB (0.3 nM, as
+  in the cup), 30 min at 22 °C, and processed as steps 3–5; duplicate per cell (2 bead types × 2 temperatures × 4
+  times × 2 = 32 tubes, one bench day plus the 24-h point). Also: **conjugate-only ageing**: D1 held at 6.6 nM in the
+  conjugate-reservoir material (glass or PP, 4 °C, dark) for 0, 8, 24 and 30 h, then used at 0.3 nM × 30 min on fresh
+  non-immune beads (n = 3 per time) — checks that the separate conjugate reservoir does not age into higher NSB
+  (aggregates). Read-outs: label factor against hold time (model: linear irreversible NSB would grow it by
+  1 + 3.3 nM × t / 11 nM·min, i.e. ×37 at 2 h and ×145 at 8 h at 22 °C, `results/design/shared_reservoir_cost.md`);
+  the capture/non-immune ratio against hold time (a ratio rising with time on capture beads only = reagent-borne
+  human IgG or detection-on-capture, docs/08 S5). Decision: the primary design already uses **separate** reservoirs;
+  if the 4 °C 8-h factor is within ×1.5 of the 0-h factor the shared reservoir could be reconsidered as a
+  simplification (it is not needed); a rising capture/non-immune ratio sends the reagents to E1.4-type lot testing;
+  conjugate-only ageing > ×1.5 at 24 h sets a maximum conjugate-reservoir life (refill per 8 h sequence block).
 * **Model expectation** (number of nonspecifically bound conjugates on 5×10⁶ beads; nominal factor 0.04, range
   0.01–0.15; 10× the per-assay numbers of the design, where the model gives N_nsb = 6.4×10³ at 0.3 nM × 30 min on
   5×10⁵ beads, `results/` diagnostics of P-vial):
@@ -274,7 +320,9 @@ dated. G0 has no "stop" outcome.
   conjugate standard series replaces this estimate with a measurement. The nominal 0.3 nM × 30 min point (6.4×10⁴)
   is ≈ 8 nM over a ≈ 3 nM free-HQ background (0.3 mM HQDP at 10⁻⁵); the kill level (0.15) is ≈ 29 nM.
 * **Time.** 2 days per conjugate for the exposure series (+1 day for the wash arm) → 6 bench days for D1 and D2,
-  plus 1 repeat day of the decisive cells (0.3 nM × 30 min and 1 nM × 30 min).
+  plus 1 repeat day of the decisive cells (0.3 nM × 30 min and 1 nM × 30 min), plus 1.5 days for the
+  reservoir-ageing arm. The factor entered at G1a is the design cell (0.3 nM × 30 min, standard wash), not the
+  average over all exposures; `analyze` prints both (revised after final review, W2).
 * **Outcomes.** See G1 (§4.11). Additional branches: β > 1.1 (super-linear: e.g. aggregates in the conjugate) →
   centrifuge/filter the conjugate (0.22 µm low-binding, or 10 min at 16 000 g) and repeat the 1 and 3 nM points;
   bead-number arm not proportional (± 30 %) → NSB is not area-limited (tube walls, carry-over); repeat with two
@@ -282,20 +330,25 @@ dated. G0 has no "stop" outcome.
 
 ### E1.4 — Detection-on-capture and bovine-IgG cross-reaction
 
-* **Purpose.** docs/05 §4.1 acceptance "blank on capture beads ≤ 1.2× blank on non-immune beads" (Qu1998: up to
-  15× when not suppressed); docs/05 §4.5 points 1–2. Tier: T0.
+* **Purpose.** docs/05 §4.1 acceptance "blank on capture beads ≤ 1.2× blank on non-immune beads" (Qu1998 shows the
+  mechanism and its suppression by normal serum; its 39 → 2.5 pg/mL is the overall LOD change, not a
+  detection-on-capture factor — corrected after final review, docs/08 §9 C1); docs/05 §4.5 points 1–2. Tier: T0.
 * **Materials.** Capture beads (biotinylated anti-human-Fc), non-immune beads, D1, AB made with (a) IgG-free BSA,
   (b) a standard BSA grade (bovine IgG present per vendor, `chem.nsb.bovine_IgG_in_BSA`), (c) the bead stock buffer
   carried over vs beads washed 3× before loading.
-* **Procedure.** No analyte. 5×10⁵ beads (design number), D1 at 0.3 nM, 30 min, the E1.3 wash/transfer/substrate
-  steps; readout E1.1. Arms: capture vs non-immune beads in AB(a), **n = 12 each** (power 0.8 to see a true 1.2× ratio at 15 % CV, §12.3); capture beads in
-  AB(b) n = 5; unwashed bead stock n = 5. Include the conjugate standard series.
+* **Procedure.** No analyte. **5×10⁶ beads and D1 at 1 nM** (revised after final review, B2 remainder: at 5×10⁵
+  beads and 0.3 nM the bead signal, ≈ 0.8 nM HQ, sits on ≈ 3 nM free HQ and cannot reach the 15 % CV that §12.3
+  assumes; at 5×10⁶ and 1 nM N ≈ 2×10⁵, comfortably measurable; NSB per area is unchanged, §1 point 3), 30 min, the
+  E1.3 wash/transfer/substrate steps; readout E1.1. Arms: capture vs non-immune beads in AB(a), **n = 12 each**
+  (power 0.8 to see a true 1.2× ratio at 15 % CV, §12.3); capture beads in AB(b) n = 5; unwashed bead stock n = 5;
+  **background rows** (no-conjugate beads or no-bead substrate, n ≥ 3; `analyze` subtracts them, docs/08 B2).
+  Include the conjugate standard series. Reagent-borne human IgG (docs/08 S5): a capture/non-immune ratio that grows
+  with conjugate pre-incubation time is measured in the E1.3 reservoir-ageing arm.
 * **Measurement → parameter.** Ratio R = N(capture)/N(non-immune) with 95 % CI (log scale) →
   `ma.labelling.detection_on_capture_residual_factor` (model 1, range 1–3). Bovine-BSA ratio → choice of blocker.
 * **Acceptance.** R ≤ 1.2 (docs/05 §4.1), read as point estimate ≤ 1.2 with the upper 95 % bound < 1.5 (derived here: n = 12 cannot prove ≤ 1.2 more tightly). Standard BSA ≤ 1.2× IgG-free BSA, else IgG-free blockers only.
-* **Model expectation.** R = 1 (1–3) in the model for a suppressed pair; at the design point N ≈ 6.4×10³ on 5×10⁵
-  beads (≈ 0.8 nM in 50 µL at 0.3 mM HQDP over 60 min) — near the E1.1 limit; therefore if the readout cannot
-  resolve it, repeat at 5×10⁶ beads and 1 nM (≈ 2×10⁵, comfortably measurable).
+* **Model expectation.** R = 1 (1–3) in the model for a suppressed pair; at 5×10⁶ beads and 1 nM × 30 min
+  N ≈ 2.1×10⁵ (E1.3 table), ≈ 25 nM HQ in 50 µL over 60 min, well above the ≈ 3 nM free-HQ background.
 * **Time.** 2 days.
 * **Outcomes.** R ≤ 1.2: pair accepted. R > 1.2: change the capture species (e.g. goat F(ab′)₂ capture with goat
   detection; docs/01 §d point 3) or add 0.25 % normal serum of the capture species to AB (Qu1998), re-test. R > 3:
@@ -305,17 +358,28 @@ dated. G0 has no "stop" outcome.
 
 * **Purpose.** Effective off-rate of the labelled complex on beads, which is what matters during the chamber
   emptying (6.6 min) and washes (docs/05 §3: detection t½ ≈ 13 min drives the one-step upper tail). Complements BLI
-  (E1.6). Tier: T0.
+  (E1.6). **Since the final review this is the decisive U2 measurement for the mode** (S4): the selected reagents
+  (goat F(ab′)₂ capture, goat F(ab′)₂-ALP detection) are polyclonal and bivalent, so a solution 1:1 k_off from BLI
+  is heterogeneous and avidity-dependent, whereas E1.5 measures the on-bead loss that the model's k_off stands for.
+  Tier: T0.
 * **Procedure.** 5×10⁶ capture beads + NISTmAb 100 pg/mL in 1 mL AB, 30 min; wash; D1 1 nM 30 min; wash 3×,
   transfer. Resuspend in 1 mL AB containing an unlabelled scavenger for released conjugate (10 µg/mL normal human
   IgG — binds released detection reagent and prevents re-binding) at 22 °C, rotating. Remove aliquots of beads at 0,
-  15, 30, 60, 120 min (triplicate tubes per time point, set up in parallel), wash, substrate, read.
+  15, 30, 60, 120 and 240 min (triplicate tubes per time point, set up in parallel; 240 min added so t½ of 30–60 min
+is resolved), wash, substrate, read.
   Control: non-immune beads treated the same (NSB decay).
 * **Measurement → parameter.** Fit N(t) = N₀·exp(−k_eff·t) (+ NSB control) → effective k_off of the complex. If
   t½,eff ≥ 1 h, both k_off,capture and k_off,detection ≤ 1.9×10⁻⁴ s⁻¹ (bound only — the loss rate is their sum).
   Updates `chem.antibodies.koff_detection` (and capture) bounds with BLI.
-* **Acceptance (docs/05 §5 U2).** One-step mode: t½ ≥ 1 h (both reagents) and k_on ≥ 3×10⁵ M⁻¹s⁻¹ (k_on from BLI).
-  Sequential mode: detection t½ 10–60 min. Reject: capture t½ < 1 h or detection t½ < 10 min.
+* **Acceptance (revised after final review, S4; `results/design/mode_choice.md`).** The complex t½ on beads bounds
+  the detection t½ from below (the loss rate is the sum of both off-rates). The modelled modes cross at t½ ≈ 25 min
+  (P one-step − sequential: −0.06 at 13 min, −0.02 at 20, +0.02 at 30, +0.05 at 45 min). **One-step mode:** t½,eff
+  ≥ 30 min and k_on ≥ 3×10⁵ M⁻¹s⁻¹ (k_on from BLI); between 30 and 45 min the modes are LOD-equivalent within the
+  model's noise and one-step is chosen because it keeps conjugate out of the SM-FL needle and loop (no conjugate
+  carry-over; the B4 reservoir risk is removed by the separate reservoirs). **Sequential mode:** 10–30 min.
+  **Reject:** detection t½,eff < 10 min, or a capture reagent whose bead-bound analyte decays with t½ < 1 h (the
+  non-immune and no-detection controls separate capture loss from detection loss). Docs/05's 1-h boundary is
+  superseded.
 * **Model expectation.** k_off,detection 8.6×10⁻⁴ s⁻¹ (t½ 13 min; sampled to 8.3×10⁻³), k_off,capture
   1×10⁻⁴ s⁻¹ (t½ 1.9 h). Effective on-bead dissociation is slower than in solution because of rebinding
   (Chang2012: effective K_D < 10⁻¹¹ M); the scavenger limits that, so this is a conservative estimate.
@@ -329,11 +393,13 @@ dated. G0 has no "stop" outcome.
   associate NISTmAb at 5 concentrations (e.g. 3–100 nM) for 300 s, dissociate 1800 s (needed to resolve t½ ≥ 1 h:
   1800 s at k_off 1.9×10⁻⁴ s⁻¹ gives 29 % decay; shorter dissociations cannot distinguish 10⁻⁴ from 10⁻⁵). For the
   detection reagent: capture NISTmAb on the loaded sensor, then associate the conjugate (or unlabelled detection
-  antibody) at 5 concentrations, dissociate 1800 s. Global 1:1 fit; report χ² and residuals. Two to four candidates
-  per role.
+  antibody) at 5 concentrations, dissociate 1800 s. Two to four candidates per role. **Fits (revised after final
+  review, S4):** 1:1 global fits only for monoclonal candidates; for the polyclonal reagents report a heterogeneous
+  (two-state or 2:1 heterogeneous-ligand) fit with the fraction in each state and the residuals of the 1:1 fit, and use
+  BLI for **k_on screening** and candidate ranking only — the mode is decided on E1.5.
 * **Measurement → parameters.** `chem.antibodies.kon_capture`, `koff_capture`, `kon_detection`, `koff_detection`
   (value = fit, low/high = 95 % CI or the spread of repeats).
-* **Acceptance.** As E1.5 (docs/05 §5 U2; §4.1 table: k_on ≥ 3×10⁵ M⁻¹s⁻¹, k_off ≤ 1.9×10⁻⁴ s⁻¹).
+* **Acceptance.** k_on ≥ 3×10⁵ M⁻¹s⁻¹ (docs/05 §4.1); k_off criteria apply only to monoclonal candidates (as E1.5).
 * **Model expectation.** Generic ELISA-grade antibodies: k_on 9×10⁴–1.2×10⁶ M⁻¹s⁻¹, k_off 3×10⁻⁶–1.3×10⁻³ s⁻¹
   (Chang2012); some commercial anti-human-Fc mAbs have t½ 1.4–3.3 min (Kamat2020) — those would be rejected.
 * **Time.** 1 week elapsed (service), ≈ 1 day of preparation.
@@ -362,9 +428,11 @@ dated. G0 has no "stop" outcome.
 * **Standards.** NISTmAb 10 mg/mL → gravimetric serial dilution in AB in LoBind tubes, ≥ 4 steps of ≤ 100×, each
   step ≥ 100 µL into ≥ 900 µL, prepared fresh in a clean area (§8.1), to 1, 3, 10, 30, 100, 1000 pg/mL. Record
   every mass. Polyclonal standard at 100 pg/mL (subclass coverage check).
-* **Procedure.** Per tube: 20 µL bead + conjugate mix (5×10⁵ beads, conjugate to give 0.3 nM final) + 200 µL standard
-  or blank (AB from the sealed blank stock), 30 min rotating at 22 °C (docs/05 §4.1 incubation), wash 3×, transfer,
-  50 µL SB + 1 mM HQDP for 60 min, read. Blanks **n = 10**, each standard level n = 3, polyclonal n = 3, plus the
+* **Procedure.** Per tube: 10 µL beads (5×10⁵) and 10 µL conjugate (to give 0.3 nM final), added separately from
+  their own stocks just before the sample, + 200 µL standard or blank (AB from the sealed blank stock), 30 min
+  rotating at 22 °C (docs/05 §4.1 incubation), wash 3×, transfer, **25 µL SB + 0.3 mM HQDP for 120 min**, read
+  (revised after final review, S7: at 1 mM HQDP, 50 µL and 60 min the 1 pg/mL increment was a sub-1-nM step on
+  ≈ 10 nM free HQ; now ≈ 1.8–2.4 nM on ≈ 3 nM, allowing for HQ oxidation with t½ 2 h). Blanks **n = 10**, each standard level n = 3, polyclonal n = 3, plus the
   conjugate standard series and no-bead SB blanks (n = 4). Randomise tube order; record times.
 * **Measurement → parameters.** Slope b (enzymes per pg/mL) from a weighted linear fit over 0–30 pg/mL; B = (mean
   blank − no-bead SB blank)/b; LOD_tube = 3·SD_blank/b (indicative only: tube handling adds variance the instrument
@@ -372,12 +440,14 @@ dated. G0 has no "stop" outcome.
   150 kDa IgG is 4.0×10⁵ molecules per 100 µL, docs/00) → compare with the model (P-vial reference: 6.8×10³ labelled
   enzymes per pg/mL for 100 µL of sample, i.e. a captured-and-labelled fraction of ≈ 1.7 %, with label retention
   0.77 and capture retention 0.97 in the model diagnostics).
-* **Acceptance (docs/05 §0 and §5 U1 in blank-equivalent form).** Confirm: B ≤ ~1 pg/mL on beads. Kill-level:
-  B > 4 pg/mL. Consistency (derived here): B within a factor 2 of N_nsb(E1.3, same exposure) / b; otherwise a term
-  is missing (contamination, detection-on-capture, bead ALP background) and E1.4/E1.9 must explain it before G1.
+* **Acceptance (revised after final review, B3/S7).** E1.8 is a **consistency check, not a decision item**: B must
+  lie within a factor 2 of N_nsb(E1.3, same exposure) / b (derived here); otherwise a term is missing
+  (contamination, detection-on-capture, bead ALP background) and E1.4/E1.9 must explain it before G1. B ≈ 24 ×
+  label factor (pg/mL) in the model, so B carries no information beyond E1.3 for the G1 rule.
 * **Model expectation.** P-vial reference nominal: B = 0.96 pg/mL, N_nsb = 6.4×10³, 6.8×10³ enzymes at 1 pg/mL,
-  LOD 0.32 pg/mL nominal (median 1.3 [0.30–21] with model readout noise, docs/05 §1.2). In the tube with a 50 µL
-  readout, 1 pg/mL is ≈ 0.8–1.6 nM HQ (6.8×10³–1.4×10⁴ enzymes, 60 min, k_cat 1000 s⁻¹ UNVERIFIED) over a ≈ 10 nM free-HQ background at 1 mM HQDP — the tube LOD is
+  LOD 0.32 pg/mL nominal (median 1.3 [0.30–21] with model readout noise, docs/05 §1.2). In the tube with the revised
+  readout (25 µL, 0.3 mM HQDP, 120 min, k_cat 1000 s⁻¹ UNVERIFIED, v/V_max 0.75), 1 pg/mL is ≈ 2.4 nM HQ before and
+  ≈ 1.8 nM after oxidation losses (HQ t½ 2 h, UNVERIFIED) over ≈ 3 nM free HQ — the tube LOD is still
   readout-limited; B and b are the quantities that transfer to the flow platform.
 * **Time.** 3 days (one assay day, one repeat day, one day for standards preparation and checks).
 
@@ -394,7 +464,10 @@ dated. G0 has no "stop" outcome.
   smallest detectable difference (80 % power) is ≈ 1.5 SD of the blank (§12.4), i.e. not 0.1 pg/mL directly; the amplified arm
   (c) makes a 0.1 pg/mL-per-step contamination a 1 pg/mL difference, which is resolvable.
 * **Model expectation.** `ma.nsb.blank_igg_contamination_equivalent` 0 (0–3 fM = 0–0.45 pg/mL); Parry1997: human IgG
-  in ≥ 1/3 of tip-cone eluates in every lab tested.
+  in ≥ 1/3 of tip-cone eluates in every lab tested, **with no amount given** (the "100 fg per sample" of docs/05 §4.5
+  has no source, docs/08 §9 C6). Scenario C1 (up to 1 pg/mL-equivalent) lowers the primary's P from 0.16 to 0.09
+  (`results/design/final_designs.md`). Contamination carried by the **reagents** (conjugate, capture antibody, BSA
+  lot) reaches blanks too: arm (d) and the E1.3 reservoir-ageing arm cover it (revised after final review, S5).
 * **Time.** Within E1.8 (+0.5 day).
 * **Outcome.** > 0.1 pg/mL per handling step → tighten §8.1 (sealed single-use blank aliquots, separate
   pipettes) and carry the measured value into the model (`ma.nsb.blank_igg_contamination_equivalent`).
@@ -407,16 +480,30 @@ dated. G0 has no "stop" outcome.
 * **Procedure.** BSM 100 µL/min of **AB without protein** (proteins are never pumped through the BSM,
   docs/02 §1.2); sample diluent = AB with 1 % IgG-free BSA. Full-loop 100 µL injections (2× overfill) of NISTmAb 10
   and 100 pg/mL from (a) Waters QuanRecovery vials, (b) standard PP vials; collect the outlet into LoBind tubes for
-  3 loop volumes (300 µL, 3 min). Then inject a blank and collect it. n = 3 per arm. Assay the collected fractions
+  3 loop volumes (300 µL, 3 min). Then inject a blank and collect it. n = 3 per arm. **Carry-over arm (revised after
+final review, S6):** inject NISTmAb at **10 ng/mL**, then two blanks (B1, B2), n = 5 sequences; at 10⁻⁴ the B1 excess
+is 1 pg/mL, resolvable in the tube format (a 100 pg/mL challenge gives 0.01 pg/mL at 10⁻⁴, below any readout). Assay the collected fractions
   in the E1.8 tube format (add beads + conjugate to the collected 300 µL; adjust the standard curve to the same
   volume) against identical standards that did not pass the injector.
 * **Measurement → parameters.** Recovery = signal(passed)/signal(not passed) → 1 − `adsorptive_loss_fraction_with_carrier`
-  and `ma.delivery.delivered_fraction_full_loop_100`; analyte carry-over = blank-after-100 / 100 pg/mL.
-* **Acceptance (derived here).** Recovery ≥ 0.8 (the model nominal), analyte carry-over ≤ 10⁻³ (docs/05 §5 U7
-  criterion applied to the injector alone).
+  and `ma.delivery.delivered_fraction_full_loop_100`; analyte carry-over = (B1 − B2 in pg/mL) / 10 000 pg/mL.
+* **Acceptance (derived here; revised after final review, S6).** Recovery ≥ 0.8 (the model nominal); injector
+  carry-over ≤ 1×10⁻⁴ (`gates.yaml` G1 injector_carryover). The docs/05 §5 U7 criterion 10⁻³ is superseded: after a
+  1000 pg/mL sample it allows 1 pg/mL — the LOD itself — in the next sample.
 * **Time.** 2 days.
 * **Outcome.** Recovery < 0.6 → change vials, raise carrier to 2 % or add 0.01 % Tween to the diluent, consider a
   PEEK/HPS loop (docs/02 R1); re-test before Stage 2 depends on it.
+
+### 4.10 Gate G1a (week 5) — early reachability check on U1 + U3 (added after final review, S8)
+
+E1.1 → E1.2 (U3) and E1.3 with its reservoir-ageing arm (U1) are the only Stage-1 items that bear on reachability,
+and they can be complete by about week 5. At G1a, enter the measured label factor (design cell, with its 95 % CI)
+and the free-HQ fraction (and k_h) into `bench/measured_values.yaml` and run `python -m elisa_auto.model_feedback`;
+apply the rule of §4.11 to the printed P. **STOP → no BLI/SPR booking, no NISTmAb order, no Stage-2 purchase**;
+Stage 1C in tubes, then G1′. GO or GO-WITH-LEVER → book BLI/SPR and order NISTmAb (S0.8), continue Stage 1.
+Indicative values (`results/design/g1_decision_table.md` Table 2, other parameters at priors): factor 0.02 with free
+HQ 10⁻⁵ → P 0.37 (GO); 0.04 with 10⁻⁵ → 0.27 (GO-WITH-LEVER); 0.04 with 10⁻⁴ → 0.10 (borderline); 0.10 with
+10⁻⁵ → 0.10 (borderline STOP).
 
 ### 4.11 Gate G1 (end of week 7–8) — is 1 pg/mL reachable, and in which mode?
 
@@ -424,26 +511,51 @@ Evaluate with `python -m elisa_auto.analyze bench/` (prints every quantity below
 `python -m elisa_auto.model_feedback bench/measured_values.yaml` (model P(success) of the primary, the sequential
 fallback and the backup with the measured values).
 
-| Item | Go (primary) | Switch | Kill / stop | Source |
+**Decision rule (revised after final review, B3; fixed 2026-11-11, before any Stage-1 data exist).** Let P be the
+largest model P(success) among the admissible designs (one-step chamber P-chamb, sequential chamber S-chamb, backup
+bed B-bed) printed by `model_feedback` with **all** Stage-1 values measured so far entered (label factor with the
+coupled NSB factors pinned at nominal; default thin-layer cell; chamber corrections of docs/08 S13; n = 2000 if P is
+within 0.03 of a threshold).
+* **GO** if P ≥ 0.30 → order Stage 2.
+* **GO-WITH-LEVER** if 0.10 ≤ P < 0.30 → order Stage 2 **and** run Stage 1C (L4 immune-complex transfer, U8) in
+  parallel; adopt L4 if it meets its U8 criterion.
+* **STOP** if P < 0.10 → no hardware purchase. Run Stage 1C in tubes (cheap) and re-apply the rule at **G1′** with the
+  measured L4 blank reduction and recovery entered; if still < 0.10, or L4 fails U8, report to the user that 1 pg/mL
+  is not reachable with this chemistry (or replace the substrate/pair first if U3/U2 drove the result).
+* The modelled L4 magnitude (×0.1/0.7, UNVERIFIED) never counts toward a decision; only measured L4 values do at G1′.
+
+Reasoning. 0.30 is the docs/05 as-specified level (~0.28): GO means the bench data put the design at least where the
+priors put it before any measurement. Even a perfect label factor leaves P ≈ 0.40 (`g1_decision_table.md`, factor
+0.005), because detection off-rate, free HQ and noise remain uncertain, so a threshold much above 0.30 would be
+unreachable at G1 by construction. Below 0.10 the model median LOD is ≥ 3.5 pg/mL (label factor ≥ 0.10): a > 3×
+gap that no lever in the model except the unmeasured L4 closes, and Stages 2–4 (≈ 24 weeks plus custom parts)
+would be spent on a < 1-in-10 model chance. P is a fraction of Monte Carlo scenarios, not a probability of
+success; the rule uses it as a pre-registered ranking, and the bands are wider than the Monte Carlo noise
+(±0.02 at n = 2000). The one-dimensional thresholds below are fast screens with the other values at their priors;
+where a screen and the rule disagree, the rule decides. This replaces the two contradicting rows of the earlier
+table (U1 "0.04–0.15 proceed" and tube-B "1–4 pg/mL proceed only if P ≥ 0.3").
+
+| Item | Go (screen) | Switch / lever | Stop (screen) | Source |
 |---|---|---|---|---|
-| U1 label factor | ≤ 0.04, β ≤ 1.1 | 0.04–0.15: proceed **and** run Stage 1C (L4 transfer, U8) in parallel with Stage 2 | > 0.15: stop hardware purchases; Stage 1C only; if L4 fails its criterion, report to the user that 1 pg/mL is not reachable with this chemistry | docs/05 §5 U1 |
+| **Model P(success), all Stage-1 values entered** | **≥ 0.30** | **0.10–0.30: Stage 2 + Stage 1C** | **< 0.10: Stage 1C only, G1′** | **this rule; `gates.yaml` G1_rule** |
+| U1 label factor (design cell) | ≤ 0.02, β ≤ 1.1 | 0.03–0.08 | ≥ 0.10 | `results/design/g1_decision_table.md` (supersedes docs/05 §5 U1 0.04/0.15) |
 | U3 free HQ / hydrolysis | ≤ 10⁻⁵ and ≤ 10⁻⁹ s⁻¹ | 10⁻⁵–10⁻⁴: purify or change lot, re-test | > 10⁻⁴ after purification: change substrate (AAP / p-HPP), repeat E1.2 and the model | docs/05 §5 U3 |
-| U2 off-rates | both t½ ≥ 1 h and k_on ≥ 3×10⁵ → **one-step mode** | detection t½ 10–60 min → **sequential mode** (same hardware) | capture t½ < 1 h or detection t½ < 10 min → reject the pair, screen the next candidate (repeat E1.5/E1.6 only) | docs/05 §5 U2 |
+| U2 off-rates (E1.5 on-bead t½,eff decides; BLI gives k_on) | t½,eff ≥ 30 min and k_on ≥ 3×10⁵ → **one-step mode** (30–45 min LOD-neutral; one-step for no conjugate in the SM-FL path) | detection t½,eff 10–30 min → **sequential mode** (same hardware) | capture t½ < 1 h or detection t½,eff < 10 min → reject the pair, screen the next candidate (repeat E1.5/E1.6 only) | revised after final review, S4; `results/design/mode_choice.md` (docs/05 §5 U2's 1 h superseded) |
 | Detection-on-capture R | ≤ 1.2 | 1.2–3: change species/add serum, re-test | > 3: reject pair | docs/05 §4.1 |
-| Tube blank-equivalent B | ≤ ~1 pg/mL and consistent with U1 | 1–4 pg/mL: proceed only if the model with all Stage-1 values gives P(success) ≥ 0.3 for some admissible design (derived here) | > 4 pg/mL | docs/05 §0, §5 U1 |
+| Tube blank-equivalent B (E1.8) | consistency check only: B within ×2 of N_nsb(E1.3)/b | otherwise a term is missing: E1.4/E1.9 must explain it before G1 | — (no stop on B; it is near the tube readout limit, S7) | revised after final review, B3/S7 |
 | U6 K_i | ≥ 2 µM | lower: design 3–5 mM HQDP / shorter accumulation | — | docs/05 §5 U6 |
 | SM-FL recovery | ≥ 0.8 | 0.6–0.8: mitigation, proceed | < 0.6 after mitigation: re-plan sample path | derived here |
 
-**Decision rule.** No "Kill" and U1, U3 in their "Go" or "Switch" band → order Stage 2 (docs/07 §2); a U3 lot in the
-purify band must be resolved before the first in-flow blanks (E2.7), not before the order. Any "Kill" → no Stage-2
-purchase; Stage 1C or substrate/pair replacement first. The tube-B "Switch" rule uses P(success) ≥ 0.3, i.e. not
-worse than the docs/05 as-specified level (~0.28) once the Stage-1 values replace the priors. The model re-run at G1 also decides: one-step vs sequential (compare P-chamb and
+**Other items.** A pair rejected on U2 or detection-on-capture, or a substrate stopped on U3, is replaced and
+re-measured before the rule is applied; a U3 lot in the purify band must be resolved before the first in-flow
+blanks (E2.7), not before the order. The model re-run at G1 also decides: one-step vs sequential (compare P-chamb and
 S-chamb with the measured k_off), whether the stringent wash is added (U1 reversibility), and whether the F(ab′)₂
 label is adopted (L3 ratio).
 
 ### 4.12 Stage 1C (conditional) — U8 immune-complex transfer in tubes (T0, 3–4 weeks)
 
-* **Trigger.** U1 factor 0.04–0.15 or > 0.15, or later U7 misses by 1–3× (docs/05 §5 U8).
+* **Trigger (revised after final review, B3).** G1a/G1 verdict GO-WITH-LEVER (run in parallel with Stage 2) or STOP
+  (run alone, then G1′), or later U7 misses by 1–3× (docs/05 §5 U8).
 * **Materials.** Capture antibody labelled with NHS-desthiobiotin (Thermo 16129, docs/07 §1.4) on streptavidin beads;
   D1; elution buffer AB + 2 mM D-biotin (docs/05 §5 U8); phase-2 beads carrying a second anti-human-IgG antibody
   whose epitope is not occupied by the capture or detection antibody and that does not bind the goat (or mouse)
@@ -458,7 +570,9 @@ label is adopted (L3 ratio).
 * **Model expectation.** L4: NSB ×0.1 (0.01–0.5), signal ×0.7 (0.4–0.9), UNVERIFIED magnitudes
   (`ma.design_levers.immune_complex_transfer_*`); primary median 2.0 → 0.95 pg/mL, backup 2.8 → 0.94 (docs/05 §3).
 * **Outcome.** Adopt → the Stage-3 hardware gets a second trap position and an elution line (+5–10 min; needs the
-  7.5 min accumulation to stay ≤ 60 min, docs/05 §2). Fail and U1 > 0.15 → **report non-reachability** with the
+  7.5 min accumulation to stay ≤ 60 min, docs/05 §2). At G1′ the measured blank reduction and recovery are entered
+  into the model and the §4.11 rule is re-applied. Fail (U8 criterion missed, or P still < 0.10) → **report
+  non-reachability** with the
   data; the project stops before custom hardware is bought.
 
 ---
@@ -466,24 +580,26 @@ label is adopted (L3 ratio).
 ## 5. Stage 2 — the flow path on the Waters stack with purchased parts (weeks 9–16, T2)
 
 Bought at G1 (docs/07 §2): V2 10-port and V3, V4 6-port PEEK valves, the SIA module (syringe pump + selection valve),
-a magnet actuator, PEEK tubing/fittings for a simple trap, a stirred-reservoir holder and a prototype cup (a LoBind
+a magnet actuator, PEEK tubing/fittings for a simple trap, a stirred bead-reservoir holder and a separate cooled
+conjugate reservoir (revised after final review, B4) and a prototype cup (a LoBind
 tube in a 3-D printed or machined holder with a vent and a bottom port). Detection: the commercial single-channel
 cell from Stage 1 (DropSens wall-jet) or a commercial thin-layer cell; the Gamry 600+ single channel. The
 orchestration layer runs with real drivers from here on (`automation/`, §9).
 
 | ID | Experiment (unknown) | Procedure (summary) | Measurement → parameter | Acceptance / branch (source) | Model expectation | Time |
 |---|---|---|---|---|---|---|
-| E2.1 | Plumbing, timing, automation | Build docs/05 §4.1 plumbing with V2, V3, V4, the prototype cup and the commercial cell (no IDA). Run the step table `automation/config/cycle_primary.yaml` with buffer only, 10 cycles; TUV at 280 nm marks protein-free tracer plugs (e.g. 0.1 mg/mL BSA or a dye) to time plug arrival; pressure log; force faults (unplug a valve, withhold Inject Start) | step timing error, plug arrival, watchdog response | every step within ±2 s of the table; safe state reached ≤ 1 s after a fault; no leaks at the restrictor pressure (derived here) | cycle 56.1 min (docs/05 §4.1) | 1 week |
-| E2.2 | U5 dose CV | SIA doses 20 µL from the stirred, cooled (4–8 °C) reservoir of capture beads (design concentration ×11 so 20 µL carries 5×10⁵) into tubes, 20 doses spread over 8 h; count by hemocytometer (n ≥ 400 beads counted per dose for ≤ 5 % Poisson CV) or by a fixed-ALP-bead signal | dose CV → `ma.capture.bead_dose_cv` | confirm ≤ 5 %; backup (fixed bed) if > 10 % (docs/05 §5 U5) | 0.05 (0.02–0.15), UNVERIFIED | 2 days |
+| E2.1 | Plumbing, timing, automation | Build docs/05 §4.1 plumbing with V2, V3, V4, the prototype cup and the commercial cell (no IDA). Run the step table `automation/config/cycle_primary.yaml` with buffer only, 10 cycles; TUV at 280 nm (bead-free runs only; W3) marks protein-free tracer plugs (e.g. a dye) to time plug arrival; pressure log; force faults (unplug a valve, withhold Inject Start). Added after final review: (i) **trap flow during load_trap** measured gravimetrically at the trap outlet with the BSM at 1 µL/min A1 and the SIA at 99 µL/min, and the BSM pressure logged at 1 µL/min (S2); (ii) completeness of the A1 → B1 switch at the trap during the 1-min substrate fill, by a dye in B1 read on the TUV (W4; if incomplete, lengthen the fill or take the loop off-line, UNVERIFIED Empower option); (iii) after a forced fault, the next run is flagged invalid and the automatic recovery cycle clears the latch (S12) | step timing error, plug arrival, watchdog response, trap flow, latch behaviour | every step within ±2 s of the table; safe state reached ≤ 1 s after a fault; trap flow 100 ± 5 µL/min; B1 ≥ 95 % at the trap by the end of the fill; latch set/cleared as logged; no leaks at the restrictor pressure (derived here) | cycle 56.1 min (docs/05 §4.1) | 1 week |
+| E2.2 | U5 dose CV | SIA doses 10 µL from the stirred, cooled (4–8 °C) **bead-only** reservoir (5×10⁷ beads/mL so 10 µL carries 5×10⁵) into tubes, 20 doses spread over 8 h; count by hemocytometer (n ≥ 400 beads counted per dose for ≤ 5 % Poisson CV) or by a fixed-ALP-bead signal. Also 10 doses of 10 µL from the separate conjugate reservoir, read by ALP activity (revised after final review, B4) | dose CV → `ma.capture.bead_dose_cv` | confirm ≤ 5 %; backup (fixed bed) if > 10 % (docs/05 §5 U5); conjugate dose CV ≤ 5 % | 0.05 (0.02–0.15), UNVERIFIED | 2 days |
 | E2.3 | U5 trap retention | Trap = PEEK tube 0.75, 1.0, 1.5 mm ID, magnet zone 1–3 mm (actuated NdFeB block); push 5×10⁵ beads in 660 µL at 50 and 100 µL/min; collect effluent; count escaped beads (or measure ALP-bead signal in the effluent) | retention → `ma.capture.magnetic_trap_efficiency` | confirm ≥ 90 % at 100 µL/min; backup if < 70 % after two trap iterations (docs/05 §5 U5) | 0.9 (0.5–0.99), UNVERIFIED | 1 week |
 | E2.4 | Cup transfer and carry-over | Sample transfer: inject 100 µL of 10 ng/mL fluorescent or UV-visible tracer into the cup by the docs/05 timing, measure fraction in the cup; bead residue after 3 SIA rinses (count in a 4th rinse) | sample transfer → chamber factor (docs/05 §4.0, 0.96); residual beads | transfer ≥ 0.95, residual beads ≤ 10⁻³ (docs/05 §5 U5) | 0.96 (docs/05 §7 chamber approximation) | 3 days |
 | E2.5 | U4 wall NSB of trap and stubs | 1 cm segments (PEEK; PEG- or BSA-coated PEEK) in the trap position; one-step wall exposure: 100 µL of 1 nM conjugate at 100 µL/min, wash 1 min, seal with substrate 10 min, sweep to the cell; n = 4 per material; compare with the bead NSB product of 5×10⁵ non-immune beads in the same run | wall/bead product ratio → `ma.nsb.surface_factor_tubing` | confirm ≤ 10 % of bead NSB product; coat or re-trap if > 30 % (docs/05 §5 U4) | tubing factor 3 (1–30), UNVERIFIED; walls < 10 % of NSB in one-step mode (docs/05 §2 L2) | 1 week |
 | E2.6 | Trap accumulation and readout calibration | Beads carrying a counted number of conjugates (from Stage-1 calibration, 10³–10⁶) loaded into the trap, substrate fill, 10 min sealed accumulation, 1 min sweep at 10 µL/min through the cell | charge per enzyme; cell conversion vs model (`cell_conversion` diagnostic); substrate blank current during accumulation | linear over 3 decades (r² ≥ 0.99, derived here); conversion within ×2 of the model's thin-layer/wall-jet value | P-vial diagnostics: 5.2 nC at 1 pg/mL for the IDA; thin layer 1.1–1.5× worse in LOD (docs/05 §1.2) | 3 days |
-| E2.7 | First in-flow integrated runs (prototype cup) | Full one-step cycle (or sequential if G1 chose it) with automated SIA dosing: 10 blanks and 3 × (1, 10, 100, 1000 pg/mL) in random order, blank after each 1000 | B_flow, SD_blank, slope; LOD₂ = 3·SD/slope; carry-over | see G2 | primary chamber median 2.0 [0.36–73] today, 0.93 [0.23–4.9] after U1–U3 pass (docs/05 §4.4) | 1 week |
+| E2.7 | First in-flow integrated runs (prototype cup) | Full one-step cycle (or sequential if G1 chose it) with automated SIA dosing: 10 blanks and 3 × (1, 10, 100, 1000 pg/mL) in random order, then 3 × (10 ng/mL challenge → B1 → B2) (S6) | B_flow, SD_blank, slope; LOD₂ = 3·SD/slope; carry-over | see G2 | primary chamber, thin-layer cell: median 3.5 [0.51–158] pg/mL today, 1.3 [0.34–9.3] after U1–U3 pass (`results/design/final_designs.md`, revised after final review; docs/05 §4.4 gave 2.0 and 0.93 with the IDA and before the S13/K_i corrections) | 1 week |
 
 Sequential mode only (if G1 chose it): add E2.8 — conjugate carry-over in the SM-FL needle/loop into the next
-injection (docs/02 §2.4c, R2): inject conjugate (3 nM, 20 µL), then the cleaning injection, then a buffer
-"substrate" plug collected and assayed for ALP; acceptance ≤ 10⁻⁵ of the conjugate dose (derived here: keeps
+injection (docs/02 §2.4c, R2): inject conjugate (3 nM, 20 µL), then the needle wash and 3 min BSM flush of the loop
+at 300 µL/min that the cycle uses (no cleaning injection; revised after final review, S3), then a buffer injection
+(a separate Empower line of this test, not part of the cycle) collected and assayed for ALP; acceptance ≤ 10⁻⁵ of the conjugate dose (derived here: keeps
 carried enzyme below 10 % of the blank NSB at the design point). Python never needs to start Empower in either mode.
 
 **Gate G2 (week 16).**
@@ -493,30 +609,31 @@ carried enzyme below 10 % of the blank NSB at the design point). Python never ne
 | U5 dose CV, retention | ≤ 5 %, ≥ 90 % | 5–10 % / 70–90 %: second trap iteration | > 10 % or < 70 % after two iterations → **backup fixed micro-bed** (Stage 3B) | docs/05 §5 U5 |
 | U4 wall product | ≤ 10 % of bead NSB | 10–30 %: proceed; > 30 %: coated trap (L1) or clean-zone re-trap (L2) | — | docs/05 §5 U4 |
 | LOD₂ (10 blanks, commercial single-channel cell) | ≤ 1.5 pg/mL | 1.5–3 pg/mL: proceed only with a lever the model says closes the gap (L3 F(ab′)₂ label, L4 transfer, stringent wash) and re-run the model | > 3 pg/mL with all levers in the model: stop and report | derived here: the IDA gains at most ×1.1–1.5 over a thin-layer cell (docs/05 §1.2), so a single-channel LOD above 1.5 cannot reach 1 by the cell alone; 10 blanks give the SD only to −31/+83 % (§12.1), hence a factor-2 band before stopping |
-| Carry-over after 1000 pg/mL | ≤ 10⁻³ | 10⁻³–10⁻²: add rinse volume or a cleaning injection | — | docs/05 §5 U7 |
+| IDA + second channel (revised after final review, S9) | not needed if the electrochemical noise (S0.5/E2.6 baseline SD in the readout window, in pg/mL-equivalent) is < 30 % of the blank SD | buy (docs/07 §3 conditional items) if ≥ 30 %: then the cell term materially sets the LOD | — | derived here: blank SD adds in quadrature, so a 30 % noise share contributes ≤ 5 % of the SD; the model IDA gain is 0.02–0.05 in P today, 0.07–0.18 in favourable scenarios |
+| Carry-over (10 ng/mL challenge, revised after final review, S6) | ≤ 1×10⁻⁴ | 10⁻⁴–10⁻³: add rinse volume or a cleaning cycle (SIA flush of the trap) after any sample above 1000 pg/mL | — | docs/08 S6 (supersedes docs/05 §5 U7 10⁻³) |
 
-At G2 the model is re-run with all Stage-1 and Stage-2 values (§9); it also tells whether the IDA is worth its lead
-time at the measured noise and blank (if the measured blank SD is ≫ the electrochemical noise, as the model expects,
-the IDA gain is small and a thin-layer cell may be kept, saving the longest lead item — a decision the model makes
-from data rather than the plan).
+At G2 the model is re-run with all Stage-1 and Stage-2 values (§9); together with the IDA row above it decides
+whether the IDA is worth its lead time at the measured noise and blank. The default is the commercial thin-layer
+cell (revised after final review, S9).
 
 ---
 
 ## 6. Stage 3 — full primary platform (weeks 17–28, T3)
 
-Bought at G2 (docs/07 §3): custom flow IDA cell (or the commercial IDE chip and flow cell as an interim), second
-potentiostat channel (Reference 620 — paired with the 600+ only if Gamry confirms; otherwise a matched 620 pair),
-machined stirred incubation cup, integrated bead trap screwed into V2 ports 2/3, magnet actuator in its
-final form. Backup branch (Stage 3B) instead buys the 38–52 µm streptavidin particles and column hardware.
+Bought at G2 (docs/07 §3; revised after final review, S9): a commercial single-channel thin-layer flow cell read by
+the Reference 600+, machined stirred incubation cup, integrated bead trap screwed into V2 ports 2/3, magnet actuator
+in its final form. **Only if the G2 IDA row says so:** custom flow IDA cell (or the commercial IDE chip and flow cell
+as an interim) and a second potentiostat channel (a second 600+ if Gamry confirms a 600+ pair; otherwise a matched
+620 pair). Backup branch (Stage 3B) instead buys the 38–52 µm streptavidin particles and column hardware.
 
 | ID | Experiment | Procedure (summary) | Measurement → parameter | Acceptance (source) | Time |
 |---|---|---|---|---|---|
-| E3.1 | IDA characterisation | CV of HQ on each finger set to set the collector potential (expected −0.1 to −0.2 V vs Ag/AgCl, UNVERIFIED, docs/05 §4.1); HQ standards 1–300 nM at 10 µL/min; generator-only vs generator–collector | collection efficiency, redox-cycling gain, noise per channel → `ma.geometry.ida_*`, `ma.noise.*` | gain ≥ model value used in docs/05 (flow IDA ×1.1–1.5 better than thin layer in LOD) | 1 week |
+| E3.1 | Cell characterisation (thin-layer default; IDA only if bought) | Thin-layer: HQ standards 1–300 nM at 10 µL/min, noise and drift per hour. IDA (conditional): CV of HQ on each finger set to set the collector potential (expected −0.1 to −0.2 V vs Ag/AgCl, UNVERIFIED, docs/05 §4.1); the collector lies only ≈ 0.1 V beyond the estimated HQ/BQ formal potential, so also measure the O₂-reduction background at the collector (air-saturated vs N₂-sparged substrate) and the sensitivity of the collector current to a ±20 mV reference shift over one day (added after final review, W6); generator-only vs generator–collector | collection efficiency, redox-cycling gain, noise per channel → `ma.geometry.ida_*`, `ma.noise.*` | gain ≥ model value used in docs/05 (flow IDA ×1.1–1.5 better than thin layer in LOD) | 1 week |
 | E3.2 | Two-channel synchronisation | Two channels started from one worker (or two workers with a shared clock); square-wave test signal; time skew | skew, crosstalk | skew ≤ 10 ms (derived here: 1 % of the 1 s integration bin) | 2 days |
-| E3.3 | Cup and SIA mixing | Aspirate/dispense 50 µL every 2 min (docs/05 §4.1); bead suspension homogeneity by sampling top/bottom at 0, 15, 30 min | settling; capture rate vs tube (E1.8 time course) | capture after 30 min ≥ 80 % of the rotated-tube value (derived here: chamber approximation uses 0.45 of the tube rate, docs/05 §7, so this is a check of that assumption) | 3 days |
-| **E3.4** | **U7 integrated blank statistics** | 20 blanks + 5 × 1 pg/mL in random order, plus 3 × (blank after 1000 pg/mL), unattended | CV_blank → `chem.nsb.blank_CV_analog_electrochemical`; B; LOD (mean + 3 SD); carry-over → `chem.regeneration.residual_label_carryover_fraction` | confirm CV_blank ≤ 10 %, LOD ≤ 1 pg/mL, carry-over ≤ 10⁻³; if CV_blank > 15 %: test L5 (reference beads, measure ρ) (docs/05 §5 U7) | 1 week |
+| E3.3 | Cup and SIA mixing | Aspirate/dispense 50 µL every 2 min (docs/05 §4.1); bead suspension homogeneity by sampling top/bottom at 0, 15, 30 min | settling; capture rate vs tube (E1.8 time course) | capture after 30 min ≥ 80 % of the rotated-tube value (derived here). Since the final review the model samples the chamber's stirred-capture factor over 0.09–0.45 of the well-mixed rate (mode 0.45, docs/08 S13); E3.3 measures it: enter (capture rate in the cup / well-mixed rate) / 2.2 as `ma.capture.in_vial_unstirred_rate_factor` for the chamber designs | 3 days |
+| **E3.4** | **U7 integrated blank statistics** | 20 blanks + 5 × 1 pg/mL in random order, plus 5 × (10 ng/mL challenge → B1 → B2), unattended | CV_blank → `chem.nsb.blank_CV_analog_electrochemical`; B; LOD (mean + 3 SD); carry-over → `chem.regeneration.residual_label_carryover_fraction` | confirm CV_blank ≤ 10 %, LOD ≤ 1 pg/mL, carry-over ≤ 1×10⁻⁴ (revised after final review, S6); if CV_blank > 15 %: test L5 (reference beads, measure ρ) (docs/05 §5 U7) | 1 week |
 | E3.5 | Optimisation loop | Model-chosen changes (accumulation 7.5–15 min, HQDP 1–3 mM, conjugate 0.3–1 nM, sweep flow) one at a time, 10 blanks + 3 × 3 pg/mL each | as E3.4 | improvement where the model predicts it; stop when LOD stops improving | 2–3 weeks |
-| E3.6 | Unattended dry run | 24 h unattended: 20 samples with blanks/controls interleaved every 10 (docs/05 §4.1), alarms on | faults, trap clogging, drift | zero manual interventions; mid control within ±15 % (derived here) | 2 days |
+| E3.6 | Unattended dry run | 24 h unattended: 20 samples with blanks/controls interleaved every 10 (docs/05 §4.1), alarms on; one forced fault mid-sequence | faults, trap clogging, drift, fault latch | zero manual interventions; mid control within ±15 % (derived here); runs between the forced fault and the logged recovery cycle flagged invalid (S12) | 2 days |
 
 **Stage 3B (backup, only if G2 sends it).** Fixed packed micro-bed per docs/05 §4.2: 0.5 µL of 38–52 µm streptavidin
 polystyrene particles (docs/07 §3B; non-porosity UNVERIFIED) loaded with the biotinylated capture antibody, in a
@@ -567,8 +684,12 @@ log-slope criterion of the model (`ma.statistics.uloq_min_log_slope` 0.8) report
 **7.5 Precision.** Controls at 3, 30 and 300 pg/mL, 5 replicates per day × 5 days (design choice): repeatability
 and within-lab CV by one-way ANOVA. Acceptance (derived here): CV ≤ 20 % at 3 pg/mL, ≤ 15 % at 30 and 300.
 
-**7.6 Carry-over.** Sequence H (1000 pg/mL) → B1 → B2, repeated 5 times. Carry-over = (mean B1 − mean B2)/(mean H −
-mean B2). Pass ≤ 10⁻³ (docs/05 §5 U7). n = 5 resolves 10⁻³ at ≈ 5σ when SD_blank ≈ 0.33 pg/mL-equivalent (§12.5).
+**7.6 Carry-over (revised after final review, S6).** Sequence H → B1 → B2, repeated 5 times, with H = **10 ng/mL**
+NISTmAb (a challenge above the calibrated range). Carry-over = ((mean B1 − mean B2) / b) / 10 000 pg/mL, with b the
+low-range slope (`stats.carryover_challenge`). Pass ≤ 1×10⁻⁴: after the top standard (1000 pg/mL) the next sample
+then carries ≤ 0.1 pg/mL, a tenth of the LOD. (The docs/05 criterion 10⁻³ allowed 1 pg/mL, the LOD itself, and a
+1000 pg/mL challenge cannot resolve 10⁻⁴.) n = 5 resolves 10⁻⁴ at ≈ 5σ when SD_blank ≈ 0.33 pg/mL-equivalent
+(§12.5). The 1000 pg/mL → B1 → B2 sequence is still run in §7.3 and reported as indicative.
 
 **7.7 Reuse/renewal over an unattended sequence.** One Empower sample set of ≥ 40 determinations (blanks, standards,
 controls, interleaved blank + mid control every 10 samples), started once and not touched (> 24 h with overlap,
@@ -577,7 +698,10 @@ interleaved controls drifts ≤ 10 % over the sequence (`ma.reuse.slope_drift_to
 ±1 SD; time from Inject Start to result ≤ 60 min for every sample (from the run log).
 
 **7.8 Sample volume and time.** Injected volume 100 µL per determination from the Empower method (full loop);
-time to result from the run log (Inject Start t₀ to computed result) for every run: max ≤ 60 min.
+time to result from the run log (Inject Start t₀ to computed result) for every run: max ≤ 60 min. **Definition used
+(added after final review, W1):** Inject Start to the end of the post-readout baseline window (52.1 min in the
+primary step table, as `automation` computes it). docs/05 quotes 56.1 min from aspiration start to cycle end; both
+are ≤ 60 min, and the report states the definition next to the number.
 
 **7.9 Specificity checks (analyte-specific).** Blank spiked with bovine IgG 1 µg/mL and mouse IgG 1 µg/mL (n = 5
 each): response ≤ LOD; polyclonal human IgG standard recovery 80–120 % against NISTmAb at 10 and 100 pg/mL
@@ -618,6 +742,8 @@ per arm as a lot-release check).
 **8.4 Carry-over between high and low samples.** Analyte path: SM-FL needle and loop (E1.10), cup and trap (E2.4,
 E3.4); label path: conjugate never passes the SM-FL in one-step mode (SIA module), and in sequential mode E2.8 applies.
 Every sequence: blank after the highest standard; the analysis flags any blank-after-high above the blank mean + 3 SD.
+With the 10⁻⁴ criterion (§7.6) a passing system leaves ≤ 0.1 pg/mL after 1000 pg/mL, so this flag and the carry-over
+gate no longer contradict each other (revised after final review, S6).
 
 **8.5 Adsorptive loss at fM.** Low-binding PP vials/tubes (Eppendorf Protein LoBind; Waters QuanRecovery with MaxPeak
 HPS, docs/07), 1 % IgG-free BSA carrier in every diluent ≤ 1 ng/mL, ≤ 1 h between dilution and injection (record),
@@ -651,7 +777,7 @@ is stored as a second quantity (redox-cycling check). Same code in `automation/e
 
 | Bench quantity (experiment) | YAML key | Re-run | Decision it informs |
 |---|---|---|---|
-| label factor, β (E1.3) | `ma.nsb.label_factor_igg_enzyme_conjugate` | `python -m elisa_auto.model_feedback` (P-chamb, S-chamb, B-bed); `scripts/kill_thresholds.py` | G1 reachability; L4 needed? |
+| label factor (design cell), β (E1.3) | `ma.nsb.label_factor_igg_enzyme_conjugate` | `python -m elisa_auto.model_feedback` (P-chamb, S-chamb, B-bed; prints the G1 verdict); `scripts/g1_decision_table.py` | G1a/G1 rule (§4.11); L4 needed? |
 | wash-removable fraction (E1.3) | `ma.design_levers.nsb_fraction_removed_by_wash` (scenario only) | `scripts/robustness.py` | add stringent wash step |
 | F(ab′)₂/IgG ratio (E1.3) | `ma.design_levers.fab_conjugate_nsb_factor` | `scripts/robustness.py --part levers` | label choice (L3) |
 | detection-on-capture R (E1.4) | `ma.labelling.detection_on_capture_residual_factor` | model_feedback | pair acceptance |
@@ -673,11 +799,11 @@ never edits `params/`). **Coupling found while building it:** the model's conjug
 4×10⁻¹⁰) × `ma.nsb.surface_factor_magnetic_beads` (1–3), and the docs/05 Monte Carlo samples all three. E1.3
 measures the product k_eff on the real beads, so when the label factor is entered the other two are pinned at
 their nominal values (otherwise the bench value is re-spread over ~50×); the script prints a note when it does this.
-With the example values in `automation/templates/measured_values.example.yaml` (factor 0.031, free HQ 8×10⁻⁶,
-k_off,det 3×10⁻⁴ s⁻¹ — illustrative numbers, not data) the primary moves from median 2.1 to 0.82 pg/mL and
-P(success) ~0.25 → ~0.64 (n = 500), and the ranking then names k_on of the detection reagent, human-IgG
-contamination and k_on of the capture reagent as the next most informative measurements — i.e. E1.6 and E1.9.
-It applies the docs/05 chamber approximation exactly as `scripts/final_designs.py`, and prints
+The coupling code is shared with the G1 decision table (`scripts/design_lib.apply_bench_values`, revised after
+final review, B3). (The example run quoted here before the review — median 2.1 → 0.82 pg/mL, P ~0.25 → ~0.64 — used
+the pre-review designs and is superseded; re-run it with the current designs if needed.)
+It applies the chamber approximation exactly as `scripts/final_designs.py` (thin-layer default, S13 corrections),
+prints the G1 verdict of §4.11, and prints
 nominal LOD, median [5–95 %] and P(success) for the primary (one-step chamber), the sequential mode and the backup,
 plus a one-at-a-time ranking of the remaining sampled parameters — the largest one is the next experiment to run.
 Accepted values are then entered by a model maintainer into the `overrides` section of
@@ -694,23 +820,24 @@ counted from the Stage-0 start (assumed 2026-11-16); holidays not included.
 
 | Weeks | Activity | Depends on | Bench days |
 |---|---|---|---|
-| 0 | Order Stage-1 items; book BLI/SPR; vendor questions | — | 1 |
+| 0 | Order Stage-1A items; BLI/SPR quote only; vendor questions | — | 1 |
 | 0–2 | Stage 0 (S0.1–S0.7) | DAQ delivery for S0.3 | 5 |
 | 2–3 | E1.1 readout qualification | SPEs, HQDP, HQ | 2 |
 | 2–4 | E1.2 U3 (2 lots if available) | E1.1 | 3–6 |
-| 3–5 | E1.3 U1 (D1, D2, repeats) | E1.1, beads, conjugates | 7 |
-| 4–6 | E1.4, E1.5, E1.7 | E1.3 method | 5.5 |
-| 4–7 | E1.6 BLI/SPR (external) | antibodies shipped to service | 1 |
+| 3–5 | E1.3 U1 (D1, D2, repeats, reservoir-ageing arm) | E1.1, beads, conjugates | 8.5 |
+| 5 | **G1a** (U1 + U3 into the model; §4.10); on GO/GO-WITH-LEVER book BLI/SPR and order NISTmAb | E1.2, E1.3 | 0.5 |
+| 5–7 | E1.4, E1.5, E1.7 | E1.3 method; NISTmAb for E1.5 | 5.5 |
+| 5–8 | E1.6 BLI/SPR (external) | G1a; antibodies shipped to service | 1 |
 | 5–7 | E1.8 + E1.9 tube integrated assay | E1.3, NISTmAb | 3.5 |
 | 6–7 | E1.10 SM-FL recovery | E1.8 format | 2 |
 | 7–8 | **G1**, model feedback, Stage-2 orders | all Stage-1 | 1 |
 | 8–12 | (Stage 1C if triggered, 3–4 weeks, in parallel with Stage-2 lead time) | G1 | 10–15 |
 | 9–16 | Stage 2: E2.1–E2.7 (valve/pump lead time assumed ≤ 3 weeks, UNVERIFIED) | G1 orders | 25 |
-| 12–16 | IDA cell design and quote; Gamry decision | S0.2 answer, E2.6 | (desk) |
+| 12–16 | IDA cell design and quote (conditional item); Gamry decision | S0.2 answer, E2.6 | (desk) |
 | 16 | **G2**; order Stage 3 | E2.2–E2.7 | 1 |
-| 16–26 | IDA cell fabrication (8–12 weeks, UNVERIFIED) | G2 | — |
+| 16–26 | IDA cell fabrication (8–12 weeks, UNVERIFIED) — only if the G2 IDA row says so | G2 | — |
 | 17–24 | Stage 3 with the interim commercial IDE chip/thin-layer cell: cup, trap, E3.2, E3.3, E3.4 first pass | G2 parts (4–6 weeks for machined parts, UNVERIFIED) | 25 |
-| 24–28 | E3.1 with the custom IDA, E3.4 repeat, E3.5, E3.6; **G3** | IDA delivery | 20 |
+| 24–28 | E3.1 (thin-layer; custom IDA if bought), E3.4 repeat, E3.5, E3.6; **G3** | thin-layer cell (IDA delivery only if bought) | 20 |
 | 28–32 | Stage 4 validation and report | G3 | 18 |
 
 Total ≈ 32 weeks if every gate passes first time; Stage 1 answers the reachability question in ≈ 8 weeks for the
@@ -723,17 +850,17 @@ during the Stage-2 lead time.
 
 | Risk | Stage hit | Likelihood (judgement) | Mitigation |
 |---|---|---|---|
-| U1 label factor > 0.15 (NSB at the old SβG level, scenario S1) | G1 | moderate (docs/05: ~15 % overall success today) | Stage 1C (L4) before any hardware; F(ab′)₂ label; stringent wash; stop early if L4 fails |
+| U1 label factor ≥ 0.10 or model P < 0.10 at G1a/G1 (revised after final review) | G1a/G1 | moderate (docs/08 §10: model P 0.16 as specified) | Stage 1C (L4) before any hardware; F(ab′)₂ label; stringent wash; stop early if L4 fails |
 | HQDP lot with free HQ > 10⁻⁴; single supplier (Metrohm DropSens) | G1 | unknown (no specification published) | test two lots; purification; AAP/pAPP alternatives tested with the same method (E1.2) |
-| No commercial detection reagent with t½ ≥ 1 h | G1 | moderate | sequential mode on the same hardware (docs/05 §4.0 route S); screen 3–4 candidates by BLI |
+| No detection reagent with on-bead t½ ≥ 30 min (revised after final review, S4) | G1 | moderate | sequential mode on the same hardware (docs/05 §4.0 route S); screen 3–4 candidates by BLI |
 | Stage-1 readout cannot reach 1 nM HQ | Stage 1 | low–moderate | FIA-EC route (T1); gold SPE; glassy-carbon thin-layer cell; larger bead numbers |
 | Bead dose CV / trap retention fail | G2 | moderate (no precedent at fM) | two trap iterations; electromagnet; backup micro-bed |
-| 600+/620 cannot be paired | Stage 3 | unknown (Gamry lists 620+620, 620+3000 only) | buy a matched 620 pair; keep the 600+ for Stage 1–2 and as a third channel for L5 |
+| A second channel is needed (G2 IDA row) and the 600+ cannot be paired | Stage 3 | unknown (Gamry lists 620+620, 3000+3000, 620+3000 and shows two 600+ units in a video; no 600+/620 pair) | buy a matched 620 pair; keep the 600+ for Stage 1–2 and as a third channel for L5 (revised after final review, S9) |
 | ToolkitPy constraints (32-bit Python 3.7, Windows, admin rights) | Stage 2 | certain constraint | separate worker process (automation/README); pin versions; test early (S0.4) |
 | Empower cannot be driven from Python | any | likely irrelevant | primary scheme does not need it (docs/02 §3.2): Empower is master, Python listens to Inject Start |
 | Run-to-run NSB CV in flow > 15 % | G3 | moderate | L5 reference beads on a third channel; temperature control of cup and trap (Peltier) |
 | Human-IgG contamination | all | high without SOP | §8.1; sealed blanks; E1.9 quantifies |
-| Custom IDA lead time slips | Stage 3 | moderate | interim commercial IDE chip + flow cell or thin-layer cell (≤ 1.5× LOD penalty); IDA decision by the model at G2 |
+| Custom IDA lead time slips | Stage 3 | low (the IDA is now conditional) | thin-layer cell is the default; IDA only on the G2 condition (revised after final review, S9) |
 | Temperature drift (no thermostat) | Stage 3–4 | moderate | log temperature; Peltier block on cup/trap if CV_blank correlates with temperature |
 
 ---
@@ -755,7 +882,7 @@ A 3-SD LOD inherits the SD's uncertainty directly. Ten blanks (Stage-2 screening
 from 1.5; twenty (U7, docs/05 §5) bound the LOD to −24/+46 %; the validation claim uses 60 (§7.2).
 
 **12.2 Gate quantities that are ratios of means** (label factor, recovery) use duplicates or triplicates: their
-CV is set by the readout (≈ 10–20 %), and the gates are factor-of-4 apart (0.04 vs 0.15), so a triplicate CV of
+CV is set by the readout (≈ 10–20 %), and the label-factor screens are factor-of-5 apart (0.02 vs 0.10), so a triplicate CV of
 15 % (SE ≈ 9 %) is enough; the decisive cells are repeated on a second day to catch day effects.
 
 **12.3 Detection-on-capture ratio 1.2 (E1.4).** Log-normal CV 15 % per tube, two-sided α = 0.05: power to detect a
@@ -765,11 +892,14 @@ true ratio of 1.2 is 0.40 at n = 5, 0.73 at n = 10, **0.82 at n = 12** per arm �
 1.51 SD at n = 8 per arm, 1.02 SD at n = 16, 0.91 SD at n = 20. A 0.1 pg/mL contamination cannot be seen
 directly when SD_blank ≈ 0.33 pg/mL (it would need ≈ 170 per arm); the amplified-handling arm multiplies it.
 
-**12.5 Carry-over (§7.6).** SD of (mean B1 − mean B2) with n = 5 pairs is 0.63·SD_blank; at SD_blank =
-0.33 pg/mL-equivalent that is 0.21 pg/mL, and the criterion 10⁻³ × 1000 pg/mL = 1 pg/mL is ≈ 5 of those.
+**12.5 Carry-over (§7.6, revised after final review, S6).** SD of (mean B1 − mean B2) with n = 5 pairs is
+0.63·SD_blank; at SD_blank = 0.33 pg/mL-equivalent that is 0.21 pg/mL, and the criterion 10⁻⁴ × 10 000 pg/mL =
+1 pg/mL is ≈ 5 of those. (With a 1000 pg/mL challenge 10⁻⁴ is 0.1 pg/mL, half an SD: not testable.)
 
 **12.6 Monte Carlo is not statistics.** Model intervals quoted here are scenario ranges from the YAML bounds
-(docs/05 header); they say where a bench result is expected to fall, not how certain it is.
+(docs/05 header); they say where a bench result is expected to fall, not how certain it is. Sampling noise on a
+model P is about ±0.02 (95 %) at n = 2000 and ±0.03 at n = 1000 (docs/05 §1.1's "±0.01" is one SE); differences in
+P below ≈ 0.05 between designs are not decision-grade (added after final review, W7).
 
 ---
 
@@ -777,7 +907,8 @@ directly when SD_blank ≈ 0.33 pg/mL (it would need ≈ 170 per arm); the ampli
 
 * Whether the HQDP sold by Metrohm DropSens has a free-HQ specification or CoA, its lead time and lot-to-lot
   variation (product page checked: catalogue number and pack sizes only; docs/07).
-* Whether a Reference 600+ can be paired with a Reference 620 (Gamry lists only 620+620 and 620+3000 pairs); whether
+* Only if the IDA option is taken: whether a Reference 600+ can be paired with a second 600+ (video on Gamry's page)
+  or with a Reference 620 (not listed; Gamry lists 620+620, 3000+3000, 620+3000 and Interface pairs); whether
   ToolkitPy needs a separate licence or can drive two instruments from one process.
 * Whether the Empower Toolkit can start a sample set (not needed by the primary scheme).
 * Rear-panel event I/O of the installed BSM/SM-FL; Inject Start pulse width.

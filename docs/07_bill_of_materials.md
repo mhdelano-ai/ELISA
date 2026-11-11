@@ -1,5 +1,10 @@
 # 07 — Bill of materials by stage (Task 5)
 
+> **Revised after the final review (docs/08 §10):** separate bead and conjugate reservoirs (B4, §2 and §5.5); the
+> Stage-3 default detector is a commercial single-channel thin-layer cell and the custom IDA cell and second
+> potentiostat channel are conditional on G2 data (S9, §3); Gamry bipotentiostat statement corrected (docs/08 §9
+> C11); non-immune beads made with normal goat F(ab′)₂ (W8). BLI/SPR and NISTmAb are ordered after G1a (S8).
+
 Status: 2026-11-11. Companion to `docs/06_bench_plan.md`; stages and gates are defined there. **Nothing in a later
 stage is ordered before its gate passes**; quotes and lead times for later stages are requested in Stage 0 so the
 order can be placed on the gate day.
@@ -35,8 +40,8 @@ price not checked. Lead times are UNVERIFIED unless stated.
 | Capture antibody, biotinylated | anti-human IgG **Fcγ-specific**, F(ab′)₂, affinity-purified, min. cross-reactivity bovine/horse/mouse | capture beads | 1 unit | Jackson ImmunoResearch Biotin-SP AffiniPure F(ab′)₂ goat anti-human IgG, Fcγ-specific **109-066-098 [D]** (Biozol listing; Fc specificity wording to be checked on the datasheet) | Mabtech MT145 (in kit 3850 series) biotinylated in-house (biotinylation reagent UNVERIFIED part) | k_off unknown → E1.6 |
 | Detection conjugate D1 | ALP-labelled F(ab′)₂ goat anti-human IgG **F(ab′)₂/Fab-specific** (asymmetric to the Fc capture; same species as capture) | U1, all assays | 2 units | Jackson ImmunoResearch AP AffiniPure F(ab′)₂ fragment goat anti-human IgG, F(ab′)₂ fragment specific **109-056-006 [D]** (reacts with Fab, not Fc, per listing) | chicken IgY anti-human IgG-ALP (UNVERIFIED supplier) | Do not confuse with the Fc-specific AP conjugate **109-056-190 [V]** (Jackson page seen; 0.5 mL) — symmetric with an Fc capture |
 | Detection conjugate D2 | whole-IgG ALP conjugate of the same specificity (for the L3 F(ab′)₂/IgG ratio) | U1 L3 arm | 1 unit | Jackson whole-IgG AP anti-human IgG F(ab′)₂-specific — a SelectScience listing exists, **part number UNVERIFIED** | Mabtech kit **3850-1AD-6** (ALP version, MT145/MT78; docs/01 [V]) | — |
-| Non-immune biotinylated IgG | biotinylated normal goat IgG (same species and loading as capture) | non-immune beads (E1.3, E1.4) | 1 unit | UNVERIFIED (Jackson "ChromPure" normal goat IgG range; biotin conjugate part not checked) | biotinylate normal goat IgG in-house | — |
-| Analyte primary standard | NISTmAb RM 8671, humanized IgG1κ, 10 mg/mL, 800 µL | calibrators (E1.8, E1.10, validation) | 1 | NIST RM 8671 via Merck/Sigma **nist8671 [D]** (indicative 1,900 USD per unit, US listing) | — | gravimetric dilution, docs/06 E1.8 |
+| Non-immune biotinylated F(ab′)₂ | biotinylated **normal goat F(ab′)₂** (same species and fragment format as the capture F(ab′)₂, so non-immune beads differ only in specificity; revised after final review, W8) | non-immune beads (E1.3, E1.4) | 1 unit | UNVERIFIED (normal goat F(ab′)₂ fragment and its biotin conjugate: part numbers not checked) | biotinylate normal goat F(ab′)₂ in-house | — |
+| Analyte primary standard | NISTmAb RM 8671, humanized IgG1κ, 10 mg/mL, 800 µL | calibrators (E1.5, E1.8, E1.10, validation); **order after G1a** (revised after final review, S8) | 1 | NIST RM 8671 via Merck/Sigma **nist8671 [D]** (indicative 1,900 USD per unit, US listing) | — | gravimetric dilution, docs/06 E1.8 |
 | Polyclonal human IgG standard | NIBSC-calibrated human IgG | subclass/light-chain check | 1 | standard supplied in Mabtech 3850 kits (docs/01 [V]) | — | — |
 | IgG-free BSA | bovine IgG not detected, protease-free | blocker and carrier in every buffer | 50 g | Jackson ImmunoResearch **001-000-162 [V]** (indicative 569.45 USD via a distributor) | — | standard BSA grade only as the E1.4 comparator (any lot) |
 | HQDP | hydroquinone diphosphate, ALP substrate | substrate (E1.2, all assays) | 2 × 0.5 g, two lots if possible | Metrohm DropSens **DRP-HQDP-0.5G [V]** (500 mg; 1 g also listed); **no purity or free-HQ specification on the product page** | 4-aminophenyl phosphate (Abcam ab141899 [D]); ascorbic acid 2-phosphate (supplier UNVERIFIED); p-hydroxyphenyl phosphate (supplier UNVERIFIED) | ask for CoA and lot history; lead time UNVERIFIED |
@@ -63,7 +68,7 @@ price not checked. Lead times are UNVERIFIED unless stated.
 
 | Item | Specification | Purpose | Notes |
 |---|---|---|---|
-| BLI or SPR kinetics | streptavidin or anti-human-Fc sensors; 25 °C; AB; dissociation ≥ 1800 s; 2–4 candidates per role | E1.6 (U2) | provider UNVERIFIED (core facility or CRO); book in week 0 |
+| BLI or SPR kinetics | streptavidin or anti-human-Fc sensors; 25 °C; AB; dissociation ≥ 1800 s; k_on screening of all candidates; k_off only for monoclonal candidates, heterogeneous fits for polyclonals (docs/06 E1.6) | E1.6 (U2) | provider UNVERIFIED (core facility or CRO); quote in week 0, **book after G1a** (revised after final review, S8) |
 
 ### 1.4 Stage 1C (only if G1 triggers U8)
 
@@ -80,11 +85,12 @@ price not checked. Lead times are UNVERIFIED unless stated.
 |---|---|---|---|---|---|---|
 | V2 reactor-isolation valve | 2-position, **10-port**, PEEK wetted, 10-32 ports, remote control | trap isolation (docs/05 §4.1) | 1 | IDEX Health & Science MX Series II **MXP9960-000 [V]** (PEEK, 0.25 mm stator passages, 5000 psi per IDEX/Chromtech; one listing says 6000 psi) | VICI/Valco 10-port (UNVERIFIED part) | control: push button, contact closure, I²C, RS-232 or USB (MX Series II manual [V]); serial command set not read — driver stub |
 | V3 cell bypass and V4 cup valve | 2-position, **6-port**, PEEK | EC cell in/bypass; SM-FL → cup / → tee | 2 | IDEX MX Series II **MXP9900-000 [V]** (PEEK, 0.30 mm passages) | — | as V2 |
-| SIA syringe pump with distribution valve | 1 mL syringe, ≥ 8-port distribution valve, RS-232, inert wetted path | bead/conjugate dosing, cup mixing and emptying (docs/05 §4.0 route A) | 1 (+1 spare valve) | Hamilton PSD/6 (e.g. **99196-01**) with 8-port distribution valve **59943-01** (Hamaflon plug) or **59943-02D** (ceramic) **[V spec sheet; a distributor lists a different ceramic number]** | Tecan Cavro Centris (RS-232/485; distribution valves 3/6/9/12 ports — **no 8-port listed**, use 9-port) [V] | syringe part and command language UNVERIFIED; driver stub |
+| SIA syringe pump with distribution valve | 1 mL syringe, ≥ 8-port distribution valve, RS-232, inert wetted path | bead dosing and conjugate dosing from **separate** reservoirs (ports 1 and 6), cup mixing and emptying, wash, waste, line to the trap (6 of 8 ports; 2 spare, e.g. a second cup) (docs/05 §4.1, revised after final review, B4) | 1 (+1 spare valve) | Hamilton PSD/6 (e.g. **99196-01**) with 8-port distribution valve **59943-01** (Hamaflon plug) or **59943-02D** (ceramic) **[V spec sheet; a distributor lists a different ceramic number]** | Tecan Cavro Centris (RS-232/485; distribution valves 3/6/9/12 ports — **no 8-port listed**, use 9-port) [V] | syringe part and command language UNVERIFIED; driver stub |
 | Prototype incubation cup | LoBind tube in a holder with bottom port and vent (§5.1, simplified) | E2.4, E2.7 | 3 | in-house (3-D print/machining) | — | — |
 | Prototype magnetic trap | PEEK tube segments 0.75/1.0/1.5 mm ID, NdFeB magnets on a slide (§5.2, simplified) | E2.3, E2.5 | 3 variants × 2 | in-house; PEEK tube and NdFeB magnets from any supplier (UNVERIFIED parts) | electromagnet | — |
 | Magnet actuator | TTL-driven linear actuator or solenoid, ±0.1 mm repeatability | trap on/off | 1 | UNVERIFIED (§5.4) | electromagnet with driver | — |
-| Stirred cooled bead reservoir | 2–5 mL, 4–8 °C, gentle stirring, sealed (§5.5) | E2.2 | 1 | in-house + small Peltier and stirrer (UNVERIFIED parts) | — | — |
+| Stirred cooled bead reservoir | 2–5 mL, 4–8 °C, gentle stirring, sealed; **beads only** (§5.5) | E2.2 | 1 | in-house + small Peltier and stirrer (UNVERIFIED parts) | — | — |
+| Cooled conjugate reservoir | 1–2 mL, 4–8 °C, dark, low-binding glass or PP, sealed, not stirred; **conjugate only** (§5.5) (added after final review, B4) | E2.2 (conjugate dose), E2.7 | 1 | in-house; shares the Peltier block with the bead reservoir (UNVERIFIED parts) | — | — |
 | PEG/BSA coating materials | for coated-PEEK arm of U4 | E2.5 | — | UNVERIFIED (method from docs/05 L1 references) | — | — |
 | Fluorescent/UV tracer | protein-free tracer for plug timing | E2.1, E2.4 | — | any (e.g. a dye with TUV absorbance) | — | — |
 
@@ -92,9 +98,10 @@ price not checked. Lead times are UNVERIFIED unless stated.
 
 | Item | Specification | Purpose | Qty | Candidate supplier / part | Alternatives | Lead time / notes |
 |---|---|---|---|---|---|---|
-| Second potentiostat channel | Gamry **Reference 620** | IDA collector (docs/05 §4.1) | Option A: 1 (if Gamry confirms a 600+/620 bipotentiostat); Option B: 2 (Gamry lists **"two Reference 620"** and **"Reference 620 + Reference 3000"** as bipotentiostat configurations; the 600+ is not listed) | Gamry Reference 620 **[V]** (Gamry: "the Reference 600+ has been replaced with the Reference 620") | Reference 3000 as the partner | bipotentiostat sync cable/kit part UNVERIFIED; ask Gamry (docs/06 S0.2); keep the 600+ for Stage 1–2 and as a third channel (L5) |
-| Interim commercial IDA | Au IDE on glass, 5 µm, with flow cell and connector | E3.1–E3.4 before the custom cell arrives | 10 chips + 1 cell | Metrohm DropSens **G-IDEAU5** chips, "Flow cell for interdigitated electrodes" (FLWCL-IDE) and IDE cable connector CACIDE — **[S]** (accessory page; finger count, channel height and pressure rating not seen) | BASi/Micrux Pt IDA MX-ED-IDA5-Pt (10 µm width/5 µm gap listed) [S] | channel geometry differs from docs/05; enter its geometry into `ma.geometry.ida_*` |
-| Custom flow IDA cell | §5.3 | primary detector | 1 body + 10 chips | custom (thin-film fab + machining; supplier UNVERIFIED) | — | **long lead: plan 8–12 weeks (UNVERIFIED)**; design/quote during Stage 2 |
+| **Default detector (Stage 3)** | commercial single-channel thin-layer flow cell, glassy carbon or Au, PEEK body, ≤ 1 µL internal volume, rated ≥ 1 MPa, external Ag/AgCl; read with the Reference 600+ alone | primary and backup detector (revised after final review, S9) | 1 (+ spare WE block) | BASi cross-flow thin-layer cell (docs/02 [S]; part number not checked) or the DropSens wall-jet cell already used in Stage 1 | Antec/other thin-layer cells (UNVERIFIED) | lead time UNVERIFIED |
+| Second potentiostat channel (**conditional**: only if G2 shows electrochemical noise is a material part of the blank SD, docs/06 §5) | Gamry Reference 620, or a second Reference 600+ if Gamry confirms a 600+ pair | IDA collector (docs/05 §4.1) | Option A: 1 (a second 600+ — Gamry's bipotentiostat page shows the 600+ in its specifications section and a video "Bipotentiostat with 2 600+ Potentiostats"; ask Gamry); Option B: 2 Reference 620 (the page lists Reference 620 + 620, 3000 + 3000 and 620 + 3000 pairs, and Interface 1010/5000 pairs; no 600+/620 mixed pair is shown) (corrected after final review, docs/08 §9 C11) | Gamry Reference 620 **[V]** (Gamry: "the Reference 600+ has been replaced with the Reference 620") | Reference 3000 as the partner | bipotentiostat sync cable/kit part UNVERIFIED; ask Gamry (docs/06 S0.2); keep the 600+ for Stage 1–2 and as a third channel (L5) |
+| Interim commercial IDA (**conditional**, as the second channel) | Au IDE on glass, 5 µm, with flow cell and connector | E3.1 before a custom cell arrives | 10 chips + 1 cell | Metrohm DropSens **G-IDEAU5** chips, "Flow cell for interdigitated electrodes" (FLWCL-IDE) and IDE cable connector CACIDE — **[S]** (accessory page; finger count, channel height and pressure rating not seen) | BASi/Micrux Pt IDA MX-ED-IDA5-Pt (10 µm width/5 µm gap listed) [S] | channel geometry differs from docs/05; enter its geometry into `ma.geometry.ida_*` |
+| Custom flow IDA cell (**conditional**, as the second channel) | §5.3 | optional upgrade of the detector | 1 body + 10 chips | custom (thin-film fab + machining; supplier UNVERIFIED) | — | long lead: plan 8–12 weeks (UNVERIFIED); design/quote during Stage 2, order only on the G2 condition |
 | Machined incubation cup | §5.1 | primary | 2 (+1 spare) | custom | — | 4–6 weeks (UNVERIFIED) |
 | Integrated bead trap | §5.2 (final variant from E2.3) | primary | 2 (+2 spare) | custom | — | 4–6 weeks (UNVERIFIED) |
 | Reference electrode and Pt counter | miniature Ag/AgCl (3 M KCl, frit) side-arm; Pt wire | IDA cell | 2 each | UNVERIFIED parts | leak-free Ag/AgCl micro reference (UNVERIFIED) | — |
@@ -166,10 +173,18 @@ price not checked. Lead times are UNVERIFIED unless stated.
   switching ≤ 0.5 s; repeatability ±0.1 mm; position feedback switch (optional) read by the DAQ; fail-safe position
   = **on** (beads held; docs/06 safe state).
 
-### 5.5 Stirred, cooled bead/conjugate reservoir (SIA source)
-* 2–5 mL glass or PP vial, sealed with a septum or capped port to the SIA selection valve; 4–8 °C (Peltier);
-  low-shear stirring or rocking that keeps 2.8 µm beads suspended (settling ≈ 7 mm/h, docs/05 model note) without
-  foaming; dark. Acceptance: dose CV ≤ 5 % over 8 h (E2.2).
+### 5.5 SIA reagent reservoirs: beads and conjugate held SEPARATELY (revised after final review, B4)
+Beads and conjugate are never stored together: holding beads in ~3.3 nM conjugate for hours would expose them to
+~1600 nM·min of conjugate over 8 h against ~11 nM·min in the cup (docs/08 B4; `results/design/shared_reservoir_cost.md`).
+* **Bead reservoir (SIA port 1):** 2–5 mL glass or PP vial, sealed with a septum or capped port to the SIA selection
+  valve; capture beads at 5×10⁷ /mL in TBS + 1 % IgG-free BSA + 0.05 % Tween (10 µL per dose = 5×10⁵ beads);
+  4–8 °C (Peltier); low-shear stirring or rocking that keeps 2.8 µm beads suspended (settling ≈ 7 mm/h, docs/05
+  model note) without foaming; dark. Acceptance: bead dose CV ≤ 5 % over 8 h (E2.2).
+* **Conjugate reservoir (SIA port 6):** 1–2 mL low-binding glass or PP vial, sealed, 4–8 °C, dark, not stirred;
+  ALP conjugate at 6.6 nM in TBS + 1 % IgG-free BSA (10 µL per dose → 0.3 nM in ~220 µL). No phosphate, no azide.
+  Maximum life set by the conjugate-only ageing arm of E1.3 (default: refill per 8-h block). Acceptance: conjugate
+  dose CV ≤ 5 % (E2.2, by ALP activity of the dispensed dose).
+* Between the two doses the SIA flushes its common channel with 50 µL wash buffer to waste (docs/05 §4.1).
 
 ### 5.6 Backup micro-bed column
 * Bed 0.5 µL: 0.5 mm ID × 2.5 mm bore in PEEK; frits/screens at both ends retaining ≥ 38 µm particles (pore
@@ -183,7 +198,7 @@ price not checked. Lead times are UNVERIFIED unless stated.
 | Item (docs/05 §7) | What was found in this session | Still open |
 |---|---|---|
 | HQDP substrate supply | Metrohm DropSens sells HQDP, DRP-HQDP-0.5G (500 mg; 1 g also listed) [V] | purity, free-HQ content, CoA, lead time, second source; p-hydroxyphenyl phosphate supplier not found |
-| Pairing a second channel with the Reference 600+ | Gamry lists bipotentiostat pairs "two Reference 620" and "Reference 620 + Reference 3000"; 600+ not listed; 600+ replaced by 620 [V/S] | Gamry's answer (docs/06 S0.2); if negative, buy two 620s |
+| Pairing a second channel with the Reference 600+ (only needed for the conditional IDA option) | Gamry's bipotentiostat page (re-read 2026-11-11) lists Interface 1010+1010, 5000+5000, 1010+5000, Reference 620+620, 3000+3000, 620+3000; it names the 600+ in the specifications section and shows a video "Bipotentiostat with 2 600+ Potentiostats"; no 600+/620 pair shown; 600+ replaced by 620 [V] (corrected after final review) | Gamry's answer (docs/06 S0.2); if negative, buy two 620s |
 | 50 µm antibody particles (backup) | Spherotech streptavidin polystyrene 38–52 µm (SVP-400) on distributor listings [D] | non-porosity; covalently oriented anti-Fc particles of this size not found |
 | Interdigitated flow cell | Commercial Au/Pt IDE chips and an IDE flow cell exist (DropSens G-IDEAU5, FLWCL-IDE; BASi/Micrux MX-ED-IDA) [S] | their channel geometry and pressure rating; a fabricator for the custom cell |
 | Valves | IDEX MXP9960-000 (10-port PEEK) and MXP9900-000 (6-port PEEK), remote RS-232/USB/contact closure [V] | serial command set; lead time |

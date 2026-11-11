@@ -32,6 +32,15 @@ can be recovered by automated means: a timed, stirred in-line chamber fed by an 
 is the primary design. Independently of decision 1, in-vial pre-mixing would also have failed on timing: the
 calibration slope changes by ±6 % per ±2 min of incubation and doubles between 35 and 120 min (section 4.3).
 
+> **Revised headline (revised after final review, docs/08 §10).** The table below is the docs/05 evaluation and is
+> kept for the record. After the review corrections — Stage-3 default detector a commercial single-channel
+> thin-layer cell (S9), chamber stirring factor sampled and the 1/0.96 transfer applied before P (S13), phosphate
+> K_i marked UNVERIFIED with bounds 0.2 µM–1 mM (S10) — the model gives (n = 2000, `results/design/final_designs.md`):
+> **primary (one-step chamber) median 3.5 [0.51–158] pg/mL, P ~0.16; after L6 + L7 1.3 [0.34–9.3], P ~0.32**;
+> sequential chamber 3.0 [0.56–26], P ~0.13; after L6 + L7 2.1 [0.49–16], P ~0.17; backup bed 3.4 [0.65–33], P 0.09;
+> after L6 + L7 2.8 [0.59–23], P 0.11. With the optional flow IDA: primary P ~0.18 (0.39 after L6 + L7). Beads and
+> conjugate are now held in separate reservoirs (B4). Step-by-step attribution: `results/design/review_changes.md`.
+
 **Predicted performance.** Monte Carlo, n = 2000. Success means LOD ≤ 1 pg/mL **and** ULOQ ≥ 1000 pg/mL.
 
 | Design | Before optimisation: nominal / median [5–95 %] / P(success) | After optimisation: nominal / median [5–95 %] / P(success) | With reagent and substrate screening (L6 + L7) | Time to result |
@@ -329,15 +338,21 @@ sequential mode on the same hardware has the same P today with a much shorter up
 **Plumbing.** All tubing PEEK; any steel only upstream of the grounded union.
 
 ```
-BSM (A1 wash buffer, A2 water/MeOH, B1 HQDP substrate, B2 spare) -> restrictor(s) -> SM-FL (100 uL loop, full loop)
+BSM (A1 wash buffer = Tris-buffered saline + 0.05 % Tween-20, NO phosphate; A2 water/MeOH; B1 HQDP substrate;
+  B2 spare) -> restrictor(s) -> SM-FL (100 uL loop, full loop)
   -> V4 (6-port, 2-pos): A = SM-FL outlet -> incubation cup ; B = SM-FL outlet -> tee -> V2
-SIA module: syringe pump (1 mL) + 8-port selection valve: bead/conjugate reservoir (stirred, 4-8 C), cup bottom
-  outlet, wash buffer, waste, line -> tee -> V2
+SIA module: syringe pump (1 mL) + 8-port selection valve: port 1 bead reservoir (beads only, stirred, 4-8 C),
+  port 2 cup bottom outlet, port 3 wash buffer (TBS + Tween, no phosphate), port 4 waste, port 5 line -> tee -> V2,
+  port 6 conjugate reservoir (conjugate only, 4-8 C, dark, not stirred), ports 7-8 spare (e.g. a second cup)
 V2 (10-port, 2-pos, reactor isolation, Scheme B): magnetic trap (1.5 mm ID PEEK, ~1.1 mm magnet zone, 2 uL)
   screwed directly into ports 2/3 (<= 5 mm stubs each side)
-V3 (6-port, 2-pos): EC IDA cell in / bypass -> optical detector (TUV, development only) -> waste
+V3 (6-port, 2-pos): EC IDA cell in / bypass -> waste. Optical detector (TUV) connected after V3 only for bead-free
+  tracer experiments (E2.1, E2.4), never in the bead path
 Magnet: actuated permanent magnet on the trap (TTL), or electromagnet
 ```
+
+(Plumbing revised after final review: A1 composition (B1), separate bead and conjugate reservoirs on their own
+selection-valve ports (B4), TUV out of the bead path (W3); docs/08 §10.)
 
 **Valve count:**
 * three external 2-position valves (V2 10-port, V3 6-port, V4 6-port);
@@ -349,16 +364,16 @@ and the Gamry. Empower owns the BSM programme and the SM-FL.
 
 | t (min) | Step | V4 / V2 / V3 | Flow, solvent | Notes |
 |---|---|---|---|---|
-| −1 → 0 | SIA doses 20 µL of bead + conjugate concentrate into the clean cup (gives 0.3 nM conjugate and 5×10⁵ beads in the final ~220 µL) | – | SIA | can overlap the previous cycle |
-| 0 → 1 | SM-FL aspirates the sample (full loop, 2× overfill: ~200 µL drawn, 100 µL injected) | A / isolate / bypass | BSM 100 µL/min A1 | Empower line L1 starts |
+| −1 → 0 | SIA doses 10 µL of bead suspension (5×10⁵ beads) from the bead reservoir, flushes the common channel with 50 µL wash buffer to waste, then doses 10 µL of 6.6 nM conjugate from the separate conjugate reservoir into the clean cup (gives 0.3 nM conjugate and 5×10⁵ beads in the final ~220 µL) (revised after final review: beads and conjugate no longer share a reservoir, B4) | – | SIA | can overlap the previous cycle |
+| 0 → 1 | SM-FL aspirates the sample (full loop, 2× overfill: ~200 µL drawn, 100 µL injected) | A / isolate / bypass | BSM 100 µL/min A1 (TBS + Tween, no phosphate; revised after final review, B1) | Empower line L1 starts |
 | 1 → 3 | Inject Start t₀: 2 loop volumes (200 µL) of sample pushed into the cup | A / isolate / bypass | 100 µL/min A1 | sample transfer ~0.96 |
-| 3 → 33 | **Incubation 30 min**, mixed by SIA aspirate/dispense (50 µL every 2 min) | B / isolate / bypass | BSM free (previous sample's readout can run here) | timed exactly; same for every sample in the queue |
-| 33 → 39.6 | Magnet on; SIA pushes the cup contents plus 2 rinses (660 µL) through the trap | – / perfuse / bypass | SIA 100 µL/min | bead capture in trap |
-| 39.6 → 40.6 | Wash | B / perfuse / bypass | BSM 100 µL/min A1 | ≥ 50 trap volumes |
+| 3 → 33 | **Incubation 30 min**, mixed by SIA aspirate/dispense (50 µL every 2 min) | B / isolate / bypass | BSM 100 µL/min A1 to waste via the shunt (a previous sample's readout can run here only with a second cup; with one cup there is no overlap — revised after final review, W10) | timed exactly; same for every sample in the queue |
+| 33 → 39.6 | Magnet on; SIA pushes the cup contents plus 2 rinses through the trap | B / perfuse / bypass | SIA 99 µL/min (653 µL) + BSM programmed to its minimum, 1 µL/min A1, which joins at the tee: trap flow 100 µL/min (revised after final review, S2: two pumps into one tee add their flows; log BSM pressure and trap flow in E2.1) | bead capture in trap |
+| 39.6 → 40.6 | Wash | B / perfuse / bypass | BSM 100 µL/min A1 (TBS + Tween, no phosphate; revised after final review, B1) | ≥ 50 trap volumes |
 | 40.6 → 41.6 | Substrate fill (A1 → B1 step) | B / perfuse / bypass | 200 µL/min B1 | |
-| 41.6 → 51.6 | **Accumulation 10 min**, trap sealed | B / isolate / detect | 10–50 µL/min B1 via shunt and cell | substrate blank current recorded |
+| 41.6 → 51.6 | **Accumulation 10 min**, trap sealed | B / isolate / detect | 10 µL/min B1 via shunt and cell, the readout flow, so the baseline windows sit at the readout flow (revised after final review, W5) | substrate blank current recorded |
 | 51.6 → 52.6 | **Readout**: sweep the trap contents through the IDA | B / perfuse / detect | 10 µL/min B1 | integrate charge on both channels |
-| 52.6 → 56.1 | Magnet off, beads to waste at 300 µL/min; cleaning injection through loop and trap; SIA rinses the cup 3× | B / perfuse / bypass | 300 µL/min A1 | |
+| 52.6 → 56.1 | Magnet off, beads to waste at 300 µL/min (V3 bypass → waste, not through the TUV); SM-FL needle wash (no injection) while the BSM flushes the loop, which stays in line after the injection, and the trap; SIA rinses the cup 3× (revised after final review, S3: the earlier "cleaning injection" was a second injection that neither the automation nor the Empower plan declared) | B / perfuse / bypass | 300 µL/min A1 | |
 
 Time to result: **56.1 min**. With a second cup (one more selection port), consecutive samples overlap and
 throughput is about 30 min per sample.
@@ -367,11 +382,14 @@ throughput is about 30 min per sample.
 is stopped on the trapped beads for 3 min, followed by a 2 min wash. Accumulation 5 min. Time to result 58.1 min.
 
 **End-to-end automation.**
-* The customer loads plain sample vials and a reagent pack (bead/conjugate reservoir, HQDP bottle).
+* The customer loads plain sample vials and a reagent pack (bead reservoir, separate conjugate reservoir, HQDP
+  bottle) (revised after final review, B4).
 * An Empower sample set holds one line per sample; its BSM programme carries the A1/B1 steps.
 * The SM-FL Inject Start signal triggers the Python cycle table (docs/02 §3.2 primary scheme), which drives the SIA
   module (serial), the valves (serial/TTL), the magnet (TTL) and the Gamry worker (ToolkitPy).
-* A watchdog parks V2 = isolate and V3 = bypass on any fault.
+* A watchdog parks V2 = isolate and V3 = bypass on any fault. Every run after a fault is flagged invalid until an
+  automatic recovery cycle (magnet off, 300 µL/min flush of the trap, cup rinse) has completed and been logged
+  (revised after final review, S12).
 * No manual step occurs between loading and result.
 * Blanks and a mid-range control are interleaved every 10 samples. That also tracks NSB drift.
 
@@ -479,6 +497,11 @@ Ordered by value of information per unit bench effort. Each item becomes a Stage
 * **Confirm primary:** factor ≤ 0.04 (nominal), linear or sub-linear in exposure.
 * **Kill the 1 pg/mL target** (all formats; go to the L4 transfer development): factor > 0.15, which is about
   blank-equivalent > 4 pg/mL on beads (model at 0.15: primary median 5.9, P 0.06; backup 9.8, P 0.02).
+* (revised after final review, B3) The two thresholds above are superseded by one rule on the model P(success) with
+  the bench value entered as `model_feedback` enters it (coupled NSB factors pinned): GO ≥ 0.30, GO-WITH-LEVER
+  0.10–0.30, STOP < 0.10 (docs/06 §4.11, `results/design/g1_decision_table.md`). Evaluated that way, factor 0.04
+  gives the primary P 0.23 (median 2.0) and 0.15 gives P 0.05 (median 5.1); the implied screen is GO ≤ 0.02,
+  STOP ≥ 0.10.
 * Also: ≥ 30 % removed by stringent washes → add the wash step (S3a). The F(ab′)₂/IgG ratio sets L3.
 
 **U2. Capture and detection antibody k_on and k_off (BLI/SPR).**
@@ -497,6 +520,8 @@ Ordered by value of information per unit bench effort. Each item becomes a Stage
 * **Confirm:** ≤ 10⁻⁵ mol/mol and ≤ 10⁻⁹ s⁻¹.
 * **Purify or change lot:** 10⁻⁵ to 10⁻⁴.
 * **Kill the substrate:** > 10⁻⁴ after purification (model at 10⁻⁴: primary median 3.8, P 0.12; at 10⁻⁵: 1.7, P 0.30). Then test AAP or p-hydroxyphenyl phosphate in the same way.
+* (revised after final review, B3) Decided by the same P rule as U1; with the revised designs the primary gives P 0.06
+  at 10⁻⁴ and 0.16 at 10⁻⁵ (`results/design/kill_thresholds.md`, n = 1000).
 
 **U4. NSB on the trap and stub materials (PEEK vs coated) and the clean-zone effect.**
 * Value: sets L1/L2; matters most for sequential mode.

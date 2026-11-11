@@ -23,6 +23,10 @@ class Devices:
     def valve_positions(self) -> dict:
         return {k: list(v.positions) for k, v in self.valves.items()}
 
+    def sia_ports(self) -> dict | None:
+        """Named SIA selection-valve ports, or None if the hardware does not declare them."""
+        return getattr(self.sia, "ports", None) or None
+
 
 def load_hw(path: str | Path) -> dict:
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
@@ -39,7 +43,7 @@ def build_sim(clock, hw: dict, fail_valve: tuple | None = None) -> Devices:
     pot = sim.SimPotentiostat(clock, baseline_A=s.get("baseline_current_A", 5e-11),
                               drift_A_per_s=s.get("drift_A_per_s", 1e-14), noise_rms_A=s.get("noise_rms_A", 4e-13),
                               collector_fraction=s.get("collector_fraction", -0.8), seed=s.get("seed", 0))
-    return Devices(valves=valves, sia=sim.SimSIA(clock), magnet=sim.SimMagnet(clock), inject=inj,
+    return Devices(valves=valves, sia=sim.SimSIA(clock, (hw.get("sia") or {}).get("ports")), magnet=sim.SimMagnet(clock), inject=inj,
                    potentiostat=pot, empower=sim.SimEmpower(inj, s.get("inject_delay_s", 0.0)))
 
 

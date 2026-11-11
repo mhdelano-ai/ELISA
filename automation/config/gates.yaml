@@ -1,25 +1,38 @@
 # Gate thresholds used by `python -m elisa_auto.analyze`. Each carries its source. "derived" = docs/06.
+#
+# G1 DECISION RULE (fixed 2026-11-11, before any Stage-1 data; final review docs/08 B3, docs/06 s4.11).
+# P = max model P(success) over the admissible designs (P-chamb, S-chamb, B-bed) with ALL Stage-1 bench values
+# entered by `python -m elisa_auto.model_feedback` (label factor with the coupled NSB factors pinned; thin-layer
+# default cell; chamber S13 corrections). The unmeasured lever L4 never counts; at G1' its measured factors do.
+# Must equal design_lib.G1_GO_MIN / G1_LEVER_MIN (tested). The per-quantity thresholds under G1 are FAST SCREENS.
+G1_rule:
+  p_go_min: 0.30          # GO: order Stage 2
+  p_lever_min: 0.10       # GO-WITH-LEVER in [0.10, 0.30): order Stage 2 and run Stage 1C (L4) in parallel
+                          # STOP below 0.10: no hardware purchase; Stage 1C in tubes, then G1' with measured L4
+  applies_at: [G1a, G1]   # G1a (week 5): U1 + U3 (+ E1.3 reservoir-ageing arm) entered; G1 (week 7-8): all Stage-1
+  source: "docs/08 B3 and s10; results/design/g1_decision_table.md"
 G1:
-  label_factor:        {confirm_max: 0.04, kill_min: 0.15, source: "docs/05 s5 U1"}
+  label_factor:        {confirm_max: 0.02, stop_min: 0.10, source: "screen from results/design/g1_decision_table.md (other values at priors; the rule is G1_rule). Was 0.04 / 0.15 (docs/05 s5 U1), superseded by docs/08 B3"}
   nsb_linearity_beta:  {confirm_max: 1.1, source: "derived (docs/06 E1.3): not super-linear"}
   wash_removed_frac:   {add_wash_min: 0.30, source: "docs/05 s5 U1 (S3a)"}
   free_hq_mol_per_mol: {confirm_max: 1.0e-5, kill_min: 1.0e-4, source: "docs/05 s5 U3"}
   hydrolysis_per_s:    {confirm_max: 1.0e-9, source: "docs/05 s5 U3"}
-  detection_t_half_min: {one_step_min: 60, sequential_min: 10, source: "docs/05 s5 U2"}
+  detection_t_half_min: {one_step_min: 30, sequential_min: 10, lod_neutral_max: 45, source: "docs/08 S4 and results/design/mode_choice.md: modes cross at ~25 min; decided on the E1.5 on-bead t1/2 (BLI 1:1 k_off is ill-defined for the polyclonal pair). Was 60 min (docs/05 s5 U2)"}
   capture_t_half_min:  {min: 60, source: "docs/05 s5 U2"}
   kon_M_s:             {min: 3.0e+5, source: "docs/05 s4.1 / s5 U2"}
   detection_on_capture_ratio: {confirm_max: 1.2, reject_min: 3.0, source: "docs/05 s4.1"}
-  blank_equivalent_pgml: {confirm_max: 1.0, kill_min: 4.0, source: "docs/05 s0 and s5 U1"}
+  blank_equivalent_pgml: {consistency_factor: 2.0, source: "consistency check only (docs/08 S7): E1.8 B within x2 of N_nsb(E1.3)/slope; no go/stop threshold"}
   ki_uM:               {confirm_min: 2.0, source: "docs/05 s5 U6"}
   smfl_recovery:       {confirm_min: 0.8, stop_max: 0.6, source: "derived (docs/06 E1.10)"}
+  injector_carryover:  {confirm_max: 1.0e-4, source: "docs/08 S6; E1.10 with a 10 ng/mL challenge"}
 G2:
   bead_dose_cv:        {confirm_max: 0.05, backup_min: 0.10, source: "docs/05 s5 U5"}
   trap_retention:      {confirm_min: 0.90, backup_max: 0.70, source: "docs/05 s5 U5"}
   wall_to_bead_ratio:  {confirm_max: 0.10, coat_min: 0.30, source: "docs/05 s5 U4"}
   lod_pgml:            {go_max: 1.5, stop_min: 3.0, source: "derived (docs/06 s5 G2)"}
-  carryover:           {confirm_max: 1.0e-3, source: "docs/05 s5 U7"}
+  carryover:           {confirm_max: 1.0e-4, source: "docs/08 S6: 1e-4 for the analyte path (1e-3 after 1000 pg/mL would allow the LOD itself in the next sample); tested with a 10 ng/mL challenge. Was 1e-3 (docs/05 s5 U7)"}
 G3:
   blank_cv:            {confirm_max: 0.10, l5_min: 0.15, source: "docs/05 s5 U7"}
   lod_pgml:            {confirm_max: 1.0, source: "docs/00 / docs/05 s5 U7"}
-  carryover:           {confirm_max: 1.0e-3, source: "docs/05 s5 U7"}
+  carryover:           {confirm_max: 1.0e-4, source: "docs/08 S6 (10 ng/mL challenge, docs/06 s7.6); was 1e-3 (docs/05 s5 U7)"}
   time_to_result_min:  {max: 60, source: "docs/00"}

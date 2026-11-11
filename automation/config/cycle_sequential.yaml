@@ -4,6 +4,9 @@
 # The conjugate injection is a second Empower line (L2) -> a second Inject Start with its own line code
 # (docs/02 s3.2 point 2). The step times below are this task's breakdown of docs/05's totals.
 # Same post-baseline deviation as cycle_primary.yaml (cleaning 3.5 -> 3.0 min + 0.5 min post-baseline).
+# Revised after the final review (docs/08 s10): same changes as cycle_primary.yaml (beads from the bead-only
+# reservoir, BSM and SM-FL actions declared and checked, trap flow 99 + 1 uL/min at the tee, needle wash instead of a
+# cleaning injection, accumulation at the readout flow, single-channel cell by default).
 name: fallback_sequential
 mode: sequential
 source: "docs/05_design_decision.md section 4.1 (sequential mode) / section 4.0 route S"
@@ -11,6 +14,8 @@ time_limit_min: 60
 injects:
   - {name: sample, at_min: 1.0, line_code: 1}
   - {name: conjugate, at_min: 41.6, line_code: 2}
+constraints:
+  max_trap_loading_flow_uL_min: 100
 watchdog:
   inject_tolerance_s: 30
   first_inject_max_wait_s: 3600
@@ -23,7 +28,7 @@ safe_state:
 potentiostat:
   channels:
     1: {role: generator, potential_V: 0.35}
-    2: {role: collector, potential_V: -0.15}   # UNVERIFIED
+    # 2: {role: collector, potential_V: -0.15}   # optional flow IDA only (docs/08 S9); UNVERIFIED potential
   sample_period_s: 0.1
 signal:
   pre_baseline: [53.1, 53.6]
@@ -31,30 +36,39 @@ signal:
   post_baseline: [54.6, 55.1]
 steps:
   - {name: dose_beads, start_min: -1.0, end_min: 0.0,
-     sia: {action: dispense, from: reservoir, to: cup, volume_uL: 20}, note: "beads only (no conjugate)"}
-  - {name: aspirate_sample, start_min: 0.0, end_min: 1.0, valves: {V4: A, V2: isolate, V3: bypass},
-     empower: "L1: SM-FL full-loop aspiration"}
-  - {name: transfer_sample_to_cup, start_min: 1.0, end_min: 3.0, valves: {V4: A, V2: isolate, V3: bypass},
-     empower: "L1 Inject Start t0; 200 uL into the cup"}
-  - {name: incubation, start_min: 3.0, end_min: 33.0, role: incubation, valves: {V4: B, V2: isolate, V3: bypass},
+     sia: {action: dispense, from: beads, to: cup, volume_uL: 20}, note: "beads only (no conjugate)"}
+  - {name: aspirate_sample, start_min: 0.0, end_min: 1.0, smfl: aspirate, valves: {V4: A, V2: isolate, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1}, empower: "L1: SM-FL full-loop aspiration"}
+  - {name: transfer_sample_to_cup, start_min: 1.0, end_min: 3.0, smfl: inject, valves: {V4: A, V2: isolate, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1}, empower: "L1 Inject Start t0; 200 uL into the cup"}
+  - {name: incubation, start_min: 3.0, end_min: 33.0, role: incubation, smfl: idle,
+     valves: {V4: B, V2: isolate, V3: bypass}, bsm: {flow_uL_min: 100, solvent: A1},
      sia: {action: mix, port: cup, volume_uL: 50, every_min: 2.0}}
-  - {name: load_trap, start_min: 33.0, end_min: 39.6, magnet: "on", valves: {V2: perfuse, V3: bypass},
-     sia: {action: empty_cup_through_trap, volume_uL: 660, flow_uL_min: 100}}
-  - {name: wash, start_min: 39.6, end_min: 40.6, valves: {V4: B, V2: perfuse, V3: bypass}}
-  - {name: aspirate_conjugate, start_min: 40.6, end_min: 41.6, valves: {V4: B, V2: perfuse, V3: bypass},
-     empower: "L2: SM-FL aspirates 20 uL of 3 nM ALP conjugate from the shared 4-8 C vial"}
-  - {name: conjugate_fill, start_min: 41.6, end_min: 42.6, valves: {V4: B, V2: perfuse, V3: bypass},
-     empower: "L2 Inject Start; conjugate plug onto the trapped beads"}
-  - {name: conjugate_stop, start_min: 42.6, end_min: 45.6, role: label_incubation,
-     valves: {V4: B, V2: isolate, V3: bypass}, note: "3 min stopped-flow labelling; loop flushed to waste via shunt"}
-  - {name: wash_after_conjugate, start_min: 45.6, end_min: 47.6, valves: {V4: B, V2: perfuse, V3: bypass}}
-  - {name: substrate_fill, start_min: 47.6, end_min: 48.6, valves: {V4: B, V2: perfuse, V3: bypass},
-     potentiostat: start_acquisition}
-  - {name: accumulation, start_min: 48.6, end_min: 53.6, role: accumulation,
-     valves: {V4: B, V2: isolate, V3: detect}, potentiostat: mark}
-  - {name: readout, start_min: 53.6, end_min: 54.6, role: readout,
-     valves: {V4: B, V2: perfuse, V3: detect}, potentiostat: mark}
-  - {name: post_baseline, start_min: 54.6, end_min: 55.1, role: post_baseline,
-     valves: {V4: B, V2: isolate, V3: detect}, potentiostat: mark}
-  - {name: clean, start_min: 55.1, end_min: 58.1, magnet: "off", valves: {V4: B, V2: perfuse, V3: bypass},
-     potentiostat: stop_acquisition, sia: {action: rinse_cup, repeats: 3}}
+  - {name: load_trap, start_min: 33.0, end_min: 39.6, magnet: "on", smfl: idle,
+     valves: {V4: B, V2: perfuse, V3: bypass}, bsm: {flow_uL_min: 1, solvent: A1},
+     sia: {action: empty_cup_through_trap, from: cup, to: to_trap, volume_uL: 653, flow_uL_min: 99},
+     empower: "BSM 1 uL/min A1 (minimum) for 33.0-39.6 min; trap flow 99 + 1 = 100 uL/min (docs/08 S2)"}
+  - {name: wash, start_min: 39.6, end_min: 40.6, smfl: idle, valves: {V4: B, V2: perfuse, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1}}
+  - {name: aspirate_conjugate, start_min: 40.6, end_min: 41.6, smfl: aspirate, valves: {V4: B, V2: perfuse, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1},
+     empower: "L2: SM-FL aspirates 20 uL of 3 nM ALP conjugate from the 4-8 C conjugate vial (no beads in it)"}
+  - {name: conjugate_fill, start_min: 41.6, end_min: 42.6, smfl: inject, valves: {V4: B, V2: perfuse, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1}, empower: "L2 Inject Start; conjugate plug onto the trapped beads"}
+  - {name: conjugate_stop, start_min: 42.6, end_min: 45.6, role: label_incubation, smfl: idle,
+     valves: {V4: B, V2: isolate, V3: bypass}, bsm: {flow_uL_min: 100, solvent: A1},
+     note: "3 min stopped-flow labelling; loop flushed to waste via shunt"}
+  - {name: wash_after_conjugate, start_min: 45.6, end_min: 47.6, smfl: idle, valves: {V4: B, V2: perfuse, V3: bypass},
+     bsm: {flow_uL_min: 100, solvent: A1}}
+  - {name: substrate_fill, start_min: 47.6, end_min: 48.6, smfl: idle, valves: {V4: B, V2: perfuse, V3: bypass},
+     bsm: {flow_uL_min: 200, solvent: B1}, potentiostat: start_acquisition}
+  - {name: accumulation, start_min: 48.6, end_min: 53.6, role: accumulation, smfl: idle,
+     valves: {V4: B, V2: isolate, V3: detect}, bsm: {flow_uL_min: 10, solvent: B1}, potentiostat: mark}
+  - {name: readout, start_min: 53.6, end_min: 54.6, role: readout, smfl: idle,
+     valves: {V4: B, V2: perfuse, V3: detect}, bsm: {flow_uL_min: 10, solvent: B1}, potentiostat: mark}
+  - {name: post_baseline, start_min: 54.6, end_min: 55.1, role: post_baseline, smfl: idle,
+     valves: {V4: B, V2: isolate, V3: detect}, bsm: {flow_uL_min: 10, solvent: B1}, potentiostat: mark}
+  - {name: clean, start_min: 55.1, end_min: 58.1, magnet: "off", smfl: needle_wash,
+     valves: {V4: B, V2: perfuse, V3: bypass}, bsm: {flow_uL_min: 300, solvent: A1},
+     potentiostat: stop_acquisition, sia: {action: rinse_cup, port: cup, repeats: 3},
+     empower: "300 uL/min A1 through loop and trap; SM-FL needle wash, no injection (docs/08 S3)"}

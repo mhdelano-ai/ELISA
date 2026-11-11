@@ -13,7 +13,11 @@ from pathlib import Path
 import yaml
 
 VALID_POT_ACTIONS = {None, "start_acquisition", "mark", "stop_acquisition"}
-VALID_SIA_ACTIONS = {"dispense", "mix", "empty_cup_through_trap", "rinse_cup", "aspirate"}
+VALID_SIA_ACTIONS = {"dispense", "mix", "empty_cup_through_trap", "rinse_cup", "aspirate", "flush_channel",
+                     "flush_trap"}
+VALID_SMFL = {None, "aspirate", "inject", "needle_wash", "idle"}
+# SIA actions that send liquid through the trap via the tee upstream of V2 (docs/05 s4.1 plumbing)
+SIA_THROUGH_TRAP = {"empty_cup_through_trap", "flush_trap"}
 
 
 class CycleError(ValueError):
@@ -32,6 +36,9 @@ class Step:
     role: str | None = None
     empower: str | None = None
     note: str | None = None
+    # structured Empower-side facts, checked by validate() (added after the final review, docs/08 S2, S3):
+    bsm: dict | None = None        # {flow_uL_min: x, solvent: A1|B1|...}: what the BSM programme does in this step
+    smfl: str | None = None        # aspirate | inject | needle_wash | idle: what the SM-FL does in this step
 
     @property
     def duration_min(self) -> float:
@@ -57,6 +64,7 @@ class Cycle:
     safe_state: dict
     potentiostat: dict
     signal: dict
+    constraints: dict = field(default_factory=dict)
     path: str | None = None
     sha256: str | None = None
 
@@ -70,14 +78,20 @@ class Cycle:
         return self.steps[-1].end_min
 
     @property
-    def first_inject_min(self) -> float:
-        return self.injects[0].at_min
+    def first_inject_min(self) -> float | None:
+        return self.injects[0].at_min if self.injects else None
 
-    def time_to_result_min(self) -> float:
+    @property
+    def is_recovery(self) -> bool:
+        return self.mode == "recovery"
+
+    def time_to_result_min(self) -> float | None:
         """Injection (first Inject Start) to result (end of readout window + post baseline = signal available).
 
         docs/05 quotes 'time to result' as the cycle end (56.1 min, counted from the aspiration start, which is
-        conservative by the 1 min aspiration); both are reported by ``timing_summary``."""
+        conservative by the 1 min aspiration); both are reported by ``timing_summary``. None for a recovery cycle."""
+        if not self.signal or not self.injects:
+            return None
         return self.signal_end_min() - self.first_inject_min
 
     def signal_end_min(self) -> float:
@@ -97,7 +111,8 @@ class Cycle:
             "cycle_end_min": self.end_min,
             "first_inject_min": self.first_inject_min,
             "cycle_duration_from_aspiration_min": round(self.end_min - 0.0, 6),
-            "inject_to_signal_min": round(self.time_to_result_min(), 6),
+            "inject_to_signal_min": (None if self.time_to_result_min() is None
+                                     else round(self.time_to_result_min(), 6)),
             "time_limit_min": self.time_limit_min,
         }
 
@@ -129,6 +144,7 @@ def load_cycle(path: str | Path) -> Cycle:
         safe_state=dict(raw.get("safe_state", {})),
         potentiostat=dict(raw.get("potentiostat", {})),
         signal={k: tuple(float(x) for x in v) for k, v in (raw.get("signal") or {}).items()},
+        constraints=dict(raw.get("constraints") or {}),
         path=str(path), sha256=hashlib.sha256(raw_text.encode()).hexdigest(),
     )
     if isinstance(cyc.safe_state.get("magnet"), bool):
@@ -137,10 +153,45 @@ def load_cycle(path: str | Path) -> Cycle:
     return cyc
 
 
-def validate(c: Cycle, valve_positions: dict | None = None) -> None:
-    """Raise CycleError on any inconsistency. valve_positions: {valve: [allowed positions]} (optional)."""
+def effective_valves(c: Cycle, initial: dict | None = None) -> list[dict]:
+    """Valve state during each step (a step's valves dict changes only the valves it names)."""
+    state, out = dict(initial or {}), []
+    for s in c.steps:
+        state.update(s.valves)
+        out.append(dict(state))
+    return out
+
+
+def trap_flow_uL_min(step: Step, valves: dict) -> float | None:
+    """Flow through the trap while the SIA pushes liquid to it through the tee (docs/05 s4.1 plumbing): the SIA
+    flow plus the BSM flow, which reaches the same tee whenever V4 is in position B. None if no SIA push."""
+    if not step.sia or step.sia.get("action") not in SIA_THROUGH_TRAP:
+        return None
+    q = float(step.sia.get("flow_uL_min", 0.0))
+    if valves.get("V4") == "B" and step.bsm is not None:
+        q += float(step.bsm.get("flow_uL_min", 0.0))
+    return q
+
+
+def sia_ports_used(c: Cycle) -> set:
+    used = set()
+    for s in c.steps:
+        if s.sia:
+            for k in ("from", "to", "port"):
+                if s.sia.get(k):
+                    used.add(s.sia[k])
+    return used
+
+
+def validate(c: Cycle, valve_positions: dict | None = None, sia_ports: dict | list | None = None) -> None:
+    """Raise CycleError on any inconsistency. valve_positions: {valve: [allowed positions]}; sia_ports: names of
+    the SIA selection-valve ports of the hardware (optional; checked when given)."""
     if not c.steps:
         raise CycleError("no steps")
+    if not c.injects and not c.is_recovery:
+        raise CycleError("only a recovery cycle may have no inject")
+    if c.is_recovery and c.signal:
+        raise CycleError("a recovery cycle has no signal windows")
     prev_end = None
     names = set()
     for s in c.steps:
@@ -158,12 +209,40 @@ def validate(c: Cycle, valve_positions: dict | None = None) -> None:
             raise CycleError(f"step {s.name}: unknown SIA action {s.sia.get('action')}")
         if s.magnet not in (None, "on", "off"):
             raise CycleError(f"step {s.name}: magnet must be on/off")
+        if s.smfl not in VALID_SMFL:
+            raise CycleError(f"step {s.name}: unknown SM-FL action {s.smfl}")
+        if s.bsm is not None and float(s.bsm.get("flow_uL_min", -1)) < 0:
+            raise CycleError(f"step {s.name}: bsm needs flow_uL_min >= 0")
         if valve_positions:
             for v, pos in s.valves.items():
                 if v not in valve_positions:
                     raise CycleError(f"step {s.name}: unknown valve {v}")
                 if pos not in valve_positions[v]:
                     raise CycleError(f"step {s.name}: valve {v} has no position {pos!r}")
+    # S3: every SM-FL injection must be a declared inject (the sequencer faults on an undeclared Inject Start)
+    inj_steps = [s for s in c.steps if s.smfl == "inject"]
+    for s in inj_steps:
+        if not any(abs(i.at_min - s.start_min) < 1e-9 for i in c.injects):
+            raise CycleError(f"step {s.name}: SM-FL injection at {s.start_min} min is not a declared inject")
+    if inj_steps or any(s.smfl for s in c.steps):
+        for i in c.injects:
+            if not any(abs(i.at_min - s.start_min) < 1e-9 for s in inj_steps):
+                raise CycleError(f"inject {i.name}: no step declares the SM-FL injection (smfl: inject)")
+    # S2: flow through the trap where two pumps meet at the tee
+    qmax = c.constraints.get("max_trap_loading_flow_uL_min")
+    for s, v in zip(c.steps, effective_valves(c, c.safe_state.get("valves"))):
+        q = trap_flow_uL_min(s, v)
+        if q is None:
+            continue
+        if v.get("V4") == "B" and s.bsm is None:
+            raise CycleError(f"step {s.name}: SIA pushes through the tee while V4 = B, but the BSM flow is not "
+                             "declared (bsm: {flow_uL_min: ...})")
+        if qmax is not None and q > float(qmax) + 1e-9:
+            raise CycleError(f"step {s.name}: trap flow {q:g} uL/min (SIA + BSM at the tee) > {qmax} uL/min")
+    if sia_ports is not None:
+        missing = sia_ports_used(c) - set(sia_ports)
+        if missing:
+            raise CycleError(f"SIA ports {sorted(missing)} used by the cycle are not defined in the hardware")
     ats = [i.at_min for i in c.injects]
     if ats != sorted(ats):
         raise CycleError("injects must be in time order")
@@ -189,7 +268,8 @@ def validate(c: Cycle, valve_positions: dict | None = None) -> None:
                 raise CycleError(f"signal window {k} not inside the acquisition ({t_acq}-{t_stop} min)")
     if c.end_min - 0.0 > c.time_limit_min + 1e-9:
         raise CycleError(f"cycle ends at {c.end_min} min > limit {c.time_limit_min} min")
-    if c.time_to_result_min() > c.time_limit_min + 1e-9:
+    ttr = c.time_to_result_min()
+    if ttr is not None and ttr > c.time_limit_min + 1e-9:
         raise CycleError("time to result exceeds the limit")
     for key in ("valves",):
         if key not in c.safe_state:

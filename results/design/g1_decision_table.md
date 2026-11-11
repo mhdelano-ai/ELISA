@@ -2,7 +2,7 @@
 
 Table 1: n = 2000, seed 20261111; Table 2: n = 1000. The label factor is entered as a bench value would be (`design_lib.apply_bench_values`, the code `elisa_auto.model_feedback` uses): coupled NSB factors pinned at nominal (4e-11 m/s, bead surface factor 1); every other parameter keeps its prior. Designs: `final_designs.designs()` default (thin-layer cell; chamber stirring factor sampled; 1/0.96 before P). L4 = immune-complex transfer, label factor x 0.1/0.7 (UNVERIFIED lever magnitude). Monte Carlo sampling noise on P: about +/-0.02 (95 %) at n = 2000, +/-0.03 at n = 1000.
 
-Rule (design_lib.g1_decision, fixed before data): GO if max P over admissible designs >= 0.3; GO-WITH-LEVER if below that but max P including L4 >= 0.1; STOP otherwise.
+Rule (design_lib.g1_decision, fixed before data): P = max P(success) over the admissible designs with all Stage-1 values entered. GO if P >= 0.3; GO-WITH-LEVER (Stage 2 + Stage 1C in parallel) if 0.1 <= P < 0.3; STOP (no hardware; Stage 1C in tubes, then G1') if P < 0.1. The L4 columns use the UNVERIFIED modelled lever and do NOT enter the rule; at G1' the measured L4 factors are entered instead.
 
 ## Table 1 - P(success) and median LOD (pg/mL) against the measured label factor
 
@@ -16,13 +16,13 @@ Rule (design_lib.g1_decision, fixed before data): GO if max P over admissible de
 | 0.05 | 1.2 | 2.3 / 0.19 | 1.2 / 0.39 | 2.2 / 0.14 | 1.1 / 0.38 | 3.2 / 0.07 | 1.3 / 0.28 | GO-WITH-LEVER |
 | 0.06 | 1.4 | 2.5 / 0.17 | 1.3 / 0.38 | 2.4 / 0.12 | 1.2 / 0.37 | 3.6 / 0.05 | 1.3 / 0.27 | GO-WITH-LEVER |
 | 0.08 | 1.9 | 3.1 / 0.12 | 1.3 / 0.37 | 3 / 0.07 | 1.2 / 0.35 | 4.5 / 0.03 | 1.4 / 0.24 | GO-WITH-LEVER |
-| 0.1 | 2.4 | 3.6 / 0.10 | 1.4 / 0.35 | 3.5 / 0.04 | 1.2 / 0.33 | 5.4 / 0.02 | 1.5 / 0.21 | GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1') |
-| 0.12 | 2.9 | 4.2 / 0.08 | 1.4 / 0.33 | 4.1 / 0.03 | 1.3 / 0.30 | 6.4 / 0.02 | 1.7 / 0.18 | GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1') |
-| 0.15 | 3.6 | 5.1 / 0.05 | 1.5 / 0.31 | 4.9 / 0.02 | 1.4 / 0.27 | 7.8 / 0.01 | 1.9 / 0.15 | GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1') |
-| 0.2 | 4.8 | 6.5 / 0.03 | 1.7 / 0.28 | 6.2 / 0.01 | 1.6 / 0.23 | 10 / 0.00 | 2.2 / 0.12 | GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1') |
-| 0.3 | 7.2 | 9.2 / 0.01 | 2.1 / 0.22 | 8.9 / 0.00 | 2 / 0.17 | 15 / 0.00 | 2.8 / 0.08 | GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1') |
+| 0.1 | 2.4 | 3.6 / 0.10 | 1.4 / 0.35 | 3.5 / 0.04 | 1.2 / 0.33 | 5.4 / 0.02 | 1.5 / 0.21 | STOP |
+| 0.12 | 2.9 | 4.2 / 0.08 | 1.4 / 0.33 | 4.1 / 0.03 | 1.3 / 0.30 | 6.4 / 0.02 | 1.7 / 0.18 | STOP |
+| 0.15 | 3.6 | 5.1 / 0.05 | 1.5 / 0.31 | 4.9 / 0.02 | 1.4 / 0.27 | 7.8 / 0.01 | 1.9 / 0.15 | STOP |
+| 0.2 | 4.8 | 6.5 / 0.03 | 1.7 / 0.28 | 6.2 / 0.01 | 1.6 / 0.23 | 10 / 0.00 | 2.2 / 0.12 | STOP |
+| 0.3 | 7.2 | 9.2 / 0.01 | 2.1 / 0.22 | 8.9 / 0.00 | 2 / 0.17 | 15 / 0.00 | 2.8 / 0.08 | STOP |
 
-Label-factor screen implied by Table 1 (other Stage-1 values at their priors): GO up to 0.02; STOP from none in the grid.
+Label-factor screen implied by Table 1 (other Stage-1 values at their priors; fast screen only, the rule is on P): GO up to 0.02; STOP from 0.1.
 
 ## Table 2 - G1a (U1 + U3): P(success) of P-chamb / S-chamb against label factor and free HQ
 

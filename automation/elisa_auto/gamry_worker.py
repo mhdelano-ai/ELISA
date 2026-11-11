@@ -104,8 +104,10 @@ class ToolkitPyBackend(object):
 
     Everything here is TODO because the ToolkitPy API was not verified in this session:
       * open the instrument(s): channel 1 = Reference 600+ (generator), channel 2 = second instrument (collector).
-        Pairing a 600+ with a Reference 620 as a synchronised bipotentiostat is UNVERIFIED (Gamry lists 620+620 and
-        620+3000 pairs; docs/07 s3). Whether one ToolkitPy process can drive two instruments is UNVERIFIED (S0.2).
+        A second channel is needed only for the optional IDA (docs/08 S9; default is one channel). Gamry's
+        bipotentiostat page lists Reference 620+620, 3000+3000, 620+3000 (and Interface pairs) and shows a video of
+        two 600+ units; a 600+/620 pair is not shown (docs/08 s9 C11). Whether one ToolkitPy process can drive two
+        instruments is UNVERIFIED (S0.2).
       * cell on, set the DC potential of each channel (vs Ag/AgCl), choose a fixed current range (60 pA-6 nA region
         expected; autoranging would add steps to the integrated charge), set the sampling mode (Noise Reject or
         Surface averaging over whole mains cycles, docs/02 s4.4).

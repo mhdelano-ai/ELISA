@@ -9,6 +9,9 @@ edge (anchor), so Empower's run-to-run timing drift does not accumulate. Watchdo
   * on a fault every safe-state item is attempted independently (V2 isolate, V3 bypass, V4 B, SIA stop, magnet
     on, cell off), the fault is logged, and the run ends with status 'fault'. Python never starts or stops Empower;
     the BSM keeps flowing to waste through the shunt and the bypass.
+Fault latch (docs/08 S12, latch.py): when a FaultLatch is given, a fault sets it; while it is set every run is
+still executed but marked valid = False (metadata, result, run log); a recovery cycle (mode 'recovery') that
+completes with status 'ok' clears it.
 Limitation (stated): if the PC or this process dies, valves keep their last position. A hardware watchdog
 (e.g. a DAQ output heartbeat that drops the cell relay) is a Stage-2 TODO (docs/06 E2.1).
 """
@@ -46,6 +49,8 @@ class RunResult:
     t0_clock: float | None = None
     anchors: dict = field(default_factory=dict)
     time_to_result_min: float | None = None
+    valid: bool = True
+    invalid_reason: str | None = None
 
 
 def build_actions(c: Cycle) -> list[Action]:
@@ -74,8 +79,9 @@ def build_actions(c: Cycle) -> list[Action]:
 
 class Sequencer:
     def __init__(self, cycle: Cycle, devices, clock, run_dir, poll_s: float = 0.1, metadata: dict | None = None,
-                 watchdog_overrides: dict | None = None):
+                 watchdog_overrides: dict | None = None, latch=None):
         self.c, self.dev, self.clock = cycle, devices, clock
+        self.latch = latch
         self.poll_s = poll_s
         self.wd = {**cycle.watchdog, **(watchdog_overrides or {})}
         self.log = RunLog(run_dir, clock)
@@ -220,6 +226,12 @@ class Sequencer:
         sample = dict(sample or {})
         c = self.c
         res = RunResult(status="ok", run_dir=str(self.log.dir))
+        run_id = self.log.dir.name
+        if self.latch is not None and self.latch.is_set and not c.is_recovery:
+            st = self.latch.state()
+            res.valid = False
+            res.invalid_reason = (f"fault latch set by run {st.get('since_run')} ({st.get('reason')}); "
+                                  "no recovery cycle completed since")
         meta = {"sample": sample, "cycle": {"name": c.name, "mode": c.mode, "file": c.path, "sha256": c.sha256,
                                            "source": c.source},
                 "devices": {"empower": self.dev.empower.describe(),
@@ -228,9 +240,11 @@ class Sequencer:
                 "clock": "simulated" if self.clock.simulated else "monotonic",
                 "host": platform.node(), "python": platform.python_version(), **self.metadata}
         try:
-            validate(c, self.dev.valve_positions())
+            validate(c, self.dev.valve_positions(), self.dev.sia_ports())
             self._base = self.clock.now() - c.start_min * 60.0
             self.log.event("arm", c.start_min, sample=sample, cycle=c.name)
+            if not res.valid:
+                self.log.event("invalid_run", c.start_min, reason=res.invalid_reason)
             self.dev.potentiostat.configure(c.potentiostat.get("channels", {}),
                                             c.potentiostat.get("sample_period_s", 0.1))
             warn = float(self.wd.get("step_overrun_warn_s", 2))
@@ -247,7 +261,7 @@ class Sequencer:
                     self.log.event("warning", a.cycle_min, message=f"action {a.kind} {late:.1f} s late")
                 self._do(a)
             res.anchors = dict(self.anchor_clock)
-            res.t0_clock = self.anchor_clock.get(c.injects[0].name)
+            res.t0_clock = self.anchor_clock.get(c.injects[0].name) if c.injects else None
             if c.signal and self.trace is not None:
                 win = {k: (self.clock_of(a), self.clock_of(b)) for k, (a, b) in c.signal.items()}
                 sig = signal_proc.run_signal(self.trace, win)
@@ -256,16 +270,26 @@ class Sequencer:
                 res.time_to_result_min = (t_res - res.t0_clock) / 60.0
                 self.log.write_json("result.json", {"S_C": sig["S"], "signal": sig, "sample": sample,
                                                     "time_to_result_min": res.time_to_result_min,
-                                                    "windows_clock_s": win})
+                                                    "windows_clock_s": win, "valid": res.valid,
+                                                    "invalid_reason": res.invalid_reason})
         except (SequenceFault, DeviceError, NotImplementedError, Exception) as e:  # noqa: B014 - all faults
             res.status, res.fault = "fault", f"{type(e).__name__}: {e}"
             self.log.event("fault", None, error=res.fault)
             self.safe_state(res.fault)
+            if self.latch is not None:
+                self.latch.set(run_id, res.fault)
+                self.log.event("latch_set", None, reason=res.fault)
         finally:
+            if res.status == "ok" and c.is_recovery and self.latch is not None and self.latch.is_set:
+                self.latch.clear(run_id)
+                self.log.event("latch_cleared", c.end_min, recovery_run=run_id)
             if self.trace is not None:
                 meta["trace_sha256"] = self.log.write_trace(self.trace)
                 meta["trace_marks"] = self.trace.get("marks")
             meta["status"], meta["fault"] = res.status, res.fault
+            meta["valid"], meta["invalid_reason"] = res.valid, res.invalid_reason
+            if self.latch is not None:
+                meta["fault_latch"] = self.latch.state()
             meta["anchors_clock_s"] = dict(self.anchor_clock)
             self.log.write_json("metadata.json", meta)
             self.log.close()
