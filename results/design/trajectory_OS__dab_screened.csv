@@ -1,0 +1,10 @@
+sweep,variable,value,leff_median,p_success,note
+0,(start),,inf,0,nominal ULOQ 607 < 1000 pg/mL
+1,chem.surfaces.bead_number_per_100uL_digital_ELISA,2e+05,1.969,0.2367,
+1,ma.timing.in_vial_incubation,38.5,1.552,0.2933,
+1,chem.antibodies.conc_detection_antibody_typical,5e-10,1.493,0.3233,
+1,ma.geometry.magnetic_trap_tube_inner_diameter,1.5,1.397,0.3467,
+1,ma.readout.sweep_flow,10,1.285,0.3733,
+1,hw.timing.readout_time,1,1.258,0.3767,
+2,ma.geometry.reactor_connection_length,0.01,1.007,0.4967,
+2,chem.surfaces.bead_number_per_100uL_digital_ELISA,3e+05,0.9793,0.5067,

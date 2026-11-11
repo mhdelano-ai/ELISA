@@ -1,0 +1,15 @@
+sweep,variable,value,leff_median,p_success,note
+0,(start),,inf,0,time to result 60.5 min > 60
+1,ma.timing.in_vial_incubation,29.5,13.44,0.02667,
+1,chem.antibodies.conc_detection_antibody_typical,3e-09,11.75,0.04,
+1,ma.geometry.magnetic_trap_volume,0.5,10.02,0.04667,
+1,ma.geometry.magnetic_trap_tube_inner_diameter,0.75,9.718,0.04667,
+1,hw.timing.accumulation_time,5,9.513,0.05,
+1,ma.readout.sweep_flow,10,9.137,0.05333,
+1,hw.timing.readout_time,1,9.011,0.06,
+2,ma.geometry.reactor_connection_length,0.01,2.376,0.2033,
+2,chem.surfaces.bead_number_per_100uL_digital_ELISA,1e+06,1.787,0.2433,
+2,ma.timing.in_vial_incubation,35,1.676,0.27,
+2,hw.timing.conjugate_stopped_flow_incubation,3,1.642,0.28,
+2,hw.smfl.loop_flush_volumes_for_transfer,4,1.619,0.28,
+3,chem.surfaces.bead_number_per_100uL_digital_ELISA,1.5e+06,1.493,0.3033,

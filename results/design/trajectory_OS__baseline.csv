@@ -1,0 +1,12 @@
+sweep,variable,value,leff_median,p_success,note
+0,(start),,2.3,0.1833,
+1,ma.geometry.reactor_connection_length,0.01,1.805,0.2367,
+1,chem.antibodies.conc_detection_antibody_typical,7e-10,1.773,0.2567,
+1,ma.geometry.magnetic_trap_tube_inner_diameter,1.5,1.636,0.2633,
+1,hw.smfl.loop_flush_volumes_for_transfer,2,1.581,0.2633,
+1,hw.timing.accumulation_time,15,1.538,0.2633,
+1,ma.readout.sweep_flow,10,1.504,0.2733,
+1,hw.timing.readout_time,1,1.461,0.28,
+2,chem.antibodies.conc_detection_antibody_typical,5e-10,1.413,0.2967,
+3,ma.timing.in_vial_incubation,35,1.383,0.3,
+3,chem.antibodies.conc_detection_antibody_typical,3e-10,1.349,0.3233,

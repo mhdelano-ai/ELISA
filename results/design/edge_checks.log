@@ -1,0 +1,32 @@
+| OS | isolated tubing removed completely | isolated connection length 0.0 m < 0.01 m | 0.32 | 1.4 | 0.38 | 0.35 | 59.5 |
+| OS | isolated tubing 5 mm | isolated connection length 0.005 m < 0.01 m | 0.32 | 1.4 | 0.38 | 0.34 | 59.5 |
+| OS | bead loading 150 uL/min (trap efficiency held constant!) | bead loading flow 150 uL/min > 100.0 (trap efficiency unverified above) | 0.3 | 1.4 | 0.38 | 0.35 | 58.8 |
+| OS | bead loading 200 uL/min (trap efficiency held constant!) | bead loading flow 200 uL/min > 100.0 (trap efficiency unverified above) | 0.3 | 1.3 | 0.39 | 0.35 | 58.5 |
+| OS | 1.5 loop volumes | loop flush 1.5 < 2.0 loop volumes | 0.32 | 1.4 | 0.37 | 0.34 | 59.0 |
+| OS | 0.5 min wash (wash efficiency not modelled) | none | 0.31 | 1.4 | 0.38 | 0.34 | 59.0 |
+| OS | 20 min accumulation | time to result 64.5 min > 60 | 0.32 | 1.4 | 0.38 | 0.34 | 64.5 |
+| OS | trap ID 2 mm | trap length 0.64 mm < 1.0 mm | 0.32 | 1.4 | 0.38 | 0.34 | 59.5 |
+| OS | sweep 5 uL/min | none | 0.32 | 1.4 | 0.37 | 0.34 | 59.5 |
+| OS | readout 0.5 min | none | 0.32 | 1.4 | 0.38 | 0.34 | 59.0 |
+| OS | conjugate 0.2 nM | none | 0.32 | 1.5 | 0.35 | 0.33 | 59.5 |
+| OS | conjugate 1 nM (baseline) | nominal ULOQ 794 < 1000 pg/mL | 0.38 | 1.5 | 0.35 | 0.28 | 59.5 |
+| SQ | isolated tubing removed completely | isolated connection length 0.0 m < 0.01 m | 0.24 | 1.2 | 0.40 | 0.37 | 58.5 |
+| SQ | bead loading 150 uL/min (trap efficiency held constant!) | bead loading flow 150 uL/min > 100.0 (trap efficiency unverified above) | 0.3 | 1.5 | 0.35 | 0.32 | 57.2 |
+| SQ | 1 min wash after conjugate (wash efficiency not modelled) | none | 0.29 | 1.4 | 0.36 | 0.33 | 57.5 |
+| SQ | trap 0.25 uL | nominal ULOQ 607 < 1000 pg/mL; trap length 0.57 mm < 1.0 mm | 0.28 | 1.3 | 0.38 | 0.32 | 58.5 |
+| SQ | 5 loop volumes | none | 0.3 | 1.4 | 0.35 | 0.32 | 59.5 |
+| SQ | 40 min in vial | time to result 63.5 min > 60 | 0.29 | 1.4 | 0.37 | 0.34 | 63.5 |
+| SQ | conjugate 10 nM | nominal ULOQ 355 < 1000 pg/mL | 0.32 | 1.4 | 0.35 | 0.24 | 58.5 |
+| FRB | 75 um beads | none | 0.94 | 4 | 0.10 | 0.09 | 51.5 |
+| FRB | 0.15 mm column | none | 0.92 | 3.7 | 0.13 | 0.11 | 51.5 |
+| FRB | isolated tubing removed completely | isolated connection length 0.0 m < 0.01 m | 0.85 | 3.2 | 0.15 | 0.13 | 51.5 |
+| FRB | load 10 uL/min | time to result 61.5 min > 60 | 0.74 | 2.9 | 0.18 | 0.14 | 61.5 |
+| FRB | load 5 uL/min | time to result 91.5 min > 60; nominal ULOQ 607 < 1000 pg/mL | 0.56 | 1.9 | 0.28 | 0.21 | 91.5 |
+| FRB | 20 min accumulation | none | 0.94 | 3.7 | 0.14 | 0.11 | 56.5 |
+| FRB | 1 min conjugate incubation | none | 0.94 | 4 | 0.10 | 0.09 | 50.5 |
+| FRB | packing-ratio-compliant: d_p 20 um, ID 0.25 mm | nominal ULOQ 794 < 1000 pg/mL | 1.2 | 4 | 0.11 | 0.09 | 51.5 |
+| FRB | packing-ratio-compliant: d_p 50 um, ID 0.5 mm | none | 0.98 | 3.9 | 0.12 | 0.10 | 51.5 |
+| FRB | packing-ratio-compliant: d_p 35 um, ID 0.5 mm | none | 1 | 3.9 | 0.13 | 0.10 | 51.5 |
+| FRC | chip channel 2 mm | chip channel 2 mm < 3.0 mm | 0.92 | 3.5 | 0.13 | 0.11 | 45.0 |
+| FRC | load 10 uL/min | none | 0.95 | 3.7 | 0.12 | 0.11 | 45.0 |
+| FRC | 1 min conjugate incubation | none | 0.97 | 4.1 | 0.10 | 0.10 | 44.0 |

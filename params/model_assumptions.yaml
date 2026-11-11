@@ -1272,3 +1272,68 @@ validation:
     source: "docs/01 section a.2 (derived from Chang2012)"
     confidence: medium
     note: "k = kon [Ab] = 3e5 x 2.3e-9 = 7e-4 /s."
+
+design_levers:
+  # Added 2026-11-11 by Task 4 (docs/05_design_decision.md sections 1-3). These entries are NOT read by the
+  # elisa_sim model; they are the bounded estimates and design limits used by scripts/robustness.py and
+  # scripts/design_lib.py for levers the model cannot represent physically. Each is a scenario input, not a
+  # calibrated value. None was chosen by reference to the 1 pg/mL target.
+  min_isolated_connection_length:
+    value: 0.01
+    low: 0.01
+    high: 0.02
+    unit: m
+    source: "design choice (docs/05 s.1.1): trap or bed screwed directly into the isolation-valve ports, 2 x 5 mm stubs"
+    confidence: medium
+    note: "Lower limit imposed on ma.geometry.reactor_connection_length in the optimisation; 0 is not buildable."
+  max_bead_loading_flow:
+    value: 100
+    low: 50
+    high: 100
+    unit: uL/min
+    source: "design choice (docs/05 s.1.1); ma.capture.magnetic_trap_efficiency is assumed only at the baseline flow"
+    confidence: low
+    note: "Higher flows lower the model LOD only because trap efficiency is held constant (artefact); excluded."
+  nsb_fraction_removed_by_wash:
+    value: 0.5
+    low: 0.0
+    high: 0.9
+    unit: fraction
+    source: "UNVERIFIED; qualitative support: Wahlgren1995 J Colloid Interface Sci (partial desorption of lysozyme on rinsing), Marsh2002 Colloids Surf B (buffer-elutable fraction falls with adsorption time; non-ionic surfactant displaces part), Zhang2020 J Colloid Interface Sci (mAb irreversible on siliconized surface, partly removed with Poloxamer 188)"
+    confidence: low
+    note: >
+      Scenario S3a in docs/05: fraction of conjugate NSB removed by the post-capture washes if NSB is partly
+      reversible. Those studies are at monolayer coverage on bare surfaces, not sub-monolayer pM conjugate on a
+      blocked surface; 0 (irreversible, the model) is inside the range. Measured by bench experiment U1.
+  fab_conjugate_nsb_factor:
+    value: 0.5
+    low: 0.2
+    high: 1.0
+    unit: fold
+    source: "UNVERIFIED; qualitative support: Ruan1986 Ann Clin Biochem doi:10.1177/000456328602300106 (Fab'-HRP NSB reduced with normal F(ab')2, LOD 5x lower with other changes); Hashida1985 J Immunoassay doi:10.1080/01971528508063024 (purified Fab' conjugates gave lower background)"
+    confidence: low
+    note: "NSB of a Fab'-ALP conjugate relative to an IgG-ALP conjugate (lever L3). No paired quantitative comparison found."
+  immune_complex_transfer_nsb_factor:
+    value: 0.1
+    low: 0.01
+    high: 0.5
+    unit: fold
+    source: "UNVERIFIED magnitude; principle: Ishikawa1990 Clin Chim Acta doi:10.1016/0009-8981(90)90303-a (600 molecules ferritin), Hashida1997 J Clin Lab Anal doi:10.1002/(SICI)1098-2825(1997)11:5<267::AID-JCLA5>3.0.CO;2-4 (transfer 'minimized' conjugate NSB, 10-300x more sensitive than conventional ELISA)"
+    confidence: low
+    note: "Fraction of first-phase conjugate NSB that survives an elute-and-recapture transfer (lever L4)."
+  immune_complex_transfer_efficiency:
+    value: 0.7
+    low: 0.4
+    high: 0.9
+    unit: fraction
+    source: "UNVERIFIED (Ishikawa/Hashida report transfer 'with minimal dissociation', no number in the abstracts read); elution by biotin of desthiobiotin-tagged capture antibody: Hirsch2002 Anal Biochem doi:10.1016/s0003-2697(02)00201-4"
+    confidence: low
+    note: "Fraction of specific complexes recovered on the second phase (lever L4)."
+  nsb_reference_channel_correlation:
+    value: 0.8
+    low: 0.0
+    high: 0.95
+    unit: dimensionless
+    source: "UNVERIFIED (no measurement of the run-to-run correlation of conjugate NSB between two bead populations found)"
+    confidence: low
+    note: "Lever L5: with a reference channel the NSB CV scales by sqrt(2(1-rho)); no gain below rho = 0.5."

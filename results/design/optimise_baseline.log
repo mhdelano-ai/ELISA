@@ -1,0 +1,73 @@
+[OS] start: L_eff median 2.3 P 0.183 []
+[OS] sweep 1: ma.geometry.reactor_connection_length -> 0.01: L_eff median 1.81 P 0.237
+[OS] sweep 1: chem.antibodies.conc_detection_antibody_typical -> 7e-10: L_eff median 1.77 P 0.257
+[OS] sweep 1: ma.geometry.magnetic_trap_tube_inner_diameter -> 1.5: L_eff median 1.64 P 0.263
+[OS] sweep 1: hw.smfl.loop_flush_volumes_for_transfer -> 2: L_eff median 1.58 P 0.263
+[OS] sweep 1: hw.timing.accumulation_time -> 15: L_eff median 1.54 P 0.263
+[OS] sweep 1: ma.readout.sweep_flow -> 10: L_eff median 1.5 P 0.273
+[OS] sweep 1: hw.timing.readout_time -> 1: L_eff median 1.46 P 0.280
+[OS] sweep 2: chem.antibodies.conc_detection_antibody_typical -> 5e-10: L_eff median 1.41 P 0.297
+[OS] sweep 3: ma.timing.in_vial_incubation -> 35: L_eff median 1.38 P 0.300
+[OS] sweep 3: chem.antibodies.conc_detection_antibody_typical -> 3e-10: L_eff median 1.35 P 0.323
+[OS] done (266 s): base median 2.1 P 0.212 -> opt nominal 0.32 median 1.3 [0.3-21] P(LOD) 0.378 P(success) 0.349; edges {'ma.geometry.reactor_connection_length': 'low edge', 'ma.geometry.magnetic_trap_tube_inner_diameter': 'high edge', 'hw.timing.sample_load_flow': 'high edge', 'hw.smfl.loop_flush_volumes_for_transfer': 'low edge', 'ma.timing.post_sample_wash': 'low edge', 'hw.timing.accumulation_time': 'high edge', 'ma.readout.sweep_flow': 'low edge', 'hw.timing.readout_time': 'low edge'}
+[SQ] start: L_eff median inf P 0.000 ['time to result 60.5 min > 60']
+[SQ] sweep 1: ma.timing.in_vial_incubation -> 29.5: L_eff median 13.4 P 0.027
+[SQ] sweep 1: chem.antibodies.conc_detection_antibody_typical -> 3e-09: L_eff median 11.8 P 0.040
+[SQ] sweep 1: ma.geometry.magnetic_trap_volume -> 0.5: L_eff median 10 P 0.047
+[SQ] sweep 1: ma.geometry.magnetic_trap_tube_inner_diameter -> 0.75: L_eff median 9.72 P 0.047
+[SQ] sweep 1: hw.timing.accumulation_time -> 5: L_eff median 9.51 P 0.050
+[SQ] sweep 1: ma.readout.sweep_flow -> 10: L_eff median 9.14 P 0.053
+[SQ] sweep 1: hw.timing.readout_time -> 1: L_eff median 9.01 P 0.060
+[SQ] sweep 2: ma.geometry.reactor_connection_length -> 0.01: L_eff median 2.38 P 0.203
+[SQ] sweep 2: chem.surfaces.bead_number_per_100uL_digital_ELISA -> 1000000.0: L_eff median 1.79 P 0.243
+[SQ] sweep 2: ma.timing.in_vial_incubation -> 35: L_eff median 1.68 P 0.270
+[SQ] sweep 2: hw.timing.conjugate_stopped_flow_incubation -> 3: L_eff median 1.64 P 0.280
+[SQ] sweep 2: hw.smfl.loop_flush_volumes_for_transfer -> 4: L_eff median 1.62 P 0.280
+[SQ] sweep 3: chem.surfaces.bead_number_per_100uL_digital_ELISA -> 1500000.0: L_eff median 1.49 P 0.303
+[SQ] done (336 s): base median 13 P 0.018 -> opt nominal 0.3 median 1.5 [0.37-12] P(LOD) 0.328 P(success) 0.306; edges {'ma.geometry.reactor_connection_length': 'low edge', 'ma.timing.in_vial_incubation': 'high edge', 'hw.timing.wash_after_conjugate': 'low edge', 'ma.geometry.magnetic_trap_volume': 'low edge', 'hw.timing.sample_load_flow': 'high edge', 'hw.smfl.loop_flush_volumes_for_transfer': 'high edge', 'hw.timing.accumulation_time': 'low edge', 'ma.readout.sweep_flow': 'low edge', 'hw.timing.readout_time': 'low edge'}
+[FRB] start: L_eff median 53.5 P 0.000 []
+[FRB] sweep 1: hw.reactors.packed_microbed_10uL.bed_volume -> 2: L_eff median 27.1 P 0.003
+[FRB] sweep 1: ma.geometry.packed_bed_column_inner_diameter -> 0.25: L_eff median 26.4 P 0.003
+[FRB] sweep 1: ma.geometry.reactor_connection_length -> 0.01: L_eff median 23.3 P 0.007
+[FRB] sweep 1: hw.timing.sample_load_flow -> 15: L_eff median 10.8 P 0.020
+[FRB] sweep 1: hw.timing.conjugate_stopped_flow_incubation -> 3: L_eff median 10.2 P 0.023
+[FRB] sweep 1: hw.timing.accumulation_time -> 12.5: L_eff median 10 P 0.023
+[FRB] sweep 2: hw.reactors.packed_microbed_10uL.bed_volume -> 1: L_eff median 6.65 P 0.043
+[FRB] sweep 2: hw.reactors.packed_microbed_10uL.bead_diameter -> 50: L_eff median 5.02 P 0.063
+[FRB] sweep 2: hw.timing.accumulation_time -> 15: L_eff median 4.88 P 0.073
+[FRB] sweep 2: ma.readout.sweep_flow -> 10: L_eff median 4.68 P 0.080
+[FRB] sweep 2: hw.timing.readout_time -> 1: L_eff median 4.42 P 0.097
+[FRB] sweep 3: hw.timing.conjugate_stopped_flow_incubation -> 2: L_eff median 4.26 P 0.093
+[FRB] sweep 4: hw.reactors.packed_microbed_10uL.bed_volume -> 0.5: L_eff median 4.14 P 0.103
+[FRB] done (409 s): base median 49 P 0.002 -> opt nominal 0.94 median 3.6 [0.6-42] P(LOD) 0.138 P(success) 0.117; edges {'hw.reactors.packed_microbed_10uL.bead_diameter': 'high edge', 'ma.geometry.packed_bed_column_inner_diameter': 'low edge', 'ma.geometry.reactor_connection_length': 'low edge', 'hw.smfl.loop_flush_volumes_for_transfer': 'high edge', 'hw.timing.conjugate_stopped_flow_incubation': 'low edge', 'hw.timing.wash_after_conjugate': 'low edge', 'hw.timing.accumulation_time': 'high edge', 'ma.readout.sweep_flow': 'low edge', 'hw.timing.readout_time': 'low edge'}
+[FRC] start: L_eff median 39.1 P 0.003 []
+[FRC] sweep 1: ma.geometry.chip_bead_bed_inner_diameter -> 0.2: L_eff median 38.1 P 0.003
+[FRC] sweep 1: ma.geometry.chip_channel_length -> 3: L_eff median 34.6 P 0.003
+[FRC] sweep 1: ma.geometry.chip_channel_width -> 0.2: L_eff median 33.5 P 0.003
+[FRC] sweep 1: hw.timing.sample_load_flow -> 50: L_eff median 19.7 P 0.007
+[FRC] sweep 1: ma.delivery.conjugate_injection_volume -> 10: L_eff median 19 P 0.007
+[FRC] sweep 1: hw.timing.conjugate_stopped_flow_incubation -> 2: L_eff median 18.2 P 0.007
+[FRC] sweep 2: ma.geometry.chip_bead_bed_volume -> 0.25: L_eff median 16.2 P 0.017
+[FRC] sweep 2: hw.reactors.packed_microbed_10uL.bead_diameter -> 10: L_eff median 15.5 P 0.013
+[FRC] sweep 2: hw.timing.sample_load_flow -> 10: L_eff median 5.63 P 0.040
+[FRC] sweep 2: hw.smfl.loop_flush_volumes_for_transfer -> 2: L_eff median 5.56 P 0.043
+[FRC] sweep 2: hw.timing.accumulation_time -> 5: L_eff median 5.5 P 0.037
+[FRC] sweep 3: ma.geometry.chip_bead_bed_volume -> 0.1: L_eff median 4.52 P 0.057
+[FRC] sweep 3: hw.timing.accumulation_time -> 7.5: L_eff median 4.42 P 0.063
+[FRC] done (471 s): base median 34 P 0.003 -> opt nominal 0.95 median 3.8 [0.64-46] P(LOD) 0.120 P(success) 0.100; edges {'ma.geometry.chip_bead_bed_volume': 'low edge', 'ma.geometry.chip_bead_bed_inner_diameter': 'low edge', 'hw.reactors.packed_microbed_10uL.bead_diameter': 'low edge', 'ma.geometry.chip_channel_length': 'low edge', 'ma.geometry.chip_channel_width': 'low edge', 'hw.timing.sample_load_flow': 'low edge', 'hw.smfl.loop_flush_volumes_for_transfer': 'low edge', 'ma.delivery.conjugate_injection_volume': 'low edge', 'hw.timing.conjugate_stopped_flow_incubation': 'low edge', 'hw.timing.wash_after_conjugate': 'low edge'}
+[CAP] start: L_eff median 98 P 0.000 []
+[CAP] sweep 1: ma.geometry.capillary_inner_diameter -> 150: L_eff median 89.5 P 0.000
+[CAP] sweep 1: ma.geometry.capillary_length -> 0.3: L_eff median 64.7 P 0.000
+[CAP] sweep 1: ma.geometry.reactor_connection_length -> 0.01: L_eff median 56.5 P 0.000
+[CAP] sweep 1: hw.timing.sample_load_flow -> 15: L_eff median 15.7 P 0.003
+[CAP] sweep 1: hw.timing.conjugate_stopped_flow_incubation -> 10: L_eff median 13.1 P 0.020
+[CAP] sweep 1: chem.antibodies.conc_detection_antibody_typical -> 3e-09: L_eff median 11.5 P 0.017
+[CAP] sweep 2: ma.geometry.capillary_inner_diameter -> 100: L_eff median 9.39 P 0.023
+[CAP] sweep 2: ma.geometry.capillary_length -> 0.2: L_eff median 8.64 P 0.023
+[CAP] sweep 2: hw.timing.readout_time -> 1: L_eff median 8.52 P 0.040
+[CAP] sweep 3: ma.geometry.capillary_length -> 0.1: L_eff median 7.86 P 0.037
+[CAP] sweep 3: hw.timing.conjugate_stopped_flow_incubation -> 5: L_eff median 7.26 P 0.033
+[CAP] sweep 3: hw.timing.accumulation_time -> 12.5: L_eff median 7.17 P 0.040
+[CAP] sweep 3: ma.readout.sweep_flow -> 10: L_eff median 6.99 P 0.043
+[CAP] sweep 4: hw.timing.conjugate_stopped_flow_incubation -> 3: L_eff median 6.6 P 0.043
+[CAP] done (540 s): base median 88 P 0.000 -> opt nominal 2 median 6.7 [1.1-65] P(LOD) 0.040 P(success) 0.037; edges {'ma.geometry.capillary_length': 'low edge', 'ma.geometry.reactor_connection_length': 'low edge', 'hw.smfl.loop_flush_volumes_for_transfer': 'high edge', 'chem.antibodies.conc_detection_antibody_typical': 'high edge', 'ma.readout.sweep_flow': 'low edge', 'hw.timing.readout_time': 'low edge'}

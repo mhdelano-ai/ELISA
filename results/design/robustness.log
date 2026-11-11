@@ -1,0 +1,55 @@
+OS-base    S0 audited baseline                                          nom 0.56 med 2.1 P 0.25 Ps 0.21
+OS-base    S1 old NSB rate (label factor 1.0, 0.3-3; x25)               nom 14 med 45 P 0.00 Ps 0.00
+OS-base    S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s)      nom 0.25 med 1.3 P 0.36 Ps 0.30
+OS-base    S2b capture reagent unscreened (koff to 8.3e-3 /s)           nom 0.56 med 2.9 P 0.19 Ps 0.17
+OS-base    S3a NSB partly reversible, fraction removed by washes = ma.d nom 0.3 med 1.3 P 0.39 Ps 0.35
+OS-base    S3b NSB irreversible and surfaces at high bound (tubing fact nom 2.2 med 5.1 P 0.09 Ps 0.08
+OS-base    S4a free HQ in substrate 1e-3 (high bound)                   nom 4 med 8.9 P 0.04 Ps 0.02
+OS-base    S4b free HQ in substrate 1e-7 (low bound)                    nom 0.56 med 1.9 P 0.29 Ps 0.25
+OS-base    S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop             nom 0.57 med 2.2 P 0.25 Ps 0.22
+OS-base    S6 worst plausible: S1 + S4a                                 nom 14 med 52 P 0.00 Ps 0.00
+OS-base    S7 favourable: S2a + S4b                                     nom 0.25 med 1.2 P 0.42 Ps 0.35
+OS-opt     S0 audited baseline                                          nom 0.32 med 1.3 P 0.38 Ps 0.35
+OS-opt     S1 old NSB rate (label factor 1.0, 0.3-3; x25)               nom 7.9 med 23 P 0.01 Ps 0.01
+OS-opt     S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s)      nom 0.14 med 0.94 P 0.55 Ps 0.50
+OS-opt     S2b capture reagent unscreened (koff to 8.3e-3 /s)           nom 0.32 med 1.8 P 0.30 Ps 0.28
+OS-opt     S3a NSB partly reversible, fraction removed by washes = ma.d nom 0.17 med 0.99 P 0.51 Ps 0.48
+OS-opt     S3b NSB irreversible and surfaces at high bound (tubing fact nom 0.51 med 1.7 P 0.32 Ps 0.29
+OS-opt     S4a free HQ in substrate 1e-3 (high bound)                   nom 6.2 med 11 P 0.04 Ps 0.03
+OS-opt     S4b free HQ in substrate 1e-7 (low bound)                    nom 0.32 med 1.1 P 0.44 Ps 0.42
+OS-opt     S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop             nom 0.33 med 1.4 P 0.36 Ps 0.35
+OS-opt     S6 worst plausible: S1 + S4a                                 nom 10 med 33 P 0.00 Ps 0.00
+OS-opt     S7 favourable: S2a + S4b                                     nom 0.13 med 0.8 P 0.61 Ps 0.57
+SQ-opt     S0 audited baseline                                          nom 0.3 med 1.5 P 0.33 Ps 0.31
+SQ-opt     S1 old NSB rate (label factor 1.0, 0.3-3; x25)               nom 7.5 med 28 P 0.00 Ps 0.00
+SQ-opt     S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s)      nom 0.25 med 1.3 P 0.38 Ps 0.34
+SQ-opt     S2b capture reagent unscreened (koff to 8.3e-3 /s)           nom 0.3 med 2.1 P 0.24 Ps 0.23
+SQ-opt     S3a NSB partly reversible, fraction removed by washes = ma.d nom 0.16 med 1 P 0.48 Ps 0.45
+SQ-opt     S3b NSB irreversible and surfaces at high bound (tubing fact nom 1.3 med 3.5 P 0.12 Ps 0.10
+SQ-opt     S4a free HQ in substrate 1e-3 (high bound)                   nom 3.7 med 8.5 P 0.03 Ps 0.02
+SQ-opt     S4b free HQ in substrate 1e-7 (low bound)                    nom 0.3 med 1.3 P 0.39 Ps 0.36
+SQ-opt     S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop             nom 0.35 med 1.7 P 0.30 Ps 0.28
+SQ-opt     S6 worst plausible: S1 + S4a                                 nom 8.4 med 35 P 0.00 Ps 0.00
+SQ-opt     S7 favourable: S2a + S4b                                     nom 0.25 med 1.1 P 0.44 Ps 0.41
+FRB-opt    S0 audited baseline                                          nom 0.94 med 3.6 P 0.14 Ps 0.12
+FRB-opt    S1 old NSB rate (label factor 1.0, 0.3-3; x25)               nom 24 med 82 P 0.00 Ps 0.00
+FRB-opt    S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s)      nom 0.78 med 3.1 P 0.16 Ps 0.14
+FRB-opt    S2b capture reagent unscreened (koff to 8.3e-3 /s)           nom 0.94 med 5.1 P 0.11 Ps 0.09
+FRB-opt    S3a NSB partly reversible, fraction removed by washes = ma.d nom 0.49 med 2.1 P 0.24 Ps 0.22
+FRB-opt    S3b NSB irreversible and surfaces at high bound (tubing fact nom 1.8 med 5.5 P 0.07 Ps 0.06
+FRB-opt    S4a free HQ in substrate 1e-3 (high bound)                   nom 4 med 12 P 0.02 Ps 0.01
+FRB-opt    S4b free HQ in substrate 1e-7 (low bound)                    nom 0.94 med 3.3 P 0.16 Ps 0.14
+FRB-opt    S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop             nom 1.3 med 4.9 P 0.10 Ps 0.09
+FRB-opt    S6 worst plausible: S1 + S4a                                 nom 24 med 90 P 0.00 Ps 0.00
+FRB-opt    S7 favourable: S2a + S4b                                     nom 0.78 med 2.8 P 0.19 Ps 0.17
+FRC-opt    S0 audited baseline                                          nom 0.95 med 3.8 P 0.12 Ps 0.10
+FRC-opt    S1 old NSB rate (label factor 1.0, 0.3-3; x25)               nom 24 med 87 P 0.00 Ps 0.00
+FRC-opt    S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s)      nom 0.79 med 3.4 P 0.15 Ps 0.12
+FRC-opt    S2b capture reagent unscreened (koff to 8.3e-3 /s)           nom 0.95 med 5.4 P 0.09 Ps 0.07
+FRC-opt    S3a NSB partly reversible, fraction removed by washes = ma.d nom 0.5 med 2.1 P 0.22 Ps 0.20
+FRC-opt    S3b NSB irreversible and surfaces at high bound (tubing fact nom 0.95 med 3.8 P 0.12 Ps 0.10
+FRC-opt    S4a free HQ in substrate 1e-3 (high bound)                   nom 3.4 med 10 P 0.01 Ps 0.01
+FRC-opt    S4b free HQ in substrate 1e-7 (low bound)                    nom 0.95 med 3.6 P 0.13 Ps 0.11
+FRC-opt    S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop             nom 1.3 med 4.9 P 0.08 Ps 0.07
+FRC-opt    S6 worst plausible: S1 + S4a                                 nom 24 med 90 P 0.00 Ps 0.00
+FRC-opt    S7 favourable: S2a + S4b                                     nom 0.79 med 3 P 0.16 Ps 0.13

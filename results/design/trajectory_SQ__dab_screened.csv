@@ -1,0 +1,9 @@
+sweep,variable,value,leff_median,p_success,note
+0,(start),,inf,0,time to result 60.5 min > 60
+1,ma.timing.in_vial_incubation,29.5,10.7,0.04,
+1,chem.antibodies.conc_detection_antibody_typical,3e-09,9.4,0.05,
+1,ma.geometry.magnetic_trap_volume,1,8.416,0.05667,
+1,ma.geometry.magnetic_trap_tube_inner_diameter,1,7.792,0.06333,
+1,hw.timing.readout_time,1,7.636,0.07333,
+2,ma.geometry.reactor_connection_length,0.01,2.254,0.2233,
+2,hw.smfl.loop_flush_volumes_for_transfer,4,2.223,0.2233,
