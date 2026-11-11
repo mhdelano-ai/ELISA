@@ -22,7 +22,7 @@ electrochemically. In a 100 µL sample that is ≈ 4 × 10^5 molecules (≈ 0.67
 ## Fixed equipment
 
 - Waters ACQUITY **BSM** (Binary Solvent Manager) — pumping / reagent delivery
-- Waters ACQUITY **SM-FL** (Sample Manager, Flow-Through Needle) — sample and reagent injection
+- Waters ACQUITY **SM-FL** (Sample Manager, **Fixed Loop** — not the flow-through-needle SM-FTN) — sample and reagent injection
 - **Gamry Reference 600+** potentiostat — electrochemical detection
 - Waters **Empower** CDS
 - An extra externally triggerable **switching valve** (6- or 10-port)
