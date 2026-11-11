@@ -1,0 +1,904 @@
+# Chemistry / biology parameter database for the electrochemical ELISA simulation (Task 1)
+# Companion document: docs/01_literature_parameters.md (source keys resolve in its reference list)
+#
+# Conventions
+#   - SI units throughout (m, s, mol, M = mol/L where stated, V, m^2/s). Units are stated on every entry.
+#   - value = best estimate for simulation; low/high = plausible bounds (not statistical CIs).
+#   - source = citation key in the reference list, "derived:" (arithmetic on cited numbers, shown in note),
+#     or UNVERIFIED (not checked against a source in this session -> do not treat as literature fact).
+#   - confidence: high (directly read from primary source, conditions match), medium (primary source but
+#     different conditions/system, or secondary source), low (derived with assumptions, or UNVERIFIED).
+#   - Potentials are vs Ag/AgCl (sat. KCl) unless the note says otherwise.
+#
+# Created 2026-11-11 by Task 1. Do not edit numbers without updating the source key.
+
+meta:
+  version: 1
+  date: "2026-11-11"
+  potential_reference: "Ag/AgCl (saturated KCl) unless noted"
+  temperature_default_K: 296
+
+analyte:
+  molar_mass:
+    value: 150000
+    low: 145000
+    high: 155000
+    unit: g/mol
+    source: project_brief
+    confidence: high
+    note: "Human IgG ~150 kDa as given in the project brief."
+  target_concentration_mass:
+    value: 1.0e-12
+    low: 1.0e-12
+    high: 1.0e-12
+    unit: g/mL
+    source: project_brief
+    confidence: high
+    note: "LOD target 1 pg/mL."
+  target_concentration_molar:
+    value: 6.67e-15
+    low: 6.4e-15
+    high: 6.9e-15
+    unit: M
+    source: "derived: 1e-12 g/mL / 150000 g/mol * 1000 mL/L"
+    confidence: high
+    note: "6.7 fM. 100 uL sample contains 4.0e5 molecules (0.67 amol)."
+  diffusion_coefficient:
+    value: 3.89e-11
+    low: 3.5e-11
+    high: 4.5e-11
+    unit: m^2/s
+    source: Chang2012
+    confidence: high
+    note: "IgG D = 3.89e-7 cm^2/s quoted in Chang2012 (25 C approx.)."
+  adsorptive_loss_fraction_untreated_tube:
+    value: 0.5
+    low: 0.1
+    high: 0.9
+    unit: fraction
+    source: "Zhang2023microtube; Dixit2011"
+    confidence: low
+    note: >
+      Protein recovery from different microtubes ranged <10% to >90% (Zhang2023microtube, proteome-scale,
+      not IgG-specific). At fM concentrations loss to vials, needle, loop and tubing is potentially dominant.
+      Model as unknown; mitigate with carrier protein (IgG-free BSA) / low-binding plastics. Must be measured.
+
+antibodies:
+  kon_capture:
+    value: 3.0e5
+    low: 9.0e4
+    high: 1.2e6
+    unit: 1/(M*s)
+    source: Chang2012
+    confidence: medium
+    note: >
+      Range measured (BLI) for 5 ELISA-grade antibodies (PSA, tau, TNF-a): kon 9e4-1.2e6 /M/s.
+      PSA capture mAb 2.7e5. No anti-human-IgG-specific kinetics were verified in this session;
+      generic ELISA-grade range used. Chang2012 shows capture yield is mainly on-rate limited.
+  koff_capture:
+    value: 1.0e-4
+    low: 3.0e-6
+    high: 1.3e-3
+    unit: 1/s
+    source: Chang2012
+    confidence: medium
+    note: "Range for 5 antibodies (BLI); PSA capture mAb 3e-6 /s. Surface rebinding/avidity lowers effective koff on dense surfaces (Chang2012, qualitative)."
+  KD_capture:
+    value: 3.0e-10
+    low: 1.2e-11
+    high: 1.0e-9
+    unit: M
+    source: Chang2012
+    confidence: medium
+    note: "KD 12 pM - 1 nM across 5 ELISA antibodies."
+  kon_detection:
+    value: 3.9e5
+    low: 9.0e4
+    high: 1.2e6
+    unit: 1/(M*s)
+    source: Chang2012
+    confidence: medium
+    note: "Example detection antibody: kon 3.9e5 /M/s, koff 8.6e-4 /s, KD 2 nM."
+  koff_detection:
+    value: 8.6e-4
+    low: 3.0e-6
+    high: 1.3e-3
+    unit: 1/s
+    source: Chang2012
+    confidence: medium
+    note: "Dissociation of detection Ab during washes/substrate step is a signal-loss term (Chang2012)."
+  conc_detection_antibody_typical:
+    value: 1.0e-9
+    low: 1.0e-10
+    high: 1.0e-8
+    unit: M
+    source: "Chang2012; Rissin2010"
+    confidence: high
+    note: "~0.1-0.15 ug/mL used in digital ELISA to limit NSB; higher conc. raises background."
+  conc_streptavidin_enzyme_typical:
+    value: 1.0e-11
+    low: 1.0e-12
+    high: 5.0e-11
+    unit: M
+    source: Rissin2010
+    confidence: high
+    note: "SbG used at 1-50 pM in digital ELISA labeling step (30 min)."
+  streptavidin_biotin_koff:
+    value: 5.1e-9
+    low: 1.0e-9
+    high: 1.0e-8
+    unit: 1/s
+    source: Chang2012
+    confidence: medium
+    note: "Quoted koff for streptavidin-biotin; effectively irreversible on assay time scale."
+  protein_G_B1_KD_human_IgG_pH7_4:
+    value: 4.9e-7
+    low: 1.0e-8
+    high: 5.0e-7
+    unit: M
+    source: Watanabe2009
+    confidence: medium
+    note: >
+      Single B1 domain of protein G vs human IgG by SPR, pH 7.4: KD 4.9e-7 M. Full multi-domain protein G
+      binds with higher apparent affinity (avidity) - low bound is an UNVERIFIED allowance for that.
+  protein_G_elution_pH:
+    value: 3.1
+    low: 2.5
+    high: 3.5
+    unit: pH
+    source: Watanabe2009
+    confidence: medium
+    note: "Peak elution of human IgG from wild-type GB1 column in decreasing pH gradient."
+  enzyme_to_antibody_ratio_HRP:
+    value: 3
+    low: 1
+    high: 4
+    unit: mol/mol
+    source: "ThermoPolyHRP21140; OriGeneHRPkit"
+    confidence: low
+    note: >
+      Thermo states standard conjugates are limited to 1-3 HRP per protein; commercial conjugation kits
+      recommend 4:1 HRP:IgG in the reaction (not the final product ratio). Vendor-specific; measure.
+  enzyme_to_antibody_ratio_ALP:
+    value: 1
+    low: 0.5
+    high: 2
+    unit: mol/mol
+    source: UNVERIFIED
+    confidence: low
+    note: "Typical 1:1 ALP(140 kDa):IgG conjugates assumed; not verified in this session."
+  poly_HRP_per_streptavidin_polymer:
+    value: 20
+    low: 10
+    high: 400
+    unit: HRP per conjugate
+    source: "SigmaS9420; Malhotra2010; Mani2009"
+    confidence: medium
+    note: >
+      Sigma S9420 SA-peroxidase polymer: ~20 HRP per polymer, >=10x sensitivity vs plain SA-HRP.
+      Research-grade multilabels go much higher: SA-HRP gave 14-16 labels/antigen, CNT-HRP 106 HRP per
+      100 nm (Malhotra2010), 1 um bead-HRP 7500 HRP (Mani2009) - those carry higher NSB/steric risk.
+  diffusion_coefficient_IgG_ALP_conjugate:
+    value: 3.1e-11
+    low: 2.5e-11
+    high: 3.6e-11
+    unit: m^2/s
+    source: "derived: Chang2012 IgG D scaled by (150/290)^(1/3) for ~290 kDa"
+    confidence: low
+    note: "Stokes-Einstein mass scaling, globular assumption. Measure by DLS if critical."
+  diffusion_coefficient_SbG_conjugate:
+    value: 2.7e-11
+    low: 2.0e-11
+    high: 3.0e-11
+    unit: m^2/s
+    source: Chang2012
+    confidence: medium
+    note: "Chang2012 assumes SbG ~ beta-galactosidase D = 2.7e-7 cm^2/s."
+  diffusion_coefficient_SA_polyHRP:
+    value: 2.0e-11
+    low: 1.0e-11
+    high: 3.0e-11
+    unit: m^2/s
+    source: "derived: mass scaling ~1 MDa from SigmaS9420 composition"
+    confidence: low
+    note: "Assumes ~20 x 44 kDa HRP + SA; polymer shape unknown."
+
+surfaces:
+  igg_surface_density_monolayer:
+    value: 1.0e16
+    low: 2.0e15
+    high: 1.5e16
+    unit: molecules/m^2
+    source: "Chang2012; Gajos2020"
+    confidence: medium
+    note: >
+      Chang2012: ~274000 Ab per 2.5 um bead -> 1.4e16 /m^2 (3.5 mg/m^2, derived). Gajos2020 studied
+      0-3 mg/m^2 (3 mg/m^2 = 1.2e16 /m^2) covering flat-on to vertical packing on silicon.
+  active_fraction_random_covalent_or_adsorbed:
+    value: 0.25
+    low: 0.1
+    high: 0.5
+    unit: fraction
+    source: "Tripathi2018; Gao2021"
+    confidence: medium
+    note: "Directly adsorbed Ab on AuNP 23 +/- 6% active (Tripathi2018); random aldehyde coupling 10-50% functional (Gao2021)."
+  active_fraction_oriented:
+    value: 0.8
+    low: 0.5
+    high: 0.95
+    unit: fraction
+    source: "Tripathi2018; Peluso2003; Laborie2021"
+    confidence: medium
+    note: "Protein A-bound 91 +/- 19% active; oriented Fab' ~90%; protein G beads 75% accessible F(ab)2."
+  oriented_vs_random_capacity_gain:
+    value: 3
+    low: 1.5
+    high: 10
+    unit: fold
+    source: "Peluso2003; Beitello2025"
+    confidence: medium
+    note: "Up to 10x (Peluso2003); 3x for site-specific biotinylation (Beitello2025)."
+  magnetic_bead_M280_SA_capacity_biotinylated_IgG:
+    value: 1.0e-5
+    low: 5.0e-6
+    high: 2.0e-5
+    unit: g IgG per g beads
+    source: ThermoM280
+    confidence: medium
+    note: "Up to 10 ug biotinylated Ab per mg beads (one brochure says 20). 10 mg/mL = 6-7e8 beads/mL; 2.8 um."
+  magnetic_bead_M280_count_per_mass:
+    value: 6.5e10
+    low: 6.0e10
+    high: 7.0e10
+    unit: beads per g
+    source: "derived: ThermoM280 6-7e8 beads per 10 mg"
+    confidence: medium
+    note: ""
+  porous_bead_proteinG_HP_capacity:
+    value: 25
+    low: 10
+    high: 25
+    unit: mg human IgG per mL medium
+    source: CytivaProteinG
+    confidence: medium
+    note: "HiTrap Protein G HP >25 mg/mL; SpinTrap format >10 mg/mL. Protein G binds the ANALYTE (human IgG) directly."
+  porous_bead_NHS_activated_IgG_coupling:
+    value: 30
+    low: 10
+    high: 30
+    unit: mg IgG per mL column
+    source: CytivaProteinG
+    confidence: medium
+    note: "'>30 mg IgG coupled to 1 mL HiTrap NHS-activated HP' (Cytiva literature via distributor)."
+  bead_ab_concentration_digital_ELISA:
+    value: 2.3e-9
+    low: 5.0e-10
+    high: 1.0e-8
+    unit: M
+    source: Chang2012
+    confidence: high
+    note: "500,000 beads in 100 uL = 2.3 nM total Ab; drives pseudo-first-order capture k = kon*[Ab]."
+
+enzymes:
+  alp:
+    name: "Alkaline phosphatase (calf intestinal), dimer"
+    molar_mass:
+      value: 140000
+      low: 120000
+      high: 160000
+      unit: g/mol
+      source: UNVERIFIED
+      confidence: medium
+      note: "Commonly quoted ~140 kDa dimer; not verified in this session."
+    specific_activity_vendor:
+      value: 3000
+      low: 1000
+      high: 5000
+      unit: U/mg (umol/min/mg; pNPP, 1 M DEA pH 9.8, 37 C)
+      source: RocheCIAP
+      confidence: high
+      note: "Roche/Sigma 10567752001 ~3000 U/mg. 1 U(37C) = 0.48 U(25C)."
+    kcat_pAPP_assay_conditions:
+      value: 1.5e3
+      low: 1.0e1
+      high: 7.0e3
+      unit: 1/s
+      source: "derived: RocheCIAP; Brooke2023"
+      confidence: low
+      note: >
+        Vendor activity -> kcat ~7000 /s (37 C, DEA, a phosphate acceptor that boosts rate); x0.48 at 25 C
+        -> ~3400 /s. Non-DEA buffers and conjugation lower it; best estimate 1500 /s. Low bound from a
+        low-grade commercial CIAP measured at pH 8.2 (kcat 9.7 /s, Brooke2023) - shows enzyme-grade risk.
+        MEASURE on the actual conjugate.
+    Km_pAPP:
+      value: 5.6e-5
+      low: 4.0e-5
+      high: 1.7e-4
+      unit: M
+      source: "Thompson1991; Kulys1980"
+      confidence: high
+      note: "56 uM in 0.10 M Tris pH 9.0 (Thompson1991); 170 uM apparent at pH 8.0 (Kulys1980)."
+    Km_pNPP:
+      value: 8.2e-5
+      low: 4.0e-5
+      high: 8.2e-5
+      unit: M
+      source: "Thompson1991; Brooke2023"
+      confidence: high
+      note: "82 uM (Tris pH 9.0); 40 uM (pH 8.2)."
+    Km_phenyl_phosphate:
+      value: 3.6e-5
+      low: 2.0e-5
+      high: 6.0e-5
+      unit: M
+      source: Bauer1996
+      confidence: medium
+      note: ""
+    Km_ascorbic_acid_2_phosphate:
+      value: 2.77e-3
+      low: 5.0e-4
+      high: 3.0e-3
+      unit: M
+      source: Sun2005
+      confidence: low
+      note: "Apparent Km 2.77 mM (DPV assay, serum ALP; minor journal). Higher Km means saturation needs mM AAP."
+    pH_optimum:
+      value: 9.5
+      low: 9.0
+      high: 10.0
+      unit: pH
+      source: "RocheCIAP; Hethey2026"
+      confidence: medium
+      note: "Vendor assay pH 9.8 DEA; activity rises 8.6->9.1 (Hethey). Requires Mg2+/Zn2+."
+    phosphate_inhibition_Ki:
+      value: 2.0e-6
+      low: 1.0e-6
+      high: 5.4e-4
+      unit: M
+      source: "OBrien2002; Coburn1998"
+      confidence: medium
+      note: >
+        Pi is a tight competitive inhibitor: Ki ~1 uM (E. coli AP), 2.4 uM (bovine kidney TNAP), 540 uM
+        apparent in serum. Consequence: NO phosphate buffer (PBS) in substrate or carrier lines that reach the
+        bead bed before/during the enzymatic step.
+    kcat_over_Km_pNPP_Ecoli:
+      value: 1.0e7
+      low: 6.6e6
+      high: 4.6e7
+      unit: 1/(M*s)
+      source: Simopoulos1994
+      confidence: medium
+      note: "E. coli AP, pH 8, 25 C; near diffusion-controlled."
+    inactivation_by_low_pH_regeneration:
+      value: 1
+      low: 0.5
+      high: 1
+      unit: fraction of bound ALP activity lost per glycine pH ~2 cycle
+      source: UNVERIFIED
+      confidence: low
+      note: "Irrelevant if label is stripped each cycle; relevant only if regeneration is incomplete (residual label -> carry-over)."
+  hrp:
+    name: "Horseradish peroxidase"
+    molar_mass:
+      value: 44000
+      low: 40000
+      high: 44000
+      unit: g/mol
+      source: UNVERIFIED
+      confidence: medium
+      note: "Commonly quoted 40-44 kDa."
+    kcat_TMB:
+      value: 2.0e3
+      low: 3.0e2
+      high: 4.0e3
+      unit: 1/s
+      source: "Gao2007 (via Theranostics2017 Table 1)"
+      confidence: low
+      note: >
+        Gao2007: kcat 4.00e3 /s (TMB), 3.48e3 /s (H2O2) at pH 3.5, 40 C. Immunoassay substrates run at
+        RT and ~pH 5-6 -> best estimate lowered to 2e3 (assumption). Primary paper not read; value via review table.
+    Km_TMB:
+      value: 4.34e-4
+      low: 1.0e-4
+      high: 8.0e-4
+      unit: M
+      source: "Gao2007 (via Theranostics2017)"
+      confidence: medium
+      note: "pH 3.5, 40 C."
+    Km_H2O2:
+      value: 3.7e-3
+      low: 1.0e-3
+      high: 5.0e-3
+      unit: M
+      source: "Gao2007 (via Theranostics2017)"
+      confidence: medium
+      note: "pH 3.5, 40 C."
+    azide_incompatibility:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean
+      source: "Mabtech3850; JacksonHRP"
+      confidence: high
+      note: "Sodium azide inhibits/inactivates HRP: azide-free buffers in all HRP lines."
+    HRP_FIA_detection_limit:
+      value: 2.0e-14
+      low: 2.0e-14
+      high: 1.0e-12
+      unit: M HRP (15 min TMB incubation, FIA amperometry)
+      source: Fanjul2005
+      confidence: high
+      note: "Bare screen-printed carbon, +0.1 V vs Ag pseudo-ref, 0.5 M H2SO4 carrier 4.3 mL/min."
+  beta_gal:
+    name: "beta-Galactosidase (E. coli), tetramer"
+    molar_mass:
+      value: 465000
+      low: 460000
+      high: 540000
+      unit: g/mol
+      source: UNVERIFIED
+      confidence: medium
+      note: "Commonly quoted ~465 kDa tetramer."
+    kcat:
+      value: 730
+      low: 64
+      high: 1000
+      unit: 1/s
+      source: "English2006 (value seen only as a secondary quote); low bound UNVERIFIED"
+      confidence: medium
+      note: "Single-molecule RGP: kcat 730 /s, Km 380 uM (secondary quote of English2006). A 2012 microfluidic study (not identified/read) reported 64 /s - used as low bound only. pAPG kcat not found."
+    Km_ONPG:
+      value: 1.2e-4
+      low: 1.2e-4
+      high: 4.2e-4
+      unit: M
+      source: Yuan1994
+      confidence: high
+      note: "Wild type 0.12 mM ONPG; 0.04 mM PNPG."
+    Km_pAPG:
+      value: 2.0e-4
+      low: 5.0e-5
+      high: 1.0e-3
+      unit: M
+      source: UNVERIFIED
+      confidence: low
+      note: "No primary Km for p-aminophenyl beta-D-galactopyranoside found this session; bracketed by ONPG/RGP values."
+    pH_optimum:
+      value: 7.3
+      low: 6.5
+      high: 8.0
+      unit: pH
+      source: "Tenu1971"
+      confidence: medium
+      note: "Activity controlled by groups pKa <6 and ~8.4 (Mg2+-enzyme); Mg2+ required. Optimum value itself inferred."
+    detection_limit_IDA_bead:
+      value: 7.0e-17
+      low: 7.0e-17
+      high: 7.0e-17
+      unit: mol beta-gal
+      source: Kim2004
+      confidence: high
+      note: "70 amol beta-gal in <1 min with comb IDA (2.4 um gap)."
+  gox:
+    name: "Glucose oxidase (A. niger)"
+    Km_glucose:
+      value: 3.3e-2
+      low: 3.3e-2
+      high: 1.1e-1
+      unit: M
+      source: SigmaGOx
+      confidence: medium
+      note: "Vendor: Km 33-110 mM (citing Gibson 1964)."
+    kcat:
+      value: 500
+      low: 100
+      high: 1500
+      unit: 1/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Not verified this session. GOx is not a recommended label: product H2O2 needs high potential or a second enzyme; glucose/O2 dependence."
+  polyenzyme_research_labels:
+    MWCNT_HRP_per_100nm:
+      value: 106
+      low: 50
+      high: 200
+      unit: HRP per 100 nm CNT
+      source: Malhotra2010
+      confidence: high
+      note: "IL-6 LOD 0.5 pg/mL in 10 uL serum."
+    magnetic_bead_HRP_per_bead:
+      value: 7500
+      low: 1000
+      high: 10000
+      unit: HRP per 1 um bead
+      source: Mani2009
+      confidence: high
+      note: "PSA LOD 0.5 pg/mL in 10 uL serum."
+
+substrates:
+  pAPP:
+    name: "4-aminophenyl phosphate (ALP substrate)"
+    working_concentration:
+      value: 1.0e-3
+      low: 1.0e-4
+      high: 1.0e-2
+      unit: M
+      source: "Balbaied2020; Thompson1991"
+      confidence: medium
+      note: ">10x Km saturates (Km 56 uM). 9.6 mM used by Balbaied2020. Higher conc. raises impurity background."
+    substrate_oxidation_onset:
+      value: 0.32
+      low: 0.25
+      high: 0.40
+      unit: V
+      source: "derived: Kulys1980 (+0.516 V vs NHE on Pt, pH 8) minus 0.197 V"
+      confidence: medium
+      note: "Applied potential must stay well below this to keep substrate background low."
+    free_pAP_impurity_fraction:
+      value: 1.0e-4
+      low: 1.0e-5
+      high: 1.0e-2
+      unit: mol/mol
+      source: UNVERIFIED
+      confidence: low
+      note: >
+        CRITICAL for LOD and not quantified in any verified source. Gyurcsanyi2002 calls pAPP 'not easily
+        accessible and unstable'; Ghindilis1995 saw a significant pAPP background (enzyme sensor). Measure
+        by HPLC-EC on each lot; consider in-line purification (e.g. small RP/anion pre-column).
+    spontaneous_hydrolysis_rate:
+      value: 1.0e-8
+      low: 1.0e-10
+      high: 1.0e-6
+      unit: 1/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Pseudo-first-order non-enzymatic hydrolysis at pH 9-10, RT. Unknown; sets a time-growing blank. Measure."
+  pAP:
+    name: "4-aminophenol (ALP / beta-gal product)"
+    n_electrons:
+      value: 2
+      low: 2
+      high: 2
+      unit: e-/molecule
+      source: deSouza2020
+      confidence: high
+      note: "2e-/2H+ reversible oxidation to p-quinone imine (QI)."
+    detection_potential:
+      value: 0.15
+      low: 0.05
+      high: 0.29
+      unit: V
+      source: "Trau1997; Thomas2004; Kulys1980"
+      confidence: high
+      note: "+150 mV at carbon (Trau1997); +290 mV at Pt IDA, collector -300 mV (Thomas2004)."
+    diffusion_coefficient:
+      value: 1.03e-9
+      low: 8.0e-10
+      high: 1.1e-9
+      unit: m^2/s
+      source: deSouza2020
+      confidence: medium
+      note: "1.03e-5 cm^2/s at glassy carbon."
+    heterogeneous_rate_constant_SPCE:
+      value: 6.5e-6
+      low: 3.0e-6
+      high: 1.0e-5
+      unit: m/s
+      source: Pemberton1999
+      confidence: medium
+      note: "6.5e-4 cm/s bare SPCE; 3.0e-4 cm/s with Ab layer (quasi-reversible at carbon)."
+    FIA_detection_limit:
+      value: 7.0e-9
+      low: 7.0e-9
+      high: 2.4e-8
+      unit: M
+      source: "Thompson1991; Xu1989"
+      confidence: high
+      note: "7 nM (Thompson1991); 24 nM by FIA-EC, limited by capacitive transient from ionic-strength mismatch (Xu1989)."
+    autoxidation_half_life_pH9_air:
+      value: 3600
+      low: 600
+      high: 36000
+      unit: s
+      source: UNVERIFIED
+      confidence: low
+      note: >
+        pAP autoxidises in alkaline air-saturated solution (radical; polymeric products - Josephy1983).
+        Hydrazine/TCEP/NADH reductants protect it (Das2007). Rate not verified; measure.
+    fouling:
+      value: 1
+      low: 0
+      high: 1
+      unit: boolean (1 = significant)
+      source: Buckey2023
+      confidence: medium
+      note: "pAP adsorbs and electropolymerises on carbon/gold with repeated oxidation; lower conc. (<~4 uM) improves reproducibility. Conference abstract."
+    redox_cycling_IDA_amplification:
+      value: 4
+      low: 4
+      high: 100
+      unit: fold
+      source: "Thomas2004; Han2014"
+      confidence: high
+      note: "Planar IDA 4x (87% collection efficiency); 3D IDA in microchannel ~100x."
+  AAP:
+    name: "L-ascorbic acid 2-phosphate (ALP substrate)"
+    stability_note:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean (1 = stable)
+      source: "Gyurcsanyi2002; Akanda2011"
+      confidence: medium
+      note: "Commercial, non-toxic, 'excellent stability'; gives high S/B at ITO."
+  AA:
+    name: "L-ascorbic acid (ALP product from AAP)"
+    detection_potential:
+      value: 0.4
+      low: 0.2
+      high: 0.45
+      unit: V
+      source: "Kokado2000; Sun2005"
+      confidence: medium
+      note: "+400 mV at GC in FIA; DPV peak +380 mV. Fast at ITO without mediator (Akanda2011)."
+    n_electrons:
+      value: 2
+      low: 2
+      high: 2
+      unit: e-/molecule
+      source: UNVERIFIED
+      confidence: medium
+      note: "Oxidation to dehydroascorbate (chemically irreversible)."
+    amperometric_current_density_100uM:
+      value: 0.248
+      low: 0.12
+      high: 0.48
+      unit: A/m^2 (at 100 uM AA, batch amperometry)
+      source: Preechaworapun2008
+      confidence: medium
+      note: "24.8 uA/cm^2 (GC), 12.0 (SPC), 48.0 (Au) for 100 uM AA; AA gave the largest response of 7 ALP products."
+    ALP_FIA_detection_limit:
+      value: 1.6e-16
+      low: 7.0e-18
+      high: 1.6e-16
+      unit: mol ALP per assay
+      source: Kokado2000
+      confidence: high
+      note: "160 amol per assay (7 amol per injection), comparable to pAPP/phenyl phosphate."
+  HQDP:
+    name: "hydroquinone diphosphate (ALP substrate)"
+    hydrolytic_stability:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean (1 = stable)
+      source: Wilson2004
+      confidence: high
+      note: "'Excellent hydrolytic stability'; product HQ does not passivate electrodes even with repeated use."
+    commercial_availability:
+      value: 0
+      low: 0
+      high: 1
+      unit: boolean
+      source: UNVERIFIED
+      confidence: low
+      note: "Wilson2004 synthesised it; commercial source not verified."
+  HQ:
+    name: "hydroquinone (product)"
+    n_electrons:
+      value: 2
+      low: 2
+      high: 2
+      unit: e-/molecule
+      source: UNVERIFIED
+      confidence: medium
+      note: "Reversible 2e-/2H+ to benzoquinone."
+    diffusion_coefficient:
+      value: 9.0e-10
+      low: 7.0e-10
+      high: 1.1e-9
+      unit: m^2/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Not verified this session."
+    fouling:
+      value: 0
+      low: 0
+      high: 0
+      unit: boolean
+      source: Wilson2004
+      confidence: high
+      note: "No passivation (contrast phenol, 1-naphthol)."
+  phenol_and_1_naphthol:
+    name: "phenyl phosphate / 1-naphthyl phosphate products"
+    fouling:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean
+      source: Wilson2004
+      confidence: high
+      note: "Irreversible oxidation with rapid electrode passivation; 1-naphthol needs ~230 mV more positive potential than pAP (Pemberton1999). Not recommended for reusable flow electrode."
+  TMB:
+    name: "3,3',5,5'-tetramethylbenzidine (HRP substrate), read as TMB(ox) reduction"
+    n_electrons:
+      value: 2
+      low: 1
+      high: 2
+      unit: e-/molecule
+      source: Fanjul2005
+      confidence: medium
+      note: "HRP/H2O2 oxidises TMB to the diimine; electrochemical reduction back to TMB. (1e- charge-transfer complex at intermediate stages.)"
+    detection_potential:
+      value: 0.2
+      low: 0.1
+      high: 0.33
+      unit: V
+      source: "Fanjul2005; Ecke2023"
+      confidence: medium
+      note: "+0.1 V vs Ag pseudo-ref in 0.5 M H2SO4 (Fanjul2005); Epc 0.408 V, optimum applied 0.33 V vs Ag/AgCl to limit H2O2 reduction background (Ecke2023, via search summary)."
+    background_H2O2_reduction:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean
+      source: Ecke2023
+      confidence: medium
+      note: "Background grows as applied potential is lowered (H2O2 reduction). Also TMB autoxidation (UNVERIFIED rate) and precipitation of TMB(ox) on electrode (exploited by Ying2024)."
+  pAPG:
+    name: "4-aminophenyl beta-D-galactopyranoside (beta-gal substrate)"
+    product: pAP
+    spontaneous_hydrolysis_rate:
+      value: 1.0e-9
+      low: 1.0e-11
+      high: 1.0e-7
+      unit: 1/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Glycosides are generally more hydrolytically stable than aryl phosphates at neutral pH (expectation, not verified)."
+
+labels_nonenzyme:
+  gold_nanoparticle_ASV:
+    atoms_per_18nm_AuNP:
+      value: 1.7e5
+      low: 1.7e5
+      high: 1.7e5
+      unit: atoms
+      source: Dequaire2000
+      confidence: high
+      note: "Acid dissolution then ASV of Au(III) at SPE; Au(III) LOD 5e-9 M."
+    IgG_LOD:
+      value: 3.0e-12
+      low: 3.0e-12
+      high: 6.0e-12
+      unit: M
+      source: "Dequaire2000; Chu2005"
+      confidence: high
+      note: "3 pM IgG (35 uL); 6 pM human IgG with silver enhancement. ~1000x short of target: not competitive."
+
+nsb:
+  background_equivalent_best_in_class:
+    value: 1.5e-15
+    low: 1.0e-15
+    high: 1.8e-15
+    unit: M analyte-equivalent
+    source: "Rissin2010; Chang2012"
+    confidence: high
+    note: >
+      Highly optimised digital ELISA on beads: NSB of detection Ab + SbG equal to 1.8 fM TNF-a / 1.2 fM PSA;
+      'typically ~1 fM'. Background dominated by labeling reagents binding to capture antibodies, not matrix.
+      Our target (6.7 fM) is only ~4-6x this best-in-class background.
+  background_equivalent_conventional_electrochemical:
+    value: 1.0e-13
+    low: 1.0e-14
+    high: 1.0e-12
+    unit: M analyte-equivalent
+    source: UNVERIFIED
+    confidence: low
+    note: "Expectation for non-optimised blocked surfaces (10-1000x worse than Simoa). Key uncertain parameter; sets LOD."
+  nsb_fraction_of_input_label:
+    value: 3.0e-6
+    low: 7.0e-7
+    high: 3.0e-5
+    unit: fraction of label molecules added that bind nonspecifically
+    source: "derived: Rissin2010 (~2000 background enzymes = 1% of 2e5 beads; SbG 1-50 pM in 100 uL = 6e7-3e9 molecules)"
+    confidence: low
+    note: "30 min incubation, blocked 2.7 um beads. Best-in-class; scale up for other surfaces."
+  nsb_effective_rate_constant:
+    value: 4.0e-11
+    low: 8.0e-12
+    high: 4.0e-10
+    unit: m/s
+    source: "derived: Rissin2010 (Gamma_nsb ~4.4e8 /m^2 after 1800 s at 1-50 pM over 0.046 cm^2 bead area)"
+    confidence: low
+    note: "Model NSB as Gamma_nsb = k_nsb * C_label * t (per unit area). Upper bound corresponds to 1 pM SbG. For ordinary surfaces assume up to 100x higher (UNVERIFIED)."
+  blank_CV_poisson_floor_digital:
+    value: 0.065
+    low: 0.06
+    high: 0.07
+    unit: fraction
+    source: Rissin2010
+    confidence: high
+    note: "1% active beads (200-300 beads) -> 6-7% Poisson CV."
+  blank_CV_analog_electrochemical:
+    value: 0.1
+    low: 0.03
+    high: 0.2
+    unit: fraction
+    source: "Pemberton1999; UNVERIFIED"
+    confidence: low
+    note: "Sensor-to-sensor precision 4-18% (Pemberton1999). Within-run blank CV on a reused flow electrode not verified."
+  digital_ELISA_detectable_enzymes:
+    value: 10
+    low: 10
+    high: 20
+    unit: enzyme labels per 100 uL
+    source: Rissin2010
+    confidence: high
+    note: "Shows label detection is not the limit at the state of the art; NSB is."
+  bovine_IgG_in_BSA:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean (1 = present in most BSA grades)
+    source: JacksonBSA
+    confidence: high
+    note: "Most BSA, incl. high-purity grades, contains bovine IgG; use IgG-free BSA or non-mammalian blocker with anti-human/anti-IgG reagents."
+  human_IgG_on_lab_equipment:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean
+    source: Parry1997
+    confidence: high
+    note: "Human IgG detected in >=1/3 of micropipettor tip-cone eluates in every one of 19 labs; only 14% of 222 eluates clean."
+
+regeneration:
+  elution_glycine_HCl_pH:
+    value: 2.2
+    low: 1.75
+    high: 2.5
+    unit: pH
+    source: "Pei2002; Kandimalla2004; Storri1998; Foubert2019; Wijesuriya1994"
+    confidence: high
+    note: "0.1-0.2 M glycine-HCl pH 1.75-2.5 most common; + 1% DMSO gave 97% dissociation (Kandimalla2004)."
+  cycles_reported:
+    value: 50
+    low: 5
+    high: 300
+    unit: cycles
+    source: "LocascioBrown1990; Pei2002; Bright1990; Foubert2019; Kandimalla2004; Ilchmann1990"
+    confidence: medium
+    note: "Hundreds over 3 months (liposome FIIA column), >80 (SPR), >50 (chaotrope, F(ab')), 13-14 (electrode/sepharose), >10 (plates)."
+  activity_loss_per_cycle:
+    value: 0.01
+    low: 0.001
+    high: 0.07
+    unit: fraction per cycle
+    source: "derived: Wijesuriya1994 (70% after 5 cycles -> ~7%/cycle); Pei2002 / LocascioBrown1990 (>80 - hundreds of cycles -> <=0.5%/cycle)"
+    confidence: low
+    note: "Strongly dependent on antibody, support and elution; Goode2015 meta-analysis: only ~60% of reported regenerations met their success definition."
+  regeneration_time:
+    value: 120
+    low: 30
+    high: 600
+    unit: s
+    source: UNVERIFIED
+    confidence: low
+    note: "Elution + re-equilibration; typical SPR 30-60 s pulses. Re-equilibration of pH and electrode baseline may dominate."
+  residual_label_carryover_fraction:
+    value: 1.0e-4
+    low: 1.0e-6
+    high: 1.0e-2
+    unit: fraction of previous run's bound label
+    source: UNVERIFIED
+    confidence: low
+    note: "CRITICAL with 3-log range: a 1000 pg/mL run followed by a blank needs carry-over <<1e-3. Measure."
+  renewable_bead_surface:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean (method exists)
+    source: Pollema1994
+    confidence: high
+    note: "Flow-injection renewable surface: spent beads flushed and replaced each assay; removes regeneration drift."
