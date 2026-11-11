@@ -111,7 +111,7 @@ in place. Bench time ≈ 5 days.
 | S0.3 | Inject Start wiring | Wire SM-FL Inject Start (connector 1, pins 1–2, docs/02 §3.1 [V: WKB55803]) to an isolated digital input of the USB DAQ (docs/07 §0). Run `python -m elisa_auto.watch_inject` (README) and make 10 injections of buffer | Every injection logged with time stamp; pulse width recorded (UNVERIFIED today) |
 | S0.4 | Lab PC | Install per `automation/README.md`; run `python -m pytest -q automation/tests` and the simulated cycle | Tests pass on the lab PC (gate G0) |
 | S0.5 | Electrochemical floor | Gamry 600+: (i) dummy cell, (ii) carbon SPE with a 50 µL drop of substrate buffer, (iii) same SPE in the DropSens wall-jet cell at 50 µL/min from the BSM. Chronoamperometry at +0.35 V vs on-strip Ag, 10 min, Faraday cage | RMS noise and drift per configuration → compare with `ma.noise` and docs/02 §4.5 (3 pA in flow, 1 pA stopped; UNVERIFIED) |
-| S0.6 | BSM low-flow check (only matters for the backup bed) | Gravimetric: 1, 10, 20, 100 µL/min into a weighed vial, 30 min each, 3 repeats, with the restrictor fitted | Flow error and CV; confirms or refutes `hw.bsm.flow_min` = 1 µL/min (docs/00 user statement) |
+| S0.6 | BSM low-flow check (the primary also depends on it: readout sweep at 10 µL/min and accumulation shunt at 10–50 µL/min, docs/05 §4.1; the backup loads at 10 µL/min — corrected by the final review, docs/08) | Gravimetric: 1, 10, 20, 100 µL/min into a weighed vial, 30 min each, 3 repeats, with the restrictor fitted | Flow error and CV; confirms or refutes `hw.bsm.flow_min` = 1 µL/min (docs/00 user statement) |
 | S0.7 | Clean-handling set-up | §8.1: dedicated pipettes, filter tips, LoBind tubes, "IgG-free" bench area, glove changes, sealed blank stock | SOP written into `bench/SOP_clean_handling.md` |
 | S0.8 | Orders and quotes | Order all Stage-1 items (docs/07 §1); book BLI/SPR; ask for quotes and lead times for Stage 2/3 items without ordering | Purchase log |
 
@@ -124,7 +124,10 @@ dated. G0 has no "stop" outcome.
 
 ### 4.0 Common materials and conditions for Stage 1
 
-* **Assay buffer (AB):** PBS pH 7.4 (or 50 mM Tris-HCl pH 7.4, 150 mM NaCl), 1 % (w/v) IgG-free BSA (docs/07),
+* **Assay buffer (AB):** 50 mM Tris-HCl pH 7.4, 150 mM NaCl (**no phosphate**: phosphate is a competitive ALP
+  inhibitor, K_i 2 µM nominal, and `chem.enzymes.alp.phosphate_inhibition_Ki` states "NO PBS in lines that reach the
+  enzyme step"; residual PBS carried into the substrate would inhibit ALP variably — corrected from "PBS" by the final
+  review, docs/08), 1 % (w/v) IgG-free BSA (docs/07),
   0.05 % Tween-20, made in LoBind tubes or glass, 0.22 µm filtered. No azide (azide is irrelevant to ALP but
   keep reagents HRP-compatible for fallback chemistry tests).
 * **Substrate buffer (SB):** 0.1 M Tris (or diethanolamine-free carbonate) pH 9.5, 1 mM MgCl₂ (docs/05 §4.1:

@@ -26,3 +26,17 @@ def test_analyze_templates(tmp_path, capsys):
     assert "[U2 BLI]" in out and "[E1.4] detection-on-capture ratio" in out
     assert "could not analyse" not in out
     assert (tmp_path / "analysis_report.md").exists()
+
+
+def test_detection_on_capture_subtracts_background(tmp_path):
+    """Added by the final review (docs/08): a raw-signal ratio on a large free-HQ background hides a 1.5x
+    detection-on-capture excess; the background-corrected ratio must recover it."""
+    rows = ["bead_type,signal"]
+    rows += [f"capture,{3.0 + 1.2 + d:.3f}" for d in (-0.02, 0.0, 0.02, 0.01)]
+    rows += [f"nonimmune,{3.0 + 0.8 + d:.3f}" for d in (-0.02, 0.0, 0.02, 0.01)]
+    rows += [f"background,{3.0 + d:.3f}" for d in (-0.01, 0.0, 0.01)]
+    (tmp_path / "detection_on_capture.csv").write_text("\n".join(rows) + "\n")
+    out = "\n".join(analyze_folder(tmp_path))
+    line = next(l for l in out.splitlines() if l.startswith("[E1.4] detection-on-capture ratio"))
+    r = float(line.split("R = ")[1].split()[0])
+    assert 1.4 < r < 1.6 and "INTERMEDIATE" in line

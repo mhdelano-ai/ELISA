@@ -200,9 +200,25 @@ def bli(p: Path, gates: dict, out: list[str]):
 
 def detection_on_capture(p: Path, gates: dict, out: list[str]):
     rows = _rows(p)
+    # The ratio must be formed on the conjugate-borne signal, not on raw signals: at the design point the bead
+    # signal (~0.8 nM HQ) sits on a ~3 nM free-HQ background (docs/06 E1.4), which would pull a raw ratio towards 1
+    # and pass the gate falsely. Rows with bead_type 'background' (no-conjugate beads or no-bead substrate blank,
+    # same substrate, volume and time) are averaged and subtracted from both arms (added by the final review,
+    # docs/08).
+    bgv = [_f(r["signal"]) for r in rows if r.get("bead_type") in ("background", "bead_blank", "no_bead")]
     cap = np.array([_f(r["signal"]) for r in rows if r.get("bead_type") == "capture"])
     non = np.array([_f(r["signal"]) for r in rows if r.get("bead_type") == "nonimmune"])
     if cap.size < 2 or non.size < 2:
+        return
+    if bgv:
+        bg = float(np.mean(bgv))
+        cap, non = cap - bg, non - bg
+    else:
+        out.append("[E1.4] WARNING: no 'background' rows; ratio formed on raw signals is biased towards 1 "
+                   "(add no-conjugate bead or no-bead substrate blanks)")
+    if cap.mean() <= 0 or non.mean() <= 0:
+        out.append("[E1.4] background-corrected signal <= 0 in one arm: not resolvable at this bead number "
+                   "(repeat at 5e6 beads and 1 nM, docs/06 E1.4)")
         return
     lr = math.log(cap.mean() / non.mean())
     se = math.sqrt(cap.var(ddof=1) / cap.size / cap.mean() ** 2 + non.var(ddof=1) / non.size / non.mean() ** 2)
