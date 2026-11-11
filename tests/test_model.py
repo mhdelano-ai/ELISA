@@ -230,3 +230,21 @@ def test_mc_sample_of_nominal_values_reproduces_nominal(ps):
     rs = evaluate(a, ps)
     assert np.allclose(rv.lod_pgml, rs.lod_pgml, rtol=1e-9)
     assert np.allclose(rv.blank_sd, rs.blank_sd, rtol=1e-9)
+
+
+def test_monte_carlo_still_samples_when_design_values_are_pinned(ps, archs):
+    """Regression: an architecture built with with_design() must not silence the Monte Carlo.
+
+    The access log used to be lost on the copy made when design values are applied, so no parameter
+    was sampled and every draw returned the nominal result.
+    """
+    base = next(a for a in archs if a.name == REF)
+    keys = montecarlo.used_keys(base, ps)
+    pin = next(k for k in keys if k.startswith("ma.") and isinstance(ps.values[k], (int, float)))
+    pinned = base.with_design(**{pin: ps.values[pin]})
+    keys_pinned = montecarlo.used_keys(pinned, ps)
+    assert set(keys_pinned) == set(keys)
+    mc = montecarlo.run(pinned, ps, n=50, seed=1)
+    assert pin not in mc.keys                      # the pinned design value itself is never sampled
+    assert len(mc.keys) >= len(montecarlo.run(base, ps, n=50, seed=1).keys) - 1
+    assert np.ptp(np.asarray(mc.result.lod_pgml, float)) > 0

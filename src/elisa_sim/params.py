@@ -158,6 +158,9 @@ class ParameterSet:
     def with_values(self, updates: dict) -> "ParameterSet":
         """New set with some values replaced (values given in the parameter's own YAML unit)."""
         ps = self.copy()
+        # Share the access log: evaluate() applies the architecture's design values through this
+        # method, and the Monte Carlo must still see which parameters the model read.
+        ps.accessed = self.accessed
         for k, v in updates.items():
             if k not in self.params:
                 raise KeyError(f"unknown parameter {k}")
