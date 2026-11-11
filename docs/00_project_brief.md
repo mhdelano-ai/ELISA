@@ -45,6 +45,13 @@ These statements take precedence over generic vendor figures in docs/02 and para
   (a customer) must not have to do the addition by hand. The SM-FL cannot add reagents to vials (docs/02), so this
   needs either vials supplied pre-filled with reagent (the user only adds sample) or an added dispensing device.
 
+## Decisions by the user (2026-11-11, later)
+
+- **Pre-filled reagent vials are NOT acceptable.** Sample vials contain sample only. Any mixing of sample with
+  beads or conjugate must be done by the automated system itself (in-line, or by added automated hardware), never by
+  the end user and never by supplying vials that already contain reagent.
+- **The 100 µL limit is the injected volume.** Drawing about 200 µL per full-loop injection is acceptable.
+
 ## Open design choices (to be decided by the in silico work)
 
 - Where the immunoassay happens: inline capture column/microreactor, on the working electrode, or
