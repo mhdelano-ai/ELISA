@@ -1,0 +1,84 @@
+architecture,surface,capacity_loss_per_cycle,electrode_loss_per_cycle,cycles_to_slope_change_tolerance,slope_after_100_cycles,residual_label_per_cycle,carryover_after_top_standard_pgml,lod_nominal_pgml
+B-mag1-IDA/alp_hqdp,renewed beads,0,0.001,105,0.905,9.87e-05,0.0986,17.4
+B-mag1-IDA/hrp_tmb,renewed beads,0,0.01,10.5,0.366,9.87e-05,0.0986,23.9
+B-mag1-IDA/alp_papp,renewed beads,0,0.01,10.5,0.366,9.87e-05,0.0986,24.2
+B-mag-IDA/alp_hqdp/PLPA97,renewed beads,0,0.001,105,0.905,9.47e-05,0.0947,67.4
+B-mag-TL/alp_hqdp,renewed beads,0,0.001,105,0.905,9.55e-05,0.0955,80.2
+B-mag-IDA/alp_hqdp,renewed beads,0,0.001,105,0.905,9.55e-05,0.0955,79.6
+B-mag-TL/hrp_tmb,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,111
+B-mag-IDA/hrp_tmb,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,111
+B-mag-TL/alp_aap,renewed beads,0,0.001,105,0.905,9.55e-05,0.0955,110
+B-mag-TL/alp_papp,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,115
+B-mag-IDA/alp_papp,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,115
+C-bed-IDA/alp_hqdp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,278
+C-bed-IDA/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,269
+C-bed-IDA/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,263
+B-bed-TL/alp_hqdp/PLPA97,regenerated,0.005,0.001,17.5,0.548,0,1e-09,526
+B-bed-TL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,622
+B-bed-IDA/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,622
+B-bed-COUL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,622
+B-bed-WJ/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,624
+B-bed-TL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,636
+B-bed-COUL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,636
+B-bed-WJ/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,636
+B-cap-TL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,535
+B-bed-TL/alp_hqdp/injected-substrate,regenerated,0.005,0.001,17.5,0.548,0,1e-09,879
+B-bed-SPE/alp_papp,regenerated,0.005,0,21,0.606,0,1e-09,833
+B-bed-SPE/hrp_tmb,regenerated,0.005,0,21,0.606,1e-05,0.01,814
+B-bed-SPE/alp_hqdp,regenerated,0.005,0,21,0.606,0,1e-09,867
+B-bed-WJ/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,834
+B-bed-TL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,814
+B-bed-IDA/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,832
+B-bed-COUL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,832
+B-bed-WJ/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,814
+B-bed-IDA/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,814
+B-bed-COUL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,814
+B-bed-TL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,832
+B-bed-TL/alp_hqdp/untreated-sample,regenerated,0.005,0.001,17.5,0.548,0,1e-09,995
+B-bed-SPE/alp_aap,regenerated,0.005,0,21,0.606,0,1e-09,888
+B-cap-TL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,560
+B-cap-TL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,742
+B-cap-TL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,731
+A-bed-TL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,928
+C-planar-IDA/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,4.66e+03
+C-planar-IDA/alp_hqdp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,4.76e+03
+C-planar-IDA/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,4.59e+03
+B-mag-IDA/sa_polyhrp_tmb,renewed beads,0,0.01,10.5,0.366,8.66e-05,0.0866,3.22e+03
+B-mag1-IDA/sa_polyhrp_tmb,renewed beads,0,0.01,10.5,0.366,9.96e-05,0.0995,3.95e+03
+B-mag-TL/sa_polyhrp_tmb,renewed beads,0,0.01,10.5,0.366,8.66e-05,0.0866,3.22e+03
+A-bed-COUL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,8.63e+03
+C-bed-IDA/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,3.47e+03
+C-bed-IDA/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,7.69e+03
+B-mag1-IDA/sbg_papg,renewed beads,0,0.01,10.5,0.366,0.0001,0.0998,8.74e+03
+A-bed-TL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,8.75e+03
+B-bed-IDA/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,1.02e+04
+B-bed-TL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,1.04e+04
+B-bed-COUL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,1.02e+04
+B-bed-SPE/sa_polyhrp_tmb,regenerated,0.005,0,21,0.606,1e-05,0.01,2.38e+04
+B-mag-IDA/sbg_papg,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,1.06e+04
+B-bed-WJ/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,2.38e+04
+B-bed-IDA/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,2.38e+04
+B-bed-COUL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,2.38e+04
+B-bed-TL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,2.38e+04
+B-mag-TL/sbg_papg,renewed beads,0,0.01,10.5,0.366,9.55e-05,0.0955,1.33e+04
+B-bed-SPE/sbg_papg,regenerated,0.005,0,21,0.606,1e-05,0.01,2.77e+04
+A-bed-COUL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,inf
+A-bed-COUL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+A-bed-COUL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,inf
+A-bed-COUL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+A-bed-COUL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+A-bed-TL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,4.03e+04
+A-bed-TL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+A-bed-TL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,2.45e+04
+A-bed-TL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+B-bed-WJ/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,4.26e+04
+B-mono-TL/alp_hqdp,regenerated,0.005,0.001,17.5,0.548,0,1e-09,4.55e+04
+B-mono-TL/alp_aap,regenerated,0.005,0.001,17.5,0.548,0,1e-09,4.76e+04
+B-mono-TL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+B-mono-TL/alp_papp,regenerated,0.005,0.01,6.99,0.222,0,1e-09,5.68e+04
+B-mono-TL/hrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,5.24e+04
+B-mono-TL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf
+B-cap-TL/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,5.15e+04
+B-cap-TL/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,2.13e+04
+C-planar-IDA/sbg_papg,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,7.26e+04
+C-planar-IDA/sa_polyhrp_tmb,regenerated,0.005,0.01,6.99,0.222,1e-05,0.01,inf

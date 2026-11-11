@@ -1,0 +1,15 @@
+comparison,model,published,unit,model/published,extra
+"Task 1 worked estimate (1e5 ALP, 10 min, 10 uL)",9.43e-09,1e-08,M,0.943,
+"DellaCiana1996 free-ALP LOD (10 min, HQ)",2.2e-16,1.2e-15,M,0.183,implied_kcat=183
+DellaCiana1996 HQ FIA LOD (wall-jet + noise model),2.6e-10,1.2e-10,M,2.17,conversion=0.0107
+"Thompson1991 ALP LOD (15 min, pAPP, LC-EC 7 nM pAP)",0.00115,0.05,ug/L,0.023,implied_kcat=23
+"Bead capture, 30 min (Chang2012-derived ~70 %)",0.493,0.7,fraction,0.704,model_without_transport_and_activity=0.711; pseudo_first_order_rate=0.000423
+"Simoa blank equivalent (closure check of the NSB rate, Rissin2010)",2.37e-15,1.5e-15,M,1.58,N_nsb=2.98e+03; active_bead_fraction=0.0149
+Conventional plate ELISA blank equivalent (Rissin2010 85 fM),2.94e-12,8.5e-14,M,34.6,capture_fraction=0.565; label_fraction=0.819; label_conc_M=1e-08; implied_k_nsb=1.16e-12
+Conventional plate ELISA blank equivalent (Rissin2010 85 fM),7.82e-13,8.5e-14,M,9.19,capture_fraction=0.565; label_fraction=0.309; label_conc_M=1e-09; implied_k_nsb=4.35e-12
+"Task 2 loop transfer: 250 uL loop, 0.5 mm ID, 250 uL plug far end, 50 uL/min",0.838 0.969 0.997 1,0.84 0.97 0.997 1,fraction at 1/1.5/2/3 V_loop,max |diff| 0.00177,
+"Task 2 loop transfer: 250 uL loop, 0.5 mm ID, 85 uL plug far end, 50 uL/min",0.614 0.912 0.992 1,0.62 0.91 0.99 1,fraction at 1/1.5/2/3 V_loop,max |diff| 0.00554,
+"Task 2 loop transfer: 250 uL loop, 0.5 mm ID, 250 uL plug far end, 200 uL/min",0.78 0.905 0.967 0.998,0.78 0.91 0.97 0.999,fraction at 1/1.5/2/3 V_loop,max |diff| 0.00472,
+"Task 2 loop transfer: 250 uL loop, 0.5 mm ID, 85 uL plug far end, 200 uL/min",0.567 0.775 0.912 0.996,0.57 0.78 0.91 0.996,fraction at 1/1.5/2/3 V_loop,max |diff| 0.00463,
+"Task 2 loop transfer: 100 uL loop, 0.5 mm ID, 100 uL plug far end, 100 uL/min",0.775 0.895 0.959 0.997,0.77 0.9 0.96 0.997,fraction at 1/1.5/2/3 V_loop,max |diff| 0.00474,
+"Task 2 loop transfer: 100 uL loop, 0.25 mm ID, 75 uL plug at outlet, 50 uL/min",0.95 0.998 1 1,0.95 0.998 1 1,fraction at 1/1.5/2/3 V_loop,max |diff| 0.000431,

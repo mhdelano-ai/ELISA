@@ -1,0 +1,6 @@
+architecture,reason
+B-bed-IDA/alp_aap,IDA redox cycling needs a chemically reversible product (ascorbate oxidation is irreversible)
+B-mag-IDA/alp_aap,IDA redox cycling needs a chemically reversible product (ascorbate oxidation is irreversible)
+B-mag1-IDA/alp_aap,IDA redox cycling needs a chemically reversible product (ascorbate oxidation is irreversible)
+C-planar-IDA/alp_aap,IDA redox cycling needs a chemically reversible product (ascorbate oxidation is irreversible)
+C-bed-IDA/alp_aap,IDA redox cycling needs a chemically reversible product (ascorbate oxidation is irreversible)

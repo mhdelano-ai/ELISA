@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.venv/
+# large / regenerable Monte Carlo outputs (the small summary CSV and figures are kept)
+results/*_samples.npz
+results/*.npy
+results/cache/

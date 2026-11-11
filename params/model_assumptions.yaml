@@ -1,0 +1,1199 @@
+# Model assumptions and parameters added by the simulation task (Task 3)
+# Companion document: docs/03_simulation_model.md (section 6 lists every entry and why it was needed).
+#
+# Same schema as params/chemistry.yaml and params/hardware.yaml:
+#   value (best estimate), low, high (plausible bounds), unit, source, confidence, note
+#   source = citation key (docs/01 or docs/02 reference lists, or the references in docs/03 section 11),
+#            "derived: ...", "design choice", or UNVERIFIED (engineering estimate made in this task).
+#   Keys are read by the model as  ma.<section>.<name>  (chemistry.yaml -> chem.*, hardware.yaml -> hw.*).
+#
+# Two special sections:
+#   monte_carlo : sampling settings and the list of DESIGN VARIABLES (glob patterns) that are held fixed in
+#                 Monte Carlo runs (timings, flows, volumes, reagent concentrations are choices, not
+#                 uncertainties; their low/high are design ranges for the optimisation task).
+#   overrides   : replacements for chem.* / hw.* entries this task questions (empty at present - the
+#                 questioned values are discussed in docs/03 section 6.3 and handled by separate entries
+#                 below, so the Task 1/2 values stay visible).
+#
+# Created 2026-11-11 by Task 3.
+
+monte_carlo:
+  log_ratio_threshold: 3.0      # high/low >= 3 and low > 0 -> log-triangular, else triangular
+  default_samples: 2000
+  seed: 20261111
+  fixed_patterns:
+    - "hw.timing.*"
+    - "ma.timing.*"
+    - "ma.geometry.*"
+    - "ma.numerics.*"
+    - "ma.statistics.*"
+    - "ma.readout.*_flow"
+    - "ma.delivery.sample_volume"
+    - "ma.delivery.conjugate_injection_volume"
+    - "ma.delivery.plug_at_outlet_end"
+    - "ma.labelling.*_concentration"
+    - "ma.chemistries.*.substrate_concentration"
+    - "chem.antibodies.conc_*"
+    - "chem.substrates.pAPP.working_concentration"
+    - "chem.surfaces.bead_number_per_100uL_digital_ELISA"
+    - "chem.analyte.*"
+    - "hw.smfl.loop_volume_recommended"
+    - "hw.smfl.loop_flush_volumes_for_transfer"
+    - "hw.smfl.injection_overhead_time"
+    - "hw.reactors.packed_microbed_10uL.bed_volume"
+    - "hw.reactors.packed_microbed_10uL.bead_diameter"
+    - "hw.reactors.monolith_cimac_100uL.bed_volume"
+    - "hw.flow_cells.thin_layer_basi.channel_height"
+    - "hw.flow_cells.thin_layer_basi.we_area"
+    - "hw.flow_cells.ida_redox_cycling.gap"
+    - "hw.flow_cells.thermo_6011rs_coulometric.min_flow"
+    - "hw.flow_cells.dropsens_spe_walljet.we_diameter"
+    - "hw.flow_cells.antec_sencell.we_diameter"
+    - "hw.bsm.flow_min"
+    - "hw.tubing.*_length"
+
+overrides: {}
+
+fluid:
+  viscosity:
+    value: 0.89e-3
+    low: 0.85e-3
+    high: 1.0e-3
+    unit: Pa*s
+    source: "standard value for water at 25 C (also used in docs/02 section 1.2)"
+    confidence: high
+    note: "Dilute aqueous buffer; upper bound covers ~20 C."
+  density:
+    value: 997
+    low: 995
+    high: 1000
+    unit: kg/m^3
+    source: "standard value for water at 25 C"
+    confidence: high
+    note: ""
+
+delivery:
+  sample_volume:
+    value: 100
+    low: 100
+    high: 100
+    unit: uL
+    source: project_brief
+    confidence: high
+    note: "Sample budget per determination."
+  adsorptive_loss_fraction_with_carrier:
+    value: 0.2
+    low: 0.02
+    high: 0.6
+    unit: fraction lost
+    source: UNVERIFIED
+    confidence: low
+    note: >
+      [UNVERIFIED] Loss of fM IgG to vial, needle, needle-to-valve path and loop WITH IgG-free carrier protein and
+      low-bind vials (the design assumption). chem.analyte.adsorptive_loss_fraction_untreated_tube (0.5, 0.1-0.9)
+      is the untreated case and can be selected per architecture (sample_treatment = "untreated"). Measure by
+      spike-recovery through the SM-FL (docs/02 R1). Scales signal only, not the blank.
+  plug_at_outlet_end:
+    value: 0
+    low: 0
+    high: 0
+    unit: boolean (1 = plug next to loop outlet)
+    source: "design choice (conservative); docs/02 section 2.4c"
+    confidence: low
+    note: "Position of the PLNO sample/conjugate plug in the loop at inject; far end is the slower case in the Task 2 table."
+  conjugate_injection_volume:
+    value: 20
+    low: 10
+    high: 50
+    unit: uL
+    source: "design choice (docs/02 section 7.4)"
+    confidence: medium
+    note: "PLNO 20 uL from a 4 C vial."
+  tubing_dilution_factor:
+    value: 0.9
+    low: 0.7
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Extra peak dilution of a reagent plug between injection valve and reactor (1.9 uL tubing, docs/02 7.5), multiplied on the loop-outlet peak computed by the loop model."
+
+geometry:
+  packed_bed_column_inner_diameter:
+    value: 1.0
+    low: 0.5
+    high: 2.1
+    unit: mm
+    source: "design choice (docs/02 section 6: 1 mm ID x 12.7 mm)"
+    confidence: medium
+    note: ""
+  monolith_diameter:
+    value: 5.2
+    low: 5.2
+    high: 5.2
+    unit: mm
+    source: SARTORIUS_CIMAC
+    confidence: medium
+    note: "CIMac 0.1 mL: 5.2 mm ID x 4.95 mm (search summary in docs/02)."
+  monolith_channel_diameter:
+    value: 2.0
+    low: 1.3
+    high: 6.0
+    unit: um
+    source: SARTORIUS_CIMAC
+    confidence: medium
+    note: "Channel sizes 1.3, 2 or 6 um (docs/02 section 6). Modelled as straight parallel channels (tortuosity ignored)."
+  capillary_inner_diameter:
+    value: 100
+    low: 50
+    high: 250
+    unit: um
+    source: "design choice; deFrutos1993 used 100 um i.d. fused silica"
+    confidence: medium
+    note: "Open-tubular capture reactor (docs/02 section 6: 50-250 um ID)."
+  capillary_length:
+    value: 0.1
+    low: 0.05
+    high: 1.0
+    unit: m
+    source: "design choice (docs/02 section 6 quotes volume per 10 cm)"
+    confidence: low
+    note: ""
+  chip_channel_height:
+    value: 25
+    low: 10
+    high: 50
+    unit: um
+    source: "design choice (docs/02 section 5.2: 10-25 um gasket)"
+    confidence: medium
+    note: ""
+  chip_channel_width:
+    value: 0.5
+    low: 0.3
+    high: 2.0
+    unit: mm
+    source: "design choice (docs/02 section 5.2: ~0.5 mm x 3 mm)"
+    confidence: medium
+    note: ""
+  chip_capture_length:
+    value: 3.0
+    low: 1.0
+    high: 10.0
+    unit: mm
+    source: "design choice (docs/02 section 5.2)"
+    confidence: low
+    note: "Length of antibody-coated zone (Scheme C planar capture)."
+  chip_channel_length:
+    value: 10.0
+    low: 5.0
+    high: 20.0
+    unit: mm
+    source: "design choice"
+    confidence: low
+    note: "Total sealed channel length during stopped-flow accumulation; gives 0.125 uL at 25 um x 0.5 mm, inside hw ida channel_volume 0.05-0.5 uL."
+  chip_bead_bed_volume:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: uL
+    source: "design choice (docs/02 section 5.2 'short bead bed immediately upstream of the IDA')"
+    confidence: low
+    note: ""
+  chip_bead_bed_inner_diameter:
+    value: 0.5
+    low: 0.3
+    high: 1.0
+    unit: mm
+    source: "design choice"
+    confidence: low
+    note: ""
+  ida_finger_pairs:
+    value: 50
+    low: 15
+    high: 100
+    unit: count
+    source: "BASI_IDA (10/5 um x 50 fingers listed in docs/02 section 5)"
+    confidence: medium
+    note: "Number of generator fingers m in the Aoki expression."
+  ida_finger_width:
+    value: 5
+    low: 2
+    high: 10
+    unit: um
+    source: "design choice; BASI_IDA 5/5 um"
+    confidence: medium
+    note: ""
+  ida_finger_length_chip:
+    value: 0.5
+    low: 0.3
+    high: 2.0
+    unit: mm
+    source: "design choice (= chip channel width)"
+    confidence: low
+    note: ""
+  ida_flow_cell_length:
+    value: 1.0
+    low: 0.5
+    high: 3.0
+    unit: mm
+    source: "design choice (docs/02 section 5.2 custom cell)"
+    confidence: low
+    note: "Length of IDA along the flow in the flow-through IDA cell (Scheme B)."
+  thin_layer_channel_width:
+    value: 3.0
+    low: 1.0
+    high: 5.0
+    unit: mm
+    source: UNVERIFIED
+    confidence: low
+    note: "BASi cross-flow cell channel width not found; electrode (3 mm disk) treated as an equal-area square."
+  walljet_nozzle_diameter:
+    value: 0.3
+    low: 0.1
+    high: 0.6
+    unit: mm
+    source: UNVERIFIED
+    confidence: low
+    note: "Inlet jet diameter of wall-jet cells (SenCell, DropSens) not found in vendor documents reached."
+  coulometric_effective_area:
+    value: 1.0e-4
+    low: 3.0e-5
+    high: 1.0e-3
+    unit: m^2
+    source: UNVERIFIED
+    confidence: low
+    note: "Wetted area of the porous graphite electrode of a 4.3 uL coulometric cell; sets its noise via the capacitance scaling."
+  magnetic_bead_diameter:
+    value: 2.8
+    low: 2.7
+    high: 2.8
+    unit: um
+    source: "ThermoM280 (INHERITED, chem.surfaces note); Chang2012 2.7 um"
+    confidence: medium
+    note: ""
+  magnetic_trap_volume:
+    value: 2.0
+    low: 1.0
+    high: 10.0
+    unit: uL
+    source: UNVERIFIED
+    confidence: low
+    note: "Volume of the magnetically trapped bead zone (stopped-flow accumulation volume for bead architectures)."
+  magnetic_trap_tube_inner_diameter:
+    value: 0.5
+    low: 0.25
+    high: 1.0
+    unit: mm
+    source: UNVERIFIED
+    confidence: low
+    note: "Sets trap wall area exposed to conjugate."
+  reactor_connection_length:
+    value: 0.1
+    low: 0.05
+    high: 0.2
+    unit: m
+    source: "derived: docs/02 section 7.5 (V10 -> reactor -> V10: 2 x 5 cm of 127 um PEEK)"
+    confidence: medium
+    note: "Tubing isolated together with the reactor during stopped-flow steps (its NSB adds to the blank)."
+
+capture:
+  in_vial_unstirred_rate_factor:
+    value: 0.5
+    low: 0.2
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: >
+      [UNVERIFIED] Capture rate of beads incubated in an SM-FL vial without agitation relative to a well-mixed
+      suspension (2.8 um beads settle ~7 mm/h by Stokes' law; the SM-FL cannot mix vials, docs/02 2.3).
+  magnetic_trap_efficiency:
+    value: 0.9
+    low: 0.5
+    high: 0.99
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Fraction of injected beads retained by the in-line magnet (Pollema1992/Hirakawa2006 give no number in the abstracts read)."
+  bead_dose_cv:
+    value: 0.05
+    low: 0.02
+    high: 0.15
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Run-to-run CV of the number of beads in the trap (pre-dispensed vial + aspiration of a settling suspension); scales bead NSB."
+
+labelling:
+  sa_polyhrp_concentration:
+    value: 1.0e-10
+    low: 1.0e-11
+    high: 1.0e-9
+    unit: M
+    source: "design choice (UNVERIFIED typical working range)"
+    confidence: low
+    note: "Second-step SA-polyHRP concentration for the two-step HRP chemistry."
+  effective_biotins_per_detection_antibody:
+    value: 1.0
+    low: 1.0
+    high: 3.0
+    unit: count
+    source: UNVERIFIED
+    confidence: low
+    note: "Streptavidin-enzyme binding sites per bound biotinylated detection antibody (two-step chemistries)."
+  sbg_enzymes_per_conjugate:
+    value: 1.0
+    low: 1.0
+    high: 2.0
+    unit: count
+    source: "UNVERIFIED (Rissin2010 SbG treated as one enzyme per binding event)"
+    confidence: low
+    note: ""
+  detection_on_capture_residual_factor:
+    value: 1.0
+    low: 1.0
+    high: 3.0
+    unit: fold
+    source: "UNVERIFIED (Qu1998 shows up to 15x when NOT suppressed)"
+    confidence: low
+    note: >
+      Multiplier on conjugate NSB for residual detection-antibody binding to the capture antibody, assuming the
+      pair is chosen to suppress it (IgY / F(ab')2 detection, docs/01 section f). Use chem nsb
+      detection_on_capture_cross_reaction_gain_when_blocked (15x) for an unsuppressed pair.
+
+nsb:
+  surface_factor_magnetic_beads:
+    value: 1.0
+    low: 1.0
+    high: 3.0
+    unit: fold
+    source: "derived: chem nsb_effective_rate_constant is defined on blocked digital-ELISA beads (Rissin2010)"
+    confidence: medium
+    note: "NSB rate relative to the Rissin2010 bead surface."
+  surface_factor_packed_bed:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "Non-porous 5-50 um capture beads in a column; chem note 'ordinary surfaces 10-100x higher'. Internal porosity of real media would add area (not modelled)."
+  surface_factor_monolith:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "Polymethacrylate monolith channels."
+  surface_factor_capillary:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "Antibody-coated fused-silica wall."
+  surface_factor_chip:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: "UNVERIFIED (Jenkins1988, Qu1998: electrode/solid-phase NSB dominant)"
+    confidence: low
+    note: "Channel walls including electrode materials (Au/Pt/carbon, glass) after blocking."
+  surface_factor_tubing:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "PEEK tubing and valve passages exposed to conjugate and later to substrate."
+  label_factor_igg_enzyme_conjugate:
+    value: 1.0
+    low: 0.3
+    high: 3.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "NSB of a direct IgG-ALP / IgG-HRP conjugate relative to SbG on the same surface."
+  label_factor_polyhrp:
+    value: 3.0
+    low: 1.0
+    high: 10.0
+    unit: fold
+    source: "UNVERIFIED (chem poly_HRP note: bigger labels -> more NSB)"
+    confidence: low
+    note: ""
+  biotin_dab_nsb_labelling_fraction:
+    value: 1.0
+    low: 0.3
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Two-step chemistries: fraction of non-specifically bound biotinylated dAb that is reached by the SA-enzyme (adds to SA-enzyme NSB)."
+  blank_igg_contamination_equivalent:
+    value: 0.0
+    low: 0.0
+    high: 3.0e-15
+    unit: M
+    source: "UNVERIFIED (Parry1997: human IgG on lab equipment, qualitative)"
+    confidence: low
+    note: "Environmental human-IgG contamination of blank samples, as analyte concentration. Nominal 0; Monte Carlo up to 3 fM (0.45 pg/mL)."
+
+chemistries:
+  alp_hqdp:
+    Km:
+      value: 1.0e-4
+      low: 2.0e-5
+      high: 1.0e-3
+      unit: M
+      source: UNVERIFIED
+      confidence: low
+      note: "ALP Km for hydroquinone diphosphate / p-hydroxyphenyl phosphate not found; aryl phosphates 36-82 uM (chem Km_pAPP, Km_phenyl_phosphate)."
+    substrate_concentration:
+      value: 1.0e-3
+      low: 1.0e-4
+      high: 5.0e-3
+      unit: M
+      source: "design choice"
+      confidence: medium
+      note: ""
+    free_product_impurity:
+      value: 1.0e-5
+      low: 1.0e-7
+      high: 1.0e-3
+      unit: mol/mol
+      source: UNVERIFIED
+      confidence: low
+      note: "Free hydroquinone in the substrate; Wilson2004 reports 'excellent hydrolytic stability' (no number)."
+    hydrolysis_rate:
+      value: 1.0e-10
+      low: 1.0e-12
+      high: 1.0e-8
+      unit: 1/s
+      source: "UNVERIFIED (Wilson2004 qualitative)"
+      confidence: low
+      note: ""
+    product_half_life:
+      value: 7200
+      low: 1800
+      high: 72000
+      unit: s
+      source: UNVERIFIED
+      confidence: low
+      note: "Hydroquinone air oxidation at pH ~9.5 (chem HQ: rate unverified)."
+    phosphate_per_product:
+      value: 2
+      low: 2
+      high: 2
+      unit: count
+      source: "stoichiometry (HQDP releases 2 Pi; p-hydroxyphenyl phosphate 1)"
+      confidence: high
+      note: "Pi is the ALP competitive inhibitor (chem phosphate_inhibition_Ki)."
+    electrode_fouling:
+      value: 0
+      low: 0
+      high: 0
+      unit: boolean
+      source: Wilson2004
+      confidence: high
+      note: "Same as chem substrates.HQ.fouling."
+  alp_aap:
+    substrate_concentration:
+      value: 5.0e-3
+      low: 1.0e-3
+      high: 1.0e-2
+      unit: M
+      source: "design choice (Km ~2.8 mM, chem Km_ascorbic_acid_2_phosphate)"
+      confidence: medium
+      note: ""
+    free_product_impurity:
+      value: 1.0e-4
+      low: 1.0e-6
+      high: 1.0e-2
+      unit: mol/mol
+      source: UNVERIFIED
+      confidence: low
+      note: "Free ascorbate in commercial AAP; no source found."
+    hydrolysis_rate:
+      value: 1.0e-9
+      low: 1.0e-11
+      high: 1.0e-7
+      unit: 1/s
+      source: UNVERIFIED
+      confidence: low
+      note: ""
+    product_diffusion_coefficient:
+      value: 7.0e-10
+      low: 5.0e-10
+      high: 9.0e-10
+      unit: m^2/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Ascorbate in water."
+    product_half_life:
+      value: 3600
+      low: 600
+      high: 36000
+      unit: s
+      source: UNVERIFIED
+      confidence: low
+      note: "Ascorbate autoxidation at pH 9-10 in air (TCEP, if used, also protects it)."
+    tcep_noise_factor:
+      value: 2.0
+      low: 1.0
+      high: 5.0
+      unit: fold
+      source: "UNVERIFIED (Akanda2011: needs low-background electrode)"
+      confidence: low
+      note: "Increase of electrode noise/background with TCEP chemical redox cycling."
+    electrode_fouling:
+      value: 0
+      low: 0
+      high: 0
+      unit: boolean
+      source: UNVERIFIED
+      confidence: low
+      note: "No fouling report for ascorbate (Preechaworapun2008 largest current of 7 products); treated as non-fouling."
+  sbg_papg:
+    substrate_concentration:
+      value: 1.0e-3
+      low: 1.0e-4
+      high: 5.0e-3
+      unit: M
+      source: "design choice"
+      confidence: medium
+      note: ""
+    free_product_impurity:
+      value: 1.0e-4
+      low: 1.0e-6
+      high: 1.0e-2
+      unit: mol/mol
+      source: UNVERIFIED
+      confidence: low
+      note: "Free pAP in pAPG; no source (same uncertainty class as chem pAPP free_pAP_impurity_fraction)."
+    product_half_life:
+      value: 36000
+      low: 3600
+      high: 100000
+      unit: s
+      source: "UNVERIFIED (Masson1995: PAP stable at pH 7)"
+      confidence: low
+      note: "pAP autoxidation at neutral pH, slower than chem pAP.autoxidation_half_life_pH9_air."
+  alp_papp:
+    phosphate_per_product:
+      value: 1
+      low: 1
+      high: 1
+      unit: count
+      source: stoichiometry
+      confidence: high
+      note: ""
+  hrp_tmb:
+    substrate_concentration:
+      value: 1.0e-3
+      low: 2.0e-4
+      high: 2.0e-3
+      unit: M
+      source: "design choice (UNVERIFIED typical TMB working concentration)"
+      confidence: low
+      note: "H2O2 assumed saturating relative to its Km."
+    free_product_impurity:
+      value: 1.0e-4
+      low: 1.0e-6
+      high: 1.0e-2
+      unit: mol/mol
+      source: UNVERIFIED
+      confidence: low
+      note: "Pre-oxidised TMB in the substrate."
+    hydrolysis_rate:
+      value: 1.0e-8
+      low: 1.0e-10
+      high: 1.0e-6
+      unit: 1/s
+      source: UNVERIFIED
+      confidence: low
+      note: "Non-enzymatic TMB oxidation by H2O2/air (chem TMB note: autoxidation rate UNVERIFIED)."
+    product_diffusion_coefficient:
+      value: 6.0e-10
+      low: 4.0e-10
+      high: 8.0e-10
+      unit: m^2/s
+      source: UNVERIFIED
+      confidence: low
+      note: ""
+    product_half_life:
+      value: 36000
+      low: 3600
+      high: 100000
+      unit: s
+      source: UNVERIFIED
+      confidence: low
+      note: "TMB diimine stable in acid; at pH 5 partial conversion/precipitation."
+    enzyme_inactivation_by_regeneration:
+      value: 0.9
+      low: 0.5
+      high: 1.0
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: "HRP activity lost per glycine pH 2 regeneration (residual label only)."
+    electrode_fouling:
+      value: 1
+      low: 1
+      high: 1
+      unit: boolean
+      source: "Ying2024 (V-abs via chem TMB note: TMB(ox) can precipitate on electrodes)"
+      confidence: medium
+      note: ""
+  sbg:
+    enzyme_inactivation_by_regeneration:
+      value: 0.9
+      low: 0.5
+      high: 1.0
+      unit: fraction
+      source: UNVERIFIED
+      confidence: low
+      note: "beta-gal activity lost per glycine pH 2 regeneration (residual label only)."
+
+detection:
+  walljet_coefficient:
+    value: 0.898
+    low: 0.898
+    high: 1.597
+    unit: dimensionless
+    source: "Yamada & Matsuda 1973 (0.898); Albery & Brett 1983 (1.597, different nozzle convention) - recalled, not verified in this session"
+    confidence: low
+    note: "i = C n F c D^(2/3) nu^(-5/12) a^(-1/2) R^(3/4) Q^(3/4), a = nozzle diameter. Bounds span the two published conventions."
+  aoki_c1:
+    value: 0.637
+    low: 0.637
+    high: 0.637
+    unit: dimensionless
+    source: "Aoki K, Morita M, Niwa O, Tabei H. J Electroanal Chem 1988;256:269 (recalled, not verified in this session)"
+    confidence: medium
+    note: "IDA steady-state generator-collector current i = m b n F c D [0.637 ln(2.55 (1 + w/g)) - 0.19/(1 + w/g)^2]."
+  aoki_c2:
+    value: 2.55
+    low: 2.55
+    high: 2.55
+    unit: dimensionless
+    source: "Aoki1988 (as above)"
+    confidence: medium
+    note: ""
+  aoki_c3:
+    value: 0.19
+    low: 0.19
+    high: 0.19
+    unit: dimensionless
+    source: "Aoki1988 (as above)"
+    confidence: medium
+    note: ""
+  ida_stopped_efficiency:
+    value: 0.5
+    low: 0.2
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Ratio of real to ideal (Aoki) steady-state IDA current in a confined, possibly fouled channel; Thomas2004 reports 87 % collection."
+
+correlations:
+  wilson_geankoplis_coefficient:
+    value: 1.09
+    low: 0.9
+    high: 1.3
+    unit: dimensionless
+    source: "Wilson EJ, Geankoplis CJ. Ind Eng Chem Fundam 1966;5:9 (recalled, not verified in this session)"
+    confidence: medium
+    note: "Sh = (1.09/eps) Re^(1/3) Sc^(1/3), 0.0016 < Re < 55. At the assay flows Re ~ 0.001-0.1."
+
+readout:
+  sweep_flow:
+    value: 50
+    low: 20
+    high: 300
+    unit: uL/min
+    source: "design choice (docs/02 section 7.4 readout at 50 uL/min)"
+    confidence: medium
+    note: "Flow used to sweep the product plug from an isolated reactor to the cell (raised to the cell minimum for the coulometric cell)."
+  continuous_flow:
+    value: 20
+    low: 10
+    high: 300
+    unit: uL/min
+    source: "design choice"
+    confidence: low
+    note: "Substrate flow in continuous (Scheme A) readout with a thin-layer / wall-jet / IDA cell."
+  tanks_packed_bed:
+    value: 3
+    low: 1
+    high: 10
+    unit: tanks
+    source: UNVERIFIED
+    confidence: low
+    note: "Tanks-in-series number describing elution of the product plug from the bed void."
+  tanks_monolith:
+    value: 2
+    low: 1
+    high: 5
+    unit: tanks
+    source: UNVERIFIED
+    confidence: low
+    note: ""
+  tanks_capillary:
+    value: 5
+    low: 2
+    high: 20
+    unit: tanks
+    source: UNVERIFIED
+    confidence: low
+    note: "Laminar open tube (Taylor-Aris regime not reached during a 2 min sweep)."
+  tanks_trap:
+    value: 1
+    low: 1
+    high: 3
+    unit: tanks
+    source: UNVERIFIED
+    confidence: low
+    note: "Magnetic trap zone behaves as a mixed tank."
+
+noise:
+  reference_electrode_area:
+    value: 7.07e-6
+    low: 7.07e-6
+    high: 7.07e-6
+    unit: m^2
+    source: "derived: 3 mm disk (docs/02 section 4.5 noise values are for 2-3 mm carbon electrodes)"
+    confidence: medium
+    note: "Area at which hw.gamry.noise_rms_flow / noise_rms_stopped_flow apply."
+  area_exponent:
+    value: 0.5
+    low: 0.25
+    high: 1.0
+    unit: dimensionless
+    source: "UNVERIFIED (LARSEN2012: capacitance-dominated noise ~ area; amplifier-dominated ~ constant)"
+    confidence: low
+    note: "i_noise = i_ref * (A / A_ref)^exponent, floored by the amplifier floor."
+  pp_to_rms:
+    value: 5.0
+    low: 5.0
+    high: 6.0
+    unit: dimensionless
+    source: "docs/02 section 4.5 (p-p ~ 5 x rms)"
+    confidence: medium
+    note: "Converts hw.gamry.antec_decade_floor_pp to an rms floor."
+  reference_bandwidth:
+    value: 1.0
+    low: 1.0
+    high: 1.0
+    unit: Hz
+    source: "hw.gamry.noise_rms_flow note (bandwidth ~1 Hz)"
+    confidence: medium
+    note: "White-noise current rms values are per this bandwidth; integrated charge SD = i_rms * sqrt(T / (2 B))."
+  drift_residual_fraction:
+    value: 0.2
+    low: 0.05
+    high: 0.5
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Fraction of the baseline drift not removed by interpolating the baseline before/after the readout window."
+  background_current_relative_noise:
+    value: 0.01
+    low: 0.002
+    high: 0.05
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Within-run relative fluctuation of a large substrate-background current (flow/temperature/potential coupling); applies to the subtracted background."
+  substrate_background_cv:
+    value: 0.05
+    low: 0.01
+    high: 0.2
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Run-to-run CV of the non-enzymatic product (impurity + hydrolysis) when it is NOT measured in the same run."
+  electrode_sensitivity_cv_nonfouling:
+    value: 0.02
+    low: 0.005
+    high: 0.05
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Run-to-run CV of electrode sensitivity, reused non-fouling electrode (HQ, AA)."
+  electrode_sensitivity_cv_fouling:
+    value: 0.1
+    low: 0.03
+    high: 0.3
+    unit: fraction
+    source: "UNVERIFIED (Buckey2022: pAP fouling variability not fixed by cleaning, V-abs via docs/01)"
+    confidence: low
+    note: "pAP, TMB(ox) products on a reused electrode."
+  spe_sensor_to_sensor_cv:
+    value: 0.1
+    low: 0.04
+    high: 0.18
+    unit: fraction
+    source: "Pemberton1999 (INHERITED, via chem blank_CV_analog_electrochemical note: 4-18 %)"
+    confidence: low
+    note: "Disposable screen-printed electrode exchanged between runs."
+  carryover_cv:
+    value: 0.5
+    low: 0.2
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Run-to-run CV of carried-over label."
+
+timing:
+  post_sample_wash:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: min
+    source: "docs/02 section 7.4 (wash 20 bed volumes)"
+    confidence: medium
+    note: ""
+  conjugate_fill:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: min
+    source: "docs/02 section 7.4"
+    confidence: medium
+    note: "Conjugate plug into reactor before stopping flow."
+  second_label_incubation:
+    value: 5.0
+    low: 2.0
+    high: 30.0
+    unit: min
+    source: "design choice"
+    confidence: low
+    note: "SA-enzyme stopped-flow incubation for two-step chemistries (Rissin2010 used 30 min SbG)."
+  injected_substrate_extra:
+    value: 6.0
+    low: 6.0
+    high: 6.0
+    unit: min
+    source: "docs/02 section 7.4 variants (cleaning injection 1.0 + 2.5 min, substrate line 1.0 + 1.5 min)"
+    confidence: medium
+    note: ""
+  bead_flush_and_clean:
+    value: 3.5
+    low: 2.0
+    high: 6.0
+    unit: min
+    source: "UNVERIFIED (docs/02 cleaning injection 1.0 + 2.5 min)"
+    confidence: low
+    note: "Release beads to waste (magnet off) and run a loop/needle cleaning injection; replaces regeneration for renewable beads."
+  continuous_stabilisation:
+    value: 2.0
+    low: 1.0
+    high: 5.0
+    unit: min
+    source: UNVERIFIED
+    confidence: low
+    note: "Scheme A: time for the substrate-flow current to reach steady state before the read window."
+  substrate_reservoir_age:
+    value: 4.0
+    low: 1.0
+    high: 12.0
+    unit: h
+    source: "UNVERIFIED (operating assumption, docs/02 section 1.2 substrate on line B1)"
+    confidence: low
+    note: "Mean time the substrate has stood in the B1 line/reservoir; sets the hydrolysis background in continuous (Scheme A) readout."
+  in_vial_incubation:
+    value: 30.0
+    low: 10.0
+    high: 60.0
+    unit: min
+    source: "design choice (Chang2012: ~70 % capture in 30 min at 2.3 nM bead antibody)"
+    confidence: medium
+    note: "Bead architectures: capture in the pre-dispensed sample vial before injection. Counted in time-to-result."
+
+reuse:
+  electrode_sensitivity_loss_per_cycle_fouling:
+    value: 0.01
+    low: 0.001
+    high: 0.05
+    unit: fraction per cycle
+    source: "UNVERIFIED (Buckey2022 qualitative)"
+    confidence: low
+    note: "Applies to a reused electrode with pAP / TMB(ox) products."
+  electrode_sensitivity_loss_per_cycle_nonfouling:
+    value: 0.001
+    low: 0.0
+    high: 0.005
+    unit: fraction per cycle
+    source: "UNVERIFIED (Wilson2004: no passivation on repeated use)"
+    confidence: low
+    note: ""
+  slope_drift_tolerance:
+    value: 0.1
+    low: 0.1
+    high: 0.1
+    unit: fraction
+    source: "design choice"
+    confidence: medium
+    note: "Recalibrate when the calibration slope has changed by this fraction."
+
+statistics:
+  k_sd:
+    value: 3
+    low: 3
+    high: 3
+    unit: dimensionless
+    source: project_brief
+    confidence: high
+    note: "LOD = mean blank + 3 SD blank."
+  uloq_min_log_slope:
+    value: 0.8
+    low: 0.8
+    high: 0.8
+    unit: dimensionless
+    source: "design choice"
+    confidence: medium
+    note: "Upper limit of the dynamic range: highest concentration at which d ln(net signal)/d ln(C) >= this value."
+  lod_target:
+    value: 1.0
+    low: 1.0
+    high: 1.0
+    unit: pg/mL
+    source: project_brief
+    confidence: high
+    note: ""
+  range_top:
+    value: 1000
+    low: 1000
+    high: 1000
+    unit: pg/mL
+    source: project_brief
+    confidence: high
+    note: ""
+  time_limit:
+    value: 60
+    low: 60
+    high: 60
+    unit: min
+    source: project_brief
+    confidence: high
+    note: ""
+
+numerics:
+  enzyme_ode_steps:
+    value: 200
+    low: 200
+    high: 200
+    unit: count
+    source: "numerical setting (RK4 steps; convergence checked in tests)"
+    confidence: high
+    note: ""
+  label_ode_steps:
+    value: 400
+    low: 400
+    high: 400
+    unit: count
+    source: "numerical setting"
+    confidence: high
+    note: ""
+  calibration_points:
+    value: 31
+    low: 31
+    high: 31
+    unit: count
+    source: "numerical setting"
+    confidence: high
+    note: "Log-spaced calibration grid from calibration_min to calibration_max plus a blank."
+  calibration_min:
+    value: 0.01
+    low: 0.01
+    high: 0.01
+    unit: pg/mL
+    source: "numerical setting"
+    confidence: high
+    note: ""
+  calibration_max:
+    value: 1.0e+5
+    low: 1.0e+5
+    high: 1.0e+5
+    unit: pg/mL
+    source: "numerical setting"
+    confidence: high
+    note: "Extends beyond the 1000 pg/mL range to show saturation."
+  capture_saturation_iterations:
+    value: 4
+    low: 4
+    high: 4
+    unit: count
+    source: "numerical setting"
+    confidence: high
+    note: ""
+
+validation:
+  # Inputs of the published scenarios the model is checked against (tests/test_validation.py, docs/03 s.8).
+  dellaciana_incubation_time:
+    value: 10
+    low: 10
+    high: 10
+    unit: min
+    source: DellaCiana1996
+    confidence: high
+    note: "[V-abs via docs/01] free ALP 1.2e-15 M detected after 10 min with p-hydroxyphenyl phosphate."
+  dellaciana_substrate_concentration:
+    value: 1.0e-3
+    low: 1.0e-4
+    high: 1.0e-2
+    unit: M
+    source: UNVERIFIED
+    confidence: low
+    note: "Not in the abstract; assumed saturating."
+  dellaciana_flow:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: mL/min
+    source: UNVERIFIED
+    confidence: low
+    note: "FIA carrier flow not in the abstract."
+  dellaciana_electrode_diameter:
+    value: 3.0
+    low: 2.0
+    high: 6.0
+    unit: mm
+    source: UNVERIFIED
+    confidence: low
+    note: "GC wall-jet electrode size not in the abstract."
+  thompson_incubation_time:
+    value: 15
+    low: 15
+    high: 15
+    unit: min
+    source: Thompson1991
+    confidence: high
+    note: "[V-abs via docs/01] ALP 0.05 ug/L after 15 min, 1.1 mL, pAP detected by LC-EC (7 nM)."
+  plate_well_diameter:
+    value: 6.4
+    low: 6.0
+    high: 7.0
+    unit: mm
+    source: UNVERIFIED
+    confidence: medium
+    note: "Standard flat-bottom 96-well plate (typical value, not checked against a vendor drawing)."
+  plate_capture_time:
+    value: 2.0
+    low: 1.0
+    high: 3.0
+    unit: h
+    source: UNVERIFIED
+    confidence: low
+    note: "Typical conventional ELISA sample incubation."
+  plate_label_time:
+    value: 1.0
+    low: 0.5
+    high: 2.0
+    unit: h
+    source: UNVERIFIED
+    confidence: low
+    note: "Typical conventional ELISA detection step."
+  plate_label_concentration:
+    value: 1.0e-8
+    low: 1.0e-9
+    high: 1.0e-8
+    unit: M
+    source: "Rissin2010 via chem conc_detection_antibody_typical note (~10 nM in conventional assays)"
+    confidence: medium
+    note: ""
+  simoa_bead_diameter:
+    value: 2.7
+    low: 2.7
+    high: 2.7
+    unit: um
+    source: Chang2012
+    confidence: high
+    note: ""
+  simoa_beads_per_100uL:
+    value: 2.0e+5
+    low: 2.0e+5
+    high: 5.0e+5
+    unit: beads per 100 uL
+    source: Rissin2010
+    confidence: high
+    note: ""
+  simoa_capture_time:
+    value: 2.0
+    low: 2.0
+    high: 2.0
+    unit: h
+    source: "Rissin2010 (docs/01 table a.1)"
+    confidence: high
+    note: ""
+  simoa_dab_time:
+    value: 45
+    low: 45
+    high: 45
+    unit: min
+    source: "Rissin2010 (docs/01 table a.1)"
+    confidence: high
+    note: ""
+  simoa_sbg_time:
+    value: 30
+    low: 30
+    high: 30
+    unit: min
+    source: "Rissin2010 (docs/01 table a.1)"
+    confidence: high
+    note: ""
+  task1_labels:
+    value: 1.0e+5
+    low: 1.0e+5
+    high: 1.0e+5
+    unit: count
+    source: "docs/01 section b worked estimate"
+    confidence: medium
+    note: ""
+  task1_volume:
+    value: 10
+    low: 10
+    high: 10
+    unit: uL
+    source: "docs/01 section b worked estimate"
+    confidence: medium
+    note: ""
+  task1_time:
+    value: 10
+    low: 10
+    high: 10
+    unit: min
+    source: "docs/01 section b worked estimate"
+    confidence: medium
+    note: ""
+  task1_product_concentration:
+    value: 1.0e-8
+    low: 1.0e-8
+    high: 1.0e-8
+    unit: M
+    source: "docs/01 section b ('~10 nM pAP')"
+    confidence: medium
+    note: ""
+  chang_capture_time:
+    value: 30
+    low: 30
+    high: 30
+    unit: min
+    source: "docs/01 section a.2 (derived from Chang2012: ~70 % in 30 min)"
+    confidence: medium
+    note: ""
+  chang_capture_fraction:
+    value: 0.7
+    low: 0.7
+    high: 0.7
+    unit: fraction
+    source: "docs/01 section a.2 (derived from Chang2012)"
+    confidence: medium
+    note: "k = kon [Ab] = 3e5 x 2.3e-9 = 7e-4 /s."
