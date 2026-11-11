@@ -1,0 +1,35 @@
+kind,hqdp_mM,added_nM,t_h,signal,note
+std_add,1.0,0,,5.0948,standard addition of HQ (nM)
+std_add,1.0,0,,4.9516,standard addition of HQ (nM)
+std_add,1.0,0,,5.0305,standard addition of HQ (nM)
+std_add,1.0,3,,6.4394,standard addition of HQ (nM)
+std_add,1.0,3,,6.7141,standard addition of HQ (nM)
+std_add,1.0,3,,6.5272,standard addition of HQ (nM)
+std_add,1.0,10,,9.9569,standard addition of HQ (nM)
+std_add,1.0,10,,9.9544,standard addition of HQ (nM)
+std_add,1.0,10,,9.9600,standard addition of HQ (nM)
+std_add,1.0,30,,19.9294,standard addition of HQ (nM)
+std_add,1.0,30,,19.6484,standard addition of HQ (nM)
+std_add,1.0,30,,20.8233,standard addition of HQ (nM)
+std_add,0.3,0,,1.4427,standard addition of HQ (nM)
+std_add,0.3,0,,1.3918,standard addition of HQ (nM)
+std_add,0.3,0,,1.4963,standard addition of HQ (nM)
+std_add,0.3,3,,2.9912,standard addition of HQ (nM)
+std_add,0.3,3,,3.0223,standard addition of HQ (nM)
+std_add,0.3,3,,2.9877,standard addition of HQ (nM)
+std_add,0.3,10,,6.4807,standard addition of HQ (nM)
+std_add,0.3,10,,6.5432,standard addition of HQ (nM)
+std_add,0.3,10,,6.6259,standard addition of HQ (nM)
+std_add,0.3,30,,16.3522,standard addition of HQ (nM)
+std_add,0.3,30,,16.3770,standard addition of HQ (nM)
+std_add,0.3,30,,17.1404,standard addition of HQ (nM)
+timecourse,1.0,,0,5.0000,"1 mM HQDP at 22 C, amber glass"
+timecourse,1.0,,1,3.6877,"1 mM HQDP at 22 C, amber glass"
+timecourse,1.0,,2,2.7597,"1 mM HQDP at 22 C, amber glass"
+timecourse,1.0,,4,1.6395,"1 mM HQDP at 22 C, amber glass"
+timecourse,1.0,,8,0.7994,"1 mM HQDP at 22 C, amber glass"
+hq_stability,,,0,15.0000,30 nM HQ spike in SB
+hq_stability,,,1,10.6066,30 nM HQ spike in SB
+hq_stability,,,2,7.5000,30 nM HQ spike in SB
+hq_stability,,,4,3.7500,30 nM HQ spike in SB
+hq_stability,,,8,0.9375,30 nM HQ spike in SB

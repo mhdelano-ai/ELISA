@@ -1,0 +1,16 @@
+# TEMPLATE for the lab PC. Copy to hardware_lab.yaml and fill in after Stage 0 (docs/06 s3).
+# Every driver named here is a STUB today: it raises NotImplementedError at the vendor call and says what is missing.
+mode: lab
+valves:
+  V2: {driver: idex_mx, port: COM3, positions: [isolate, perfuse], position_map: {isolate: 1, perfuse: 2}}  # IDEX MXP9960-000 (10-port PEEK)
+  V3: {driver: idex_mx, port: COM4, positions: [bypass, detect], position_map: {bypass: 1, detect: 2}}      # IDEX MXP9900-000 (6-port PEEK)
+  V4: {driver: idex_mx, port: COM5, positions: [A, B], position_map: {A: 1, B: 2}}                          # IDEX MXP9900-000
+sia: {driver: cavro_type_pump, port: COM6, baud: 9600, syringe_uL: 1000, ports: {reservoir: 1, cup: 2, wash: 3, waste: 4, to_trap: 5}}
+magnet: {driver: daq_ttl, daq: labjack_u3, line: FIO4}
+inject_start: {driver: labjack_u3, line: FIO5, code_lines: [FIO6, FIO7]}   # Inject Start: SM-FL connector 1 pins 1-2 (docs/02 s3.1)
+empower: {driver: passive}         # docs/02 s3.2 primary scheme: Empower is the master, Python only listens
+potentiostat:
+  driver: gamry_worker
+  host: 127.0.0.1
+  port: 50555
+  worker_python: 'C:\path\to\Gamry\ToolkitPy\python.exe'   # Gamry's curated 32-bit Python 3.7.9 (UNVERIFIED path)

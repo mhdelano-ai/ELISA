@@ -1,0 +1,71 @@
+# Primary design, ONE-STEP mode: per-cycle step table of docs/05 section 4.1 (installed system).
+# Times are CYCLE minutes: t = 0 is the start of the SM-FL sample aspiration (Empower line L1); the SM-FL
+# Inject Start contact closure is expected at t = 1.0 (docs/05 s4.1 "1 -> 3 Inject Start t0").
+# Python owns V2/V3/V4, the SIA module, the magnet and the Gamry; Empower owns the BSM programme and the SM-FL.
+# 'empower' fields are documentation of what the Empower instrument method must do at that time (Python does not
+# command the BSM); they are checked only for consistency.
+#
+# Deviation from docs/05 (stated): the 3.5 min cleaning step 52.6 -> 56.1 is split into a 0.5 min post-readout
+# baseline (trap sealed, cell in detect, fresh substrate through the shunt) and 3.0 min cleaning, so that the charge
+# can be baseline-corrected "with baseline windows before and after" (docs/05 s4.1). 3.0 min lies inside the model
+# range of ma.timing.bead_flush_and_clean (2-6 min). Total cycle unchanged: 56.1 min.
+name: primary_one_step
+mode: one_step
+source: "docs/05_design_decision.md section 4.1 (per-cycle step table)"
+time_limit_min: 60
+injects:
+  - {name: sample, at_min: 1.0, line_code: 1}
+watchdog:
+  inject_tolerance_s: 30          # docs/02 s3.2 point 6: Inject Start late by > 30 s -> safe state
+  first_inject_max_wait_s: 3600   # the first sample of a sample set may wait for Empower start-up
+  step_overrun_warn_s: 2
+safe_state:                       # docs/05 s4.1: "A watchdog parks V2 = isolate and V3 = bypass on any fault"
+  valves: {V2: isolate, V3: bypass, V4: B}
+  magnet: "on"                    # keeps beads in the trap rather than sending them downstream
+  sia: stop
+  potentiostat: cell_off
+potentiostat:
+  channels:
+    1: {role: generator, potential_V: 0.35}     # HQ -> BQ, vs Ag/AgCl (docs/05 s4.1)
+    2: {role: collector, potential_V: -0.15}    # UNVERIFIED: set from a CV at the bench (docs/05 s4.1: -0.1 to -0.2 V)
+  sample_period_s: 0.1
+signal:                            # windows in cycle minutes (see automation/elisa_auto/signal_proc.py)
+  pre_baseline: [51.1, 51.6]
+  readout: [51.6, 52.6]
+  post_baseline: [52.6, 53.1]
+steps:
+  - {name: dose_beads_conjugate, start_min: -1.0, end_min: 0.0,
+     sia: {action: dispense, from: reservoir, to: cup, volume_uL: 20},
+     note: "20 uL bead + conjugate concentrate into the clean cup (0.3 nM conjugate, 5e5 beads in ~220 uL)"}
+  - {name: aspirate_sample, start_min: 0.0, end_min: 1.0,
+     valves: {V4: A, V2: isolate, V3: bypass},
+     empower: "SM-FL full-loop aspiration (2x overfill, ~200 uL drawn); BSM 100 uL/min A1"}
+  - {name: transfer_sample_to_cup, start_min: 1.0, end_min: 3.0,
+     valves: {V4: A, V2: isolate, V3: bypass},
+     empower: "Inject Start t0; 2 loop volumes (200 uL) push the sample into the cup; BSM 100 uL/min A1"}
+  - {name: incubation, start_min: 3.0, end_min: 33.0, role: incubation,
+     valves: {V4: B, V2: isolate, V3: bypass},
+     sia: {action: mix, port: cup, volume_uL: 50, every_min: 2.0},
+     empower: "BSM free (previous sample's readout may run here)"}
+  - {name: load_trap, start_min: 33.0, end_min: 39.6, magnet: "on",
+     valves: {V2: perfuse, V3: bypass},
+     sia: {action: empty_cup_through_trap, volume_uL: 660, flow_uL_min: 100},
+     note: "cup contents plus 2 rinses through the trap"}
+  - {name: wash, start_min: 39.6, end_min: 40.6, valves: {V4: B, V2: perfuse, V3: bypass},
+     empower: "BSM 100 uL/min A1"}
+  - {name: substrate_fill, start_min: 40.6, end_min: 41.6, valves: {V4: B, V2: perfuse, V3: bypass},
+     potentiostat: start_acquisition,
+     empower: "A1 -> B1 step, 200 uL/min B1 (HQDP substrate)"}
+  - {name: accumulation, start_min: 41.6, end_min: 51.6, role: accumulation,
+     valves: {V4: B, V2: isolate, V3: detect}, potentiostat: mark,
+     empower: "10-50 uL/min B1 via shunt and cell; substrate blank current recorded"}
+  - {name: readout, start_min: 51.6, end_min: 52.6, role: readout,
+     valves: {V4: B, V2: perfuse, V3: detect}, potentiostat: mark,
+     empower: "10 uL/min B1: sweep the trap contents through the IDA"}
+  - {name: post_baseline, start_min: 52.6, end_min: 53.1, role: post_baseline,
+     valves: {V4: B, V2: isolate, V3: detect}, potentiostat: mark,
+     empower: "B1 through shunt and cell (fresh substrate baseline)"}
+  - {name: clean, start_min: 53.1, end_min: 56.1, magnet: "off",
+     valves: {V4: B, V2: perfuse, V3: bypass}, potentiostat: stop_acquisition,
+     sia: {action: rinse_cup, repeats: 3},
+     empower: "beads to waste at 300 uL/min A1; cleaning injection through loop and trap"}

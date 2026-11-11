@@ -1,0 +1,13 @@
+# All devices simulated. Used by tests and by `python -m elisa_auto.run_sim`.
+mode: sim
+valves:
+  V2: {positions: [isolate, perfuse], initial: isolate}   # 10-port, 2-position reactor isolation (docs/05 s4.1)
+  V3: {positions: [bypass, detect], initial: bypass}      # 6-port, EC cell in / bypass
+  V4: {positions: [A, B], initial: B}                     # 6-port: A = SM-FL -> cup, B = SM-FL -> tee -> V2
+sim:
+  seed: 20261111
+  inject_delay_s: 0.0          # extra delay of each simulated Inject Start relative to schedule
+  baseline_current_A: 5.0e-11  # substrate background current, generator channel
+  drift_A_per_s: 1.0e-14
+  noise_rms_A: 4.0e-13         # model nominal noise_rms (P-vial diagnostics, 0.4 pA)
+  collector_fraction: -0.8     # collector current relative to generator signal (sign: reduction)

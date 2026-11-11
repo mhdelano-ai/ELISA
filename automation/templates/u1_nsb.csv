@@ -1,0 +1,70 @@
+kind,conjugate,format,n_beads,conc_nM,time_min,wash,molecules,signal,note
+standard,D1_Fab2_ALP,,,,,,0,2.0000,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,0,2.0000,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,10000,2.9721,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,10000,3.0298,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,30000,4.9767,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,30000,4.9765,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,100000,12.5699,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,100000,12.0473,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,300000,31.9614,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,300000,32.6565,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,1000000,105.3806,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,1000000,101.9075,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,3000000,307.2919,conjugate standard series (molecules per tube)
+standard,D1_Fab2_ALP,,,,,,3000000,293.2365,conjugate standard series (molecules per tube)
+bead_blank,D1_Fab2_ALP,,5000000,,,,,1.9817,beads without conjugate
+bead_blank,D1_Fab2_ALP,,5000000,,,,,1.9781,beads without conjugate
+bead_blank,D1_Fab2_ALP,,5000000,,,,,1.9334,beads without conjugate
+sample,D1_Fab2_ALP,fab2,5000000,0.1,10,standard,,2.6046,
+sample,D1_Fab2_ALP,fab2,5000000,0.1,10,standard,,2.5961,
+sample,D1_Fab2_ALP,fab2,5000000,0.1,30,standard,,4.0849,
+sample,D1_Fab2_ALP,fab2,5000000,0.1,30,standard,,4.0991,
+sample,D1_Fab2_ALP,fab2,5000000,0.1,60,standard,,6.1349,
+sample,D1_Fab2_ALP,fab2,5000000,0.1,60,standard,,6.3013,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,10,standard,,3.8506,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,10,standard,,4.1189,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,30,standard,,8.5602,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,30,standard,,8.8889,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,60,standard,,13.7309,
+sample,D1_Fab2_ALP,fab2,5000000,0.3,60,standard,,14.3029,
+sample,D1_Fab2_ALP,fab2,5000000,1,10,standard,,7.6849,
+sample,D1_Fab2_ALP,fab2,5000000,1,10,standard,,8.7611,
+sample,D1_Fab2_ALP,fab2,5000000,1,30,standard,,18.6670,
+sample,D1_Fab2_ALP,fab2,5000000,1,30,standard,,20.3273,
+sample,D1_Fab2_ALP,fab2,5000000,1,60,standard,,49.4233,
+sample,D1_Fab2_ALP,fab2,5000000,1,60,standard,,35.3130,
+sample,D1_Fab2_ALP,fab2,5000000,3,10,standard,,25.0646,
+sample,D1_Fab2_ALP,fab2,5000000,3,10,standard,,24.0593,
+sample,D1_Fab2_ALP,fab2,5000000,3,30,standard,,64.0754,
+sample,D1_Fab2_ALP,fab2,5000000,3,30,standard,,69.0201,
+sample,D1_Fab2_ALP,fab2,5000000,3,60,standard,,136.9131,
+sample,D1_Fab2_ALP,fab2,5000000,3,60,standard,,143.5510,
+sample,D1_Fab2_ALP,fab2,5000000,1,30,stringent,,14.5201,10 washes + 0.1% Tween + 5 min hold
+sample,D1_Fab2_ALP,fab2,5000000,1,30,stringent,,14.0564,10 washes + 0.1% Tween + 5 min hold
+sample,D2_IgG_ALP,igg,5000000,0.1,10,standard,,3.3378,
+sample,D2_IgG_ALP,igg,5000000,0.1,10,standard,,3.2835,
+sample,D2_IgG_ALP,igg,5000000,0.1,30,standard,,6.2526,
+sample,D2_IgG_ALP,igg,5000000,0.1,30,standard,,5.9361,
+sample,D2_IgG_ALP,igg,5000000,0.1,60,standard,,11.4565,
+sample,D2_IgG_ALP,igg,5000000,0.1,60,standard,,8.9464,
+sample,D2_IgG_ALP,igg,5000000,0.3,10,standard,,5.8046,
+sample,D2_IgG_ALP,igg,5000000,0.3,10,standard,,5.8646,
+sample,D2_IgG_ALP,igg,5000000,0.3,30,standard,,12.1333,
+sample,D2_IgG_ALP,igg,5000000,0.3,30,standard,,17.2532,
+sample,D2_IgG_ALP,igg,5000000,0.3,60,standard,,21.4580,
+sample,D2_IgG_ALP,igg,5000000,0.3,60,standard,,26.9046,
+sample,D2_IgG_ALP,igg,5000000,1,10,standard,,15.4914,
+sample,D2_IgG_ALP,igg,5000000,1,10,standard,,18.5972,
+sample,D2_IgG_ALP,igg,5000000,1,30,standard,,36.2366,
+sample,D2_IgG_ALP,igg,5000000,1,30,standard,,49.2965,
+sample,D2_IgG_ALP,igg,5000000,1,60,standard,,81.1868,
+sample,D2_IgG_ALP,igg,5000000,1,60,standard,,86.1095,
+sample,D2_IgG_ALP,igg,5000000,3,10,standard,,41.8516,
+sample,D2_IgG_ALP,igg,5000000,3,10,standard,,47.4538,
+sample,D2_IgG_ALP,igg,5000000,3,30,standard,,115.5742,
+sample,D2_IgG_ALP,igg,5000000,3,30,standard,,129.1424,
+sample,D2_IgG_ALP,igg,5000000,3,60,standard,,267.3653,
+sample,D2_IgG_ALP,igg,5000000,3,60,standard,,305.4741,
+sample,D2_IgG_ALP,igg,5000000,1,30,stringent,,21.4658,10 washes + 0.1% Tween + 5 min hold
+sample,D2_IgG_ALP,igg,5000000,1,30,stringent,,31.5397,10 washes + 0.1% Tween + 5 min hold

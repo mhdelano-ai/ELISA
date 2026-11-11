@@ -1,0 +1,25 @@
+# Gate thresholds used by `python -m elisa_auto.analyze`. Each carries its source. "derived" = docs/06.
+G1:
+  label_factor:        {confirm_max: 0.04, kill_min: 0.15, source: "docs/05 s5 U1"}
+  nsb_linearity_beta:  {confirm_max: 1.1, source: "derived (docs/06 E1.3): not super-linear"}
+  wash_removed_frac:   {add_wash_min: 0.30, source: "docs/05 s5 U1 (S3a)"}
+  free_hq_mol_per_mol: {confirm_max: 1.0e-5, kill_min: 1.0e-4, source: "docs/05 s5 U3"}
+  hydrolysis_per_s:    {confirm_max: 1.0e-9, source: "docs/05 s5 U3"}
+  detection_t_half_min: {one_step_min: 60, sequential_min: 10, source: "docs/05 s5 U2"}
+  capture_t_half_min:  {min: 60, source: "docs/05 s5 U2"}
+  kon_M_s:             {min: 3.0e+5, source: "docs/05 s4.1 / s5 U2"}
+  detection_on_capture_ratio: {confirm_max: 1.2, reject_min: 3.0, source: "docs/05 s4.1"}
+  blank_equivalent_pgml: {confirm_max: 1.0, kill_min: 4.0, source: "docs/05 s0 and s5 U1"}
+  ki_uM:               {confirm_min: 2.0, source: "docs/05 s5 U6"}
+  smfl_recovery:       {confirm_min: 0.8, stop_max: 0.6, source: "derived (docs/06 E1.10)"}
+G2:
+  bead_dose_cv:        {confirm_max: 0.05, backup_min: 0.10, source: "docs/05 s5 U5"}
+  trap_retention:      {confirm_min: 0.90, backup_max: 0.70, source: "docs/05 s5 U5"}
+  wall_to_bead_ratio:  {confirm_max: 0.10, coat_min: 0.30, source: "docs/05 s5 U4"}
+  lod_pgml:            {go_max: 1.5, stop_min: 3.0, source: "derived (docs/06 s5 G2)"}
+  carryover:           {confirm_max: 1.0e-3, source: "docs/05 s5 U7"}
+G3:
+  blank_cv:            {confirm_max: 0.10, l5_min: 0.15, source: "docs/05 s5 U7"}
+  lod_pgml:            {confirm_max: 1.0, source: "docs/00 / docs/05 s5 U7"}
+  carryover:           {confirm_max: 1.0e-3, source: "docs/05 s5 U7"}
+  time_to_result_min:  {max: 60, source: "docs/00"}

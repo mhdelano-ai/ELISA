@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elisa_auto"
+version = "0.1.0"
+description = "Lab-PC orchestration skeleton for the automated electrochemical ELISA (simulated devices + stubs)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pyyaml>=6.0",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+lab = ["pyserial>=3.5"]   # real valve / syringe-pump drivers (stubs today)
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["elisa_auto*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

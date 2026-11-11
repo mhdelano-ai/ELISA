@@ -1,0 +1,6 @@
+# EXAMPLE of bench/measured_values.yaml (docs/06 s9.1). Keys are model parameter names (params/*.yaml).
+# value = bench estimate; low/high = its 95 % interval (or the spread of repeats); source = bench folder.
+# python -m elisa_auto.model_feedback bench/measured_values.yaml --rank
+ma.nsb.label_factor_igg_enzyme_conjugate: {value: 0.031, low: 0.022, high: 0.044, source: "bench/S1_E1.3_EXAMPLE"}
+ma.chemistries.alp_hqdp.free_product_impurity: {value: 8.0e-6, low: 6.0e-6, high: 1.1e-5, source: "bench/S1_E1.2_EXAMPLE"}
+chem.antibodies.koff_detection: {value: 3.0e-4, low: 2.4e-4, high: 3.8e-4, source: "bench/S1_E1.6_EXAMPLE"}
