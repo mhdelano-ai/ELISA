@@ -33,6 +33,8 @@ def main():
              lambda p: L.pin(pm_ch(p), **{"ma.capture.bead_dose_cv": 0.15}), f_ch),
             ("C unstirred held-up coil (capture factor 0.09)", a_ch,
              lambda p: L.pin(p, **{"ma.capture.in_vial_unstirred_rate_factor": 0.09}), f_ch),
+            # route B with the separate SM-FL reagent vials is not re-evaluated: it shares the B4 pre-exposure
+            # problem only if beads and conjugate share a vial (docs/08 B4)
             ("S sequential mode on hardware A", a_sq, pm_sq, f_sq)]
     scen = {"S0 audited": lambda p: p,
             "L6+L7 screening passed": [x for x in R.LEVERS if x[0].startswith("L6+L7")][0][1]}
@@ -40,14 +42,15 @@ def main():
              "|---|---|---|---|---|---|---|"]
     for lab, a, pm, f in opts:
         for sl, fn in scen.items():
-            s = L.mc(a, pm(fn(ps0)), n=L.N_FINAL)
-            lines.append(f"| {lab} | {sl} | {fmt(s['lod_nominal'] * f)} | {fmt(s['lod_median'] * f)} "
-                         f"[{fmt(s['lod_p05'] * f)}-{fmt(s['lod_p95'] * f)}] | ~{s['p_lod_only']:.2f} | "
+            s = L.mc(a, pm(fn(ps0)), n=L.N_FINAL, lod_scale=f)
+            lines.append(f"| {lab} | {sl} | {fmt(s['lod_nominal'])} | {fmt(s['lod_median'])} "
+                         f"[{fmt(s['lod_p05'])}-{fmt(s['lod_p95'])}] | ~{s['p_lod_only']:.2f} | "
                          f"~{s['p_success']:.2f} | {s['time_to_result_min']:.1f} |")
             print(lines[-1], flush=True)
     (L.OUT / "recovery_options.md").write_text(
         "# Automated recovery of simultaneous incubation (no reagent in sample vials)\n\nn = 2000, seed 20261111; "
-        "'~' = chamber approximation.\n\n" + "\n".join(lines) + "\n")
+        "'~' = chamber approximation. Revised after the final review (docs/08 S9, S13): thin-layer cell, sampled "
+        "stirring factor (route C keeps its pinned 0.09), 1/0.96 applied per draw before P.\n\n" + "\n".join(lines) + "\n")
 
 
 if __name__ == "__main__":

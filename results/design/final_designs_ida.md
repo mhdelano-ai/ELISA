@@ -1,0 +1,71 @@
+# Final candidate designs under the decisive scenarios
+
+n = 2000, seed 20261111. Revised after the final review (docs/08). Detector: flow IDA (optional Stage-3 upgrade). '~': chamber approximation; stirred-capture factor sampled on [0.2, 1.0]/2.2 (mode 0.45) and the 1/0.96 transfer factor applied to every draw before P (S13). F-seq and P-vial put reagent in the sample vial (inadmissible, reference only).
+
+| Design | Scenario | LOD nominal (pg/mL) | LOD median [5-95 %] (pg/mL) | P(LOD<=1) | P(success) | ULOQ nominal | time to result (min) | constraint flags |
+|---|---|---|---|---|---|---|---|---|
+| P-vial | S0 audited baseline | 0.32 | 1.3 [0.3-21] | 0.38 | 0.32 | 1.8e+03 | 59.5 | ok |
+| P-vial | S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s) | 0.14 | 0.94 [0.24-6.1] | 0.55 | 0.45 | 7.9e+02 | 59.5 | nominal ULOQ 794 < 1000 pg/mL |
+| P-vial | S2b capture reagent unscreened (koff to 8.3e-3 /s) | 0.32 | 1.8 [0.38-48] | 0.30 | 0.25 | 1.8e+03 | 59.5 | ok |
+| P-vial | S1 old NSB rate (label factor 1.0, 0.3-3; x25) | 7.9 | 23 [2.3-4.1e+02] | 0.01 | 0.01 | 1.8e+03 | 59.5 | ok |
+| P-vial | S3a NSB partly reversible, fraction removed by washes = ma.design_levers.nsb_fra | 0.17 | 0.99 [0.22-13] | 0.51 | 0.45 | 1.8e+03 | 59.5 | ok |
+| P-vial | S3b NSB irreversible and surfaces at high bound (tubing factor 30) | 0.51 | 1.7 [0.37-29] | 0.32 | 0.27 | 1.8e+03 | 59.5 | ok |
+| P-vial | S4a free HQ in substrate 1e-3 (high bound) | 6.2 | 11 [1.2-1.8e+02] | 0.04 | 0.02 | 1.8e+03 | 59.5 | ok |
+| P-vial | S4b free HQ in substrate 1e-7 (low bound) | 0.32 | 1.1 [0.27-18] | 0.44 | 0.38 | 1.8e+03 | 59.5 | ok |
+| P-vial | S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop | 0.33 | 1.4 [0.32-27] | 0.36 | 0.32 | 3e+03 | 59.5 | ok |
+| P-vial | C1 human-IgG contamination of blanks up to 1 pg/mL-equivalent (6.7 fM; nominal 0 | 0.32 | 1.9 [0.43-21] | 0.21 | 0.18 | 1.8e+03 | 59.5 | ok |
+| P-vial | L6+L7 (reagent + substrate screening) | 0.13 | 0.8 [0.19-4.5] | 0.61 | 0.52 | 7.9e+02 | 59.5 | nominal ULOQ 794 < 1000 pg/mL |
+| P-vial | L1+L3+L6+L7 | 0.065 | 0.61 [0.14-2.1] | 0.77 | 0.67 | 7.9e+02 | 59.5 | nominal ULOQ 794 < 1000 pg/mL |
+| P-vial | L4 immune-complex transfer: NSB x0.1 / signal x0.7 => label factor x0.14 [OUTSID | 0.08 | 0.75 [0.14-8.3] | 0.66 | 0.59 | 1.8e+03 | 59.5 | ok |
+| P-chamb | S0 audited baseline | 0.56 | 3 [0.51-1.3e+02] | ~0.19 | ~0.18 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s) | 0.19 | 1.5 [0.38-15] | ~0.32 | ~0.29 | 1.8e+03 | 56.1 | ok |
+| P-chamb | S2b capture reagent unscreened (koff to 8.3e-3 /s) | 0.56 | 4.8 [0.58-3.9e+02] | ~0.14 | ~0.13 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S1 old NSB rate (label factor 1.0, 0.3-3; x25) | 13 | 53 [4.6-2.2e+03] | ~0.00 | ~0.00 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S3a NSB partly reversible, fraction removed by washes = ma.design_levers.nsb_fra | 0.32 | 1.9 [0.37-78] | ~0.30 | ~0.28 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S3b NSB irreversible and surfaces at high bound (tubing factor 30) | 0.87 | 3.8 [0.58-1.6e+02] | ~0.15 | ~0.14 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S4a free HQ in substrate 1e-3 (high bound) | 16 | 39 [3.1-1.3e+03] | ~0.00 | ~0.00 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S4b free HQ in substrate 1e-7 (low bound) | 0.53 | 2.2 [0.4-98] | ~0.26 | ~0.24 | 5.2e+03 | 56.1 | ok |
+| P-chamb | S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop | 0.58 | 3.3 [0.51-1.6e+02] | ~0.18 | ~0.18 | 6.8e+03 | 56.1 | ok |
+| P-chamb | C1 human-IgG contamination of blanks up to 1 pg/mL-equivalent (6.7 fM; nominal 0 | 0.56 | 3.3 [0.68-1.3e+02] | ~0.10 | ~0.09 | 5.2e+03 | 56.1 | ok |
+| P-chamb | L6+L7 (reagent + substrate screening) | 0.18 | 1.2 [0.3-9.4] | ~0.42 | ~0.39 | 1.8e+03 | 56.1 | ok |
+| P-chamb | L1+L3+L6+L7 | 0.087 | 0.82 [0.2-4.3] | ~0.60 | ~0.57 | 1.8e+03 | 56.1 | ok |
+| P-chamb | L4 immune-complex transfer: NSB x0.1 / signal x0.7 => label factor x0.14 [OUTSID | 0.19 | 1.2 [0.23-48] | ~0.44 | ~0.42 | 5.2e+03 | 56.1 | ok |
+| B-bed | S0 audited baseline | 0.74 | 2.8 [0.52-32] | 0.19 | 0.14 | 1e+03 | 51.5 | ok |
+| B-bed | S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s) | 0.62 | 2.4 [0.48-26] | 0.21 | 0.16 | 7.9e+02 | 51.5 | nominal ULOQ 794 < 1000 pg/mL |
+| B-bed | S2b capture reagent unscreened (koff to 8.3e-3 /s) | 0.74 | 3.8 [0.59-92] | 0.14 | 0.10 | 1e+03 | 51.5 | ok |
+| B-bed | S1 old NSB rate (label factor 1.0, 0.3-3; x25) | 19 | 63 [6.6-8.3e+02] | 0.00 | 0.00 | 1e+03 | 51.5 | ok |
+| B-bed | S3a NSB partly reversible, fraction removed by washes = ma.design_levers.nsb_fra | 0.39 | 1.6 [0.39-17] | 0.31 | 0.24 | 1e+03 | 51.5 | ok |
+| B-bed | S3b NSB irreversible and surfaces at high bound (tubing factor 30) | 1.4 | 4.3 [0.71-42] | 0.11 | 0.08 | 1e+03 | 51.5 | ok |
+| B-bed | S4a free HQ in substrate 1e-3 (high bound) | 3.2 | 9.2 [1.4-76] | 0.02 | 0.01 | 1e+03 | 51.5 | ok |
+| B-bed | S4b free HQ in substrate 1e-7 (low bound) | 0.74 | 2.6 [0.47-28] | 0.21 | 0.17 | 1e+03 | 51.5 | ok |
+| B-bed | S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop | 0.99 | 3.7 [0.59-40] | 0.14 | 0.11 | 1.4e+03 | 51.5 | ok |
+| B-bed | C1 human-IgG contamination of blanks up to 1 pg/mL-equivalent (6.7 fM; nominal 0 | 0.74 | 3.1 [0.71-32] | 0.10 | 0.07 | 1e+03 | 51.5 | ok |
+| B-bed | L6+L7 (reagent + substrate screening) | 0.62 | 2.2 [0.44-24] | 0.25 | 0.20 | 7.9e+02 | 51.5 | nominal ULOQ 794 < 1000 pg/mL |
+| B-bed | L1+L3+L6+L7 | 0.3 | 1.2 [0.27-11] | 0.42 | 0.34 | 7.9e+02 | 51.5 | nominal ULOQ 794 < 1000 pg/mL |
+| B-bed | L4 immune-complex transfer: NSB x0.1 / signal x0.7 => label factor x0.14 [OUTSID | 0.15 | 0.94 [0.23-6.5] | 0.54 | 0.44 | 1e+03 | 51.5 | ok |
+| F-seq | S0 audited baseline | 0.3 | 1.5 [0.37-12] | 0.33 | 0.28 | 1.4e+03 | 58.5 | ok |
+| F-seq | S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s) | 0.25 | 1.3 [0.35-9.9] | 0.38 | 0.31 | 1e+03 | 58.5 | ok |
+| F-seq | S2b capture reagent unscreened (koff to 8.3e-3 /s) | 0.3 | 2.1 [0.43-63] | 0.24 | 0.21 | 1.4e+03 | 58.5 | ok |
+| F-seq | S1 old NSB rate (label factor 1.0, 0.3-3; x25) | 7.5 | 28 [3.4-2.6e+02] | 0.00 | 0.00 | 1.4e+03 | 58.5 | ok |
+| F-seq | S3a NSB partly reversible, fraction removed by washes = ma.design_levers.nsb_fra | 0.16 | 1 [0.26-7.3] | 0.48 | 0.41 | 1e+03 | 58.5 | ok |
+| F-seq | S3b NSB irreversible and surfaces at high bound (tubing factor 30) | 1.3 | 3.5 [0.66-32] | 0.12 | 0.09 | 1.4e+03 | 58.5 | ok |
+| F-seq | S4a free HQ in substrate 1e-3 (high bound) | 3.7 | 8.6 [1.2-75] | 0.03 | 0.02 | 1.4e+03 | 58.5 | ok |
+| F-seq | S4b free HQ in substrate 1e-7 (low bound) | 0.3 | 1.3 [0.3-11] | 0.39 | 0.33 | 1.4e+03 | 58.5 | ok |
+| F-seq | S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop | 0.35 | 1.7 [0.38-15] | 0.30 | 0.25 | 1.8e+03 | 58.5 | ok |
+| F-seq | C1 human-IgG contamination of blanks up to 1 pg/mL-equivalent (6.7 fM; nominal 0 | 0.3 | 2 [0.51-12] | 0.18 | 0.15 | 1.4e+03 | 58.5 | ok |
+| F-seq | L6+L7 (reagent + substrate screening) | 0.25 | 1.1 [0.27-8.2] | 0.44 | 0.36 | 1e+03 | 58.5 | ok |
+| F-seq | L1+L3+L6+L7 | 0.1 | 0.67 [0.17-2.6] | 0.71 | 0.63 | 1e+03 | 58.5 | ok |
+| F-seq | L4 immune-complex transfer: NSB x0.1 / signal x0.7 => label factor x0.14 [OUTSID | 0.069 | 0.71 [0.17-3.7] | 0.70 | 0.62 | 1e+03 | 58.5 | ok |
+| S-chamb | S0 audited baseline | 0.36 | 2.4 [0.5-24] | ~0.20 | ~0.18 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S2a detection reagent screened (koff 1e-4, <=1.9e-4 /s) | 0.3 | 2 [0.47-18] | ~0.24 | ~0.21 | 1e+03 | 58.1 | ok |
+| S-chamb | S2b capture reagent unscreened (koff to 8.3e-3 /s) | 0.36 | 3.7 [0.58-1.8e+02] | ~0.14 | ~0.13 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S1 old NSB rate (label factor 1.0, 0.3-3; x25) | 9 | 48 [5.1-4.8e+02] | ~0.00 | ~0.00 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S3a NSB partly reversible, fraction removed by washes = ma.design_levers.nsb_fra | 0.19 | 1.5 [0.35-13] | ~0.34 | ~0.30 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S3b NSB irreversible and surfaces at high bound (tubing factor 30) | 1.5 | 5.9 [0.85-57] | ~0.06 | ~0.05 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S4a free HQ in substrate 1e-3 (high bound) | 4.3 | 15 [1.9-1.3e+02] | ~0.01 | ~0.01 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S4b free HQ in substrate 1e-7 (low bound) | 0.36 | 2 [0.42-20] | ~0.25 | ~0.22 | 1.4e+03 | 58.1 | ok |
+| S-chamb | S5 <=100 uL DRAWN: PLNO 75 uL on the 100 uL loop | 0.41 | 2.7 [0.52-27] | ~0.18 | ~0.17 | 1.8e+03 | 58.1 | ok |
+| S-chamb | C1 human-IgG contamination of blanks up to 1 pg/mL-equivalent (6.7 fM; nominal 0 | 0.36 | 2.7 [0.67-24] | ~0.10 | ~0.09 | 1.4e+03 | 58.1 | ok |
+| S-chamb | L6+L7 (reagent + substrate screening) | 0.3 | 1.7 [0.38-16] | ~0.29 | ~0.25 | 1e+03 | 58.1 | ok |
+| S-chamb | L1+L3+L6+L7 | 0.12 | 0.87 [0.22-4.7] | ~0.57 | ~0.52 | 1e+03 | 58.1 | ok |
+| S-chamb | L4 immune-complex transfer: NSB x0.1 / signal x0.7 => label factor x0.14 [OUTSID | 0.082 | 0.9 [0.23-6.4] | ~0.55 | ~0.50 | 1.4e+03 | 58.1 | ok |

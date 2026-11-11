@@ -90,6 +90,21 @@ overrides:
       koff > ln2/3600 = 1.9e-4 /s is not part of the design that would be built; sampling it mixed a reagent-selection
       failure into the parameter uncertainty. The unscreened range is kept as a separate scenario in
       scripts/run_baseline.py ("unscreened capture reagent").
+  chem.enzymes.alp.phosphate_inhibition_Ki:
+    value: 2.0e-6
+    low: 2.0e-7
+    high: 1.0e-3
+    unit: M
+    source: "UNVERIFIED for calf-intestinal ALP at pH 9.5 (final review docs/08 S10). OBrien2002 (PubMed 11863460) measured E. coli AP; FernleyWalker1967 (doi:10.1042/bj1041011, abstract only) shows Pi inhibition of calf-intestinal ALP is mainly competitive with a Ki that changes ~100-fold over pH 8-10 (values not in the abstract)"
+    confidence: low
+    note: >
+      FINAL-REVIEW OVERRIDE (2026-11-11, docs/08 S10 and 'Corrections to earlier documents'). chemistry.yaml took
+      Ki = 2 uM (1-540 uM) from E. coli alkaline phosphatase and applied it to the calf-intestinal ALP of the
+      conjugate without a source for that enzyme. The nominal is kept (no better number was found), the bound is
+      widened to 0.2 uM - 1 mM and the value is marked UNVERIFIED: the enzyme transfer is unsupported and the only
+      calf-intestinal source reached shows a ~100-fold pH dependence over pH 8-10 whose direction at pH 9.5 was not
+      read. The low bound matters for the 1000 pg/mL upper range (nominal ULOQ of the primary at 1 mM HQDP:
+      5200 pg/mL at 2 uM, 2300 at 1 uM, 460 at 0.2 uM); bench item E1.7 (U6) measures Ki on the actual conjugate.
 
 fluid:
   viscosity:

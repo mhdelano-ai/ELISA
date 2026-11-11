@@ -139,28 +139,41 @@ def constraint_violations(arch, ps, r=None) -> list[str]:
     return why
 
 
-def mc(arch, ps, n=N_FINAL, seed=SEED) -> dict:
+def mc(arch, ps, n=N_FINAL, seed=SEED, lod_scale: float = 1.0) -> dict:
     """Monte Carlo summary with the success metric of this task added.
 
     Work-around for a bug in elisa_sim.montecarlo.used_keys (found in this task, reported in docs/05 s.7):
     for an architecture with a non-empty ``design`` the accessed-key probe is recorded on the copy made by
     apply_design, so NO parameter is sampled.  We therefore apply the design to the parameter set first
     (design keys become pinned and stay unsampled) and run the Monte Carlo on the design-free architecture.
+    (The src fix of commit 6cbf85e makes both paths identical; docs/08 s3.2.)
+
+    lod_scale: factor applied to EVERY draw's LOD before the summary and before P is computed (added after the
+    final review, docs/08 S13). The chamber designs use 1/0.96 for the analyte lost in the loop -> cup
+    transfer; before the review it was applied to the reported LOD only, so P was slightly optimistic. The
+    returned lod_* values are already scaled: callers must not multiply them again.
     """
     if arch.design:
         ps = ps.with_values(dict(arch.design))
         arch = _replace(arch, design=())
     m = montecarlo.run(arch, ps, n=n, seed=seed)
     s = m.summary(TARGET, TIME_LIMIT, RANGE_TOP)
-    lod = np.asarray(m.result.lod_pgml, float)
+    lod = np.asarray(m.result.lod_pgml, float) * float(lod_scale)
     uloq = np.asarray(m.result.uloq_pgml, float)
+    if lod_scale != 1.0:
+        q = lambda x, a: float(np.nanpercentile(np.where(np.isfinite(x), x, 1e30), a))
+        s.update(lod_nominal=float(m.nominal.lod_pgml) * float(lod_scale), lod_median=q(lod, 50),
+                 lod_p05=q(lod, 5), lod_p95=q(lod, 95), p_lod_le_target=float(np.mean(lod <= TARGET)),
+                 p_lod_and_range=float(np.mean((lod <= TARGET) & (uloq >= RANGE_TOP))))
+    s["lod_scale"] = float(lod_scale)
     leff = np.where(np.isfinite(lod), lod, 1e30) * np.maximum(1.0, RANGE_TOP / np.maximum(uloq, 1e-30))
     s["leff_median"] = float(np.median(leff))
     s["p_success"] = float(np.mean(leff <= TARGET))
     s["p_lod_only"] = float(np.mean(lod <= TARGET))
     s["p_lod_le_3"] = float(np.mean(lod <= 3.0))
     s["uloq_nominal"] = float(m.nominal.uloq_pgml)
-    s["blank_equiv_nominal"] = float(m.nominal.diagnostics["blank_equivalent_pgml"])
+    s["blank_equiv_nominal"] = float(m.nominal.diagnostics["blank_equivalent_pgml"]) * float(lod_scale)
+    s["lod_draws"] = lod
     s["_mc"] = m
     return s
 
@@ -310,3 +323,69 @@ ASSUMPTION_FLAGS = {
     "ma.geometry.packed_bed_column_inner_diameter": "geometry only (W-G film transfer); small effect",
     "ma.delivery.conjugate_injection_volume": "linear NSB (UNVERIFIED); plug dispersion from loop model (verified)",
 }
+
+
+# --------------------------------------------------------------------------------------------------------
+# Bench values entered the way automation/elisa_auto/model_feedback.py enters them (docs/06 s9.3). Moved here
+# after the final review (docs/08 B3) so the G1 decision table and the bench feedback use ONE implementation.
+# --------------------------------------------------------------------------------------------------------
+# A bench measurement of the label factor is a measurement of the absolute k_eff on the actual beads
+# (docs/06 E1.3: factor = k_eff / 4e-11 m/s). The model computes k_eff = label factor x
+# chem.nsb.nsb_effective_rate_constant x ma.nsb.surface_factor_magnetic_beads and the Monte Carlo samples the
+# last two as well; left free they would re-spread the measured value over ~50x. So when the label factor is
+# measured, the reference rate and the bead surface factor are pinned at their nominal values (4e-11 m/s, 1).
+COUPLED = {"ma.nsb.label_factor_igg_enzyme_conjugate": ("chem.nsb.nsb_effective_rate_constant",
+                                                        "ma.nsb.surface_factor_magnetic_beads")}
+
+
+def apply_bench_values(ps: ParameterSet, measured: dict, notes: list | None = None) -> ParameterSet:
+    """measured: {key: {value, low?, high?}} -> copy of ps narrowed to the bench values (coupled factors pinned)."""
+    for key, partners in COUPLED.items():
+        if key in measured:
+            for k2 in partners:
+                if k2 not in measured and k2 in ps.params:
+                    v = ps.params[k2].value
+                    ps = with_bounds(ps, k2, value=v, low=v, high=v)
+                    if notes is not None:
+                        notes.append(f"{k2} pinned at {v:g} because {key} was measured on the actual beads")
+    for key, v in measured.items():
+        if key not in ps.params:
+            raise KeyError(f"unknown model parameter {key!r} (see params/*.yaml)")
+        val = float(v["value"])
+        lo, hi = float(v.get("low", val)), float(v.get("high", val))
+        if not (lo <= val <= hi):
+            raise ValueError(f"{key}: low <= value <= high violated")
+        ps = with_bounds(ps, key, value=val, low=lo, high=hi)
+    return ps
+
+
+def l4_transfer(ps: ParameterSet) -> ParameterSet:
+    """Lever L4 (immune-complex transfer) on top of whatever label factor ps holds: factor x NSB/efficiency
+    (ma.design_levers nominal 0.1 / 0.7), bounds scaled alike (OUTSIDE MODEL as physics; docs/05 s2)."""
+    k = "ma.nsb.label_factor_igg_enzyme_conjugate"
+    m = (float(ps.params["ma.design_levers.immune_complex_transfer_nsb_factor"].value)
+         / float(ps.params["ma.design_levers.immune_complex_transfer_efficiency"].value))
+    p = ps.params[k]
+    v = float(np.asarray(ps.values[k]).reshape(-1)[0]) if k in ps.pinned else p.value
+    out = with_bounds(ps, k, value=p.value * m, low=p.low * m, high=p.high * m)
+    if k in ps.pinned:
+        out = out.with_values({k: v * m})
+    return out
+
+
+# G1 decision rule fixed before any Stage-1 data exist (docs/06 s4.11, automation/config/gates.yaml G1_rule;
+# reasoning in docs/08 'Resolution of findings', B3). P = model P(success) of a design with the bench values
+# entered by apply_bench_values (thin-layer default detector, chamber approximation with the S13 corrections).
+G1_GO_MIN = 0.30
+G1_LEVER_MIN = 0.10
+
+
+def g1_decision(p_no_lever: dict, p_with_l4: dict) -> str:
+    """p_*: {design: P(success)} over the ADMISSIBLE designs (P-chamb, S-chamb, B-bed)."""
+    p0 = max(p_no_lever.values())
+    pl = max([p0] + list(p_with_l4.values()))
+    if p0 >= G1_GO_MIN:
+        return "GO"
+    if pl >= G1_LEVER_MIN:
+        return "GO-WITH-LEVER" if p0 >= G1_LEVER_MIN else "GO-WITH-LEVER (Stage 1C first; Stage-2 order waits for G1')"
+    return "STOP"

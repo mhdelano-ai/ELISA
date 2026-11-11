@@ -24,8 +24,10 @@ Usage: python scripts/inline_chamber.py  -> results/design/inline_chamber.md
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import design_lib as L
+import final_designs as F
 from design_lib import fmt
 
 TRANSFER = 0.96
@@ -42,17 +44,19 @@ def main():
         a = opt.with_design(**{"ma.timing.in_vial_incubation": t_inc, "hw.timing.accumulation_time": acc,
                                "hw.smfl.loop_flush_volumes_for_transfer": 6.6,
                                "ma.timing.post_sample_wash": wash + 2.0})
-        p = L.pin(ps, **{"ma.capture.in_vial_unstirred_rate_factor": 0.45})
+        a = replace(a, detector=F.DEFAULT_DETECTOR)
+        p = F.chamber_ps_fn("review")(ps)
         why = L.constraint_violations(a, p)
-        s = L.mc(a, p, n=L.N_FINAL)
-        rows.append(f"| chamber, incubation {t_inc} min, accumulation {acc} min | {fmt(s['lod_nominal'] / TRANSFER)} | "
-                    f"{fmt(s['lod_median'] / TRANSFER)} [{fmt(s['lod_p05'] / TRANSFER)}-{fmt(s['lod_p95'] / TRANSFER)}] | "
+        s = L.mc(a, p, n=L.N_FINAL, lod_scale=1.0 / TRANSFER)
+        rows.append(f"| chamber, incubation {t_inc} min, accumulation {acc} min | {fmt(s['lod_nominal'])} | "
+                    f"{fmt(s['lod_median'])} [{fmt(s['lod_p05'])}-{fmt(s['lod_p95'])}] | "
                     f"~{s['p_lod_only']:.2f} | ~{s['p_success']:.2f} | {s['time_to_result_min']:.1f} | "
                     f"{'; '.join(why) or 'ok'} |")
         print(rows[-1], flush=True)
     txt = ("# One-step format with a timed in-line incubation chamber (approximation)\n\n"
-           "P values are for the model LOD before the 1/0.96 transfer factor (they are therefore slightly "
-           "optimistic, hence '~').\n\n" + "\n".join(rows) + "\n")
+           "Revised after the final review (docs/08 S9, S13): thin-layer cell (Stage-3 default), stirred-capture "
+           "factor sampled on [0.2, 1.0]/2.2 (mode 0.45), 1/0.96 transfer factor applied to every draw before P. "
+           "'~' = chamber approximation.\n\n" + "\n".join(rows) + "\n")
     (L.OUT / "inline_chamber.md").write_text(txt)
 
 
