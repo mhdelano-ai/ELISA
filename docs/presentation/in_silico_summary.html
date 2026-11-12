@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electrochemical ELISA: In Silico Phase</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  html, body { margin: 0; height: 100%; background: #0b161e; overflow: hidden; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  section { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box;
+             overflow: hidden; }
+  section:not(.current) { display: none !important; }
+  section *, section *::before, section *::after { box-sizing: border-box; }
+  section h1, section h2, section h3, section p { margin: 0; }
+  section aside { display: none; }
+  section table { border-collapse: collapse; width: 100%; }
+  section th, section td { padding: 0.35em 0.6em; border-bottom: 1px solid rgba(19, 35, 47, 0.18);
+                            vertical-align: top; text-align: left; }
+  x-connector { display: block; flex: none; height: 0; border-top-style: solid; position: relative; }
+  x-connector::after { content: ""; position: absolute; right: -2px; top: -9px; border-left: 12px solid currentColor;
+                        border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 16px; display: flex; gap: 16px;
+          justify-content: center; align-items: center; font: 14px Arial, sans-serif; color: #b9c7cf; }
+  #bar button { font: inherit; color: inherit; background: #13232f; border: 1px solid #44525c; border-radius: 6px;
+                 padding: 4px 12px; cursor: pointer; }
+  @media print {
+    html, body { overflow: visible; height: auto; background: none; }
+    #bar { display: none; }
+    #stage { position: static; transform: none !important; width: auto; height: auto; }
+    section, section:not(.current) { position: relative; display: flex !important; page-break-after: always; }
+    @page { size: 1920px 1080px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" data-transition="fade" style="background:#13232F;color:#F6F4EE;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#F0A35E">In silico phase · summary</p>
+<div style="display:flex;flex-direction:column;gap:40px">
+<h1 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:120px;font-weight:600;line-height:1.05">Automated electrochemical ELISA for human IgG</h1>
+<p style="font-size:44px;line-height:1.3;color:#B9C7CF">The design chosen for a 1 pg/mL detection limit, how it works, and how likely it is to get there.</p>
+</div>
+<div style="display:flex;gap:64px">
+<p style="font-size:24px;color:#B9C7CF">Waters ACQUITY I-Class PLUS · BSM + SM-FL</p>
+<p style="font-size:24px;color:#B9C7CF">Gamry Reference 600+</p>
+<p style="font-size:24px;color:#B9C7CF">November 2026</p>
+</div>
+<aside>Summary of the modelling phase, before any bench work. The deck explains the recommended design first, then the predictions and the plan.</aside>
+</section>
+<section id="target" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">The target</h2>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF7;padding:40px;border:1px solid #D9D3C4;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:120px;font-weight:600;line-height:1;color:#A84A12">1 pg/mL</p>
+<p style="font-size:32px;line-height:1.35;color:#44525C">Detection limit for human IgG in buffer, defined as blank mean + 3 SD</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FCFBF7;padding:40px;border:1px solid #D9D3C4;border-radius:16px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:120px;font-weight:600;line-height:1;color:#1F6F8B">6.7 fM</p>
+<p style="font-size:32px;line-height:1.35;color:#44525C">The same concentration in molar terms: about 400,000 molecules in the 100 µL injected</p>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:32px">
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #13232F;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Range</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">1 to 1000 pg/mL calibration</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #13232F;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Time</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">60 min or less, injection to result</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #13232F;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Surface</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Reusable, or renewed automatically each run</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #13232F;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Automation</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">No manual step; sample vials hold sample only</p>
+</div>
+</div>
+<aside>Success criteria from the project brief. The 100 µL is the injected volume: a full-loop injection with 2× overfill draws about 200 µL. No reagent may be placed in the sample vial.</aside>
+</section>
+<section id="blank" data-transition="fade" style="background:#A84A12;color:#FCFBF7;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#FBE3CC">What stands in the way</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:96px;font-weight:600;line-height:1.1">The blank sets the limit, and the blank is enzyme conjugate sticking where it should not.</h2>
+<div style="display:flex;gap:48px">
+<p style="flex:1;font-size:32px;line-height:1.4;color:#FBE3CC">Run-to-run variation in conjugate sticking carries nearly all of the blank variance in the model.</p>
+<p style="flex:1;font-size:32px;line-height:1.4;color:#FBE3CC">Electrochemical noise is at least a thousand times smaller, so the detector barely matters.</p>
+<p style="flex:1;font-size:32px;line-height:1.4;color:#FBE3CC">The design therefore aims to minimise surface exposed to conjugate per captured IgG.</p>
+</div>
+<aside>This held through the audit and the final review. Published flow-injection readouts already detect alkaline phosphatase near 1 fM; every study that analysed its blank traced it to non-specific binding of the conjugate.</aside>
+</section>
+<section id="alternatives" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Why this design and not the others</h2>
+<table style="font-size:26px;color:#13232F">
+<tr style="background:#13232F"><th style="width:30%;text-align:left;color:#F6F4EE;font-weight:600">Format</th><th style="width:18%;text-align:left;color:#F6F4EE;font-weight:600">Outcome</th><th style="width:52%;text-align:left;color:#F6F4EE;font-weight:600">Reason</th></tr>
+<tr style="background:#FBE3CC"><td>Beads + stirred in-line cup, dosed by a syringe pump</td><td>Chosen</td><td>Recovers simultaneous incubation of sample, beads and conjugate with nothing in the sample vial</td></tr>
+<tr><td>Same hardware, sequential steps</td><td>Fallback</td><td>Used if the detection antibody releases too fast for one-step mode</td></tr>
+<tr style="background:#ECE8DD"><td>Fixed packed micro-bed</td><td>Backup</td><td>No bead handling, but more sticking surface per captured IgG</td></tr>
+<tr><td>Beads and conjugate in the sample vial</td><td>Ruled out</td><td>Reagent in the sample vial is not allowed; incubation time would also vary along a queue</td></tr>
+<tr style="background:#ECE8DD"><td>Merging reagents from a BSM line</td><td>Ruled out</td><td>Proteins and beads must not pass through the pump</td></tr>
+<tr><td>Unstirred holding coil</td><td>Rejected</td><td>Capture too slow without stirring: about 6% modelled chance of success</td></tr>
+<tr style="background:#ECE8DD"><td>Bead bed on a chip, open capillary</td><td>Ranked lower</td><td>Higher predicted detection limits than the packed bed or the bead formats</td></tr>
+</table>
+<aside>The model evaluated 84 combinations of capture format, chemistry, detector and plumbing. The ranking stayed the same through the audit: one-step beads, sequential beads, chip bead bed, packed bed. The in-vial formats led the model but were excluded by the decision that sample vials hold sample only.</aside>
+</section>
+<section id="layout" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">How the primary design is plumbed</h2>
+<div style="position:relative;width:1664px;height:640px">
+<svg aria-label="Flow schematic: the pump feeds the sample manager, whose loop empties through valve V4 into a stirred cup. A syringe pump with a selection valve doses beads and conjugate from reservoirs into the cup, then pushes the cup contents up into a magnetic trap mounted on valve V2. From V2 the flow passes valve V3 to the electrochemical flow cell, which is read by the potentiostat." style="position:absolute;left:0px;top:0px" width="1664" height="640" viewBox="0 0 1664 640">
+<defs>
+<marker id="ad" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#13232F" stroke="none"/></marker>
+<marker id="ao" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#A84A12" stroke="none"/></marker>
+</defs>
+<g fill="none" stroke="#13232F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M200 150 L312 150" marker-end="url(#ad)"/>
+<path d="M435 150 L562 150" marker-end="url(#ad)"/>
+<path d="M665 150 L972 150" marker-end="url(#ad)"/>
+<path d="M620 195 L620 284" marker-end="url(#ad)"/>
+<path d="M1095 150 L1212 150" marker-end="url(#ad)"/>
+<path d="M1315 150 L1387 150" marker-end="url(#ad)"/>
+<path d="M1270 195 L1270 238" marker-end="url(#ad)"/>
+<path d="M1570 150 L1640 150" marker-end="url(#ad)"/>
+<path d="M1250 252 L1250 282 L1290 282 L1290 252"/>
+<path d="M1040 500 L1040 412" stroke-width="3"/>
+<path d="M1100 500 L1062 402" stroke-width="3"/>
+<path d="M1085 370 L1120 370"/>
+</g>
+<g fill="none" stroke="#A84A12" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M620 440 L620 480 L930 480 L930 370 L980 370" marker-end="url(#ao)"/>
+<path d="M1040 325 L1040 220" marker-end="url(#ao)"/>
+<path d="M980 500 L1018 402" stroke-width="5"/>
+<path d="M1012 98 L1012 55 L1068 55 L1068 98"/>
+</g>
+<rect x="62" y="50" width="30" height="40" rx="4" fill="#D5E8EE" stroke="#13232F" stroke-width="3"/>
+<rect x="108" y="50" width="30" height="40" rx="4" fill="#FBE3CC" stroke="#13232F" stroke-width="3"/>
+<rect x="154" y="50" width="30" height="40" rx="4" fill="#ECE8DD" stroke="#13232F" stroke-width="3"/>
+<rect x="40" y="90" width="160" height="120" rx="12" fill="#FCFBF7" stroke="#13232F" stroke-width="4"/>
+<circle cx="90" cy="150" r="24" fill="#ECE8DD" stroke="#13232F" stroke-width="4"/>
+<circle cx="150" cy="150" r="24" fill="#ECE8DD" stroke="#13232F" stroke-width="4"/>
+<path d="M78 150 L102 150 M138 150 L162 150" stroke="#13232F" stroke-width="4" stroke-linecap="round"/>
+<path d="M361 117 C 318 34, 442 34, 399 117" fill="none" stroke="#1F6F8B" stroke-width="6" stroke-linecap="round"/>
+<circle cx="380" cy="150" r="55" fill="#FCFBF7" stroke="#13232F" stroke-width="4"/>
+<g fill="#13232F"><circle cx="418" cy="150" r="6"/><circle cx="399" cy="183" r="6"/><circle cx="361" cy="183" r="6"/><circle cx="342" cy="150" r="6"/><circle cx="361" cy="117" r="6"/><circle cx="399" cy="117" r="6"/></g>
+<path d="M342 150 L361 117 M399 117 L418 150 M361 183 L399 183" stroke="#13232F" stroke-width="3" fill="none"/>
+<path d="M380 205 L380 250" stroke="#13232F" stroke-width="3"/>
+<rect x="362" y="252" width="36" height="78" rx="6" fill="#D5E8EE" stroke="#13232F" stroke-width="3"/>
+<rect x="357" y="244" width="46" height="12" rx="3" fill="#13232F"/>
+<circle cx="620" cy="150" r="45" fill="#FCFBF7" stroke="#13232F" stroke-width="4"/>
+<g fill="#13232F"><circle cx="650" cy="150" r="6"/><circle cx="590" cy="150" r="6"/><circle cx="620" cy="180" r="6"/><circle cx="620" cy="120" r="6"/></g>
+<path d="M590 150 L620 180" stroke="#13232F" stroke-width="3"/>
+<path d="M567 340 L567 420 Q567 438 585 438 L655 438 Q673 438 673 420 L673 340 Z" fill="#D5E8EE"/>
+<path d="M565 300 L565 420 Q565 440 585 440 L655 440 Q675 440 675 420 L675 300" fill="none" stroke="#13232F" stroke-width="4" stroke-linecap="round"/>
+<rect x="598" y="422" width="44" height="10" rx="5" fill="#13232F"/>
+<g fill="#A84A12"><circle cx="590" cy="370" r="5"/><circle cx="615" cy="395" r="5"/><circle cx="640" cy="360" r="5"/><circle cx="655" cy="400" r="5"/><circle cx="600" cy="408" r="5"/><circle cx="630" cy="382" r="5"/><circle cx="584" cy="392" r="5"/><circle cx="652" cy="374" r="5"/><circle cx="610" cy="356" r="5"/></g>
+<circle cx="1040" cy="370" r="45" fill="#FBE3CC" stroke="#A84A12" stroke-width="4"/>
+<g fill="#13232F"><circle cx="1072" cy="370" r="5"/><circle cx="1063" cy="393" r="5"/><circle cx="1040" cy="402" r="5"/><circle cx="1017" cy="393" r="5"/><circle cx="1008" cy="370" r="5"/><circle cx="1017" cy="347" r="5"/><circle cx="1040" cy="338" r="5"/><circle cx="1063" cy="347" r="5"/></g>
+<rect x="1120" y="348" width="130" height="44" rx="4" fill="#FCFBF7" stroke="#13232F" stroke-width="4"/>
+<rect x="1123" y="351" width="66" height="38" fill="#D5E8EE"/>
+<rect x="1189" y="350" width="10" height="40" fill="#13232F"/>
+<path d="M1199 370 L1292 370" stroke="#13232F" stroke-width="4"/>
+<path d="M1292 348 L1292 392" stroke="#13232F" stroke-width="7" stroke-linecap="round"/>
+<rect x="972" y="500" width="16" height="16" fill="#13232F"/>
+<rect x="958" y="516" width="44" height="84" rx="6" fill="#FBE3CC" stroke="#13232F" stroke-width="3"/>
+<g fill="#A84A12"><circle cx="970" cy="560" r="4"/><circle cx="984" cy="574" r="4"/><circle cx="975" cy="586" r="4"/><circle cx="990" cy="552" r="4"/></g>
+<rect x="1032" y="500" width="16" height="16" fill="#13232F"/>
+<rect x="1018" y="516" width="44" height="84" rx="6" fill="#D5E8EE" stroke="#13232F" stroke-width="3"/>
+<rect x="1092" y="500" width="16" height="16" fill="#13232F"/>
+<rect x="1078" y="516" width="44" height="84" rx="6" fill="#ECE8DD" stroke="#13232F" stroke-width="3"/>
+<circle cx="1040" cy="150" r="55" fill="#FBE3CC" stroke="#A84A12" stroke-width="4"/>
+<g fill="#13232F"><circle cx="1078" cy="150" r="6"/><circle cx="1059" cy="183" r="6"/><circle cx="1021" cy="183" r="6"/><circle cx="1002" cy="150" r="6"/><circle cx="1021" cy="117" r="6"/><circle cx="1059" cy="117" r="6"/></g>
+<rect x="1014" y="43" width="52" height="24" rx="9" fill="#FCFBF7" stroke="#A84A12" stroke-width="3"/>
+<g fill="#A84A12"><circle cx="1028" cy="55" r="4"/><circle cx="1040" cy="55" r="4"/><circle cx="1052" cy="55" r="4"/></g>
+<rect x="1010" y="8" width="30" height="26" fill="#13232F"/>
+<rect x="1040" y="8" width="30" height="26" fill="#A84A12"/>
+<circle cx="1270" cy="150" r="45" fill="#FCFBF7" stroke="#13232F" stroke-width="4"/>
+<g fill="#13232F"><circle cx="1300" cy="150" r="6"/><circle cx="1240" cy="150" r="6"/><circle cx="1270" cy="180" r="6"/><circle cx="1270" cy="120" r="6"/></g>
+<path d="M1240 150 L1300 150" stroke="#13232F" stroke-width="3"/>
+<rect x="1400" y="105" width="170" height="90" rx="10" fill="#FCFBF7" stroke="#1F6F8B" stroke-width="4"/>
+<path d="M1402 150 L1568 150" stroke="#D5E8EE" stroke-width="12"/>
+<rect x="1455" y="157" width="60" height="22" rx="3" fill="#1F6F8B"/>
+<path d="M1485 180 L1485 330" stroke="#1F6F8B" stroke-width="3" stroke-dasharray="8 8" fill="none"/>
+<rect x="1410" y="330" width="220" height="100" rx="10" fill="#13232F"/>
+<rect x="1426" y="346" width="124" height="68" rx="6" fill="#D5E8EE"/>
+<path d="M1434 400 L1462 400 Q1476 400 1483 372 Q1490 350 1499 380 Q1505 400 1522 400 L1542 400" fill="none" stroke="#1F6F8B" stroke-width="3" stroke-linecap="round"/>
+<circle cx="1590" cy="364" r="10" fill="#F0A35E"/>
+<circle cx="1590" cy="398" r="10" fill="#B9C7CF"/>
+</svg>
+<p style="position:absolute;left:40px;top:222px;width:200px;font-size:24px;line-height:1.3"><b>BSM pump</b><br>buffer, substrate</p>
+<p style="position:absolute;left:270px;top:0px;width:320px;font-size:24px;line-height:1.3"><b>SM-FL</b> · 100 µL loop</p>
+<p style="position:absolute;left:236px;top:262px;width:112px;font-size:24px;line-height:1.3;text-align:right">sample vial</p>
+<p style="position:absolute;left:680px;top:204px;width:150px;font-size:24px;line-height:1.3"><b>Valve V4</b></p>
+<p style="position:absolute;left:700px;top:320px;width:200px;font-size:24px;line-height:1.3"><b>Stirred cup</b><br>30 min</p>
+<p style="position:absolute;left:720px;top:20px;width:260px;font-size:24px;line-height:1.3;text-align:right"><b>Trap + magnet</b><br>on valve V2</p>
+<p style="position:absolute;left:1200px;top:56px;width:150px;font-size:24px;line-height:1.3"><b>Valve V3</b></p>
+<p style="position:absolute;left:1300px;top:246px;width:100px;font-size:24px;line-height:1.3">waste</p>
+<p style="position:absolute;left:1400px;top:56px;width:250px;font-size:24px;line-height:1.3"><b>Flow cell</b></p>
+<p style="position:absolute;left:1400px;top:442px;width:264px;font-size:24px;line-height:1.3"><b>Gamry 600+</b><br>reads charge</p>
+<p style="position:absolute;left:1150px;top:420px;width:230px;font-size:24px;line-height:1.3"><b>Syringe pump</b><br>8-port selector</p>
+<p style="position:absolute;left:1150px;top:530px;width:320px;font-size:24px;line-height:1.3"><b>Reservoirs</b><br>beads · conjugate · wash</p>
+<p style="position:absolute;left:0px;top:560px;width:900px;font-size:24px;line-height:1.3;color:#44525C"><span style="color:#A84A12"><b>Orange:</b></span> the path beads travel. <b>Dark:</b> clean liquid only. <span style="color:#1F6F8B"><b>Blue:</b></span> sample loop and detection.</p>
+</div>
+<aside>Three external two-position valves (V2 ten-port, V3 and V4 six-port) plus the selection valve on the syringe pump. The sample manager injects sample only, into the cup. The syringe pump doses beads and conjugate from separate reservoirs, then pushes the cup contents through the trap mounted on V2. Beads and conjugate never enter the pump or the sample manager. Open question raised after the review: beads pass through the selection valve and V2, and rotor wear and bead carryover in those valves are not yet addressed in the plan.</aside>
+</section>
+<section id="cycle" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">One assay cycle, step by step</h2>
+<div style="position:relative;width:1664px;height:620px">
+<svg aria-label="Timeline of one 57-minute cycle drawn to scale: dose 1 minute, sample 3, incubate 30, trap 6.6, wash and fill 2, accumulate 10, read 1.5, clean 3. Incubation and accumulation take most of the time." style="position:absolute;left:0px;top:0px" width="1664" height="620" viewBox="0 0 1664 620">
+<rect x="0" y="230" width="29" height="80" fill="#F0A35E"/>
+<rect x="29" y="230" width="88" height="80" fill="#1F6F8B"/>
+<rect x="117" y="230" width="874" height="80" fill="#13232F"/>
+<rect x="991" y="230" width="192" height="80" fill="#A84A12"/>
+<rect x="1183" y="230" width="58" height="80" fill="#B9C7CF"/>
+<rect x="1241" y="230" width="292" height="80" fill="#44525C"/>
+<rect x="1533" y="230" width="43" height="80" fill="#1F6F8B"/>
+<rect x="1576" y="230" width="88" height="80" fill="#D9D3C4"/>
+<g stroke="#13232F" stroke-width="3" fill="none">
+<path d="M15 152 L15 226"/>
+<path d="M1212 152 L1212 226"/>
+<path d="M1554 152 L1554 226"/>
+<path d="M73 314 L73 356"/>
+<path d="M1087 314 L1087 356"/>
+<path d="M1387 314 L1387 356"/>
+<path d="M1620 314 L1620 492"/>
+<path d="M554 314 L554 356"/>
+</g>
+<g fill="#13232F"><circle cx="15" cy="228" r="6"/><circle cx="1212" cy="228" r="6"/><circle cx="1554" cy="228" r="6"/><circle cx="73" cy="312" r="6"/><circle cx="1087" cy="312" r="6"/><circle cx="1387" cy="312" r="6"/><circle cx="1620" cy="312" r="6"/><circle cx="554" cy="312" r="6"/></g>
+</svg>
+<p style="position:absolute;left:0px;top:40px;width:340px;font-size:24px;line-height:1.35"><b>Dose</b> · 1 min<br>Beads, then conjugate, into the cup</p>
+<p style="position:absolute;left:1000px;top:40px;width:340px;font-size:24px;line-height:1.35"><b>Wash, fill</b> · 2 min<br>Buffer, then substrate; cell bypassed</p>
+<p style="position:absolute;left:1380px;top:40px;width:284px;font-size:24px;line-height:1.35"><b>Read</b> · 1.5 min<br>Result 52 min after injection</p>
+<p style="position:absolute;left:140px;top:252px;width:820px;font-size:28px;line-height:1.3;color:#F6F4EE"><b>Incubate</b></p>
+<p style="position:absolute;left:1004px;top:252px;width:170px;font-size:28px;line-height:1.3;color:#FCFBF7"><b>Trap</b></p>
+<p style="position:absolute;left:1256px;top:252px;width:270px;font-size:28px;line-height:1.3;color:#F6F4EE"><b>Accumulate</b></p>
+<p style="position:absolute;left:0px;top:364px;width:330px;font-size:24px;line-height:1.35"><b>Sample</b> · 3 min<br>100 µL injected into the cup</p>
+<p style="position:absolute;left:380px;top:364px;width:440px;font-size:24px;line-height:1.35"><b>Incubate</b> · 30 min<br>Stirred; the same for every queued sample</p>
+<p style="position:absolute;left:900px;top:364px;width:310px;font-size:24px;line-height:1.35"><b>Trap</b> · 6.6 min<br>Cup contents pass the trap, magnet on</p>
+<p style="position:absolute;left:1240px;top:364px;width:300px;font-size:24px;line-height:1.35"><b>Accumulate</b> · 10 min<br>Stopped flow; enzyme makes product</p>
+<p style="position:absolute;left:1240px;top:500px;width:424px;font-size:24px;line-height:1.35;text-align:right"><b>Clean</b> · 3 min<br>Magnet off, beads flushed to waste</p>
+</div>
+<aside>The bar is drawn to scale over 57 minutes, starting one minute before injection. Times are from the step table in the automation skeleton. Beads are renewed every run, so there is no regeneration chemistry. The simulated sequence reports 52.1 min to result. Sequential mode on the same hardware takes 58 min.</aside>
+</section>
+<section id="chemistry" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Chemistry and reagents</h2>
+<div style="display:flex;gap:48px">
+<div style="position:relative;width:900px;height:600px">
+<svg aria-label="The assay at molecular scale: a capture antibody on a magnetic bead holds human IgG by its stem; an enzyme-labelled detection fragment binds the IgG arms; the enzyme converts substrate to hydroquinone, which is oxidised at the electrode. Below, a conjugate stuck to a wall with no IgG present produces the blank." style="position:absolute;left:0px;top:0px" width="900" height="600" viewBox="0 0 900 600">
+<defs>
+<marker id="cd" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#13232F" stroke="none"/></marker>
+<marker id="cb" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#1F6F8B" stroke="none"/></marker>
+</defs>
+<circle cx="140" cy="300" r="118" fill="#F3C9A0" stroke="#A84A12" stroke-width="4"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="12">
+<path d="M258 300 L312 300 M312 300 L346 272 M312 300 L346 328" stroke="#44525C"/>
+<path d="M356 300 L414 300 M414 300 L450 268 M414 300 L450 332" stroke="#1F6F8B"/>
+<path d="M462 262 L504 244 L486 204" stroke="#A84A12"/>
+<path d="M206 538 L232 500 L258 538" stroke="#A84A12"/>
+</g>
+<circle cx="532" cy="226" r="30" fill="#A84A12"/>
+<circle cx="232" cy="470" r="26" fill="#A84A12"/>
+<rect x="30" y="544" width="410" height="16" rx="4" fill="#B9C7CF"/>
+<path d="M680 82 L706 97 L706 127 L680 142 L654 127 L654 97 Z" fill="#ECE8DD" stroke="#13232F" stroke-width="4" stroke-linejoin="round"/>
+<circle cx="680" cy="70" r="10" fill="#13232F"/>
+<circle cx="680" cy="154" r="10" fill="#13232F"/>
+<path d="M660 160 Q 580 240 660 316" fill="none" stroke="#13232F" stroke-width="4" marker-end="url(#cd)"/>
+<path d="M708 306 L734 321 L734 351 L708 366 L682 351 L682 321 Z" fill="#D5E8EE" stroke="#1F6F8B" stroke-width="4" stroke-linejoin="round"/>
+<path d="M708 374 L708 462" fill="none" stroke="#1F6F8B" stroke-width="4" marker-end="url(#cb)"/>
+<rect x="590" y="480" width="236" height="40" rx="6" fill="#13232F"/>
+</svg>
+<p style="position:absolute;left:50px;top:268px;width:180px;font-size:24px;line-height:1.3;text-align:center"><b>Magnetic bead</b></p>
+<p style="position:absolute;left:258px;top:352px;width:130px;font-size:24px;line-height:1.3">Capture antibody</p>
+<p style="position:absolute;left:400px;top:350px;width:160px;font-size:24px;line-height:1.3;color:#1F6F8B"><b>Human IgG</b></p>
+<p style="position:absolute;left:330px;top:110px;width:270px;font-size:24px;line-height:1.3;color:#A84A12"><b>Detection fragment with enzyme</b></p>
+<p style="position:absolute;left:724px;top:96px;width:150px;font-size:24px;line-height:1.3">Substrate</p>
+<p style="position:absolute;left:748px;top:320px;width:152px;font-size:24px;line-height:1.3;color:#1F6F8B"><b>Hydro-<br>quinone</b></p>
+<p style="position:absolute;left:590px;top:528px;width:300px;font-size:24px;line-height:1.3">Electrode at +0.35 V</p>
+<p style="position:absolute;left:280px;top:440px;width:280px;font-size:24px;line-height:1.3;color:#A84A12"><b>Conjugate stuck to a wall: the blank</b></p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<h3 style="font-size:30px;font-weight:600;color:#A84A12">Capture</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">2.8 µm streptavidin beads with biotinylated anti-human IgG, Fc-specific. About 500,000 per assay, renewed every run.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<h3 style="font-size:30px;font-weight:600;color:#A84A12">Detection</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Alkaline phosphatase on an F(ab′)₂ or IgY against the IgG arms, so it binds neither capture antibody nor Fc.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<h3 style="font-size:30px;font-weight:600;color:#1F6F8B">Signal</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Hydroquinone diphosphate becomes hydroquinone, which does not foul the carbon electrode.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<h3 style="font-size:30px;font-weight:600;color:#1F6F8B">Buffers and standard</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Tris-buffered saline throughout, because phosphate inhibits the enzyme. NISTmAb as standard.</p>
+</div>
+</div>
+</div>
+<aside>Alkaline phosphatase with hydroquinone diphosphate ranked first among the chemistries because its product does not foul a reused electrode. Two reagent properties decide reachability: how much conjugate sticks to blocked beads and walls, and how much free hydroquinone the substrate lot already contains. Only one supplier of the substrate was found, with no purity specification. The detection target is a half-life on the analyte of an hour or more.</aside>
+</section>
+<section id="control" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Control and synchronisation</h2>
+<div style="display:flex;align-items:center;gap:20px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Empower</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Runs the pump and sample manager from an ordinary sample set, one line per sample.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Inject-start signal</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">A contact closure from the sample manager, read by a small USB input device.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#13232F;padding:32px;border:1px solid #13232F;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#F6F4EE">Python layer</h3>
+<p style="font-size:24px;line-height:1.4;color:#B9C7CF">Times every later step from each injection, using a step table.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Devices</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Valves, syringe pump, magnet, and the Gamry through its own worker process.</p>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px">
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Watchdog</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">A late, early or unexpected injection, or any device error, sends the system to a safe state.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Fault latch</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Runs after a fault are flagged invalid until a recovery cycle has flushed the trap and cup.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Status</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Tested in simulation only. The real hardware drivers, including the Gamry one, are still stubs.</p>
+</div>
+</div>
+<aside>Empower does not need to be started from Python in the primary scheme; whether the Toolkit can start a sample set is unverified and only a fallback. The Gamry worker must run in Gamry's own 32-bit Python 3.7 and talks to the main program over a local connection. The rear-panel signal details of the sample manager are unverified and are a Stage 0 check.</aside>
+</section>
+<section id="journey" data-transition="fade" style="background:#ECE8DD;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:32px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">How the predictions changed</h2>
+<div style="position:relative;width:1664px;height:580px">
+<svg aria-label="Predicted detection limit of the leading design at four points, on a logarithmic axis from 0.1 to 10,000 pg/mL, as a median with its 5 to 95 percent range, against the 1 pg/mL target. First model: median 80, range 5.6 to 4200. After the audit: 2.3, range 0.39 to 35. After the design task: 2.0, range 0.36 to 73. After the final review: 3.5, range 0.51 to 158." style="position:absolute;left:0px;top:0px" width="1664" height="580" viewBox="0 0 1664 580">
+<rect x="520" y="50" width="1100" height="440" fill="#F6F4EE"/>
+<g stroke="#D9D3C4" stroke-width="2"><path d="M520 50 L520 490"/><path d="M960 50 L960 490"/><path d="M1180 50 L1180 490"/><path d="M1400 50 L1400 490"/><path d="M1620 50 L1620 490"/></g>
+<path d="M740 40 L740 490" stroke="#A84A12" stroke-width="4" stroke-dasharray="10 8"/>
+<g stroke="#44525C" stroke-width="8" stroke-linecap="round">
+<path d="M905 110 L1537 110"/>
+<path d="M650 220 L1080 220"/>
+<path d="M642 330 L1150 330"/>
+</g>
+<path d="M676 440 L1224 440" stroke="#A84A12" stroke-width="8" stroke-linecap="round"/>
+<g fill="#13232F" stroke="#F6F4EE" stroke-width="4">
+<circle cx="1159" cy="110" r="16"/>
+<circle cx="820" cy="220" r="16"/>
+<circle cx="806" cy="330" r="16"/>
+</g>
+<circle cx="860" cy="440" r="18" fill="#A84A12" stroke="#F6F4EE" stroke-width="4"/>
+</svg>
+<p style="position:absolute;left:0px;top:76px;width:490px;font-size:24px;line-height:1.35"><b>1. First model</b><br>reagents in vial · chance under 1%</p>
+<p style="position:absolute;left:0px;top:186px;width:490px;font-size:24px;line-height:1.35"><b>2. After the audit</b><br>reagents in vial · 25%</p>
+<p style="position:absolute;left:0px;top:296px;width:490px;font-size:24px;line-height:1.35"><b>3. After the design task</b><br>in-line cup · 28%</p>
+<p style="position:absolute;left:0px;top:406px;width:490px;font-size:24px;line-height:1.35;color:#A84A12"><b>4. After the final review</b><br>in-line cup · 16%</p>
+<p style="position:absolute;left:1099px;top:60px;width:120px;font-size:24px;line-height:1.3;text-align:center"><b>80</b></p>
+<p style="position:absolute;left:760px;top:170px;width:120px;font-size:24px;line-height:1.3;text-align:center"><b>2.3</b></p>
+<p style="position:absolute;left:746px;top:280px;width:120px;font-size:24px;line-height:1.3;text-align:center"><b>2.0</b></p>
+<p style="position:absolute;left:800px;top:388px;width:120px;font-size:24px;line-height:1.3;text-align:center;color:#A84A12"><b>3.5</b></p>
+<p style="position:absolute;left:752px;top:6px;width:300px;font-size:24px;line-height:1.3;color:#A84A12"><b>1 pg/mL target</b></p>
+<p style="position:absolute;left:480px;top:498px;width:80px;font-size:24px;line-height:1.3;text-align:center">0.1</p>
+<p style="position:absolute;left:700px;top:498px;width:80px;font-size:24px;line-height:1.3;text-align:center">1</p>
+<p style="position:absolute;left:920px;top:498px;width:80px;font-size:24px;line-height:1.3;text-align:center">10</p>
+<p style="position:absolute;left:1140px;top:498px;width:80px;font-size:24px;line-height:1.3;text-align:center">100</p>
+<p style="position:absolute;left:1350px;top:498px;width:100px;font-size:24px;line-height:1.3;text-align:center">1,000</p>
+<p style="position:absolute;left:1544px;top:498px;width:120px;font-size:24px;line-height:1.3;text-align:right">10,000</p>
+<p style="position:absolute;left:520px;top:540px;width:1100px;font-size:24px;line-height:1.3;color:#44525C">Predicted detection limit, pg/mL: median (dot) and 5–95% range (bar), log scale</p>
+</div>
+<p style="font-size:28px;line-height:1.35;color:#44525C">The audit removed a 25-fold error in conjugate sticking; the review then added uncertainty the model had left out. The ranking of designs never changed.</p>
+<aside>Chance means the model's probability of a detection limit of 1 pg/mL or better together with a range reaching 1000 pg/mL. The audit's correction moved the result in the favourable direction, on evidence independent of the target: two published anchors agree on the corrected value. The review's corrections moved it back: sampling the stirring factor cost 8 to 12 points, the single-channel default cell 2 to 9 points. Absolute numbers remain uncertain by about a factor of ten either way.</aside>
+</section>
+<section id="odds" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">The odds, and what could raise them</h2>
+<div style="position:relative;width:1664px;height:470px">
+<svg aria-label="Model chance of success for the primary design: 16 percent as specified today, 18 percent with an interdigitated cell, 32 percent after antibody and substrate screening, 39 percent with screening and the interdigitated cell. The first gate stops the project below 10 percent and passes it outright at 30 percent." style="position:absolute;left:0px;top:0px" width="1664" height="470" viewBox="0 0 1664 470">
+<rect x="600" y="20" width="200" height="390" fill="#ECE8DD"/>
+<rect x="1200" y="20" width="400" height="390" fill="#D5E8EE"/>
+<path d="M600 20 L600 410" stroke="#13232F" stroke-width="3"/>
+<path d="M800 20 L800 410" stroke="#44525C" stroke-width="3" stroke-dasharray="8 8"/>
+<path d="M1200 20 L1200 410" stroke="#1F6F8B" stroke-width="3" stroke-dasharray="8 8"/>
+<rect x="600" y="42" width="320" height="56" fill="#A84A12"/>
+<rect x="600" y="142" width="360" height="56" fill="#F0A35E"/>
+<rect x="600" y="242" width="640" height="56" fill="#1F6F8B"/>
+<rect x="600" y="342" width="780" height="56" fill="#13232F"/>
+</svg>
+<p style="position:absolute;left:0px;top:52px;width:576px;font-size:26px;line-height:1.3;text-align:right"><b>As specified today</b></p>
+<p style="position:absolute;left:0px;top:152px;width:576px;font-size:26px;line-height:1.3;text-align:right">Today, with interdigitated cell</p>
+<p style="position:absolute;left:0px;top:252px;width:576px;font-size:26px;line-height:1.3;text-align:right"><b>After Stage 1 screening passes</b></p>
+<p style="position:absolute;left:0px;top:352px;width:576px;font-size:26px;line-height:1.3;text-align:right">Screening, with interdigitated cell</p>
+<p style="position:absolute;left:936px;top:44px;width:120px;font-family:'Space Grotesk', Arial, sans-serif;font-size:44px;font-weight:600;line-height:1.2;color:#A84A12">16%</p>
+<p style="position:absolute;left:976px;top:144px;width:120px;font-family:'Space Grotesk', Arial, sans-serif;font-size:44px;font-weight:600;line-height:1.2;color:#13232F">18%</p>
+<p style="position:absolute;left:1256px;top:244px;width:120px;font-family:'Space Grotesk', Arial, sans-serif;font-size:44px;font-weight:600;line-height:1.2;color:#1F6F8B">32%</p>
+<p style="position:absolute;left:1396px;top:344px;width:120px;font-family:'Space Grotesk', Arial, sans-serif;font-size:44px;font-weight:600;line-height:1.2;color:#13232F">39%</p>
+<p style="position:absolute;left:610px;top:420px;width:180px;font-size:24px;line-height:1.3;color:#44525C">under 10%: stop</p>
+<p style="position:absolute;left:1210px;top:420px;width:380px;font-size:24px;line-height:1.3;color:#1F6F8B"><b>30% or more: go</b></p>
+<p style="position:absolute;left:820px;top:420px;width:360px;font-size:24px;line-height:1.3;color:#44525C">10–30%: go, with a lever</p>
+</div>
+<div style="display:flex;gap:48px">
+<p style="flex:1;font-size:26px;line-height:1.4;color:#44525C"><b>Screening</b> means slow-releasing antibodies and a substrate lot low in free hydroquinone.</p>
+<p style="flex:1;font-size:26px;line-height:1.4;color:#44525C"><b>Conjugate sticking</b> at half the assumed level would pass the first gate outright.</p>
+<p style="flex:1;font-size:26px;line-height:1.4;color:#44525C"><b>Beyond the model:</b> about 10% today, about 30% if Stage 1 is favourable.</p>
+</div>
+<aside>Bars are the model's probability of a detection limit of 1 pg/mL or better with a range reaching 1000 pg/mL, for the primary design. The median detection limit is 3.5 pg/mL today, with a 5 to 95 percent range of 0.51 to 158, and 1.3 pg/mL after screening. The judgement beyond the model is lower because contamination, bead handling and temperature are not modelled. Immune-complex transfer to clean beads is a further lever that is not credited until measured.</aside>
+</section>
+<section id="designs" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Primary, fallback and backup</h2>
+<table style="font-size:26px;color:#13232F">
+<tr style="background:#13232F"><th style="width:19%;text-align:left;color:#F6F4EE;font-weight:600"> </th><th style="width:27%;text-align:left;color:#F6F4EE;font-weight:600">Primary</th><th style="width:27%;text-align:left;color:#F6F4EE;font-weight:600">Fallback</th><th style="width:27%;text-align:left;color:#F6F4EE;font-weight:600">Backup</th></tr>
+<tr style="background:#FCFBF7"><td>Format</td><td>Beads, one-step incubation in the cup</td><td>Same hardware, sequential steps</td><td>Fixed 0.5 µL packed micro-bed</td></tr>
+<tr style="background:#ECE8DD"><td>Surface</td><td>Renewed every run</td><td>Renewed every run</td><td>Regenerated with glycine, pH 2</td></tr>
+<tr style="background:#FCFBF7"><td>Cycle time</td><td>56 min</td><td>58 min</td><td>51.5 min</td></tr>
+<tr style="background:#ECE8DD"><td>Today</td><td>3.5 pg/mL, 16%</td><td>3.0 pg/mL, 13%</td><td>3.4 pg/mL, 9%</td></tr>
+<tr style="background:#FCFBF7"><td>After screening</td><td>1.3 pg/mL, 32%</td><td>2.1 pg/mL, 17%</td><td>2.8 pg/mL, 11%</td></tr>
+<tr style="background:#ECE8DD"><td>Switch to it when</td><td>Default</td><td>Detection antibody half-life on beads is under 30 min</td><td>Bead dosing varies over 10%, or the trap keeps under 70%</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4;color:#44525C">Figures are the model’s median detection limit and its chance of meeting both the limit and the 1000 pg/mL range.</p>
+<aside>All three use alkaline phosphatase with hydroquinone diphosphate and a single-channel thin-layer cell by default. The fallback and primary share every piece of hardware, so the choice between them is made from the on-bead dissociation measurement in Stage 1, not by a purchase.</aside>
+</section>
+<section id="risks" data-transition="fade" style="background:#ECE8DD;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Risks and open questions</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+<div style="display:flex;flex-direction:column;gap:10px;background:#FBE3CC;padding:30px;border:1px solid #A84A12;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Beads in rotary valves</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Beads cross the selection valve and V2. Rotor wear, lodged beads and carryover are not yet covered by the plan.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF7;padding:30px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Substrate supply</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">One supplier found for hydroquinone diphosphate, with no purity specification and no second source.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF7;padding:30px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Human IgG contamination</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">From the operator, the room and the reagents. Barely represented in the model.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF7;padding:30px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Antibody cross-reaction</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Both reagents are anti-IgG and are themselves immunoglobulins, so detection may bind capture.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF7;padding:30px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Top of the range</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Phosphate inhibition of the enzyme is unverified. At its strong end the upper limit falls to about 460 pg/mL.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#FCFBF7;padding:30px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:30px;font-weight:600">Unverified hardware</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Pump behaviour at 1 µL/min, sample manager signal wiring, Gamry pairing, and every real device driver.</p>
+</div>
+</div>
+<p style="font-size:26px;line-height:1.4;color:#13232F"><b>Awaiting a decision:</b> are shared reagent reservoirs on the instrument acceptable, with nothing in the sample vial?</p>
+<aside>The bead-in-valve concern was raised after the final review and is the one item on this slide with no experiment or specification attached yet. Options are valves specified for slurries and switched only on bead-free liquid, taking valves out of the bead path with pinch valves, or the packed-bed backup, which has no moving beads.</aside>
+</section>
+<section id="bench" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">The bench plan in five stages</h2>
+<div style="position:relative;width:1664px;height:560px">
+<svg aria-label="Schedule over 32 weeks: Stage 0 set-up in weeks 0 to 2; Stage 1 reachability in weeks 2 to 8 with an early gate at week 5 and gate G1 at week 8; Stage 2 flow path in weeks 9 to 16 ending at gate G2; Stage 3 full platform in weeks 17 to 28 ending at gate G3; Stage 4 validation in weeks 28 to 32." style="position:absolute;left:0px;top:0px" width="1664" height="560" viewBox="0 0 1664 560">
+<g stroke="#D9D3C4" stroke-width="2"><path d="M208 20 L208 496"/><path d="M416 20 L416 496"/><path d="M624 20 L624 496"/><path d="M832 20 L832 496"/><path d="M1040 20 L1040 496"/><path d="M1248 20 L1248 496"/><path d="M1456 20 L1456 496"/></g>
+<path d="M0 496 L1664 496" stroke="#13232F" stroke-width="3"/>
+<rect x="0" y="40" width="104" height="56" rx="8" fill="#44525C"/>
+<rect x="104" y="130" width="312" height="56" rx="8" fill="#A84A12"/>
+<rect x="468" y="220" width="364" height="56" rx="8" fill="#1F6F8B"/>
+<rect x="884" y="310" width="572" height="56" rx="8" fill="#13232F"/>
+<rect x="1456" y="400" width="208" height="56" rx="8" fill="#44525C"/>
+<g fill="#FCFBF7" stroke="#13232F" stroke-width="4" stroke-linejoin="round">
+<path d="M260 140 L278 158 L260 176 L242 158 Z"/>
+<path d="M416 136 L438 158 L416 180 L394 158 Z"/>
+<path d="M832 226 L854 248 L832 270 L810 248 Z"/>
+<path d="M1456 316 L1478 338 L1456 360 L1434 338 Z"/>
+</g>
+</svg>
+<p style="position:absolute;left:124px;top:50px;width:1100px;font-size:24px;line-height:1.35"><b>0 · Set-up</b> — instrument facts, noise floor, vendor answers</p>
+<p style="position:absolute;left:456px;top:140px;width:1200px;font-size:24px;line-height:1.35;color:#A84A12"><b>1 · Reachability</b> — tubes, magnet and disposable electrodes; early gate at week 5, gate G1 at week 8</p>
+<p style="position:absolute;left:872px;top:230px;width:790px;font-size:24px;line-height:1.35"><b>2 · Flow path</b> — valves, syringe pump, cup and trap; gate G2</p>
+<p style="position:absolute;left:0px;top:320px;width:860px;font-size:24px;line-height:1.35;text-align:right"><b>3 · Full platform</b> — blank statistics, 24 h unattended run; gate G3</p>
+<p style="position:absolute;left:0px;top:410px;width:1420px;font-size:24px;line-height:1.35;text-align:right"><b>4 · Validation</b> — formal evidence against the success criteria</p>
+<p style="position:absolute;left:0px;top:506px;width:120px;font-size:24px;line-height:1.3">week 0</p>
+<p style="position:absolute;left:386px;top:506px;width:60px;font-size:24px;line-height:1.3;text-align:center">8</p>
+<p style="position:absolute;left:802px;top:506px;width:60px;font-size:24px;line-height:1.3;text-align:center">16</p>
+<p style="position:absolute;left:1218px;top:506px;width:60px;font-size:24px;line-height:1.3;text-align:center">24</p>
+<p style="position:absolute;left:1604px;top:506px;width:60px;font-size:24px;line-height:1.3;text-align:right">32</p>
+</div>
+<p style="font-size:28px;line-height:1.35;color:#44525C">Diamonds are gates. Stage 1 is about 25 bench days with no custom flow hardware, and nothing for a later stage is bought before its gate passes.</p>
+<aside>Stage 1 measures conjugate sticking on blocked beads, free hydroquinone in the substrate lot, antibody dissociation on beads, the phosphate inhibition constant, contamination, and carryover through the injector. The early gate at about week 5 uses the first two alone, before the kinetics service and the NIST standard are bought. The interdigitated cell and second potentiostat are bought only if Stage 2 shows electrochemical noise is at least 30 percent of the blank variation.</aside>
+</section>
+<section id="gate" data-transition="fade" style="background:#13232F;color:#F6F4EE;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:36px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">The first gate, fixed before any data</h2>
+<p style="font-size:30px;line-height:1.35;color:#B9C7CF">Enter the Stage 1 measurements into the model and take the best chance of success among the three designs.</p>
+<div style="position:relative;width:1664px;height:230px">
+<svg aria-label="A scale of model chance of success from 0 to 40 percent in three bands: stop below 10 percent, go with a lever from 10 to 30 percent, go at 30 percent or more. Today's best-guess inputs give 23 percent, in the middle band." style="position:absolute;left:0px;top:0px" width="1664" height="230" viewBox="0 0 1664 230">
+<rect x="0" y="80" width="416" height="90" fill="#FCFBF7"/>
+<rect x="416" y="80" width="832" height="90" fill="#F0A35E"/>
+<rect x="1248" y="80" width="416" height="90" fill="#1F6F8B"/>
+<path d="M957 76 L935 46 L979 46 Z" fill="#FCFBF7"/>
+<path d="M957 80 L957 170" stroke="#13232F" stroke-width="4"/>
+</svg>
+<p style="position:absolute;left:707px;top:0px;width:500px;font-size:26px;line-height:1.3;text-align:center;color:#FCFBF7"><b>Today’s best guess: 23%</b></p>
+<p style="position:absolute;left:24px;top:106px;width:370px;font-size:30px;line-height:1.3;color:#13232F"><b>Stop</b></p>
+<p style="position:absolute;left:440px;top:106px;width:480px;font-size:30px;line-height:1.3;color:#13232F"><b>Go, with a lever</b></p>
+<p style="position:absolute;left:1272px;top:106px;width:370px;font-size:30px;line-height:1.3;color:#FCFBF7"><b>Go</b></p>
+<p style="position:absolute;left:0px;top:182px;width:100px;font-size:24px;line-height:1.3;color:#B9C7CF">0%</p>
+<p style="position:absolute;left:366px;top:182px;width:100px;font-size:24px;line-height:1.3;text-align:center;color:#B9C7CF">10%</p>
+<p style="position:absolute;left:1198px;top:182px;width:100px;font-size:24px;line-height:1.3;text-align:center;color:#B9C7CF">30%</p>
+<p style="position:absolute;left:1564px;top:182px;width:100px;font-size:24px;line-height:1.3;text-align:right;color:#B9C7CF">40%</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 2fr 1fr;gap:32px">
+<p style="font-size:26px;line-height:1.4;color:#B9C7CF">No hardware. Test the transfer lever in tubes, then apply the rule again.</p>
+<p style="font-size:26px;line-height:1.4;color:#B9C7CF">Order the Stage 2 flow hardware, and test immune-complex transfer in parallel.</p>
+<p style="font-size:26px;line-height:1.4;color:#B9C7CF">Order the Stage 2 flow hardware.</p>
+</div>
+<aside>The rule replaced two conflicting gate rules found by the final review. An unmeasured lever never counts toward the probability. With the current assumed sticking level the model gives 23 percent; half that level passes outright, and two and a half times that level stops the project before any hardware is bought. Next step: Stage 0.</aside>
+</section>
+</div>
+<div id="bar"><button id="prev">&#8592; Back</button><span id="count"></span><button id="next">Next &#8594;</button></div>
+<script>
+  const stage = document.getElementById('stage');
+  const slides = Array.from(stage.querySelectorAll('section'));
+  let i = Math.max(0, parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1);
+  function fit() {
+    const s = Math.min(innerWidth / 1920, (innerHeight - 44) / 1080);
+    stage.style.transform = 'scale(' + s + ') translate(-50%, -50%)';
+    stage.style.marginTop = '-22px';
+  }
+  function show(n) {
+    i = Math.min(slides.length - 1, Math.max(0, n));
+    slides.forEach((el, k) => el.classList.toggle('current', k === i));
+    document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+    history.replaceState(null, '', '#slide-' + (i + 1));
+  }
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => {
+    const n = parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1;
+    if (n !== i) show(n);
+  });
+  fit();
+  show(i);
+</script>
+</body>
+</html>

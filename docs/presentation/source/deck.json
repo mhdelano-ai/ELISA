@@ -1,0 +1,19 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-11-11T22:30:00Z"},
+  "lists": "css",
+  "title": "Electrochemical ELISA: In Silico Phase",
+  "cover": "cover",
+  "order": ["cover", "target", "blank", "alternatives", "layout", "cycle", "chemistry", "control", "journey", "odds", "designs", "risks", "bench", "gate"],
+  "sections": {
+    "s1": {"description": "The target and what stands in the way of it.", "start": "cover"},
+    "s2": {"description": "The recommended design: why it was chosen, how it is plumbed, one cycle, the chemistry and the control scheme.", "start": "alternatives"},
+    "s3": {"description": "What the model predicts, how that changed, and what could raise the odds.", "start": "journey"},
+    "s4": {"description": "Open risks and the staged bench plan with its first gate.", "start": "risks"}
+  },
+  "faces": {
+    "space-grotesk": {"family": "Space Grotesk", "href": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"},
+    "inter": {"family": "Inter", "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"}
+  },
+  "designSystems": []
+}

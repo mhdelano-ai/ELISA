@@ -1,0 +1,39 @@
+<section id="control" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Control and synchronisation</h2>
+<div style="display:flex;align-items:center;gap:20px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Empower</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Runs the pump and sample manager from an ordinary sample set, one line per sample.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Inject-start signal</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">A contact closure from the sample manager, read by a small USB input device.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#13232F;padding:32px;border:1px solid #13232F;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600;color:#F6F4EE">Python layer</h3>
+<p style="font-size:24px;line-height:1.4;color:#B9C7CF">Times every later step from each injection, using a step table.</p>
+</div>
+<x-connector style="width:72px;color:#13232F;border-width:3px"></x-connector>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCFBF7;padding:32px;border:1px solid #D9D3C4;border-radius:16px">
+<h3 style="font-size:32px;font-weight:600">Devices</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Valves, syringe pump, magnet, and the Gamry through its own worker process.</p>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px">
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Watchdog</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">A late, early or unexpected injection, or any device error, sends the system to a safe state.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Fault latch</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Runs after a fault are flagged invalid until a recovery cycle has flushed the trap and cup.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;border-top:4px solid #A84A12;padding:20px 0 0 0">
+<h3 style="font-size:32px;font-weight:600">Status</h3>
+<p style="font-size:24px;line-height:1.4;color:#44525C">Tested in simulation only. The real hardware drivers, including the Gamry one, are still stubs.</p>
+</div>
+</div>
+<aside>Empower does not need to be started from Python in the primary scheme; whether the Toolkit can start a sample set is unverified and only a fallback. The Gamry worker must run in Gamry's own 32-bit Python 3.7 and talks to the main program over a local connection. The rear-panel signal details of the sample manager are unverified and are a Stage 0 check.</aside>
+</section>
