@@ -1,0 +1,31 @@
+<section id="brief" data-transition="fade">
+<p class="eyebrow">The task</p>
+<h2>A cartridge that runs the whole assay after injection</h2>
+<div class="row center">
+<p class="node node-w" style="width:230px">Pump: buffer stream</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:250px">Autosampler: 100 µL sample</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<div class="col" style="width:640px;gap:10px">
+<p class="node node-o">Cartridge in a docking station</p>
+<div class="row" style="gap:10px">
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">incubate</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">capture</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">wash</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">amplify</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">detect</p>
+</div>
+</div>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:250px">Potentiostat: current</p>
+</div>
+<p class="soft">Sandwich immunoassay for human IgG in buffer. An alkaline-phosphatase label turns a substrate into hydroquinone, which the electrode measures. The success criteria are unchanged from the first generation.</p>
+<div class="row">
+<div class="card"><p class="big">≤ 1 pg/mL</p><p class="small">limit of detection (about 6.7 fM)</p></div>
+<div class="card"><p class="big">≤ 100 µL</p><p class="small">sample injected per determination</p></div>
+<div class="card"><p class="big">≤ 60 min</p><p class="small">from injection to result</p></div>
+<div class="card"><p class="big">≤ 10⁻⁴</p><p class="small">carry-over after a 10 ng/mL sample</p></div>
+<div class="card"><p class="big">0</p><p class="small">manual steps; vials hold sample only</p></div>
+</div>
+<aside>Source: docs/00 project brief and docs/09 chip requirements. The calibration range is about 1–1000 pg/mL. The limit of detection is defined as mean blank plus 3 SD of replicate blanks, read through a calibration curve.</aside>
+</section>

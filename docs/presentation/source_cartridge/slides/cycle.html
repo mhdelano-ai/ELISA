@@ -1,0 +1,50 @@
+<section id="cycle" data-transition="fade">
+<p class="eyebrow">Cartridge A · assay cycle</p>
+<h2>Each read falls in a pause of the next run</h2>
+<div class="col" style="gap:8px">
+<div class="row" style="gap:0">
+<p class="small soft" style="width:128px"></p>
+<p class="small soft" style="width:256px;border-left:3px solid #14213D;padding-left:8px;box-sizing:border-box">0 min</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">10</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">20</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">30</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">40</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;border-right:3px solid #A8481A;padding-left:8px;box-sizing:border-box">50 → 60</p>
+</div>
+<p class="small strong">Run n, injected at 0 min</p>
+<div class="row" style="gap:0">
+<div class="seg s-dose" style="width:128px">Dose</div>
+<div class="seg s-move" style="width:38px"></div>
+<div class="seg s-inc" style="width:512px">Incubation, mixed</div>
+<div class="seg s-pause" style="width:115px"></div>
+<div class="seg s-inc" style="width:102px"></div>
+<div class="seg s-quiet" style="width:102px"></div>
+<div class="seg s-move" style="width:138px">Rinse</div>
+<div class="seg s-dose" style="width:58px"></div>
+<div class="seg s-acc" style="width:282px">Accumulation</div>
+<div class="seg s-quiet" style="width:102px">Read</div>
+<div class="seg s-none" style="width:83px"></div>
+</div>
+<p class="small strong" style="padding-top:12px">Run n+1, injected at 31 min</p>
+<div class="row" style="gap:0">
+<div class="seg s-none" style="width:794px"></div>
+<div class="seg s-dose" style="width:128px">Dose</div>
+<div class="seg s-move" style="width:38px"></div>
+<div class="seg s-inc" style="width:512px">Incubation, mixed</div>
+<div class="seg s-pause" style="width:115px"></div>
+<div class="seg s-inc" style="width:77px"></div>
+</div>
+</div>
+<div class="row center" style="gap:12px">
+<div class="key" style="background:#A8481A"></div><p class="small">Quiet electrochemical window: no pump, valve or magnet moves in any run</p>
+<div class="key" style="background:#B9CCE3;margin-left:20px"></div><p class="small">Mixing paused</p>
+<div class="key" style="background:#2F8072;margin-left:20px"></div><p class="small">Cell sealed</p>
+</div>
+<div class="grow"></div>
+<div class="row">
+<div class="card"><p class="big">56.75 min</p><p class="small">injection to result; 3.25 min of margin to the 60 min limit</p></div>
+<div class="card"><p class="big">31 min</p><p class="small">between samples, against 56 min on the first-generation rig</p></div>
+<div class="card"><p class="big">14</p><p class="small">determinations per card in about 7.9 h: 10 samples and 4 quality controls</p></div>
+</div>
+<aside>Source: docs/13 Revision B §7.1. One-step incubation 28.5 min, of which 6.35 min is paused for other runs’ reads; rinses and a 23.3 mm magnet drag follow; accumulation 11 min sealed at open circuit; then a three-window potential-step read that cancels offset and linear drift. The first orange window in each run is the pre-electrolysis monitor of the cell before the beads arrive. Restoring the margin and keeping reads quiet cost about 0.04 in P. Open point from the resolution table: two movable steps sit exactly on the guard band, so the schedule has no slack, and the checking script is not in the repository.</aside>
+</section>

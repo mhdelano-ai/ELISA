@@ -1,0 +1,21 @@
+{
+  "v": 5,
+  "createdOnFiles": {"v": 1, "at": "2026-11-12T21:00:00Z"},
+  "lists": "css",
+  "format": {"v": 1, "shared": ["project/deck.css"]},
+  "title": "ELISA cartridge design round",
+  "cover": "cover",
+  "order": ["cover", "brief", "process", "interview", "findings", "candidates", "estimates", "checkpoint", "stack", "plan", "cycle", "alternatives", "review", "revb", "performance", "unknowns", "gates", "decision"],
+  "sections": {
+    "s1": {"description": "What was asked, how the work was organised, and what the user fixed in the interview.", "start": "cover"},
+    "s2": {"description": "What the surveys found and the three candidate cartridges that came out of them.", "start": "findings"},
+    "s3": {"description": "Cartridge A in pictures: layer stack, plan view and assay cycle.", "start": "stack"},
+    "s4": {"description": "The alternatives B and C′, the adversarial review and what it changed.", "start": "alternatives"},
+    "s5": {"description": "Performance against the first generation, the unknowns that decide it, the plan and the decision.", "start": "performance"}
+  },
+  "faces": {
+    "source-serif-4": {"family": "Source Serif 4", "href": "https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400..700&display=swap"},
+    "ibm-plex-sans": {"family": "IBM Plex Sans", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"}
+  },
+  "designSystems": []
+}

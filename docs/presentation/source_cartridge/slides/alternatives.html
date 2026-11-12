@@ -1,0 +1,26 @@
+<section id="alternatives" data-transition="fade">
+<p class="eyebrow">Alternatives B and C′</p>
+<h2>Regeneration cannot reach the carry-over limit</h2>
+<div class="row">
+<div class="card" style="flex:1.25">
+<h3>C fails, C′ replaces it</h3>
+<p class="small soft">Captured IgG removed by acid regeneration, best figure found</p>
+<div class="row" style="gap:0">
+<div class="seg s-inc" style="width:560px;height:56px">92 % removed</div>
+<div class="seg" style="width:120px;height:56px;background:#D9773F">8 % left</div>
+</div>
+<p class="small"><b>Needed: 99.99 % removed.</b> A fraction never elutes, so repeating the strip does not converge, and blank subtraction gains about 10× at most.</p>
+<p class="small"><b>C′:</b> keep the permanent glass chip, but pack a fresh 0.1 µL particle bed before every injection and flush it out after the read. No valves on the chip; all switching in the dock. Result in 37.5 min.</p>
+<p class="small soft">Viable only if three mock-up results pass: end-to-end carry-over ≤ 10⁻⁴, packed-bed NSB factor ≤ 2, blank CV ≤ 12 % over 20 repacks.</p>
+</div>
+<div class="card">
+<h3>B stays the fallback</h3>
+<p class="small">16 single-use cells per card in a 2 × 8 grid, indexed by one linear axis.</p>
+<p class="small">Dried conjugate must deliver a dose CV ≤ 5 %; at 10 % the estimate falls to P 0.13.</p>
+<p class="small"><b>Switch from A to B when</b> an A risk fails <b>and</b> the packed-bed NSB factor is ≤ 2 <b>and</b> the cell-to-cell blank CV is ≤ 10 %.</p>
+<p class="small soft">Highest cost class: one electrode per determination.</p>
+</div>
+</div>
+<p class="lead" style="font-size:30px"><b>One shared test decides both:</b> the packed-bed NSB factor, measurable in tubes without any chip.</p>
+<aside>Source: docs/14 revised after review. The 92 % is an elution recovery in a hapten system (Sun 2008), not an IgG sandwich regeneration, so it is an indication, not a measurement of our case; no source found shows 99.99 % removal. NSB = non-specific binding of the enzyme conjugate; the “factor” is the bed’s NSB relative to blocked beads. For C′, P runs from 0.43 at factor 1 to 0.06 at factor 10. After a 1000 pg/mL sample, a residual of 10⁻⁴ takes C′ from P 0.15 to 0.10.</aside>
+</section>

@@ -1,30 +1,68 @@
 """Assemble the slide sources into one self-contained HTML file that opens in any browser.
 
 Usage:  python docs/presentation/build.py
-Reads   docs/presentation/source/deck.json and source/slides/<id>.html
-Writes  docs/presentation/in_silico_summary.html
+Builds every deck listed in DECKS: reads <source>/deck.json, <source>/slides/<id>.html and, if present,
+<source>/deck.css (shared styles), and writes the HTML file named beside it.
 """
 import json
 import pathlib
 
 here = pathlib.Path(__file__).parent
-deck = json.loads((here / "source" / "deck.json").read_text(encoding="utf-8"))
-slides = "\n".join(
-    (here / "source" / "slides" / f"{sid}.html").read_text(encoding="utf-8").strip()
-    for sid in deck["order"]
-)
-fonts = "\n".join(
-    f'<link rel="stylesheet" href="{face["href"]}">' for face in deck["faces"].values() if "href" in face
-)
+DECKS = [("source", "in_silico_summary.html"), ("source_cartridge", "cartridge_round.html")]
 
-page = f"""<!DOCTYPE html>
+# Extra rules and script for decks that carry a deck.css: shapes and coordinate connectors.
+SHAPES_CSS = """
+  x-shape { display: block; }
+  x-shape[kind=ellipse] { border-radius: 50%; }
+  x-shape[kind=arrow-right] { clip-path: polygon(0 30%, 60% 30%, 60% 0, 100% 50%, 60% 100%, 60% 70%, 0 70%); }
+  section hr { border: none; }
+  x-connector[x1] { display: none; }
+"""
+CONNECTOR_JS = """
+  document.querySelectorAll('x-connector[x1]').forEach((c) => {
+    const g = (k) => +c.getAttribute(k), x1 = g('x1'), y1 = g('y1'), x2 = g('x2'), y2 = g('y2');
+    const col = c.style.color || '#14213D', w = parseFloat(c.style.borderWidth) || 2;
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('style', 'position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible');
+    let head = '';
+    if (c.getAttribute('head') !== 'none') {
+      const a = Math.atan2(y2 - y1, x2 - x1), L = w * 3.2;
+      const p = (d) => (x2 - L * Math.cos(a + d)) + ',' + (y2 - L * Math.sin(a + d));
+      head = '<polygon points="' + x2 + ',' + y2 + ' ' + p(0.45) + ' ' + p(-0.45) + '" fill="' + col + '"/>';
+    }
+    s.innerHTML = '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col +
+      '" stroke-width="' + w + '"/>' + head;
+    c.replaceWith(s);
+  });
+"""
+
+
+def build(source, target):
+    src = here / source
+    deck = json.loads((src / "deck.json").read_text(encoding="utf-8"))
+    slides = "\n".join(
+        (src / "slides" / f"{sid}.html").read_text(encoding="utf-8").strip() for sid in deck["order"]
+    )
+    fonts = "\n".join(
+        f'<link rel="stylesheet" href="{face["href"]}">' for face in deck["faces"].values() if "href" in face
+    )
+    css_file = src / "deck.css"
+    shared_css = css_file.read_text(encoding="utf-8") + SHAPES_CSS if css_file.exists() else ""
+    extra_js = CONNECTOR_JS if css_file.exists() else ""
+    page = PAGE.format(title=deck["title"], fonts=fonts, slides=slides, shared_css=shared_css, extra_js=extra_js)
+    (here / target).write_text(page, encoding="utf-8")
+    print(f"wrote {here / target} ({len(deck['order'])} slides)")
+
+
+PAGE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{deck["title"]}</title>
+<title>{title}</title>
 {fonts}
 <style>
+{shared_css}
   html, body {{ margin: 0; height: 100%; background: #0b161e; overflow: hidden; }}
   #stage {{ position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }}
   section {{ position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box;
@@ -87,9 +125,11 @@ page = f"""<!DOCTYPE html>
   }});
   fit();
   show(i);
-</script>
+{extra_js}</script>
 </body>
 </html>
 """
-(here / "in_silico_summary.html").write_text(page, encoding="utf-8")
-print(f"wrote {here / 'in_silico_summary.html'} ({len(deck['order'])} slides)")
+
+if __name__ == "__main__":
+    for source, target in DECKS:
+        build(source, target)

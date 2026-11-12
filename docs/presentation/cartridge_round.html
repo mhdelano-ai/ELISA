@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELISA cartridge design round</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+section {
+  background: #F6F3EC;
+  color: #14213D;
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  padding: 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-sizing: border-box;
+}
+h1 { font-family: 'Source Serif 4', Georgia, serif; font-size: 96px; font-weight: 600; line-height: 1.08; }
+h2 { font-family: 'Source Serif 4', Georgia, serif; font-size: 58px; font-weight: 600; line-height: 1.1; }
+h3 { font-size: 32px; font-weight: 600; line-height: 1.2; }
+p { font-size: 28px; line-height: 1.35; }
+
+.dark { background: #14213D; color: #F6F3EC; }
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #A8481A; }
+.dark .eyebrow { color: #F0A36B; }
+.soft { color: #4A5568; }
+.dark .soft { color: #BCC7DA; }
+.lead { font-size: 34px; line-height: 1.35; }
+.small { font-size: 24px; line-height: 1.35; }
+.strong { font-weight: 600; }
+
+.row { display: flex; flex-direction: row; gap: 28px; }
+.col { display: flex; flex-direction: column; gap: 16px; }
+.grow { flex: 1; }
+.center { align-items: center; }
+.end { align-items: flex-end; }
+
+.card {
+  background: #FFFDF8;
+  border: 2px solid #D9D2C2;
+  border-radius: 16px;
+  padding: 26px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  box-sizing: border-box;
+}
+.card-dark { background: #1E2E52; border: 2px solid #3A4C78; }
+.big { font-family: 'Source Serif 4', Georgia, serif; font-size: 68px; font-weight: 600; line-height: 1; color: #A8481A; }
+.blue { color: #1F5A96; }
+.dark .big { color: #F0A36B; }
+
+.node {
+  background: #14213D;
+  color: #F6F3EC;
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  box-sizing: border-box;
+}
+.node-o { background: #A8481A; }
+.node-l { background: #E3EBF5; color: #14213D; border: 2px solid #1F5A96; }
+.node-w { background: #FFFDF8; color: #14213D; border: 2px solid #D9D2C2; font-weight: 400; }
+.arr { width: 48px; height: 26px; background: #A8481A; flex: none; align-self: center; }
+.arr-d { width: 26px; height: 40px; background: #A8481A; flex: none; align-self: center; }
+
+table { width: 100%; font-size: 26px; line-height: 1.3; color: #14213D; }
+.band { background: #ECE7DB; }
+
+/* charts */
+.chart { display: flex; flex-direction: row; align-items: flex-end; gap: 14px; }
+.bar { width: 76px; background: #1F5A96; border-radius: 6px 6px 0 0; }
+.bar-o { background: #D9773F; }
+.bar-g { background: #9AA5B8; }
+.hbar { height: 34px; background: #1F5A96; border-radius: 0 6px 6px 0; }
+.hbar-o { background: #D9773F; }
+.key { width: 28px; height: 28px; border-radius: 6px; flex: none; }
+
+/* timeline */
+.seg { height: 64px; box-sizing: border-box; font-size: 24px; font-weight: 600; color: #F6F3EC; display: flex; align-items: center; justify-content: center; }
+.s-dose { background: #9AA5B8; }
+.s-inc { background: #1F5A96; }
+.s-pause { background: #B9CCE3; }
+.s-quiet { background: #A8481A; }
+.s-move { background: #5E6B85; }
+.s-acc { background: #2F8072; }
+.s-none { background: none; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.in { animation: rise 420ms ease-out both; animation-delay: calc(var(--i) * 120ms); }
+
+  x-shape { display: block; }
+  x-shape[kind=ellipse] { border-radius: 50%; }
+  x-shape[kind=arrow-right] { clip-path: polygon(0 30%, 60% 30%, 60% 0, 100% 50%, 60% 100%, 60% 70%, 0 70%); }
+  section hr { border: none; }
+  x-connector[x1] { display: none; }
+
+  html, body { margin: 0; height: 100%; background: #0b161e; overflow: hidden; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  section { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box;
+             overflow: hidden; }
+  section:not(.current) { display: none !important; }
+  section *, section *::before, section *::after { box-sizing: border-box; }
+  section h1, section h2, section h3, section p { margin: 0; }
+  section aside { display: none; }
+  section table { border-collapse: collapse; width: 100%; }
+  section th, section td { padding: 0.35em 0.6em; border-bottom: 1px solid rgba(19, 35, 47, 0.18);
+                            vertical-align: top; text-align: left; }
+  x-connector { display: block; flex: none; height: 0; border-top-style: solid; position: relative; }
+  x-connector::after { content: ""; position: absolute; right: -2px; top: -9px; border-left: 12px solid currentColor;
+                        border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 16px; display: flex; gap: 16px;
+          justify-content: center; align-items: center; font: 14px Arial, sans-serif; color: #b9c7cf; }
+  #bar button { font: inherit; color: inherit; background: #13232f; border: 1px solid #44525c; border-radius: 6px;
+                 padding: 4px 12px; cursor: pointer; }
+  @media print {
+    html, body { overflow: visible; height: auto; background: none; }
+    #bar { display: none; }
+    #stage { position: static; transform: none !important; width: auto; height: auto; }
+    section, section:not(.current) { position: relative; display: flex !important; page-break-after: always; }
+    @page { size: 1920px 1080px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" class="dark" data-transition="fade">
+<p class="eyebrow">Automated electrochemical ELISA · design round of 11–12 November 2026</p>
+<h1>A microfluidic cartridge for everything after the autosampler</h1>
+<p class="lead soft" style="width:1300px">What was asked, how the work was organised, what the candidates look like, and what is decided for the second generation.</p>
+<div class="grow"></div>
+<div class="row center">
+<p class="node node-w" style="width:300px">Waters pump and autosampler</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-o" style="width:420px">Cartridge in a docking station</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:300px">Gamry potentiostat</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:300px">Human IgG result</p>
+</div>
+<aside>Summary of one working session. The cartridge is a second generation: the first-generation tubing-and-valve rig is still built first. All performance figures in this deck are nearest-model estimates; the simulation was not extended for chip effects in this round.</aside>
+</section>
+<section id="brief" data-transition="fade">
+<p class="eyebrow">The task</p>
+<h2>A cartridge that runs the whole assay after injection</h2>
+<div class="row center">
+<p class="node node-w" style="width:230px">Pump: buffer stream</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:250px">Autosampler: 100 µL sample</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<div class="col" style="width:640px;gap:10px">
+<p class="node node-o">Cartridge in a docking station</p>
+<div class="row" style="gap:10px">
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">incubate</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">capture</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">wash</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">amplify</p>
+<p class="node node-l grow" style="padding:12px 6px;font-size:24px">detect</p>
+</div>
+</div>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-w" style="width:250px">Potentiostat: current</p>
+</div>
+<p class="soft">Sandwich immunoassay for human IgG in buffer. An alkaline-phosphatase label turns a substrate into hydroquinone, which the electrode measures. The success criteria are unchanged from the first generation.</p>
+<div class="row">
+<div class="card"><p class="big">≤ 1 pg/mL</p><p class="small">limit of detection (about 6.7 fM)</p></div>
+<div class="card"><p class="big">≤ 100 µL</p><p class="small">sample injected per determination</p></div>
+<div class="card"><p class="big">≤ 60 min</p><p class="small">from injection to result</p></div>
+<div class="card"><p class="big">≤ 10⁻⁴</p><p class="small">carry-over after a 10 ng/mL sample</p></div>
+<div class="card"><p class="big">0</p><p class="small">manual steps; vials hold sample only</p></div>
+</div>
+<aside>Source: docs/00 project brief and docs/09 chip requirements. The calibration range is about 1–1000 pg/mL. The limit of detection is defined as mean blank plus 3 SD of replicate blanks, read through a calibration curve.</aside>
+</section>
+<section id="process" data-transition="fade">
+<p class="eyebrow">How the work was organised</p>
+<h2>One orchestrator, eleven agent tasks, three decision points</h2>
+<div class="row" style="gap:14px">
+<div class="col in" style="width:176px;gap:10px;--i:0">
+<p class="node node-o" style="padding:14px 8px;font-size:24px">Interview</p>
+<p class="node node-w" style="padding:12px 8px;font-size:24px">11 questions to you</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:1">
+<p class="node" style="padding:14px 8px;font-size:24px">1 · Surveys</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Requirements</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Literature</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Fabrication</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:2">
+<p class="node" style="padding:14px 8px;font-size:24px">2 · Candidates</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Architect: three designs</p>
+</div>
+<div class="col in" style="width:176px;gap:10px;--i:3">
+<p class="node node-o" style="padding:14px 8px;font-size:24px">Checkpoint</p>
+<p class="node node-w" style="padding:12px 8px;font-size:24px">4 choices by you</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:4">
+<p class="node" style="padding:14px 8px;font-size:24px">3 · Design</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Cartridge A in detail</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Alternatives B and C</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Bench test E1.2b</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:5">
+<p class="node" style="padding:14px 8px;font-size:24px">4 · Review</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Adversarial reviewer</p>
+</div>
+<div class="col in" style="width:176px;gap:10px;--i:6">
+<p class="node node-o" style="padding:14px 8px;font-size:24px">Decisions</p>
+<p class="node node-w" style="padding:12px 8px;font-size:24px">4 choices by you</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:7">
+<p class="node" style="padding:14px 8px;font-size:24px">5 · Close</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Revise design A</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Correct B and C′</p>
+<p class="node node-l" style="padding:12px 8px;font-size:24px;font-weight:400">Decision document</p>
+</div>
+</div>
+<div class="grow"></div>
+<div class="row">
+<div class="card"><p class="big blue">8</p><p class="small">new documents, docs/09 to docs/16, each with sources or an UNVERIFIED mark</p></div>
+<div class="card"><p class="big blue">19</p><p class="small">questions answered by you in five rounds</p></div>
+<div class="card"><p class="big blue">33</p><p class="small">review findings, each traced to a fix or an open bench question</p></div>
+<div class="card"><p class="big blue">3</p><p class="small">stops at the usage limit; every agent resumed from its saved work</p></div>
+</div>
+<aside>Orange steps are the user’s; dark steps are phases run by agents working in parallel; light boxes are the individual agent tasks. Each agent wrote one document and reported a summary; the orchestrator checked, committed and pushed each piece. The 33 findings are 2 blockers, 11 significant, 10 weaknesses and 10 notes; some are resolved only in part, as recorded in docs/15 §7.</aside>
+</section>
+<section id="interview" data-transition="fade">
+<p class="eyebrow">The interview</p>
+<h2>What was fixed before any agent started</h2>
+<table>
+<tr><th style="width:26%;text-align:left">Question</th><th style="width:37%;text-align:left">Answer</th><th style="width:37%;text-align:left">What it meant for the design</th></tr>
+<tr class="band"><td>What is on the chip?</td><td>Fluidic path, valves and reagents</td><td>A cartridge, not a bare flow cell</td></tr>
+<tr><td>Relation to the current design</td><td>Second generation</td><td>The tubing rig is built first; docs/00–08 stay as they are</td></tr>
+<tr class="band"><td>Assay format</td><td>Reopened</td><td>Beads, packed beds and regenerated surfaces all compared</td></tr>
+<tr><td>What may sit outside the chip?</td><td>Anything, in a docking station</td><td>Pumps, magnets, cooling and contacts move to the dock</td></tr>
+<tr class="band"><td>Success criteria</td><td>Unchanged</td><td>1 pg/mL, 100 µL, 60 min, no manual step</td></tr>
+<tr><td>Fabrication, lifetime, detector, batch size, parallel runs</td><td>Agents recommend</td><td>Decided from the surveys and the model</td></tr>
+<tr class="band"><td>Depth of this round</td><td>Concept, model estimate, decision</td><td>One checkpoint after the candidates are defined</td></tr>
+</table>
+<p class="small soft">Later rounds changed one of these: after the review, reagents supplied from the dock were accepted in place of reagents stored on the card.</p>
+<aside>Three rounds of questions at the start (11 questions). The reagent decision was revised by the user on 12 November after the detailed design showed that a liquid bead suspension stored on the card has no precedent and that factory-filled substrate would pass its phosphate limit in about 1.9 days.</aside>
+</section>
+<section id="findings" data-transition="fade">
+<p class="eyebrow">Phase 1 · what the surveys found</p>
+<h2>Six facts that shaped the candidates</h2>
+<div class="row">
+<div class="card in" style="--i:0"><p class="big">0</p><h3>precedents for the exact combination</h3><p class="small soft">No integrated chip found with this enzyme label and electrochemical readout at 1 pg/mL IgG in 60 min and 100 µL.</p></div>
+<div class="card in" style="--i:1"><p class="big">Every one</p><h3>uses a fresh capture surface</h3><p class="small soft">All high-sensitivity commercial cartridges found renew the surface each run. Regeneration evidence stops near 50 cycles.</p></div>
+<div class="card in" style="--i:2"><p class="big">93 % → 20 %</p><h3>beads trapped, 5 → 20 µL/min</h3><p class="small soft">Magnetic trapping in flow is fragile. Dragging beads by magnet into a clean zone is the better-evidenced pattern.</p></div>
+</div>
+<div class="row">
+<div class="card in" style="--i:3"><p class="big blue">37× → 4×</p><h3>redox-cycling gain under flow</h3><p class="small soft">An interdigitated electrode only pays off when the liquid stands still.</p></div>
+<div class="card in" style="--i:4"><p class="big blue">16.5 µL</p><h3>in one standard chip port</h3><p class="small soft">More than the whole path from capture to detector. Through-hole ports hold 0.6 µL.</p></div>
+<div class="card in" style="--i:5"><p class="big blue">&gt; 50</p><h3>valve actuations shown</h3><p class="small soft">Published endurance for thermoplastic membrane valves. A cartridge used for a week needs about 1000.</p></div>
+</div>
+<aside>Sources: docs/10 chip literature (checked against abstracts, not full texts) and docs/11 chip fabrication (vendor pages; some gaps marked UNVERIFIED in its §8). Trapping figures are for 4.5 µm beads in a single-magnet chamber. Redox-cycling figure is one carbon interdigitated array at 500 nL/s. The requirements survey (docs/09) added that the capture surface’s own non-specific binding dominates the detection limit, far more than the size of the accumulation volume.</aside>
+</section>
+<section id="candidates" data-transition="fade">
+<p class="eyebrow">Phase 2 · three candidates</p>
+<h2>Three ways to renew the capture surface</h2>
+<div class="row">
+<div class="card in" style="--i:0">
+<h3>A · Multi-run bead-transfer card</h3>
+<div class="row center" style="gap:10px">
+<p class="node node-l grow" style="padding:14px 10px;font-size:24px;font-weight:400">Stirred chamber: sample, beads, conjugate</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-o grow" style="padding:14px 10px;font-size:24px">Sealed readout cell</p>
+</div>
+<p class="small"><b>Renewal:</b> fresh beads dosed for every run.</p>
+<p class="small"><b>Trick:</b> a magnet drags the beads into a cell that never sees conjugate solution.</p>
+<p class="small"><b>Read:</b> one electrode, liquid at rest.</p>
+<p class="small soft">Two chambers staggered; one card per working block.</p>
+</div>
+<div class="card in" style="--i:1">
+<h3>B · Single-use cells</h3>
+<div class="row center" style="gap:10px">
+<p class="node node-l grow" style="padding:14px 10px;font-size:24px;font-weight:400">Fresh packed bed, dried conjugate</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-o grow" style="padding:14px 10px;font-size:24px">Own electrode per cell</p>
+</div>
+<p class="small"><b>Renewal:</b> a new cell for every sample, 16 cells per card, changed automatically.</p>
+<p class="small"><b>Trick:</b> nothing is reused, so carry-over is near zero by construction.</p>
+<p class="small"><b>Read:</b> liquid at rest in each cell.</p>
+<p class="small soft">Highest cost per determination.</p>
+</div>
+<div class="card in" style="--i:2">
+<h3>C · Permanent glass chip</h3>
+<div class="row center" style="gap:10px">
+<p class="node node-l grow" style="padding:14px 10px;font-size:24px;font-weight:400">0.1 µL bed, stripped with acid</p>
+<x-shape kind="arrow-right" class="arr"></x-shape>
+<p class="node node-o grow" style="padding:14px 10px;font-size:24px">Array electrode, two channels</p>
+</div>
+<p class="small"><b>Renewal:</b> the same bed regenerated with glycine pH 2 after each run.</p>
+<p class="small"><b>Trick:</b> redox cycling on an interdigitated array in stopped flow.</p>
+<p class="small"><b>Read:</b> fastest result, 37.5 min.</p>
+<p class="small soft">Later replaced by C′ (see the alternatives slide).</p>
+</div>
+</div>
+<aside>Source: docs/12 chip candidates. A: 170 µL stirred chamber and a 2 µL readout chamber in the first version; B: 0.5 µL streptavidin bed per cell; C: 0.1 µL anti-Fc bed. All three keep the alkaline phosphatase and hydroquinone diphosphate chemistry of the first generation.</aside>
+</section>
+<section id="estimates" data-transition="fade">
+<p class="eyebrow">Phase 2 · first estimates</p>
+<h2>Only A gains from better reagents</h2>
+<div class="row" style="gap:56px">
+<div class="col" style="width:960px;gap:20px">
+<div class="row end" style="gap:56px;position:relative;height:470px">
+<hr style="position:absolute;left:0;top:128px;width:940px;border-top:3px dashed #A8481A">
+<p class="small strong" style="position:absolute;left:500px;top:88px;width:440px;text-align:right;color:#A8481A">GO threshold, P = 0.30</p>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.16</p><div class="bar" style="height:160px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.32</p><div class="bar bar-o" style="height:320px"></div></div></div><p class="small strong">Gen-1 rig</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.20</p><div class="bar" style="height:200px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.39</p><div class="bar bar-o" style="height:390px"></div></div></div><p class="small strong">A</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.15</p><div class="bar" style="height:150px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.20</p><div class="bar bar-o" style="height:200px"></div></div></div><p class="small strong">B</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.16</p><div class="bar" style="height:160px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.20</p><div class="bar bar-o" style="height:200px"></div></div></div><p class="small strong">C</p></div>
+</div>
+<div class="row center" style="gap:14px">
+<div class="key" style="background:#1F5A96"></div><p class="small">As specified</p>
+<div class="key" style="background:#D9773F;margin-left:24px"></div><p class="small">After reagent and substrate screening</p>
+</div>
+</div>
+<div class="col grow" style="gap:20px">
+<p class="strong">Probability of reaching 1 pg/mL, nearest-model estimate</p>
+<p class="small">A keeps the one-step format, where sample, beads and conjugate incubate together. A better detection reagent therefore helps it.</p>
+<p class="small">B and C label in flow and capture only 0.5–1.7 % of the label, so better reagents barely move them.</p>
+<p class="small soft">These are the figures the checkpoint was based on. A’s numbers changed after the review; the final comparison is on the performance slide.</p>
+</div>
+</div>
+<aside>Source: docs/12 §6, n = 2000 model runs per case. Median detection limits as specified: gen-1 3.5, A 2.3, B 2.3, C 2.4 pg/mL. A difference in P below 0.05 is not decision-grade (docs/08 W7). The model could not represent several chip effects; these are nearest-architecture estimates.</aside>
+</section>
+<section id="checkpoint" class="dark" data-transition="fade">
+<p class="eyebrow">Checkpoint with the user</p>
+<h1 style="font-size:84px">A goes to detailed design. B is the fallback. C stays alive.</h1>
+<div class="grow"></div>
+<div class="row">
+<div class="card card-dark"><h3>Candidates</h3><p class="small soft">A in detail; B documented as fallback; C kept despite its carry-over and valve problems.</p></div>
+<div class="card card-dark"><h3>Pre-electrolysis</h3><p class="small soft">The biggest single lever found, but unverified. Added to the first-generation plan as a bench test only.</p></div>
+<div class="card card-dark"><h3>Reagent placement</h3><p class="small soft">Agents compare “all on the card” with “bead stock in the dock”.</p></div>
+<div class="card card-dark"><h3>Model</h3><p class="small soft">Nearest-model estimates are enough for this round; no extension of the simulation.</p></div>
+</div>
+<aside>Pre-electrolysis means electrolysing the substrate fill before accumulation to remove its free hydroquinone impurity. It rests on an assumed 1 % escape and would work on the first-generation rig as well, so it is not an argument for a cartridge. The bench test is E1.2b in docs/06; it is informational and not an input to gates G1a or G1.</aside>
+</section>
+<section id="stack" data-transition="fade">
+<p class="eyebrow">Cartridge A · cross-section through a valve</p>
+<h2>Plungers press from above, magnets pull from below</h2>
+<div class="row" style="gap:56px">
+<div style="position:relative;width:940px;height:600px;flex:none">
+<div style="position:absolute;left:0;top:70px;width:400px;height:250px;background:#D9D2C2"></div>
+<div style="position:absolute;left:540px;top:70px;width:400px;height:250px;background:#D9D2C2"></div>
+<p style="position:absolute;left:400px;top:0;width:140px;height:316px;background:#14213D;color:#F6F3EC;font-size:24px;font-weight:600;text-align:center;padding:16px 0;box-sizing:border-box">Plunger</p>
+<div style="position:absolute;left:0;top:320px;width:940px;height:50px;background:#D9773F"></div>
+<div style="position:absolute;left:0;top:370px;width:360px;height:60px;background:#B9CCE3"></div>
+<div style="position:absolute;left:580px;top:370px;width:360px;height:60px;background:#B9CCE3"></div>
+<div style="position:absolute;left:360px;top:370px;width:220px;height:60px;background:#FFFDF8"></div>
+<x-shape kind="ellipse" style="position:absolute;left:420px;top:410px;width:18px;height:18px;background:#14213D"></x-shape>
+<x-shape kind="ellipse" style="position:absolute;left:446px;top:410px;width:18px;height:18px;background:#14213D"></x-shape>
+<x-shape kind="ellipse" style="position:absolute;left:472px;top:410px;width:18px;height:18px;background:#14213D"></x-shape>
+<x-shape kind="ellipse" style="position:absolute;left:498px;top:410px;width:18px;height:18px;background:#14213D"></x-shape>
+<div style="position:absolute;left:0;top:430px;width:940px;height:22px;background:#1F5A96"></div>
+<div style="position:absolute;left:0;top:458px;width:360px;height:90px;background:#5E6B85"></div>
+<div style="position:absolute;left:580px;top:458px;width:360px;height:90px;background:#5E6B85"></div>
+<p style="position:absolute;left:390px;top:464px;width:160px;height:136px;background:#A8481A;color:#F6F3EC;font-size:24px;font-weight:600;text-align:center;padding:48px 0 0;box-sizing:border-box">Magnet</p>
+</div>
+<div class="col grow" style="gap:14px">
+<div class="row center" style="gap:14px"><div class="key" style="background:#D9D2C2"></div><p class="small"><b>Upper body</b>, COC, 5.5 mm: chambers, tanks, plunger bores</p></div>
+<div class="row center" style="gap:14px"><div class="key" style="background:#D9773F"></div><p class="small"><b>Elastomer ceiling</b>, 0.3–0.5 mm: the membrane of every valve</p></div>
+<div class="row center" style="gap:14px"><div class="key" style="background:#B9CCE3"></div><p class="small"><b>Channel sheet</b>, COC, 0.175 mm: every channel cut through it</p></div>
+<div class="row center" style="gap:14px"><div class="key" style="background:#1F5A96"></div><p class="small"><b>Floor foil</b>, COC, 140 µm: beads sit on it</p></div>
+<div class="row center" style="gap:14px"><div class="key" style="background:#5E6B85"></div><p class="small"><b>Dock support plate</b>, with windows only where a magnet must reach</p></div>
+<p class="small soft" style="padding-top:12px">A valve closes when the plunger presses the ceiling onto the floor. No seat ridge, so nothing for beads to catch on.</p>
+<p class="small soft">This stack replaced the first layout, in which the membrane sat 5.8 mm above the channels it was meant to close.</p>
+</div>
+</div>
+<aside>Not to scale. Source: docs/13 Revision B §2.1 and §2.4. Card footprint 75.5 × 50 mm, about 6.2 mm thick. Gates over the magnet slot are limited to 1.5 N so the foil sags by about 15 µm. Open point: there is no endurance evidence for an elastomer membrane on COC; mock-up M4 decides. The electrode die is glass, bonded face-down over the readout cell, with its contact pads outside the seal and reached by spring pins from below.</aside>
+</section>
+<section id="plan" data-transition="fade">
+<p class="eyebrow">Cartridge A · plan view</p>
+<h2>Two chambers, one wash lane, one readout cell</h2>
+<div class="row" style="gap:40px">
+<div style="position:relative;width:982px;height:650px;flex:none;background:#FFFDF8;border:3px solid #14213D;box-sizing:border-box">
+<div style="position:absolute;left:0;top:0;width:260px;height:644px;background:#E3EBF5"></div>
+<div style="position:absolute;left:260px;top:0;width:52px;height:644px;background:#D9D2C2"></div>
+<p class="small strong" style="position:absolute;left:12px;top:10px;width:240px">Reagent zone, 4–8 °C</p>
+<p class="small strong" style="position:absolute;left:330px;top:10px;width:300px">Assay zone, 25 °C</p>
+<p style="position:absolute;left:39px;top:100px;width:150px;height:130px;background:#1F5A96;color:#F6F3EC;font-size:24px;font-weight:600;text-align:center;padding:46px 0 0;box-sizing:border-box">Conjugate</p>
+<x-shape kind="ellipse" style="position:absolute;left:468px;top:104px;width:104px;height:104px;background:#1F5A96"></x-shape>
+<x-shape kind="ellipse" style="position:absolute;left:468px;top:442px;width:104px;height:104px;background:#1F5A96"></x-shape>
+<p class="small strong" style="position:absolute;left:380px;top:58px;width:300px">Incubation chamber 1</p>
+<p class="small strong" style="position:absolute;left:380px;top:556px;width:300px">Incubation chamber 2</p>
+<p style="position:absolute;left:330px;top:273px;width:120px;height:104px;background:#5E6B85;color:#F6F3EC;font-size:24px;font-weight:600;text-align:center;padding:18px 0 0;box-sizing:border-box">Inlet valves</p>
+<x-connector x1="572" y1="156" x2="650" y2="325" head="none" style="color:#A8481A;border-width:7px"></x-connector>
+<x-connector x1="572" y1="494" x2="650" y2="325" head="none" style="color:#A8481A;border-width:7px"></x-connector>
+<x-connector x1="650" y1="325" x2="722" y2="325" head="end" style="color:#A8481A;border-width:7px"></x-connector>
+<div style="position:absolute;left:699px;top:215px;width:78px;height:130px;border:3px solid #14213D;box-sizing:border-box"></div>
+<div style="position:absolute;left:721px;top:312px;width:34px;height:26px;background:#A8481A"></div>
+<div style="position:absolute;left:722px;top:367px;width:32px;height:32px;background:#5E6B85"></div>
+<p style="position:absolute;left:806px;top:442px;width:156px;height:156px;background:#2F8072;color:#F6F3EC;font-size:24px;font-weight:600;text-align:center;padding:60px 0 0;box-sizing:border-box">Substrate</p>
+<p class="small" style="position:absolute;left:640px;top:112px;width:330px;color:#A8481A;font-weight:600">Wash lanes: beads dragged by a magnet</p>
+<p class="small" style="position:absolute;left:796px;top:226px;width:176px">Readout cell under the glass electrode die</p>
+</div>
+<div class="col grow" style="gap:14px">
+<h3>75.5 × 50 mm, about 6.2 mm thick</h3>
+<p class="small"><b>Chambers:</b> 185 µL working volume each, mixed by a tidal stroke every 30 s.</p>
+<p class="small"><b>Drag path:</b> 23.3 mm at 0.20 mm/s, through buffer, into a cell that conjugate solution never enters.</p>
+<p class="small"><b>Readout cell:</b> 1.34 µL, 0.200 mm high; its ceiling is the working electrode.</p>
+<p class="small"><b>Valves:</b> 17 valves and 4 gates; the busiest sees 17 cycles per card.</p>
+<p class="small"><b>Reagents:</b> the dock fills the conjugate and substrate tanks at insertion; beads come from a cooled, agitated vial in the dock.</p>
+<p class="small soft">Grey square below the cell: bead-waste pocket.</p>
+</div>
+</div>
+<aside>Schematic drawn from the coordinates in docs/13 Revision B §2.2–2.3; simplified, not a fabrication drawing. The card carries no factory-filled reagent by user decision of 12 November. Substrate is 3 mM hydroquinone diphosphate, needed to keep the upper range limit above 1000 pg/mL with the small cell.</aside>
+</section>
+<section id="cycle" data-transition="fade">
+<p class="eyebrow">Cartridge A · assay cycle</p>
+<h2>Each read falls in a pause of the next run</h2>
+<div class="col" style="gap:8px">
+<div class="row" style="gap:0">
+<p class="small soft" style="width:128px"></p>
+<p class="small soft" style="width:256px;border-left:3px solid #14213D;padding-left:8px;box-sizing:border-box">0 min</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">10</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">20</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">30</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">40</p>
+<p class="small soft" style="width:256px;border-left:3px solid #9AA5B8;border-right:3px solid #A8481A;padding-left:8px;box-sizing:border-box">50 → 60</p>
+</div>
+<p class="small strong">Run n, injected at 0 min</p>
+<div class="row" style="gap:0">
+<div class="seg s-dose" style="width:128px">Dose</div>
+<div class="seg s-move" style="width:38px"></div>
+<div class="seg s-inc" style="width:512px">Incubation, mixed</div>
+<div class="seg s-pause" style="width:115px"></div>
+<div class="seg s-inc" style="width:102px"></div>
+<div class="seg s-quiet" style="width:102px"></div>
+<div class="seg s-move" style="width:138px">Rinse</div>
+<div class="seg s-dose" style="width:58px"></div>
+<div class="seg s-acc" style="width:282px">Accumulation</div>
+<div class="seg s-quiet" style="width:102px">Read</div>
+<div class="seg s-none" style="width:83px"></div>
+</div>
+<p class="small strong" style="padding-top:12px">Run n+1, injected at 31 min</p>
+<div class="row" style="gap:0">
+<div class="seg s-none" style="width:794px"></div>
+<div class="seg s-dose" style="width:128px">Dose</div>
+<div class="seg s-move" style="width:38px"></div>
+<div class="seg s-inc" style="width:512px">Incubation, mixed</div>
+<div class="seg s-pause" style="width:115px"></div>
+<div class="seg s-inc" style="width:77px"></div>
+</div>
+</div>
+<div class="row center" style="gap:12px">
+<div class="key" style="background:#A8481A"></div><p class="small">Quiet electrochemical window: no pump, valve or magnet moves in any run</p>
+<div class="key" style="background:#B9CCE3;margin-left:20px"></div><p class="small">Mixing paused</p>
+<div class="key" style="background:#2F8072;margin-left:20px"></div><p class="small">Cell sealed</p>
+</div>
+<div class="grow"></div>
+<div class="row">
+<div class="card"><p class="big">56.75 min</p><p class="small">injection to result; 3.25 min of margin to the 60 min limit</p></div>
+<div class="card"><p class="big">31 min</p><p class="small">between samples, against 56 min on the first-generation rig</p></div>
+<div class="card"><p class="big">14</p><p class="small">determinations per card in about 7.9 h: 10 samples and 4 quality controls</p></div>
+</div>
+<aside>Source: docs/13 Revision B §7.1. One-step incubation 28.5 min, of which 6.35 min is paused for other runs’ reads; rinses and a 23.3 mm magnet drag follow; accumulation 11 min sealed at open circuit; then a three-window potential-step read that cancels offset and linear drift. The first orange window in each run is the pre-electrolysis monitor of the cell before the beads arrive. Restoring the margin and keeping reads quiet cost about 0.04 in P. Open point from the resolution table: two movable steps sit exactly on the guard band, so the schedule has no slack, and the checking script is not in the repository.</aside>
+</section>
+<section id="alternatives" data-transition="fade">
+<p class="eyebrow">Alternatives B and C′</p>
+<h2>Regeneration cannot reach the carry-over limit</h2>
+<div class="row">
+<div class="card" style="flex:1.25">
+<h3>C fails, C′ replaces it</h3>
+<p class="small soft">Captured IgG removed by acid regeneration, best figure found</p>
+<div class="row" style="gap:0">
+<div class="seg s-inc" style="width:560px;height:56px">92 % removed</div>
+<div class="seg" style="width:120px;height:56px;background:#D9773F">8 % left</div>
+</div>
+<p class="small"><b>Needed: 99.99 % removed.</b> A fraction never elutes, so repeating the strip does not converge, and blank subtraction gains about 10× at most.</p>
+<p class="small"><b>C′:</b> keep the permanent glass chip, but pack a fresh 0.1 µL particle bed before every injection and flush it out after the read. No valves on the chip; all switching in the dock. Result in 37.5 min.</p>
+<p class="small soft">Viable only if three mock-up results pass: end-to-end carry-over ≤ 10⁻⁴, packed-bed NSB factor ≤ 2, blank CV ≤ 12 % over 20 repacks.</p>
+</div>
+<div class="card">
+<h3>B stays the fallback</h3>
+<p class="small">16 single-use cells per card in a 2 × 8 grid, indexed by one linear axis.</p>
+<p class="small">Dried conjugate must deliver a dose CV ≤ 5 %; at 10 % the estimate falls to P 0.13.</p>
+<p class="small"><b>Switch from A to B when</b> an A risk fails <b>and</b> the packed-bed NSB factor is ≤ 2 <b>and</b> the cell-to-cell blank CV is ≤ 10 %.</p>
+<p class="small soft">Highest cost class: one electrode per determination.</p>
+</div>
+</div>
+<p class="lead" style="font-size:30px"><b>One shared test decides both:</b> the packed-bed NSB factor, measurable in tubes without any chip.</p>
+<aside>Source: docs/14 revised after review. The 92 % is an elution recovery in a hapten system (Sun 2008), not an IgG sandwich regeneration, so it is an indication, not a measurement of our case; no source found shows 99.99 % removal. NSB = non-specific binding of the enzyme conjugate; the “factor” is the bed’s NSB relative to blocked beads. For C′, P runs from 0.43 at factor 1 to 0.06 at factor 10. After a 1000 pg/mL sample, a residual of 10⁻⁴ takes C′ from P 0.15 to 0.10.</aside>
+</section>
+<section id="review" data-transition="fade">
+<p class="eyebrow">Phase 4 · adversarial review</p>
+<h2>The first design of A could not be built</h2>
+<div class="row">
+<div class="card"><p class="big">2</p><p class="small strong">blockers</p></div>
+<div class="card"><p class="big">11</p><p class="small strong">significant findings</p></div>
+<div class="card"><p class="big blue">10</p><p class="small strong">weaknesses</p></div>
+<div class="card"><p class="big blue">10</p><p class="small strong">notes</p></div>
+</div>
+<div class="row">
+<div class="card">
+<h3>Blockers</h3>
+<p class="small"><b>Valves could not close.</b> Channels were cut into the bottom of a 6 mm body; the membrane and plungers were on top.</p>
+<p class="small"><b>Electrode pads were unreachable.</b> The die was bonded face-down, the contact pins were in the lid.</p>
+</div>
+<div class="card">
+<h3>Numbers that changed</h3>
+<p class="small"><b>Read drift:</b> error 0.79 nC against a 0.05 nC target.</p>
+<p class="small"><b>Timing:</b> 58.9 min, about 1 min of margin; a 16-run card took 9.5 h.</p>
+<p class="small"><b>Pre-electrolysis:</b> about 11 % escape in the tabulated layout, not 1 %.</p>
+</div>
+<div class="card">
+<h3>What held up</h3>
+<p class="small">Every model figure the reviewer re-ran matched.</p>
+<p class="small">17 sources checked: none contradicted, three stretched beyond what they show.</p>
+<p class="small soft">Verdict: A stays the leading concept; wait for gate G1 and the E1.2b result.</p>
+</div>
+</div>
+<aside>Source: docs/15 chip review. The reviewer recomputed the magnet forces, diffusion and electrolysis time constants, charging charge, timing table and carry-over paths with its own scripts, and re-ran a sample of the model estimates on a copy of the repository. Other significant findings: a read window collided with valve and pump activity of the run two places later; the magnet geometry could not gather beads from the far half of the chamber; stranded beads reached a later incubation; A’s carry-over budget was not allocated; a modelling error in the C′ carry-over table flattered C′.</aside>
+</section>
+<section id="revb" data-transition="fade">
+<p class="eyebrow">Phase 5 · Revision B of cartridge A</p>
+<h2>What the review changed in the design</h2>
+<table>
+<tr><th style="width:18%;text-align:left">Topic</th><th style="width:38%;text-align:left">First design</th><th style="width:44%;text-align:left">Revision B</th></tr>
+<tr class="band"><td>Valves</td><td>Membrane on top, channels 5.8 mm below it</td><td>Channels cut through a thin sheet; plunger presses the ceiling onto the floor</td></tr>
+<tr><td>Electrode contacts</td><td>Pads face down, pins in the lid</td><td>Pads outside the seal, spring pins from below in a shielded bay</td></tr>
+<tr class="band"><td>Read method</td><td>Two potential steps; drift error 0.79 nC</td><td>Three windows cancel offset and linear drift; requirement SD ≤ 0.05 nC</td></tr>
+<tr><td>Timing</td><td>58.9 min; 16 runs in 9.5 h</td><td>56.75 min; 14 runs in 7.9 h; no activity in any read window</td></tr>
+<tr class="band"><td>Bead gather</td><td>One 4 mm sweep; far half of chamber missed</td><td>Fixed collection magnet, then three raster passes of a small drag magnet</td></tr>
+<tr><td>Carry-over</td><td>Budget not allocated</td><td>Budget per path sums to 9.6 × 10⁻⁵, if the autosampler reaches 3 × 10⁻⁵</td></tr>
+<tr class="band"><td>After a high result</td><td>No rule</td><td>Cleaning cycle and blank check after any result above 100 pg/mL</td></tr>
+</table>
+<aside>User decisions after the review: reagents supplied from the dock; card capped at about 14 determinations with at least 3 min of margin; the cleaning rule; one test approved before gate G1. Source: docs/13 Revision B, finding-by-finding map at its top, and docs/15 §7 for partial resolutions. Still open: the autosampler’s nominal carry-over is 10⁻⁴, three times worse than the budget needs, and is unverified; inserting a blank-check injection needs the Empower Toolkit to edit a running sample set, which is unconfirmed; the elastomer valve has no endurance evidence. Each high result costs one of the 14 slots.</aside>
+</section>
+<section id="performance" data-transition="fade">
+<p class="eyebrow">Result · performance against the first generation</p>
+<h2>No candidate beats the tubing rig on detection limit</h2>
+<div class="row" style="gap:48px">
+<div class="col" style="width:1100px;gap:20px;flex:none">
+<div class="row end" style="gap:48px;position:relative;height:470px">
+<hr style="position:absolute;left:0;top:128px;width:1090px;border-top:3px dashed #A8481A">
+<p class="small strong" style="position:absolute;left:650px;top:88px;width:440px;text-align:right;color:#A8481A">GO threshold, P = 0.30</p>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.16</p><div class="bar" style="height:160px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.32</p><div class="bar bar-o" style="height:320px"></div></div></div><p class="small strong">Gen-1 rig</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.150</p><div class="bar" style="height:150px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.215</p><div class="bar bar-g" style="height:215px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.328</p><div class="bar bar-o" style="height:328px"></div></div></div><p class="small strong">A, Revision B</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.15</p><div class="bar" style="height:150px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.17</p><div class="bar bar-g" style="height:170px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.20</p><div class="bar bar-o" style="height:200px"></div></div></div><p class="small strong">B</p></div>
+<div class="col center" style="gap:10px"><div class="chart"><div class="col center" style="gap:6px"><p class="small strong">0.15</p><div class="bar" style="height:150px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.16</p><div class="bar bar-g" style="height:160px"></div></div><div class="col center" style="gap:6px"><p class="small strong">0.21</p><div class="bar bar-o" style="height:210px"></div></div></div><p class="small strong">C′</p></div>
+</div>
+<div class="row center" style="gap:12px">
+<div class="key" style="background:#1F5A96"></div><p class="small">As specified</p>
+<div class="key" style="background:#9AA5B8;margin-left:16px"></div><p class="small">With unverified pre-electrolysis credit</p>
+<div class="key" style="background:#D9773F;margin-left:16px"></div><p class="small">After screening</p>
+</div>
+</div>
+<div class="col grow" style="gap:16px">
+<p class="strong">Probability of reaching 1 pg/mL</p>
+<p class="small">Median detection limit as specified: gen-1 3.5, A 3.67, B 2.3, C′ 2.4 pg/mL. After screening: gen-1 1.3, A 1.34.</p>
+<p class="small">Differences in P below 0.05 are not decision-grade. As specified, all four are level.</p>
+<p class="small"><b>The case for a cartridge is operational:</b> a sample every 31 min against 56, full automation, and about 0.8 mL of buffer per run against 4.3 mL.</p>
+</div>
+</div>
+<aside>Source: docs/16 §1 comparison table, with A from docs/13 Revision B and B, C′ from docs/14 revised. Nearest-model estimates, n = 2000; the simulation has no incubation chamber with wall binding, no single-electrode stopped-flow chip detector and no multi-run cartridge terms. “After screening” means after the reagent and substrate screening of first-generation Stage 1 comes back favourable; the pre-electrolysis credit adds nothing in that case. The buffer figure is from the candidates document (docs/12). A’s interval as specified is 0.53–126 pg/mL.</aside>
+</section>
+<section id="unknowns" data-transition="fade" style="gap:24px">
+<p class="eyebrow">Result · the unknowns that decide it</p>
+<h2>Four measurements move the outcome most</h2>
+<div class="row">
+<div class="card" style="gap:10px">
+<h3>Packed-bed NSB factor</h3>
+<p class="small soft">C′; B behaves alike</p>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">× 1</p><div class="hbar" style="width:387px"></div><p class="small strong">0.43</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">× 2</p><div class="hbar" style="width:270px"></div><p class="small strong">0.30</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">× 3</p><div class="hbar" style="width:207px"></div><p class="small strong">0.23</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">× 10</p><div class="hbar hbar-o" style="width:54px"></div><p class="small strong">0.06</p></div>
+</div>
+<div class="card" style="gap:10px">
+<h3>Read repeatability</h3>
+<p class="small soft">A, first design; B uses the same kind of read</p>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">0.05 nC</p><div class="hbar" style="width:234px"></div><p class="small strong">0.26</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">0.11 nC</p><div class="hbar" style="width:153px"></div><p class="small strong">0.17</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">0.55 nC</p><div class="hbar hbar-o" style="width:45px"></div><p class="small strong">0.05</p></div>
+</div>
+</div>
+<div class="row">
+<div class="card" style="gap:10px">
+<h3>Bead dose variation</h3>
+<p class="small soft">A, first design</p>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">CV 5 %</p><div class="hbar" style="width:234px"></div><p class="small strong">0.26</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">CV 10 %</p><div class="hbar" style="width:180px"></div><p class="small strong">0.20</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">CV 15 %</p><div class="hbar" style="width:153px"></div><p class="small strong">0.17</p></div>
+</div>
+<div class="card" style="gap:10px">
+<h3>Residual after a 1000 pg/mL sample</h3>
+<p class="small soft">C′</p>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">none</p><div class="hbar" style="width:135px"></div><p class="small strong">0.15</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">10⁻⁴</p><div class="hbar" style="width:90px"></div><p class="small strong">0.10</p></div>
+<div class="row center" style="gap:12px"><p class="small" style="width:150px">3 × 10⁻⁴</p><div class="hbar hbar-o" style="width:6px"></div><p class="small strong">0.006</p></div>
+</div>
+</div>
+<aside>Bars show the model’s probability of reaching 1 pg/mL; orange marks the case that kills the candidate. Sources: docs/14 revised (bed factor and carry-over for C′), docs/13 first design, as reported before the review (read repeatability and bead dose CV, both with the pre-electrolysis credit). NSB = non-specific binding of the enzyme conjugate, relative to blocked beads. None of these four quantities has been measured; each has a bench experiment assigned in docs/16. A further open item: the pre-electrolysis credit, tested by E1.2b.</aside>
+</section>
+<section id="gates" data-transition="fade" style="gap:24px">
+<p class="eyebrow">Plan · gates before any cartridge spend</p>
+<h2>One small test now; everything else waits for G1</h2>
+<div class="col" style="gap:8px">
+<div class="row" style="gap:0">
+<p class="small soft" style="width:236px;border-left:3px solid #14213D;padding-left:8px;box-sizing:border-box">Week 1</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">5</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">9</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">13</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">17</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">21</p>
+<p class="small soft" style="width:236px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">25</p>
+</div>
+<p class="small strong">First-generation rig</p>
+<div class="row" style="gap:0">
+<div class="seg s-inc" style="width:295px;height:56px">Stage 1A bench</div>
+<div class="seg s-pause" style="width:177px;height:56px;color:#14213D">to gate G1</div>
+<div class="seg s-inc" style="width:472px;height:56px">Stage 2: flow hardware</div>
+<div class="seg s-pause" style="width:708px;height:56px;color:#14213D">after gate G2</div>
+</div>
+<p class="small strong" style="padding-top:8px">Cartridge track</p>
+<div class="row" style="gap:0">
+<div class="seg s-none" style="width:236px;height:56px"></div>
+<div class="seg s-acc" style="width:177px;height:56px">E1.2b</div>
+</div>
+<div class="row" style="gap:0">
+<div class="seg s-none" style="width:295px;height:56px"></div>
+<div class="seg s-quiet" style="width:295px;height:56px">M5a read test</div>
+</div>
+<div class="row" style="gap:0">
+<div class="seg s-none" style="width:472px;height:56px"></div>
+<div class="seg s-move" style="width:472px;height:56px">Mock-ups M1–M7</div>
+<div class="seg s-move" style="width:708px;height:56px;background:#14213D">Prototype cards and dock</div>
+</div>
+</div>
+<div class="row">
+<div class="card"><h3>Approved before G1</h3><p class="small">Only M5a: the stopped-flow read background on a catalogue electrode die with the existing potentiostat. A risk shared by A and B.</p></div>
+<div class="card"><h3>Scheduling problem</h3><p class="small">M5a does not fit its approved weeks 6–8: those weeks hold about 17.5 of 20 bench days. Proposed: set-up in weeks 6–8, instrument time in weeks 8–10.</p></div>
+<div class="card"><h3>Gates</h3><p class="small">Mock-ups start only after G1 and E1.2b. Prototype cards need the mock-up gate and gen-1 gate G2. Moulding comes after a second cartridge gate.</p></div>
+</div>
+<aside>Source: docs/16 staged plan, docs/13 §10 and docs/06 (E1.2b in weeks 5–7; M5a entry). Week numbers for mock-ups (9–16) and prototypes (about 17–28) are the plan’s estimates and assume gate G1 gives GO or GO-WITH-LEVER; the week of G1 itself depends on Stage 1. E1.2b is the bench test of substrate pre-electrolysis. Both E1.2b and M5a are informational and are not inputs to gates G1a or G1; the G1 rule is unchanged. The M5a effort (about 2 set-up days plus 9 instrument days) is the closing agent’s estimate.</aside>
+</section>
+<section id="decision" class="dark">
+<p class="eyebrow">Decision</p>
+<h2>A leads on throughput and automation, not on detection limit</h2>
+<div class="row">
+<div class="card card-dark"><p class="big">A</p><h3>Leading concept</h3><p class="small soft">Multi-run bead-transfer card. Fixed on paper only; not yet buildable until the mock-ups pass.</p></div>
+<div class="card card-dark"><p class="big">B</p><h3>Fallback</h3><p class="small soft">Single-use cells. Chosen only if an A risk fails and the packed-bed tests pass.</p></div>
+<div class="card card-dark"><p class="big">C′</p><h3>Kept alive</h3><p class="small soft">Permanent chip with a bed repacked every run. Three bench conditions must pass.</p></div>
+</div>
+<h3>Open questions for the user</h3>
+<div class="row">
+<div class="card card-dark"><p class="small"><b>Where does M5a go?</b></p><p class="small soft">Weeks 8–10 for the instrument part keeps G1 on schedule; weeks 6–8 slips G1 by about two weeks.</p></div>
+<div class="card card-dark"><p class="small"><b>Tighten the residual-bead limit?</b></p><p class="small soft">The gen-1 bench plan allows 10⁻³ residual beads, but the carry-over criterion is 10⁻⁴.</p></div>
+<div class="card card-dark"><p class="small"><b>Which clock for the margin?</b></p><p class="small soft">3.25 min from Inject Start; only 2.25 min counted from the start of aspiration.</p></div>
+</div>
+<aside>Source: docs/16 chip decision, §1 and §8 (six further questions there, including the mock-up gate rule, quality-control slots per card and which model extensions to build next). All work is on branch claude/sleepy-mayer-hwypo0: docs/09–16, the two added bench experiments in docs/06 and docs/07, and the updated project guide. Both test suites pass (model 71, automation 50).</aside>
+</section>
+</div>
+<div id="bar"><button id="prev">&#8592; Back</button><span id="count"></span><button id="next">Next &#8594;</button></div>
+<script>
+  const stage = document.getElementById('stage');
+  const slides = Array.from(stage.querySelectorAll('section'));
+  let i = Math.max(0, parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1);
+  function fit() {
+    const s = Math.min(innerWidth / 1920, (innerHeight - 44) / 1080);
+    stage.style.transform = 'scale(' + s + ') translate(-50%, -50%)';
+    stage.style.marginTop = '-22px';
+  }
+  function show(n) {
+    i = Math.min(slides.length - 1, Math.max(0, n));
+    slides.forEach((el, k) => el.classList.toggle('current', k === i));
+    document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+    history.replaceState(null, '', '#slide-' + (i + 1));
+  }
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => {
+    const n = parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1;
+    if (n !== i) show(n);
+  });
+  fit();
+  show(i);
+
+  document.querySelectorAll('x-connector[x1]').forEach((c) => {
+    const g = (k) => +c.getAttribute(k), x1 = g('x1'), y1 = g('y1'), x2 = g('x2'), y2 = g('y2');
+    const col = c.style.color || '#14213D', w = parseFloat(c.style.borderWidth) || 2;
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('style', 'position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible');
+    let head = '';
+    if (c.getAttribute('head') !== 'none') {
+      const a = Math.atan2(y2 - y1, x2 - x1), L = w * 3.2;
+      const p = (d) => (x2 - L * Math.cos(a + d)) + ',' + (y2 - L * Math.sin(a + d));
+      head = '<polygon points="' + x2 + ',' + y2 + ' ' + p(0.45) + ' ' + p(-0.45) + '" fill="' + col + '"/>';
+    }
+    s.innerHTML = '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col +
+      '" stroke-width="' + w + '"/>' + head;
+    c.replaceWith(s);
+  });
+</script>
+</body>
+</html>
