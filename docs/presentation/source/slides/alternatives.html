@@ -1,0 +1,14 @@
+<section id="alternatives" data-transition="fade" style="background:#F6F4EE;color:#13232F;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1">Why this design and not the others</h2>
+<table style="font-size:26px;color:#13232F">
+<tr style="background:#13232F"><th style="width:30%;text-align:left;color:#F6F4EE;font-weight:600">Format</th><th style="width:18%;text-align:left;color:#F6F4EE;font-weight:600">Outcome</th><th style="width:52%;text-align:left;color:#F6F4EE;font-weight:600">Reason</th></tr>
+<tr style="background:#FBE3CC"><td>Beads + stirred in-line cup, dosed by a syringe pump</td><td>Chosen</td><td>Recovers simultaneous incubation of sample, beads and conjugate with nothing in the sample vial</td></tr>
+<tr><td>Same hardware, sequential steps</td><td>Fallback</td><td>Used if the detection antibody releases too fast for one-step mode</td></tr>
+<tr style="background:#ECE8DD"><td>Fixed packed micro-bed</td><td>Backup</td><td>No bead handling, but more sticking surface per captured IgG</td></tr>
+<tr><td>Beads and conjugate in the sample vial</td><td>Ruled out</td><td>Reagent in the sample vial is not allowed; incubation time would also vary along a queue</td></tr>
+<tr style="background:#ECE8DD"><td>Merging reagents from a BSM line</td><td>Ruled out</td><td>Proteins and beads must not pass through the pump</td></tr>
+<tr><td>Unstirred holding coil</td><td>Rejected</td><td>Capture too slow without stirring: about 6% modelled chance of success</td></tr>
+<tr style="background:#ECE8DD"><td>Bead bed on a chip, open capillary</td><td>Ranked lower</td><td>Higher predicted detection limits than the packed bed or the bead formats</td></tr>
+</table>
+<aside>The model evaluated 84 combinations of capture format, chemistry, detector and plumbing. The ranking stayed the same through the audit: one-step beads, sequential beads, chip bead bed, packed bed. The in-vial formats led the model but were excluded by the decision that sample vials hold sample only.</aside>
+</section>
