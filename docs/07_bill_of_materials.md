@@ -49,6 +49,7 @@ price not checked. Lead times are UNVERIFIED unless stated.
 | pNPP | 4-nitrophenyl phosphate disodium salt hexahydrate | optional optical cross-check of conjugate activity | 1 | Sigma-Aldrich **71768** or **N4645 [D]** | — | optional |
 | ALP enzyme (free) | bovine intestinal, ≥ 10 DEA U/mg solid | optional readout check | 1 | Sigma-Aldrich **P7640 [D]** | — | optional; the conjugate itself is the standard (docs/06 §1 point 4) |
 | Buffers, Tween-20, MgCl₂, Tris, D-biotin, phosphate salts, HCl | analytical grade | AB, SB, quench, E1.7 | — | any (generic) | — | made in glass or LoBind |
+| 1,4-Benzoquinone | ≥ 98 %, reference standard | BQ-spike control and peak identification in the pre-electrolysis test (docs/06 E1.2b, added 2026-11-12) | 1 small pack | to be selected — supplier and part number not checked (UNVERIFIED); price on request | — | toxic/irritant — handle per SDS; dissolve fresh, dark |
 
 ### 1.2 Consumables and small hardware
 
@@ -63,6 +64,11 @@ price not checked. Lead times are UNVERIFIED unless stated.
 | SPE connector | cable connector, any potentiostat | Gamry ↔ SPE | 1 | Metrohm DropSens **DRP-CAC [V]** | — |
 | Wall-jet flow cell for SPEs | PEEK, magnetic closure | R-FIA (T1) | 1 | Metrohm DropSens **DRP-FLWCL-PEEK** (docs/02 [V]) | BASi cross-flow thin-layer cell (docs/02 [S]) |
 | PEEK tubing and fittings | 1/16″ OD, 127 µm ID; 10-32 coned | T1 plumbing | 3 m, 20 fittings | any LC supplier | — |
+| Divided bulk-electrolysis cell | glass, 5–10 mL working compartment, counter electrode in a fritted glass compartment, ports for WE, reference and N₂, stir bar | HQDP pre-electrolysis test (docs/06 E1.2b, added 2026-11-12) | 1 (+1 spare frit compartment) | to be selected (UNVERIFIED; no part number checked); price on request | the undivided arm of E1.2b uses the same cell without the frit compartment |
+| Large-area carbon working electrode | reticulated vitreous carbon or graphite felt, ≈ 1 cm³, with a carbon or Pt current collector | E1.2b | 3 pieces | to be selected (UNVERIFIED); price on request | conditioned by pre-electrolysis in SB before each use |
+| Counter electrode | Pt wire/mesh or graphite rod | E1.2b | 1 | to be selected (UNVERIFIED) | — |
+| Reference electrode | Ag/AgCl, 3 M KCl, with frit, fits the cell port | E1.2b | 1 (+1 spare) | to be selected (UNVERIFIED) | the Stage-3 reference electrode (§3) is a separate, later item |
+| Magnetic stirrer | small, low heat output, constant speed | E1.2b | 1 | any (in-house if available) | — |
 
 ### 1.3 Services
 

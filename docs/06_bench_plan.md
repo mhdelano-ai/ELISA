@@ -30,6 +30,7 @@ Tiers: **T0** = no flow system (tubes, magnet, rotator, a drop on a screen-print
 |---|---|---|---|---|---|
 | 0 Set-up and facts | T0/T1 | 0–2 | instrument facts, noise floor, PC, vendor answers | G0: lab PC runs the simulated cycle; Inject Start seen; Stage-1 reagents in hand | Stage-1 reagents are ordered in week 0 (they gate everything) |
 | **1 Reachability** | **T0 + T1** | 2–8 | **U1** conjugate NSB (+ reservoir ageing), **U3** free HQ, **U2** off-rates, detection-on-capture, U6, U9, SM-FL recovery, a tube-format integrated blank-equivalent | **G1a (wk 5, U1 + U3) and G1 (wk 7–8): GO / GO-WITH-LEVER / STOP on model P(success)** (revised after final review) | valves, SIA pump, magnet actuator, prototype cup and trap parts (Stage 2); BLI/SPR service and NISTmAb only after G1a |
+| (1A, informational) HQDP pre-electrolysis test E1.2b (added 2026-11-12) | T0 | 5–7 | whether pre-electrolysis removes free HQ to ≤ 1 % without side effects (docs/12 "guard cell") | none; not a G1a/G1 input; outcome decides at G1: guard cell considered at Stage 2 / kept in the cartridge design / dropped | nothing (no guard cell in the hardware before the result) |
 | 1C Immune-complex transfer (conditional) | T0 | +3–4 | U8 | adopt / abandon L4 | second trap position, elution line |
 | 2 Flow path on the Waters | T2 | 8–16 | U5 dosing/trap, U4 wall NSB, cup transfer, first in-flow blanks | **G2: build primary / go to backup** | commercial thin-layer cell, machined cup, integrated trap (Stage 3) — or the backup bed parts; custom IDA cell and second potentiostat channel **only if** G2 shows electrochemical noise is a material part of the blank SD (revised after final review, S9) |
 | 3 Full primary platform | T3 | 16–28 | **U7** integrated blank statistics, unattended operation; IDA gain and two-channel readout only if bought | G3: start validation | nothing new (validation consumables) |
@@ -43,10 +44,12 @@ screens: label factor ≤ 0.02 GO, > 0.10 STOP; free HQ ≤ 10⁻⁵ accept, > 1
 with a magnet and the Gamry, plus the Waters stack only as a flow-injection electrochemical (FIA-EC) reader with a
 purchased wall-jet cell. No valve, pump, cup, trap or custom cell is bought before G1.
 
-**Stage 1 cost.** About 6 weeks of one bench scientist (≈ 25 bench days, schedule §10), plus 1–3 weeks lead time
+**Stage 1 cost.** About 6 weeks of one bench scientist (≈ 25 bench days, schedule §10; + 4 days for the
+informational E1.2b, added 2026-11-12), plus 1–3 weeks lead time
 for reagents. Purchases: antibodies (capture, two detection conjugates, non-immune IgG), streptavidin beads, a
 magnet rack, IgG-free BSA, HQDP (Metrohm DropSens), HQ standard, NISTmAb and a polyclonal human IgG standard,
-screen-printed electrodes with connector and a wall-jet flow cell, LoBind tubes and low-binding vials, a USB DAQ for
+screen-printed electrodes with connector and a wall-jet flow cell, a small divided bulk-electrolysis cell with
+carbon working, counter and reference electrodes and benzoquinone (E1.2b), LoBind tubes and low-binding vials, a USB DAQ for
 Inject Start, plus an external BLI/SPR service (docs/07 §0–1). Indicative list prices seen in this session (not
 quotes): NISTmAb ≈ 1 900 USD, magnet rack ≈ 880 USD, M-280 beads 2 mL ≈ 590 USD (offer ended 2024), IgG-free BSA
 50 g ≈ 570 USD; all other prices (antibodies, HQDP, electrodes, flow cell, DAQ, BLI service) were not checked.
@@ -134,7 +137,7 @@ in place. Bench time ≈ 5 days.
 | S0.5 | Electrochemical floor | Gamry 600+: (i) dummy cell, (ii) carbon SPE with a 50 µL drop of substrate buffer, (iii) same SPE in the DropSens wall-jet cell at 50 µL/min from the BSM. Chronoamperometry at +0.35 V vs on-strip Ag, 10 min, Faraday cage | RMS noise and drift per configuration → compare with `ma.noise` and docs/02 §4.5 (3 pA in flow, 1 pA stopped; UNVERIFIED) |
 | S0.6 | BSM low-flow check (the primary also depends on it: readout sweep at 10 µL/min and accumulation shunt at 10–50 µL/min, docs/05 §4.1; the backup loads at 10 µL/min — corrected by the final review, docs/08) | Gravimetric: 1, 10, 20, 100 µL/min into a weighed vial, 30 min each, 3 repeats, with the restrictor fitted | Flow error and CV; confirms or refutes `hw.bsm.flow_min` = 1 µL/min (docs/00 user statement) |
 | S0.7 | Clean-handling set-up | §8.1: dedicated pipettes, filter tips, LoBind tubes, "IgG-free" bench area, glove changes, sealed blank stock | SOP written into `bench/SOP_clean_handling.md` |
-| S0.8 | Orders and quotes | Order the Stage-1A items needed for E1.1–E1.3 and E1.7 (docs/07 §1); ask the BLI/SPR provider for a quote and slot, and ask for quotes and lead times for Stage 2/3 items, without ordering. **The BLI/SPR booking and the NISTmAb order wait for G1a** (week 5): both are useless if U1 or U3 stops the project (revised after final review, S8) | Purchase log |
+| S0.8 | Orders and quotes | Order the Stage-1A items needed for E1.1–E1.3, E1.2b and E1.7 (docs/07 §1); ask the BLI/SPR provider for a quote and slot, and ask for quotes and lead times for Stage 2/3 items, without ordering. **The BLI/SPR booking and the NISTmAb order wait for G1a** (week 5): both are useless if U1 or U3 stops the project (revised after final review, S8) | Purchase log |
 
 **G0 (week 2):** automation tests pass on the lab PC; Inject Start edges are logged; Stage-1 reagents delivered or
 dated. G0 has no "stop" outcome.
@@ -249,6 +252,170 @@ loading so no phosphate is carried into any step (revised after final review, B1
   UNVERIFIED); re-run the model with `ma.chemistries.alp_aap` / `alp_papp` and their measured values.
   Also: if k_h > 10⁻⁹ s⁻¹ but f_free passes, deliver substrate from a 4 °C vial instead of the B1 line (docs/02 R8)
   and re-check the cycle time.
+
+### E1.2b — Pre-electrolysis of the HQDP substrate ("guard cell" test; added 2026-11-12, user decision; bench test only)
+
+* **Status and scope.** Added by user decision after docs/12. **A bench test only**: no guard cell is added to the
+  gen-1 flow hardware, the step tables or the hardware design until this result is in and the decision below has
+  been taken. Numbered E1.2b so that no existing experiment number (cited in docs/08–12) changes. **Not a G1a/G1
+  input**: the G1 rule (§4.11) is unchanged and is applied with the free HQ of the lot *as delivered* (E1.2),
+  because gen-1 has no guard cell. Tier: T0 (Gamry 600+ and a small stirred cell; no Waters, no flow hardware).
+* **Purpose and the model question it answers.** docs/12 §2.3 point 2 derives that electrolysing the substrate
+  once at the read potential before accumulation removes the lot's free HQ (oxidised to benzoquinone, BQ, which is
+  not oxidised again at the read). It represents this in the model as `ma.chemistries.alp_hqdp.free_product_impurity`
+  × 0.01 (value 10⁻⁷, bounds 10⁻⁹–10⁻⁵; docs/12 §8 table, row "all"), resting on the **assumption that 1 % of the
+  fill escapes electrolysis (UNVERIFIED**; docs/12 §2.3, §8, §10). With that credit the S4a kill scenario (free HQ
+  10⁻³) becomes the nominal 10⁻⁵ case (docs/12 §3.9: A0 under S4a 19 pg/mL, P 0.00 → A1 under S4a 1.9 pg/mL,
+  P 0.22; nearest-model estimates), and docs/12 §9 decision 3 / §10 calls the idea portable to gen-1 as a
+  flow-through coulometric guard cell on the substrate line. The questions: (1) is a residual of ≤ 1 % of the free
+  HQ **chemically** reachable at the chosen potential, or is there a floor (HQ re-formed from BQ, an
+  electrogenerated product read as HQ, HQDP converted at the electrode)? (2) does free HQ re-grow after electrolysis
+  faster than the lot's own hydrolysis within the time to the end of accumulation? (3) does electrolysis harm
+  anything the model does not represent (HQDP consumption, BQ or its products inhibiting ALP or changing the
+  readout)? (4) does the counter electrode re-form HQ when it shares the solution? **What it does not answer:** the
+  geometric escape of a real guard cell or readout chamber (ports, valve seats, dead volume; the origin of the 1 %
+  in docs/12). In a stirred, divided bulk cell the mass-transfer escape exp(−p·t) is driven far below 1 %, so the
+  measured escape is the chemical floor; the geometric escape is measured only on a real cell (gen-1: Stage 2, if the
+  decision below calls for it; cartridge: docs/12 risk A5).
+* **Materials.** Gamry 600+ (potentiostatic chronoamperometry / bulk electrolysis); a divided bulk-electrolysis
+  cell, 5–10 mL glass, with the counter electrode in a fritted compartment; large-area carbon working electrode
+  (reticulated vitreous carbon or graphite felt, ≈ 1 cm³); Pt or graphite counter; Ag/AgCl (3 M KCl) reference
+  with frit; magnetic stirrer and PTFE stir bar; carbon SPEs (for the CVs in step 1); HQDP lot(s) of E1.2, HQ
+  standard, 1,4-benzoquinone (BQ) for the BQ-spike control, SB, amber glass vials, N₂; the conjugate D1 and its
+  standard series (§4.0) for the ALP-rate arm; the E1.1 readout (R-drop or R-FIA). New items: docs/07 §1.2 (rows
+  marked E1.2b); none has a checked part number.
+* **Choice of potential (reasoning).** Default **E_pre = +0.35 V vs Ag/AgCl, the read potential**
+  (`chem.substrates.HQ.detection_potential` 0.35 V, 0.30–0.42; DellaCiana1996 on glassy carbon): pre-electrolysis
+  then removes exactly what the read would count as HQ and nothing that the read cannot see. Thermodynamics is not
+  limiting (derived here): the HQ/BQ formal potential at pH 9.5 lies near 0 to −0.1 V vs Ag/AgCl (estimate used for
+  the IDA collector in E3.1, UNVERIFIED), so at +0.35 V the Nernst ratio [HQ]/[BQ] at the electrode is
+  exp(−2F·0.35 V/RT) ≈ 10⁻¹², far below 10⁻². A **higher** potential raises the risk of oxidising HQDP itself or
+  the matrix (onset potential of HQDP on carbon not found, **UNVERIFIED**; step 1 measures it); a **lower** one risks
+  incomplete removal on a high-area carbon with slow kinetics. Rule (judgement, applied to the step-1 CVs): keep
+  +0.35 V if the HQ wave reaches its mass-transport plateau by ≤ +0.30 V on the electrolysis carbon and 1 mM HQDP
+  shows no current above SB alone below +0.50 V; otherwise take the midpoint of the window and record why.
+* **Procedure.**
+  1. *Windows (½ day).* CV and SWV (−0.4 → +0.8 V, 20 mV/s; E1.1 SWV settings) on a carbon SPE and on the
+     electrolysis carbon in the cell: SB alone, SB + 1 mM HQDP (unspiked), SB + 10 µM HQ, SB + 10 µM BQ. Output: HQ
+     plateau potential, HQDP onset potential, BQ reduction potential (for the counter-electrode argument).
+  2. *Spiked solutions.* 1 mM HQDP in SB (lot of E1.2, fresh, dark) spiked with HQ to **10⁻⁴ (100 nM) and 10⁻³
+     (1 µM) mol/mol** immediately before use (docs/12 risk A5 asks for 10⁻⁴–10⁻³), plus the unspiked lot. The 10⁻³
+     spike is the S4a level and makes the 1 % residual 10 nM — ten times the E1.1 acceptance LOD (≤ 1 nM), so 1 %
+     is resolvable; the residual of the unspiked lot (≈ 0.1 nM at 10⁻⁵) is not, and only confirms "≤ LOD".
+  3. *Electrolysis (divided cell, stirred, 22 °C, air).* 5.0 mL in the cell; SB-only pre-electrolysis of the
+     carbon at E_pre until the current is flat (conditioning, recorded); then the solution, E_pre applied, current
+     logged at 1 s. Sample 3 × 100 µL at **10 and 30 min** with the potential still applied. From the background-
+     corrected current fit i(t) − i_bg = i₀·exp(−p·t) → p (s⁻¹) and the predicted mass-transfer escape exp(−p·t)
+     (expected minutes to exhaustion; p not known for this cell, UNVERIFIED). If the measured residual is far above
+     exp(−p·t) and does not fall from 10 to 30 min, it is a floor (chemistry), not mass transfer.
+  4. *Same-cell open-circuit control* for every spike level and day: the same solution stirred in the same cell for
+     the same time with the potential off. Escape is formed against this control, which removes air oxidation of HQ
+     during the electrolysis (HQ t½ 2 h, `ma.chemistries.alp_hqdp.product_half_life`, UNVERIFIED) from the result.
+  5. *Residual free HQ.* Each aliquot read by **standard addition** of HQ 0, 3, 10, 30 nM, triplicate reads, on the
+     E1.1 route — the E1.2 method, so residuals and E1.2's f_free are on the same scale. Open-circuit controls at
+     10⁻³ are diluted 1:10 in SB before the read (the standard addition absorbs the matrix change).
+  6. *Arms and replicates.* Independent electrolyses (fresh solution, conditioned electrode) per condition:
+     10⁻³ at +0.35 V **n = 3**; 10⁻⁴ at +0.35 V n = 3; unspiked at +0.35 V n = 3; 10⁻³ at **+0.25 and +0.45 V**,
+     n = 2 each (does the residual plateau with potential; does a higher potential create HQ-like products);
+     **undivided cell** (counter in the same solution), 10⁻³ at +0.35 V, n = 2 (does the cathode reduce BQ back to
+     HQ — the question any guard cell or in-chamber pre-electrolysis with a nearby counter must answer); SB alone at
+     +0.35 V, n = 3 (background charge and electrode drift); **repeat electrolysis** of one unspiked solution
+     (10 min, then 60 min, then a second 10-min run): any HQDP-borne current above SB is converted to the fraction
+     of HQDP consumed (Q / (2F·n_HQDP)).
+  7. *Re-growth after electrolysis.* Electrolysed unspiked and 10⁻³ solutions transferred to amber glass at 22 °C
+     and read (standard addition, triplicate) at **0, 0.5, 1, 2, 4 and 8 h**; the same lot non-electrolysed at the
+     same times (control; the E1.2 time course on the same day). Fit d[HQ]/dt = k_h·[HQDP] − k_ox·[HQ] with k_ox from
+     E1.2 step 4 → k_h,post (electrolysed) vs k_h,control. Starting from ≈ 0 instead of the lot's free HQ, k_h,post
+     is the more sensitive estimate of the lot's hydrolysis (nominal 10⁻¹⁰ s⁻¹ gives ≈ 2.9 nM in 8 h at 1 mM before
+     oxidation; 30 min gives 0.18 nM, below any readout).
+  8. *Side effects of BQ and of electrolysis.* (a) SWV (−0.4 → +0.6 V) of the electrolysed 10⁻³ solution against
+     the unspiked, non-electrolysed lot: any new peak, and the apparent HQ at the read potential that it causes.
+     (b) **BQ-spike control:** 1 µM BQ (the BQ an electrolysed 10⁻³ solution holds) added to the unspiked lot,
+     without electrolysis, read at 0, 0.5, 2 and 8 h (does BQ or its alkaline decomposition products read as HQ or
+     re-form HQ?; BQ fate at pH 9.5 is UNVERIFIED). (c) **ALP rate:** the conjugate standard series (§4.0; 0,
+     1×10⁵, 1×10⁶, 3×10⁶ molecules, duplicate) incubated 60 min in electrolysed 10⁻³ substrate, in the BQ-spike
+     substrate and in non-electrolysed unspiked substrate; slope ratio = (electrolysed or BQ) / control. (d) HQ
+     standard-addition slope electrolysed / control (readout sensitivity unchanged by BQ).
+* **Measured quantities → model inputs.**
+  * **Escape fraction f_esc** = residual HQ (electrolysed) / HQ (open-circuit control, same time), with its 95 % CI
+    (log scale, t with n − 1). **No parameter key exists** for this quantity (params/*.yaml checked: there is no
+    pre-electrolysis or escape key; docs/12 applies it as a multiplier on `ma.chemistries.alp_hqdp.free_product_impurity`
+    in a scratch copy, its §8 and Appendix A `pre_el`). Record it in `bench/S1_E1.2b_<date>/results.yaml` as
+    `pre_electrolysis_escape_fraction: {value, low, high, e_pre_V, electrolysis_min, cell: divided, source}` and as a
+    **comment line** in `bench/measured_values.yaml` — **not as a key**: `model_feedback` rejects any key that is
+    not a model parameter (`design_lib.apply_bench_values` raises KeyError), and the value must not enter G1. It is
+    used only in scenario runs of the guard-cell / cartridge variants: free_product_impurity × f_esc (and its
+    bounds) in place of docs/12's × 0.01.
+  * **k_h,post** → `ma.chemistries.alp_hqdp.hydrolysis_rate` — the same quantity of the same lot as E1.2. It is
+    entered (at G1, not G1a) only if E1.2's time course could not resolve k_h and the two are consistent; this is a
+    better measurement of an existing G1 input, not a new input, and the rule is unchanged.
+  * HQ t½ in electrolysed substrate → consistency check of `ma.chemistries.alp_hqdp.product_half_life` (E1.2 keeps
+    the entered value).
+  * CV of the residual background over replicate electrolyses → informs `ma.noise.substrate_background_cv` for the
+    pre-electrolysed variants only (scenario runs; not entered at G1).
+  * p (s⁻¹), charge per electrolysis, fraction of HQDP consumed, ALP-rate ratio, readout-slope ratio, new-peak
+    current: no key; recorded in the folder (needed to size a guard cell and to judge side effects).
+* **Acceptance (derived here from docs/12's arithmetic; thresholds fixed before data).** The U3 acceptance for free
+  HQ is 10⁻⁵ mol/mol and its kill line 10⁻⁴ (docs/05 §5 U3; `gates.yaml` G1 free_hq_mol_per_mol). docs/12's credit
+  "S4a (10⁻³) → nominal (10⁻⁵)" requires f_esc ≤ 10⁻⁵ / 10⁻³ = **10⁻²**, which is the 1 % assumption itself. A
+  guard cell that cannot bring even a lot at the kill line into acceptance needs f_esc > 10⁻⁵ / 10⁻⁴ = **10⁻¹**,
+  and then has no use for any lot that E1.2 does not already accept. Hence:
+  * **PASS** (pre-electrolysis chemically supports the docs/12 credit): upper 95 % bound of f_esc ≤ **0.01** at the
+    10⁻³ spike, divided cell, E_pre, 30 min; **and** all side-effect criteria below. (With n = 3 and a 20 % CV of
+    the residual the upper bound is ≈ 1.6× the point estimate, so a pass needs a point estimate ≲ 0.006.)
+  * **INTERMEDIATE**: 0.01 < f_esc ≤ 0.1 (point estimate), side effects pass — the S4a scenario is not rescued, a lot
+    in the purify band (10⁻⁵–10⁻⁴) is.
+  * **FAIL**: f_esc > 0.1 (point estimate), **or** any side-effect criterion fails.
+  * Side-effect criteria (each must pass for PASS or INTERMEDIATE):
+    (i) re-growth: k_h,post ≤ **10⁻⁹ s⁻¹** (the U3 hydrolysis acceptance; derived: over a 30-min window — guard cell
+    to end of accumulation, gen-1 fill + accumulation + readout = 12 min, docs/12 A 15-min accumulation, plus line
+    dwell — it re-forms ≤ 1.8×10⁻⁶ mol/mol, ≤ 18 % of the 10⁻⁵ acceptance) **and** k_h,post ≤ 2 × k_h,control
+    (derived: electrolysis must not create an HQ source; ×2 is about what two triplicate slope fits at a few nM can
+    resolve, UNVERIFIED until E1.1 gives the readout CV);
+    (ii) no HQ-like product: any new SWV peak, and the BQ-spike control, add ≤ **1 nM HQ-equivalent** at the read
+    potential in 1 mM HQDP (derived: 10⁻⁶ mol/mol, 10 % of the 10⁻⁵ acceptance; also ≈ the E1.1 LOD);
+    (iii) ALP rate ratio and HQ readout-slope ratio within **0.85–1.15** (derived: about what a duplicate/triplicate
+    ratio resolves at 10–20 % readout CV, §12.2; on the platform a smaller common factor scales specific and NSB
+    signal alike);
+    (iv) HQDP consumed per electrolysis ≤ **1 %** (derived: keeps the substrate concentration, and so v/V_max and the
+    ULOQ, within the weighing tolerance of the solution).
+  * Informational, no pass/fail: undivided/divided escape ratio (> 2 → any guard or in-chamber pre-electrolysis
+    needs a counter electrode separated from, or downstream of, the treated volume); residual at +0.25 and
+    +0.45 V (chooses E_pre if +0.35 V fails a side-effect criterion that a lower potential passes).
+* **Model / literature expectation.** Assumption to be tested: 1 % escape (docs/12, **UNVERIFIED**; geometric in
+  origin, so a stirred divided cell is expected to do better unless a chemical floor exists). Nernst floor at
+  +0.35 V ≈ 10⁻¹² (derived above). Re-growth at the nominal k_h 10⁻¹⁰ s⁻¹ (`hydrolysis_rate`, UNVERIFIED): 0.18 nM
+  in 30 min, 2.9 nM in 8 h at 1 mM before oxidation. A commercial flow-through coulometric cell — the guard-cell
+  candidate named in docs/12 §9 decision 3 — is specified at collection efficiency 0.95 (0.8–1.0;
+  `hw.flow_cells.thermo_6011rs_coulometric.collection_efficiency`, THERMO_6011RS "near 100 %"), i.e. a single-pass
+  escape of ≈ 5 %, which by itself would be INTERMEDIATE here; its two porous-graphite electrodes in series could
+  do better (UNVERIFIED), and its minimum flow of 300 µL/min (`…min_flow`) is above the gen-1 fill flow of
+  200 µL/min (`cycle_primary.yaml` substrate_fill). Both are Stage-2 questions; this test only says whether the
+  chemistry allows ≤ 1 %.
+* **Time.** 4 bench days (½ day windows; 2 days of electrolyses with reads; 1 day for re-growth reads and the
+  ALP/BQ arms; ½ day analysis), plus the 8-h reads. Weeks 5–7, after G1a (§10): it does not compete with E1.2/E1.3
+  for the G1a critical path, and it is reported at G1 (weeks 7–8) so the Stage-2 order list can include or omit a
+  guard-cell quote. It runs whatever the G1a verdict, unless the project is reported non-reachable.
+* **Data.** `bench/S1_E1.2b_<YYYY-MM-DD>/` (§9.1) with the Gamry files (CVs, i(t) of every electrolysis), the
+  filled `automation/templates/pre_electrolysis.csv` and `results.yaml`. `python -m elisa_auto.analyze` has no
+  handler for this template (it ignores the file); the residuals are standard-addition intercepts computed as in
+  E1.2 (`stats.standard_addition`).
+* **Decision that follows each outcome** (taken at G1, by the user; none changes the G1 rule):
+  * **PASS** → *included in the cartridge design*: docs/12's pre-electrolysis step (PE1) is kept, with the
+    measured f_esc replacing the assumed 0.01 in its nearest-model runs; the readout chamber's own geometric escape
+    remains docs/12 risk A5. *Gen-1: guard cell considered at Stage 2* — quoted with the Stage-2 orders and built and
+    tested in flow (geometric escape of the real cell at the gen-1 fill flow, with the same thresholds) only if
+    (a) E1.2 places the lot above 10⁻⁵ (purify band or above: the guard cell then replaces purification or a
+    substrate change as the first remedy), or (b) a model run of the primary with free_product_impurity × f_esc
+    gains ≥ 0.05 in P (the decision-grade margin, §12.6). Otherwise gen-1 stays without a guard cell.
+  * **INTERMEDIATE** → cartridge: PE1 kept only as a background-recording step, with the credit in the model reduced
+    to the measured f_esc (no S4a rescue claimed). Gen-1: guard cell considered at Stage 2 only under (a), and only
+    for a lot whose f_free × f_esc ≤ 10⁻⁵.
+  * **FAIL** → *dropped* from gen-1 and from the cartridge design; the docs/12 rows with pre-electrolysis (A1, B1,
+    C2 pre-electrolysis, A1 under S4a) are void and the corresponding rows without it apply; S4a remains a kill
+    scenario and U3 is handled only by E1.2's purify/replace route. If only +0.45 V or only the undivided cell
+    fails, the outcome is decided on the arm that passes and the restriction (potential ceiling, separated counter)
+    is recorded as a design requirement.
 
 ### E1.3 — U1: conjugate NSB on blocked streptavidin beads (rate, linearity, reversibility, IgG vs F(ab′)₂)
 
@@ -759,7 +926,8 @@ maximum); electrode conditioning logged.
 
 **9.1 Where results go.** `bench/<stage>_<experiment>_<YYYY-MM-DD>/` with `README.md` (what, who, lots, deviations),
 raw instrument files, and the filled CSV template from `automation/templates/` (u1_nsb.csv, u3_free_hq.csv,
-blanks_calibration.csv, carryover.csv, dissociation.csv, bli.csv). Automated runs are written by the sequencer to
+blanks_calibration.csv, carryover.csv, dissociation.csv, bli.csv; pre_electrolysis.csv for E1.2b, not parsed by
+`analyze`). Automated runs are written by the sequencer to
 `bench/runs/<run_id>/` (trace, metadata, event log). `bench/measured_values.yaml` collects every model input the bench
 has measured:
 
@@ -783,6 +951,7 @@ is stored as a second quantity (redox-cycling check). Same code in `automation/e
 | detection-on-capture R (E1.4) | `ma.labelling.detection_on_capture_residual_factor` | model_feedback | pair acceptance |
 | k_on, k_off (E1.5/E1.6) | `chem.antibodies.kon_capture`, `koff_capture`, `kon_detection`, `koff_detection` | model_feedback | one-step vs sequential mode |
 | free HQ, hydrolysis, HQ t½ (E1.2) | `ma.chemistries.alp_hqdp.free_product_impurity`, `.hydrolysis_rate`, `.product_half_life` | model_feedback; `scripts/kill_thresholds.py` | substrate accept/purify/replace; B1 line vs vial |
+| pre-electrolysis escape fraction f_esc, side-effect ratios (E1.2b, added 2026-11-12) | **no key**: `results.yaml` in the E1.2b folder and a comment line in `measured_values.yaml` (a non-parameter key would make `model_feedback` stop); k_h,post → `ma.chemistries.alp_hqdp.hydrolysis_rate` only as described in E1.2b | scenario runs only: `free_product_impurity` × f_esc for the guard-cell / cartridge variants (docs/12 §8 method, scratch copy) | guard cell considered at Stage 2 / kept in the cartridge design / dropped — **not** G1a/G1 |
 | K_i, Km (E1.7) | `chem.enzymes.alp.phosphate_inhibition_Ki`, `ma.chemistries.alp_hqdp.Km` | `scripts/optimise_designs.py` (HQDP, accumulation) | ULOQ ≥ 1000: HQDP 1 vs 3 mM |
 | B, slope (E1.8) | consistency check of the above (no key) | — | G1 consistency |
 | contamination (E1.9) | `ma.nsb.blank_igg_contamination_equivalent` | model_feedback | handling SOP |
@@ -829,6 +998,7 @@ counted from the Stage-0 start (assumed 2026-11-16); holidays not included.
 | 5–7 | E1.4, E1.5, E1.7 | E1.3 method; NISTmAb for E1.5 | 5.5 |
 | 5–8 | E1.6 BLI/SPR (external) | G1a; antibodies shipped to service | 1 |
 | 5–7 | E1.8 + E1.9 tube integrated assay | E1.3, NISTmAb | 3.5 |
+| 5–7 | E1.2b HQDP pre-electrolysis test (informational, not a G1a/G1 input; added 2026-11-12) | E1.1 route, E1.2 lot and k_ox, D1 standard series | 4 |
 | 6–7 | E1.10 SM-FL recovery | E1.8 format | 2 |
 | 7–8 | **G1**, model feedback, Stage-2 orders | all Stage-1 | 1 |
 | 8–12 | (Stage 1C if triggered, 3–4 weeks, in parallel with Stage-2 lead time) | G1 | 10–15 |

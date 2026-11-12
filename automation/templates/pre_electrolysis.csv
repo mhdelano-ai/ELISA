@@ -1,0 +1,61 @@
+kind,arm,replicate,spike_mol_per_mol,e_pre_V,electrolysis_min,t_after_h,dilution,added_nM,molecules,signal,note
+std_add,electrolysed,1,1.0e-3,0.35,30,0,1,0,,2.1541,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,1,1.0e-3,0.35,30,0,1,3,,3.7044,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,1,1.0e-3,0.35,30,0,1,10,,7.1094,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,1,1.0e-3,0.35,30,0,1,30,,16.8385,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,2,1.0e-3,0.35,30,0,1,0,,1.8585,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,2,1.0e-3,0.35,30,0,1,3,,3.4021,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,2,1.0e-3,0.35,30,0,1,10,,6.7589,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,2,1.0e-3,0.35,30,0,1,30,,16.4144,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,3,1.0e-3,0.35,30,0,1,0,,2.2590,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,3,1.0e-3,0.35,30,0,1,3,,3.7600,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,3,1.0e-3,0.35,30,0,1,10,,7.3292,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,electrolysed,3,1.0e-3,0.35,30,0,1,30,,16.9347,EXAMPLE residual HQ after pre-electrolysis (1 mM HQDP)
+std_add,open_circuit,1,1.0e-3,,30,0,10,0,,42.5043,EXAMPLE same-cell control without potential; read 1:10
+std_add,open_circuit,1,1.0e-3,,30,0,10,3,,43.9430,EXAMPLE same-cell control without potential; read 1:10
+std_add,open_circuit,1,1.0e-3,,30,0,10,10,,46.0695,EXAMPLE same-cell control without potential; read 1:10
+std_add,open_circuit,1,1.0e-3,,30,0,10,30,,58.1187,EXAMPLE same-cell control without potential; read 1:10
+std_add,undivided,1,1.0e-3,0.35,30,0,1,0,,12.5802,EXAMPLE counter electrode in the same solution
+std_add,undivided,1,1.0e-3,0.35,30,0,1,3,,14.6690,EXAMPLE counter electrode in the same solution
+std_add,undivided,1,1.0e-3,0.35,30,0,1,10,,17.5710,EXAMPLE counter electrode in the same solution
+std_add,undivided,1,1.0e-3,0.35,30,0,1,30,,27.4204,EXAMPLE counter electrode in the same solution
+std_add,sb_only,1,0,0.35,30,0,1,0,,0.1025,EXAMPLE substrate buffer without HQDP
+std_add,sb_only,1,0,0.35,30,0,1,3,,1.6064,EXAMPLE substrate buffer without HQDP
+std_add,sb_only,1,0,0.35,30,0,1,10,,5.1927,EXAMPLE substrate buffer without HQDP
+std_add,sb_only,1,0,0.35,30,0,1,30,,14.9896,EXAMPLE substrate buffer without HQDP
+regrowth,electrolysed,1,0,0.35,30,0,1,0,,0.0502,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,electrolysed,1,0,0.35,30,0.5,1,0,,0.1531,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,electrolysed,1,0,0.35,30,1,1,0,,0.2535,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,electrolysed,1,0,0.35,30,2,1,0,,0.4010,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,electrolysed,1,0,0.35,30,4,1,0,,0.6359,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,electrolysed,1,0,0.35,30,8,1,0,,0.9585,EXAMPLE unspiked lot after pre-electrolysis; amber glass 22 C
+regrowth,control,1,0,,,0,1,0,,5.0077,EXAMPLE same lot not electrolysed
+regrowth,control,1,0,,,0.5,1,0,,4.5141,EXAMPLE same lot not electrolysed
+regrowth,control,1,0,,,1,1,0,,4.0173,EXAMPLE same lot not electrolysed
+regrowth,control,1,0,,,2,1,0,,3.3718,EXAMPLE same lot not electrolysed
+regrowth,control,1,0,,,4,1,0,,2.2976,EXAMPLE same lot not electrolysed
+regrowth,control,1,0,,,8,1,0,,1.4057,EXAMPLE same lot not electrolysed
+alp,control,1,0,,,0,1,,0,5.0667,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,2,0,,,0,1,,0,4.8913,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,1,0,,,0,1,,100000,5.1582,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,2,0,,,0,1,,100000,5.1480,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,1,0,,,0,1,,1000000,7.2773,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,2,0,,,0,1,,1000000,6.9870,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,1,0,,,0,1,,3000000,11.1435,EXAMPLE conjugate standard series 60 min in this substrate
+alp,control,2,0,,,0,1,,3000000,11.1363,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,1,1.0e-3,0.35,,0,1,,0,4.9719,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,2,1.0e-3,0.35,,0,1,,0,4.8449,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,1,1.0e-3,0.35,,0,1,,100000,5.2942,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,2,1.0e-3,0.35,,0,1,,100000,5.1517,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,1,1.0e-3,0.35,,0,1,,1000000,7.0397,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,2,1.0e-3,0.35,,0,1,,1000000,6.7588,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,1,1.0e-3,0.35,,0,1,,3000000,10.7252,EXAMPLE conjugate standard series 60 min in this substrate
+alp,electrolysed,2,1.0e-3,0.35,,0,1,,3000000,11.0920,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,1,0,,,0,1,,0,5.1431,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,2,0,,,0,1,,0,4.8698,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,1,0,,,0,1,,100000,5.0517,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,2,0,,,0,1,,100000,5.1854,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,1,0,,,0,1,,1000000,7.0005,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,2,0,,,0,1,,1000000,6.9221,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,1,0,,,0,1,,3000000,10.7650,EXAMPLE conjugate standard series 60 min in this substrate
+alp,bq_spike,2,0,,,0,1,,3000000,10.4884,EXAMPLE conjugate standard series 60 min in this substrate
