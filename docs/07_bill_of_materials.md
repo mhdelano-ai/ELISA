@@ -5,6 +5,9 @@
 > potentiostat channel are conditional on G2 data (S9, §3); Gamry bipotentiostat statement corrected (docs/08 §9
 > C11); non-immune beads made with normal goat F(ab′)₂ (W8). BLI/SPR and NISTmAb are ordered after G1a (S8).
 
+> **Added 2026-11-12:** §8, cartridge track — only the M5a items are purchasable now; post-G1 stages by cost class
+> only (docs/16).
+
 Status: 2026-11-11. Companion to `docs/06_bench_plan.md`; stages and gates are defined there. **Nothing in a later
 stage is ordered before its gate passes**; quotes and lead times for later stages are requested in Stage 0 so the
 order can be placed on the gate day.
@@ -249,3 +252,40 @@ Beads and conjugate are never stored together: holding beads in ~3.3 nM conjugat
 * BASi MX-ED-IDA5-Pt: https://basinc.com/products/MX-ED-IDA5-Pt
 * CLSI EP17 replicate numbers (secondary sources only): https://metricgate.com/docs/clsi-ep17-detection-limit/ ;
   https://www.westgard.com/probit-part-one.htm
+
+---
+
+## 8. Cartridge track (second generation; added 2026-11-12, docs/16)
+
+Only the items of the approved pre-G1 test **M5a** (docs/06 M5a; docs/13 §10.1) are purchasable now. Nothing in this
+section is bought for gen-1, and nothing beyond M5a is ordered before a G1 GO or GO-WITH-LEVER and the E1.2b result
+(docs/16 §6). Sources are the docs/11 keys (URLs in docs/11 §9); no part number or price below was checked in this
+session beyond what docs/11 records.
+
+### 8.1 M5a — purchasable now
+
+| Item | Specification | Purpose (docs/06 M5a) | Qty | Candidate supplier / part | Price / notes |
+|---|---|---|---|---|---|
+| Catalogue Au thin-film electrode dies | glass, Au 150 nm on 50 nm Ti, support 10 × 6 mm, Au RE and CE on the die; IDA with both combs joined as one WE, or single thin-film electrodes | the WE of the clamp cell | 5–10 | Micrux IDA family, e.g. **MX-ED-IDA6-Au** (5/5 µm, 30 pairs) or MX-ED-IDA1-Au **[S/D as docs/11 §2.3: BASI_IDA (H), PALMSENS_IDA (M)]**; Micrux thin-film single electrodes (catalogue existence only, DI_MICRUX_SINGLE, L; geometry and part numbers UNVERIFIED) | **price on request** (docs/11 §2.3); pad pitch and position UNVERIFIED — get the datasheet before the clamp cell is drawn |
+| Die holder / connection | Micrux connection platform ("one of the Micrux cells is necessary to connect", PALMSENS_IDA): AIO platform, optional flow add-on in PMMA or PEEK | incoming CV check of each die; reference connection before mounting in the M5a clamp | 1 | Micrux AIO platform (PALMSENS_AIO, DI_AIO, M); flow add-on ref. "MX-ED-AIO-ADD-ON-FC-PMMA" seen only in a search summary (docs/11 §2.3) — **confirm on quote** | price on request; the M5a clamp itself (pogo from below through a contact window) is custom, below |
+| Clamp-cell laminate parts | 140 µm COC foil; laser-cut 0.175 mm COC sheet; 25 µm double-sided adhesive film; TPE coupons 0.3–0.5 mm; PMMA/PEEK clamp with a contact window | reproduces the docs/13 §2 stack; one cell with 0.5 mm, one with 1.0 mm stubs | 1 clamp + 10 laminate sets | in-house laser cutting or a laminate supplier (docs/11 §1.3; COC foil thickness DARWIN_CS4CH); materials UNVERIFIED | cost class low (docs/13 §11); no prices seen |
+| Spring-loaded (pogo) contacts | gold-plated, low-leakage mounting (≥ 5×10¹² Ω pad-to-WE target) | contact from below | 1 set (6–10 pins) | to be selected (Mill-Max page returned 403, docs/11 §5.4) — UNVERIFIED | low |
+| Grounded Faraday box, 25.0 °C block | as Stage 0 Faraday cage; small Peltier or heated block | shielding, temperature | 1 | Stage 0 cage reused if it fits; block UNVERIFIED | low |
+| Docked Ag/AgCl reference + high-impedance voltage input (≥ 10¹² Ω) | salt-bridge reference; electrometer-grade input logged by the PC | QRE drift log (M5a-5) | 1 | Stage-1 E1.2b reference electrode type (§1.2) may be reused; voltage input to be selected (UNVERIFIED) | low |
+| Noise-source kit | solenoid plunger, small stepper with chopper driver + 2 × 2 × 4 mm NdFeB magnet, syringe pump (gen-1 class, or borrowed), Peltier module on PWM, reed relay | M5a noise-source arms | 1 | to be selected (docs/13 §11: "low, to be selected") — no part numbers | low |
+| HQDP at 3 mM, NaCl | Stage-1 HQDP lot (§1.1 DRP-HQDP-0.5G), NaCl analytical grade | substrate of the reads | — | from Stage-1 stock | — |
+
+Reused, not bought: Gamry Reference 600+ (in hand), Stage-1 HQ standards and SB components.
+
+### 8.2 Post-G1 cartridge stages — cost class only
+
+Cost class [assessment, docs/13 §11]: **low** < €1 k, **medium** €1–10 k, **high** > €10 k. Item lists: docs/13 §11;
+stage contents and gates: docs/16 §6. No item is ordered before its gate.
+
+| Stage (docs/16 §6) | Gate before ordering | Content (summary) | Cost class |
+|---|---|---|---|
+| Shared tube test B-E1 = C′-R2 | G1 GO / GO-WITH-LEVER | 10 µm and 50 µm streptavidin particles vs M-280 beads in tubes (gen-1 reagents) | low (particles as §3B; price not checked for 10 µm) |
+| C1 mock-ups M1–M8 | G1 GO / GO-WITH-LEVER and E1.2b recorded | laminate coupons and mock-up cards, milled upper bodies, anvil with windows and slot, magnets, Z units and a motorised stage, syringe pumps, 2-channel pressure controller; optional ChipShop Fluidic 1367 reference chips (€34.40 each from 10, CS_1367, docs/11 §2.2) | medium |
+| C′ mock-up (only if B-E1 ≤ 2) | B-E1 | milled 0.1 µL cavity with weir, dock pinch/solenoid valves, catalogue IDA die | medium |
+| C2 prototype cards and dock | GC1 and gen-1 G2 | custom electrode die wafer run, 10–20 laminated cards, full dock (21 plungers, carriage, 5 pumps, 3 thermal zones, electrode bay) | high (price on request) |
+| C3 moulded pre-series | GC2 | upper-body mould (MOQ 100), series lamination, die bonding | high (price on request) |

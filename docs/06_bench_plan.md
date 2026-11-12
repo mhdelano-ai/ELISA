@@ -8,6 +8,10 @@
 > are marked "(revised after final review)". Model numbers quoted here are the revised ones (thin-layer cell, S13
 > corrections, K_i override); docs/05 numbers are kept only where marked "docs/05".
 
+> **Added 2026-11-12 (cartridge round, docs/16):** the approved pre-G1 cartridge test M5a (before §4.10; informational,
+> not a G1a/G1 input; its approved slot does not fit the bench load — options in its Schedule paragraph), a pointer
+> section §14, and three OPEN items in §13. The G1 rule is unchanged.
+
 Status: 2026-11-11. Inputs: docs/00–05, `params/*.yaml`, `results/design/`, `src/elisa_sim/`. This document plans
 the bench phase for the design chosen in docs/05 (primary: renewable streptavidin magnetic beads, SIA dispenser
 and stirred in-line cup, bead trap on the 10-port isolation valve, ALP/HQDP, a commercial single-channel thin-layer
@@ -31,6 +35,7 @@ Tiers: **T0** = no flow system (tubes, magnet, rotator, a drop on a screen-print
 | 0 Set-up and facts | T0/T1 | 0–2 | instrument facts, noise floor, PC, vendor answers | G0: lab PC runs the simulated cycle; Inject Start seen; Stage-1 reagents in hand | Stage-1 reagents are ordered in week 0 (they gate everything) |
 | **1 Reachability** | **T0 + T1** | 2–8 | **U1** conjugate NSB (+ reservoir ageing), **U3** free HQ, **U2** off-rates, detection-on-capture, U6, U9, SM-FL recovery, a tube-format integrated blank-equivalent | **G1a (wk 5, U1 + U3) and G1 (wk 7–8): GO / GO-WITH-LEVER / STOP on model P(success)** (revised after final review) | valves, SIA pump, magnet actuator, prototype cup and trap parts (Stage 2); BLI/SPR service and NISTmAb only after G1a |
 | (1A, informational) HQDP pre-electrolysis test E1.2b (added 2026-11-12) | T0 | 5–7 | whether pre-electrolysis removes free HQ to ≤ 1 % without side effects (docs/12 "guard cell") | none; not a G1a/G1 input; outcome decides at G1: guard cell considered at Stage 2 / kept in the cartridge design / dropped | nothing (no guard cell in the hardware before the result) |
+| (cartridge track, informational) M5a read-background test on a catalogue die (approved 2026-11-12) | T0 | 6–8 approved; **does not fit the bench load — see M5a, options (a)–(c)** | whether cartridge A's three-window step read reaches SD(Q_net) ≤ 0.05 nC with dock noise sources; escape of in-cell pre-electrolysis (docs/13 §10.1) | none; **not a G1a/G1 input**; decides A's read mode (docs/16 §6.1) | nothing for gen-1; post-G1 cartridge mock-ups per docs/16 §6.2 |
 | 1C Immune-complex transfer (conditional) | T0 | +3–4 | U8 | adopt / abandon L4 | second trap position, elution line |
 | 2 Flow path on the Waters | T2 | 8–16 | U5 dosing/trap, U4 wall NSB, cup transfer, first in-flow blanks | **G2: build primary / go to backup** | commercial thin-layer cell, machined cup, integrated trap (Stage 3) — or the backup bed parts; custom IDA cell and second potentiostat channel **only if** G2 shows electrochemical noise is a material part of the blank SD (revised after final review, S9) |
 | 3 Full primary platform | T3 | 16–28 | **U7** integrated blank statistics, unattended operation; IDA gain and two-channel readout only if bought | G3: start validation | nothing new (validation consumables) |
@@ -661,6 +666,92 @@ is 1 pg/mL, resolvable in the tube format (a 100 pg/mL challenge gives 0.01 pg/m
 * **Outcome.** Recovery < 0.6 → change vials, raise carrier to 2 % or add 0.01 % Tween to the diluent, consider a
   PEEK/HPS loop (docs/02 R1); re-test before Stage 2 depends on it.
 
+### M5a — Read background of the cartridge step read on a catalogue electrode die (cartridge track; approved pre-G1 test, added 2026-11-12, user decision; informational)
+
+* **Status and scope.** Approved by the user on 2026-11-12 as the **only cartridge bench work before G1**
+  (docs/16 §2, §6.1). Protocol and acceptance are taken from docs/13 §10.1 (Revision B). **Informational for the
+  cartridge track; NOT a G1a/G1 input**: the G1 rule (§4.11) is unchanged, no M5a quantity is entered into
+  `bench/measured_values.yaml` as a key, and no gen-1 decision depends on it. Tier: T0 (Gamry Reference 600+ in hand,
+  a clamp cell, no Waters, no flow hardware). Numbered M5a (docs/13's mock-up series M1–M8), not E1.x, so that no
+  existing experiment number changes.
+* **Purpose and the question it answers.** Cartridge A reads a sealed 1.34 µL cell by a three-window potential-step
+  read, Q_net = Q_a − 2Q_b + Q_c, which cancels constant offset and linear drift (docs/13 §3.5.4). The model does not
+  represent this read's background; docs/13 §1.3 shows P 0.141 at SD(Q_net) = 0.05 nC and 0.097 at 0.155 nC. The
+  questions: (1) is SD(Q_net) ≤ 0.05 nC reachable, drift-corrected, with representative dock actuation noise
+  running? (2) does the bottom contact route through a dry window work? (3) how much free HQ escapes in-cell
+  pre-electrolysis on Au at 3 mM in the real cell geometry (complement to E1.2b, which tests carbon, 1 mM and a bulk
+  divided cell; docs/15 N9)? Outcome: step read retained, or the R-flow fallback read (docs/13 §3.5.7).
+* **Materials.** 5–10 catalogue Micrux Au thin-film dies (single-electrode dies, geometry UNVERIFIED, or IDA dies with
+  both combs joined as one WE; 10 × 6 mm, Au RE and CE on the die; docs/11 §2.3; docs/07 §8); clamp cell reproducing
+  docs/13 §2: 140 µm COC foil floor, laser-cut 0.175 mm COC sheet + 25 µm adhesive film (cell 2.6 × 2.0 × 0.200 mm
+  over the WE, or the WE area the die allows, ≈ 5 mm²), two lane stubs ending at clamped TPE flat-floor valves — one
+  cell with **0.5 mm** and one with **1.0 mm** stubs; fill path through the die's RE/CE region where its geometry allows
+  (otherwise an external CE/RE through a 0.2 mm channel, recorded as a deviation); pogo pins **from below through a
+  contact window**; PMMA/PEEK clamp; grounded Faraday box; block at 25.0 ± 0.2 °C. Docked salt-bridge Ag/AgCl
+  reference read by a high-impedance (≥ 10¹² Ω) voltage input for the QRE log. **Dock noise sources**, each switched by
+  the PC: a solenoid plunger pressing a TPE coupon on a foil 20 mm from the die; a stepper with chopper driver moving a
+  2 × 2 × 4 mm NdFeB magnet 0.16 mm under a foil 10 mm from the cell; a syringe pump pumping water 50 mm away; a Peltier
+  module on PWM; a reed relay. Solutions: Stage-1 SB made at 3 mM HQDP (0.1 M Tris pH 9.5, 1 mM MgCl₂) **+ 50 mM
+  NaCl**; HQ standards (§4.0). Items: docs/07 §8 (no part numbers checked).
+* **Procedure** (docs/13 §10.1).
+  1. *CV on Au:* E_det (lowest potential on the HQ plateau), E_rest window (neither HQ oxidation nor BQ reduction), Au
+     oxide onset; E_rest check: 30-s E_rest hold on 100 nM HQ.
+  2. *Quiet blank reads:* ≥ 30 three-window reads (30 s pre-rest, 3 × 60-s windows, 15-s rests; 4.0 min) on fresh
+     substrate fills per die, ≥ 3 dies, over ≥ 3 days. From each read: Q_net, the linear drift (Q_c − Q_a)/(2Δ·T), the
+     curvature term, and — from the same data — the two-window Q_a − Q_b for comparison. Fixed range plan vs autorange.
+  3. *Noise-source arms:* the same reads with each source (i) actuating during E_det windows, (ii) actuating only in
+     the E_rest segments, (iii) off; randomised order, ≥ 10 reads per arm and source.
+  4. *Collection:* HQ standards 10–300 nM in the cell → Q_net vs 2F·V·c → read weight (predicted 0.92 at 25 °C).
+  5. *Pre-electrolysis and escape* (after E1.2b's windows and chemical floor are known): substrate spiked to
+     10⁻⁴ mol/mol HQ; flush → PE1 → 3-min hold → PE2 → 11-min hold → three-window read; escape = excess Q_net over
+     unspiked fills / added HQ charge; both stub lengths (predicted 0.2–0.5 % vs 4.8–5.6 %, docs/13 §3.6).
+  6. *QRE:* Au QRE vs the docked Ag/AgCl over 8 h (a fill every 31 min) and within every read (window a vs c).
+  7. *Contact route:* pad-to-WE leakage with a wet cell; contact-loop resistance over 8 h.
+* **Measurement → quantities.** SD(Q_net) (nC) and its 95 % χ² interval (§12.1); drift d₁ (pA/min) and curvature
+  d₂ (pA/min²); read weight; escape fraction; QRE drift; leakage. **No parameter key is written**: the step-read
+  background is not a model term (docs/09 §5.4 item 3). The measured SD enters only scratch model runs of A
+  (`hw.gamry.noise_rms_flow` pinned to SD/7.75 s, docs/13 §1.3, §10.1); the escape replaces the assumed ×0.01 in A's
+  credit scenario. Record in `bench/S1_M5a_<YYYY-MM-DD>/results.yaml` and the filled
+  `automation/templates/m5a_read_background.csv` (not parsed by `analyze`); at most a **comment line** in
+  `bench/measured_values.yaml` (a non-parameter key would stop `model_feedback`, as for E1.2b).
+* **Acceptance (fixed before data; docs/13 §10.1; `gates.yaml` `informational.M5a_read_background`).**
+
+  | ID | Quantity | Acceptance |
+  |---|---|---|
+  | M5a-1 | SD(Q_net) on blank fills, drift-corrected (three-window), sources in the planned state (off in windows), n ≥ 30 per die, ≥ 3 dies | ≤ 0.05 nC |
+  | M5a-2 | curvature residual \|d₂\|·Δ²·T; day-to-day shift of mean Q_net | ≤ 0.025 nC in ≥ 95 % of reads (d₂ ≤ 0.27 pA/min²); ≤ 0.05 nC |
+  | M5a-3 | read weight on HQ standards; die-to-die slope CV | 0.92 ± 0.05; ≤ 5 % |
+  | M5a-4 | escape with 0.5 mm stubs (1.0 mm cell as model check) | ≤ 1 % (1.0 mm cell ≥ 3 %) |
+  | M5a-5 | E_rest hold charge; QRE drift | ≤ 1 % of Q_a; ≤ 20 mV / 8 h and ≤ 2 mV between windows a and c |
+  | M5a-6 | SD(Q_net) with sources actuating only in E_rest segments | ≤ 1.2 × the quiet value (then tidal strokes are allowed in rests); arm (i) reported |
+  | M5a-7 | pad-to-WE leakage; contact-loop stability | ≥ 5×10¹² Ω; ≤ 0.1 Ω drift over 8 h |
+
+* **Model expectation.** SD(Q_net) ≤ 0.05 nC ⇔ white noise ≤ 3.7 pA (docs/13 §3.5.4); the repository's only drift
+  value (`hw.gamry.baseline_drift` 5 pA/min, 1–10, UNVERIFIED) is cancelled by the three-window read, its curvature is
+  unknown. Escape 0.2–0.5 % at 0.5 mm stubs, 4.8–5.6 % at 1.0 mm (docs/13 §3.6, Derived in a scratch script).
+* **Decision that follows (cartridge track only, taken with docs/16; none changes the G1 rule).** M5a-1, -2 and -3 pass
+  → the step read is retained. Any of them fails → R-flow read mode (no pre-electrolysis credit; docs/13's headline is
+  already the no-credit case) and the WE2 channel is tested in M5. M5a-4 fails → the credit is dropped; S4a then has
+  no rescue on A. M5a is not a kill on its own; the cartridge kill criteria are in docs/16 §6.3.
+* **Time** [assessment; docs/13 gives no bench-day estimate]: ≈ 2 days of set-up (clamp cell from laser-cut parts,
+  noise-source kit, Faraday box — can be done by the part-time second person) plus ≈ 9 Gamry-bound bench days (CVs
+  ½; quiet reads ≥ 90 reads × ≈ 5 min over 3 days, 3; noise arms 5 sources × 3 arms × 10 reads ≈ 12.5 h, 2; collection
+  ½; escape 1; QRE and contact log overlapping with read days, 1; analysis 1).
+* **Schedule and bench load (stated plainly).** The approved slot is weeks 6–8. Weeks 5–7 already carry ≈ 16.5 bench
+  days of Stage 1 against 15 available (G1a 0.5, E1.4/E1.5/E1.7 5.5, E1.8 + E1.9 3.5, E1.2b 4, E1.10 2, E1.6 handling
+  1; §10), and week 8 carries G1 (1 day) — so weeks 5–8 hold ≈ 17.5 of 20 days and leave ≈ 2.5. **M5a (≈ 9 Gamry days)
+  does not fit in weeks 6–8 without slipping something**, and it competes for the single Gamry with E1.2b and every
+  E1.x readout. It is not squeezed in. Options for the user (docs/16 §8 Q1):
+  * **(a) recommended:** set-up (≈ 2 days, second person) in weeks 6–8; the Gamry-bound protocol in **weeks 8–10**,
+    during the Stage-2 order lead time (Stage 2 bench work starts week 9 and waits for valve/pump delivery,
+    ≤ 3 weeks, UNVERIFIED). G1 does not slip; M5a is still complete before any C1 mock-up is specified (C1 needs G1 and
+    E1.2b first, docs/16 §6.2). Step 5 then naturally follows E1.2b.
+  * (b) run M5a in weeks 6–8 as approved and let G1 slip by ≈ 1.5–2 weeks.
+  * (c) run the reads in parallel on a second potentiostat channel (none in hand; the Gamry pairing question is S0.2;
+    a purchase before G1 contradicts "no instrument-class item in Stage 1").
+* **Data.** `bench/S1_M5a_<YYYY-MM-DD>/` (§9.1): Gamry files of every read, the noise-source log (which source, when),
+  the filled template and `results.yaml`.
+
 ### 4.10 Gate G1a (week 5) — early reachability check on U1 + U3 (added after final review, S8)
 
 E1.1 → E1.2 (U3) and E1.3 with its reservoir-ageing arm (U1) are the only Stage-1 items that bear on reachability,
@@ -926,8 +1017,8 @@ maximum); electrode conditioning logged.
 
 **9.1 Where results go.** `bench/<stage>_<experiment>_<YYYY-MM-DD>/` with `README.md` (what, who, lots, deviations),
 raw instrument files, and the filled CSV template from `automation/templates/` (u1_nsb.csv, u3_free_hq.csv,
-blanks_calibration.csv, carryover.csv, dissociation.csv, bli.csv; pre_electrolysis.csv for E1.2b, not parsed by
-`analyze`). Automated runs are written by the sequencer to
+blanks_calibration.csv, carryover.csv, dissociation.csv, bli.csv; pre_electrolysis.csv for E1.2b and m5a_read_background.csv for
+M5a, neither parsed by `analyze`). Automated runs are written by the sequencer to
 `bench/runs/<run_id>/` (trace, metadata, event log). `bench/measured_values.yaml` collects every model input the bench
 has measured:
 
@@ -1000,6 +1091,7 @@ counted from the Stage-0 start (assumed 2026-11-16); holidays not included.
 | 5–7 | E1.8 + E1.9 tube integrated assay | E1.3, NISTmAb | 3.5 |
 | 5–7 | E1.2b HQDP pre-electrolysis test (informational, not a G1a/G1 input; added 2026-11-12) | E1.1 route, E1.2 lot and k_ox, D1 standard series | 4 |
 | 6–7 | E1.10 SM-FL recovery | E1.8 format | 2 |
+| 6–8 (approved) | M5a cartridge read-background test (informational, not a G1a/G1 input; added 2026-11-12) — **over capacity**: weeks 5–8 already hold ≈ 17.5 of 20 bench days; proposed: set-up in weeks 6–8 (second person), Gamry-bound part in weeks 8–10 (see M5a) | E1.1 route; E1.2b for step 5 | ≈ 2 set-up + ≈ 9 Gamry days |
 | 7–8 | **G1**, model feedback, Stage-2 orders | all Stage-1 | 1 |
 | 8–12 | (Stage 1C if triggered, 3–4 weeks, in parallel with Stage-2 lead time) | G1 | 10–15 |
 | 9–16 | Stage 2: E2.1–E2.7 (valve/pump lead time assumed ≤ 3 weeks, UNVERIFIED) | G1 orders | 25 |
@@ -1088,3 +1180,26 @@ P below ≈ 0.05 between designs are not decision-grade (added after final revie
 * Non-porosity of the 38–52 µm streptavidin particles for the backup; streptavidin–biotin stability at pH 2.
 * Lead times for the IDEX valves, the syringe pump, machined parts and the custom IDA cell.
 * CLSI EP17 replicate numbers were read only from secondary sources (docs/07 §7).
+* **OPEN, for the user (added 2026-11-12, found in docs/09 §7, docs/15 N10): residual-bead acceptance vs analyte
+  carry-over.** The bead-handling acceptance (U5, E2.4; docs/07 §5.1) allows residual beads ≤ 10⁻³ of the dose after
+  3 rinses, while the analyte carry-over criterion is 1×10⁻⁴ (docs/08 S6, `gates.yaml` G2/G3 `carryover`). Beads left
+  behind carry their sandwiches into the next run, so 10⁻³ could use ten times the carry-over allowance. The
+  acceptance value is **not** changed here; the user decides whether E2.4 is tightened (cartridge A's M1 uses ≤ 10
+  beads per path, docs/13 §8.3).
+* OPEN (added 2026-11-12, docs/15 S8 (iii)): if E1.2b passes and a guard cell is considered at Stage 2, electrolysing
+  only the substrate fill creates a **baseline mismatch** — gen-1's baseline windows read untreated substrate, the
+  product plug treated substrate — a negative bias equal to the free HQ in the trap volume, varying with lot and age.
+  A gen-1 guard cell must treat all substrate that reaches the cell, at ≥ 300 µL/min (its minimum flow), or the bias
+  must be measured.
+* OPEN (added 2026-11-12): the approved M5a slot (weeks 6–8) does not fit the bench load (M5a, options (a)–(c)).
+
+---
+
+## 14. Cartridge track (second generation)
+
+The second-generation cartridge (docs/09–16) does not change this plan or the G1 rule. Its decision document is
+`docs/16_chip_decision.md`: A (docs/13 Revision B) is the leading concept, B the fallback, C′ kept alive. **Before G1
+the only cartridge bench work is M5a** (above, informational). Everything else for the cartridge — the shared
+packed-bed NSB tube test (B-E1 = C′-R2), the mock-ups M1–M8, gate GC1, prototype cards (C2, after gen-1 G2) and tooling
+(C3) — waits for a G1 GO or GO-WITH-LEVER and the E1.2b result; it is specified in docs/16 §6 and docs/13 §10, with the
+gen-1 results that would change the cartridge decision in docs/16 §7. A G1 STOP stops all cartridge spend.

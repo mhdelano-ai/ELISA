@@ -14,6 +14,13 @@ or automatically renewed; buffer matrix only; no manual step between loading the
 - The 100 µL limit is the injected volume (full-loop injection, 2× overfill, ~200 µL drawn, is accepted).
 - One custom Python orchestration layer drives the Gamry and the added hardware; Empower runs the Waters stack.
 - A second potentiostat channel is acceptable. Budget for purchases/custom parts is not the constraint.
+- Cartridge round (2026-11-11/12, docs/16 §2): second-generation cartridge after the gen-1 tubing rig; dock may
+  contain anything; criteria unchanged; nearest-model estimates only (no model extension). A leads, B fallback,
+  C′ kept alive. Pre-electrolysis is a gen-1 bench TEST only (E1.2b, informational). Reagents are dock-supplied
+  (beads in a cooled agitated dock vial; conjugate and HQDP tanks on the card filled at insertion). Card ≤ ~14
+  determinations with ≥ 3 min margin to 60 min. Carry-over 1×10⁻⁴ kept + mandatory cleaning cycle and blank check
+  after any result > 100 pg/mL. M5a (read background, catalogue die, existing Gamry) approved before G1; everything
+  else for the cartridge waits for G1 and E1.2b.
 
 ## Sourcing rule
 Every number carries a source (DOI/URL/vendor document) and a confidence. Anything not checked in the session is
@@ -23,6 +30,9 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 - `docs/00–05` — brief, literature, hardware, model, audit, design decision (in silico phase; do not edit; docs/05
   carries a few passages marked "(revised after final review)").
 - `docs/08_final_review.md` — final review, corrections to earlier documents (§9), resolution of findings (§10).
+- `docs/09–15` — cartridge round: requirements, literature, fabrication, candidates (corrections box), design A
+  (Revision B), alternatives B and C′ (revised), review with resolution of findings (§7). Do not edit docs/09–12.
+- `docs/16_chip_decision.md` — cartridge decision, authoritative comparison table, cartridge gates and kill criteria.
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
 - `params/*.yaml` — model parameters (`chem.*`, `hw.*`, `ma.*`; schema in the file headers).
 - `src/elisa_sim/` — simulation package; `tests/` — its tests; `scripts/` — design scripts (`design_lib.py`).
@@ -45,7 +55,7 @@ python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the mo
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
 
-## Status (2026-11-11)
+## Status (2026-11-12)
 In silico phase complete; the final review's findings are resolved or listed as open in docs/08 §10. **Next:
 bench Stage 0 (instrument facts, ordering) and Stage 1A (E1.1 readout, E1.2 U3 free HQ, E1.3 U1 conjugate NSB with
 the reservoir-ageing arm; plus E1.2b HQDP pre-electrolysis "guard cell" test, weeks 5–7, informational, not a G1a/G1
@@ -57,6 +67,13 @@ primary median 3.5 pg/mL, P 0.16 as specified; 1.3 pg/mL, P 0.32 after reagent +
 Design changes from the review: separate bead and conjugate reservoirs; commercial single-channel thin-layer cell
 by default (IDA + second channel only if Stage 2 shows a need); carry-over criterion 1×10⁻⁴ with a 10 ng/mL
 challenge; fault latch + recovery cycle in the sequencer; phosphate K_i UNVERIFIED (0.2 µM–1 mM).
+**Cartridge design round complete (2026-11-12, docs/16):** A (multi-run bead-transfer card, docs/13 Rev B) leads,
+B (single-use cells) is the fallback, C′ (permanent chip, renewable micro-bed) is kept alive. No candidate has a
+decision-grade LOD advantage: A Rev B without pre-electrolysis credit median 3.67 pg/mL, P 0.150 (credit, UNVERIFIED:
+2.33, P 0.215); after screening 1.34, P 0.328 — vs gen-1 3.5 / 0.16 and 1.3 / 0.32. The case is throughput (31 vs
+56 min per result), automation and buffer use. **Approved before G1: only M5a** (docs/06; informational, not a
+G1a/G1 input; its weeks 6–8 slot does not fit the bench load — options in docs/06 M5a). Everything else for the
+cartridge waits for G1 and E1.2b.
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

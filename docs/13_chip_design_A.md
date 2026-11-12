@@ -47,8 +47,8 @@ named in the last column. "Open" means it cannot be closed on paper.
 | S6 | shared clean/dirty syringe paths; serpentine unbudgeted | **Resolved**: clean pump S_A only dispenses, S_IC_k and S_RC only pull to waste; rinses enter through a separate chamber inlet; the serpentine never returns liquid during washing; all paths in the budget | §3.2, §3.4, §8.3 | M7 (same-chamber carry-over), M2 |
 | S7, S7b | gather cannot reach the far half; hand-over order impossible | **Resolved**: fixed collection magnet per chamber (Z only), gather by three raster passes of the small drag magnet (two cover the floor, the third is spare) (capture half-width ≥ 2.7 mm at 0.3 mm/s, recomputed), no magnet ever under the other chamber; M_c and M_d are separate units | §3.3 | M1 (≤ 1 % of beads left on the floor) |
 | S8 | credits unsupported; fallback voids credit | **Resolved for A**: credit only for the step-read mode with the computed escape; headline without credit; the R-flow fallback runs **without** pre-electrolysis (so baseline and plug carriers match) and is the no-credit case | §3.5.7, §3.6 | E1.2b, M5a |
-| S9 | docs/14 contamination pinning | not candidate A — **open for docs/14's owner** (this document uses additive bounds only) | — | — |
-| S10 | stale comparison tables | **Resolved for A here**: like-for-like table with and without credit (§1.3); docs/12 §0 and docs/14 §F still carry the old A — **open for their owners** | §1.3 | — |
+| S9 | docs/14 contamination pinning | not candidate A — resolved in docs/14 §C3.7 (revised); this document uses additive bounds only (cross-reference updated with docs/16) | — | — |
+| S10 | stale comparison tables | **Resolved for A here**: like-for-like table with and without credit (§1.3); docs/12 §0 is corrected by its box; the master table is docs/16 §1 (cross-reference updated with docs/16) | §1.3 | — |
 | S11 | carry-over budget not allocated | **Resolved**: per-path budget, normal and post-high, sum 9.6×10⁻⁵ ≤ 10⁻⁴; SM-FL allocated 3×10⁻⁵ (better than its nominal 10⁻⁴) | §8.3 | E1.10, M1, M7 (100 ng/mL challenge) |
 | W1 | "reagents on the card" no longer true | **Resolved by user decision (2026-11-12)**: the card is a fluidic/valve/electrode consumable, not a reagent pack | §5 | — |
 | W2 | transfer CV not in M1 | **Resolved**: M1 acceptance transfer CV ≤ 5 % | §10.3 | M1 |
@@ -1279,8 +1279,8 @@ is reused for S_b; gen-1's IDEX valves are not needed.
 7. Laminate and foundry questions: 0.175 mm through-cut COC sheet (tolerance, series process); TPE–COC lamination under
    cycling; 25 µm die film (creep, leachables, HQ/BQ sorption); 0.15 mm shim for the 50 µm WE2 channel; die datum edges;
    pads on the lower face at one end; Ag/AgCl on the die; PTFE vent heat-staking on COC.
-8. For the owners of other documents (not edited here): docs/12 §0 and docs/14 §F still show Revision A's or docs/12's A
-   (docs/15 S10); docs/14 contamination pinning (S9); docs/06 E2.4 residual-bead criterion 10⁻³ (N10); docs/10 Kim2015
+8. For the owners of other documents (not edited here): the comparison of A with B and C′ is docs/16 §1 and docs/14's
+   contamination term is redone in docs/14 §C3.7 (cross-reference updated with docs/16); docs/06 E2.4 residual-bead criterion 10⁻³ (N10); docs/10 Kim2015
    key collision (N5); Otieno2014 and Sun2008 wording (N4, W10).
 9. Model extensions (docs/09 §5.4) remain unbuilt by user decision; the step-read background (white noise, drift
    curvature, range offsets) is an item for such an extension.

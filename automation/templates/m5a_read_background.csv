@@ -1,0 +1,11 @@
+kind,die,day,read,cell_stub_mm,range_plan,source,source_state,q_a_nC,q_b_nC,q_c_nC,q_rest_nC,hq_added_nM,spike_mol_per_mol,qre_mV_a,qre_mV_c,note
+blank,D1,1,1,0.5,fixed,none,off,12.4031,12.4127,12.4229,0.0412,0,0,,,EXAMPLE quiet blank fill; Q_net = q_a - 2 q_b + q_c
+blank,D1,1,2,0.5,fixed,none,off,12.3984,12.4093,12.4180,0.0398,0,0,,,EXAMPLE quiet blank fill
+blank,D1,1,3,0.5,autorange,none,off,12.4115,12.4202,12.4311,0.0405,0,0,,,EXAMPLE autorange arm
+noise,D1,2,1,0.5,fixed,solenoid,in_windows,12.4520,12.4302,12.4447,0.0410,0,0,,,EXAMPLE source actuating during E_det windows
+noise,D1,2,2,0.5,fixed,solenoid,in_rests,12.4044,12.4139,12.4246,0.0420,0,0,,,EXAMPLE source actuating only in E_rest segments
+noise,D1,2,3,0.5,fixed,stepper,off,12.4007,12.4110,12.4205,0.0401,0,0,,,EXAMPLE source off
+collection,D1,3,1,0.5,fixed,none,off,13.0124,12.4150,12.4245,0.0408,100,0,,,EXAMPLE HQ standard in the cell
+escape,D1,3,1,0.5,fixed,none,off,12.4210,12.4120,12.4228,0.0402,0,1.0e-4,,,EXAMPLE spiked fill after PE1 - hold - PE2 - 11 min hold
+escape,D1,3,2,1.0,fixed,none,off,12.6005,12.4131,12.4240,0.0404,0,1.0e-4,,,EXAMPLE 1.0 mm stub cell (model check)
+qre,D1,4,1,0.5,fixed,none,off,12.4022,12.4118,12.4219,0.0400,0,0,-102.4,-102.9,EXAMPLE Au QRE vs docked Ag/AgCl at windows a and c

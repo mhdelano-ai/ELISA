@@ -46,3 +46,15 @@ informational:
     hq_like_product_nM:  {pass_max: 1.0, source: "derived docs/06 E1.2b: 1e-6 mol/mol in 1 mM HQDP"}
     alp_and_readout_ratio: {min: 0.85, max: 1.15, source: "derived docs/06 E1.2b (s12.2 resolution)"}
     hqdp_consumed_frac:  {pass_max: 0.01, source: "derived docs/06 E1.2b"}
+  # INFORMATIONAL ONLY (added 2026-11-12, user decision; cartridge track): docs/06 M5a, read background of cartridge A's
+  # three-window step read on a catalogue die (docs/13 s10.1, docs/16 s6.1). NOT a G1a/G1 input and not read by any
+  # code; it decides A's read mode (step read vs R-flow) and whether A keeps the pre-electrolysis credit.
+  M5a_read_background:
+    sd_qnet_nC:          {pass_max: 0.05, source: "docs/13 s10.1 M5a-1 (drift-corrected Q_a - 2Q_b + Q_c, n >= 30 per die, >= 3 dies)"}
+    curvature_residual_nC: {pass_max: 0.025, fraction_of_reads_min: 0.95, day_shift_max_nC: 0.05, source: "docs/13 s10.1 M5a-2 (d2 <= 0.27 pA/min^2)"}
+    read_weight:         {target: 0.92, tolerance: 0.05, die_slope_cv_max: 0.05, source: "docs/13 s10.1 M5a-3"}
+    escape_fraction:     {pass_max: 0.01, check_1mm_stub_min: 0.03, source: "docs/13 s10.1 M5a-4 (0.5 mm stubs; computed 0.2-0.5 %, docs/13 s3.6)"}
+    e_rest_charge_frac:  {pass_max: 0.01, source: "docs/13 s10.1 M5a-5 (of Q_a)"}
+    qre_drift_mV:        {per_8h_max: 20, between_windows_max: 2, source: "docs/13 s10.1 M5a-5"}
+    rest_actuation_sd_ratio: {pass_max: 1.2, source: "docs/13 s10.1 M5a-6 (tidal strokes allowed in E_rest if met)"}
+    leakage_ohm:         {min: 5.0e+12, contact_drift_ohm_max: 0.1, source: "docs/13 s10.1 M5a-7"}

@@ -465,3 +465,77 @@ the shared B-E1 = C′-R2 packed-bed NSB tube experiment is cheap and keeps the 
 5. **M5a before G1** (catalogue Micrux die, low cost) — approve, with the protocol additions of S2/S3/S8?
 6. **Reagent life ≥ 9.5 h per card** (S4): accept an extended conjugate/HQDP in-use life (needs E1.3 ageing beyond 8 h),
    or limit a card to ≈ 14 determinations?
+
+---
+
+## 7. Resolution of findings
+
+Added 2026-11-12 by the session that wrote the decision document (docs/16). Each claimed resolution was checked by
+reading the revised text (docs/12 corrections box, docs/13 Revision B, docs/14 revised, docs/06); no model run was
+made in this session, so numerical claims of docs/13/14 are recorded as stated there unless a check is named. Status:
+**resolved** (the text now does what the finding asked), **resolved on paper** (the design answers it, the bench must
+confirm), **partial** (part of the correction is missing), **open** (with the deciding experiment), **superseded**
+(by a user decision of 2026-11-12, docs/16 §2).
+
+| ID | Status | Where | Check made / what remains |
+|---|---|---|---|
+| A1 | resolved on paper | docs/13 §2.1–2.6, §4 | Stack is now foil / 0.175 mm through-cut sheet / TPE ceiling / upper body; every valve presses the TPE onto the foil; zoning keeps valves over the anvil. Open: sealing of a TPE ceiling in a 0.5 × 0.175 mm rectangular channel and the 0.175 mm through-cut sheet as a series part (UNVERIFIED) — **M4** |
+| A2 | resolved on paper | docs/13 §2.7, §6.3 | Die face-down on the sheet, pads on the lower face over a dry contact window, pogo pins from below, lid pad reacts the force. Open: pin force, leakage ≥ 5×10¹² Ω — **M5a-7**, C2 |
+| S1 | resolved on paper | docs/13 §2.6, §3.6 | Stub rule ≤ 0.3 mm (≤ 0.5 mm at the cell); escape recomputed 0.20 % (D 9×10⁻¹⁰) / 0.49 % (7×10⁻¹⁰) — component sum checked: 0.05 + 0.05 + 0.03 + 0.07 = 0.20; 0.12 + 0.12 + 0.07 + 0.17 = 0.48 (stated 0.49, rounding). M5a/M5 acceptance set to ≤ 1 % as asked. Escape script is scratch only (`escape_b3.py`, not in the repository). Bench: **M5a-4** |
+| S2 | resolved on paper; open on the bench | docs/13 §3.5.4, §1.3, §10.1 | Three-window read Q_a − 2Q_b + Q_c, noise mapping with the factor 2 (σ_Q = 7.75 s × i), drift-corrected acceptance, fixed-range vs autorange arm, E_rest charge criterion (M5a-5). **Partial on one point:** the E_rest segments are bounded by an acceptance (≤ 1 % of Q_a) rather than integrated into Q_net as the finding suggested. Bench: **M5a-1/2/5** |
+| S3 | resolved (spot-checked) | docs/13 §7.1–7.2 | Periodic check over k = −4…4 offsets by the scratch `sched.py` (not in the repository). Hand spot-check of offsets ±1, ±2 against the step table: no dock actuation in any PE2 or READ window; **two movable steps of run n+2 sit exactly on the ±0.25 min guard** (conjugate fill ends at 52.5 = READ start − 0.25; bead dose starts at 57.0 = READ end + 0.25), so the guard has zero slack at C = 31.0 and relies on the scheduler. Bench: **M8** |
+| S4 | resolved | docs/13 §7.1, §5.2 | Checked: PE2 and READ 30 + 3×60 + 2×15 s = 4.0 min; drag 23.3 mm / 0.20 mm/s = 116.5 s within 39.5–41.75; accumulation 41.75–52.75 = 11 min; result 56.75; 12 + 13 × 31 + 56.75 = 471.75 min = 7.86 h for 14 determinations |
+| S5 | resolved | docs/13 §3.3.6, §7.1 | WL_k refresh at 41.75–42.35, before the same run's cleaning (42.35–49.85). Bench: M1 (≤ 1 bead in IC_k) |
+| S6 | resolved on paper | docs/13 §3.2, §3.4, §8.3, §7.5 | Dispense-only S_A, pull-only S_IC_k and S_RC (enforced in software), rinses through a clean inlet, serpentine one-way; all paths in the §8.3 budget. Bench: M7, M2 |
+| S7, S7b | resolved on paper | docs/13 §3.3 | Fixed collection magnet per chamber, three raster passes of the drag magnet, separate units, no magnet under the other chamber. Magnet arithmetic is scratch (`mag_b.py`); M-280 magnetisation still UNVERIFIED (N8). Bench: **M1** |
+| S8 | resolved for A, B, C′; **partial for gen-1** | docs/13 §3.5.7, §3.6; docs/14 §B0, §C3.1; docs/12 box item 2 | A: headline without credit, R-flow fallback without pre-electrolysis. B/C′: credit re-derived as ×0.05 with a per-run guard-cell fill at ≥ 300 µL/min, headline without credit. **Gen-1:** docs/06 E1.2b names the guard cell's 300 µL/min minimum flow but not the **baseline mismatch** of S8 (iii) (baseline windows on untreated substrate); recorded as an open item in docs/06 §13 by this session. Bench: E1.2b, M5a-4, C′-R6 |
+| S9 | resolved, with a follow-up | docs/14 §0, §C3.7, Appendix | Carry-over now added to the default 0–3 fM term; "artefact" removed. **Follow-up:** docs/14 found this review's own additive redo slightly optimistic, because `sample_param` samples a range with low > 0 and high/low ≥ 3 log-triangularly, which concentrates draws near r·C_prev and under-weights the default term. Figures at r = 10⁻⁴ after a 1000 pg/mL predecessor: **this review P 0.152; docs/14 with linear sampling P 0.10** (r = 3×10⁻⁴: 0.006 in both). **docs/16 uses 0.10.** Not re-run in this session |
+| S10 | resolved | docs/16 §1; docs/12 box item 1; docs/14 §F (A column marked interim) | One master table in docs/16 with A from docs/13 Rev B and every candidate with and without credit. Leftovers listed below (docs/14 §C3.11, §F1 "0.37") |
+| S11 | resolved on paper; **partial in substance** | docs/13 §8.3; docs/14 §C3.8 | Budget table, sums checked (consecutive 8.2×10⁻⁵, same chamber 1.4×10⁻⁵, worst 9.6×10⁻⁵, post-high 4.6×10⁻⁵, after blank check 1.7×10⁻⁵). It closes only if the SM-FL reaches 3×10⁻⁵ against a nominal 10⁻⁴ (UNVERIFIED); the user's post-high rule is the stated protection otherwise. Bench: **E1.10** + flush programme, M7 |
+| W1 | superseded by user decision | docs/13 §5; docs/12 box 9(a); docs/14 §B0 | Dock-supplied reagents accepted 2026-11-12 |
+| W2 | resolved | docs/13 §10.3 M1 | transfer CV ≤ 5 % |
+| W3 | resolved | docs/13 §10.3 M1 | whole-path fluorescence imaging |
+| W4 | resolved for the cartridge; gen-1 unchanged | docs/13 §8.3, §10.3; docs/14 §C3.10 | 100 ng/mL challenge, n = 5 per path class (C′: or ≥ 10 pairs). gen-1 keeps 10 ng/mL with 5 pairs; docs/06 §12.5 argues it resolves 10⁻⁴ at SD_blank 0.33 pg/mL (≈ 5 SE), which holds only if the blank SD is that low — not changed here |
+| W5 | open | docs/13 §3.5.5, §10.1 step 6 | within-run QRE log against a docked Ag/AgCl — **M5a-5** |
+| W6 | resolved on paper | docs/13 §3.5.5 | NaCl fixed at 50 mM; its effect on ALP UNVERIFIED (E1.7-type arm) |
+| W7 | resolved | docs/13 §8.2 | per-chamber lot calibration; blank and control per chamber per card |
+| W8 | resolved as a record; **user confirmation open** | docs/13 §3.1, §1.3 (dilution /1.85); docs/14 §B0; docs/12 box 8 | F1 relaxation recorded for A and B; question put to the user in docs/16 §8 Q2 |
+| W9 | resolved, **partial** | docs/14 §C3.4, §C3.6, §C3.10 | IDA recovery defined as concentration; counter-flow 4.3 µL. Pinch-valve pressure rating against the bed Δp (0.14–0.29 MPa) still not read — check before C′-R1 |
+| W10 | resolved | docs/14 §0, §C1, §C3.8, §F; docs/12 box 5 | "no residual measured; one 92 % elution recovery in a hapten system" |
+| N1 | resolved | docs/13 §2.3, §3.1 | MC 2.0 × 1.0 × 5.0 mm = 10.0 µL (checked); chamber 185 µL; stock 5.6 nM |
+| N2, N3 | resolved | docs/13 §3.5.4–3.5.5 | 7 forward steps per run; constant turnover cancels to −0.9 % |
+| N4 | resolved in docs/12 (box 6); **docs/10 unchanged** | docs/12 box | docs/10 may not be edited; the wording there still reads as before |
+| N5 | **partial** | docs/12 box 7; docs/13 cites the DOI | the key collision remains in docs/10 (not editable in this round) |
+| N6 | **partial** | docs/14 §C7, §C2.2 | Vendor ratings traced to docs/14 §C7 documents and Parker withdrawn; the part numbers are still **not** in docs/11 §9 (docs/11 not editable) — add them there before any BOM use; none is in docs/07 |
+| N7 | resolved | docs/13 §2.1, §4 | no endurance evidence exists for TPE on COC; M4 (100 cycles) decides |
+| N8 | open | docs/13 §12.2 | M-280 magnetisation UNVERIFIED; M1 measures follow speed directly |
+| N9 | resolved | docs/13 §10.1 | M5a adds Au, 3 mM, the cell geometry |
+| N10 | open (user decision) | docs/06 §13 (open item added by this session) | E2.4 residual beads ≤ 10⁻³ vs analyte criterion 10⁻⁴; acceptance **not** changed |
+| §4 stretched sources (Otieno2014, Sun2008, CHILDERS2024/CS_1367) | resolved where editable | docs/12 box 5–6; docs/13 §2.1, §4; docs/14 §C1 | docs/10 wording unchanged (not editable) |
+| §6 Q1 reagents on the card | superseded by user decision | docs/16 §2 | dock-supplied reagents |
+| §6 Q2 cartridge without LOD gain | answered in docs/16 §0 | — | case stated as throughput, automation, buffer use |
+| §6 Q3 time margin | superseded by user decision | docs/13 §7.1 | ≥ 3 min; 3.25 min after Inject Start (2.25 after aspiration, docs/16 §8 Q6) |
+| §6 Q4 carry-over rule | superseded by user decision | docs/13 §7.4; docs/14 §B0, §C3.8 | 10⁻⁴ kept + mandatory cleaning cycle and blank check after > 100 pg/mL |
+| §6 Q5 M5a | superseded by user decision (approved) | docs/06 M5a; docs/13 §10.1 | protocol includes drift-corrected acceptance, range plan arm, dock actuation sources; the slot does not fit the bench load (docs/06 M5a) |
+| §6 Q6 reagent life | superseded by user decision | docs/13 §5.2 | card capped at 14 determinations (7.86 h) |
+
+**Leftover inconsistencies between docs/09–14** (found while writing docs/16; docs/09–12 are not edited in this round):
+1. docs/14 §C3.11 and §F1 quote A + L6 + L7 as P 0.37 (docs/13 Revision A); Revision B gives 0.328 / 0.330
+   (docs/13 §1.3). docs/14 §F already says to read A from docs/16; left as is.
+2. docs/14 §B7 (iv): "valves fail below 3× life (≈ 210 cycles)" rests on docs/12 A's busiest ≈ 70; Revision B's busiest
+   is 17 per card (31 fallback) and M4 tests 100 cycles. Not changed (number, not a cross-reference).
+3. docs/12 box item 4 says docs/13 has 20 valves (Revision A); Revision B has 21 (17 + 4 gates).
+4. Capture gain from reduced dilution: ×1.21 (docs/12 §10, box 8) vs ×1.17 (this review §2, W8). Revision B uses the
+   dilution /1.85 directly.
+5. B time to result: 50.0 min (docs/12 §4.4 step table) vs model time 52.0 (docs/14 §B6) — two definitions.
+6. Margin basis: docs/13 states 3.25 min from Inject Start and 2.25 min from aspiration; gen-1 is quoted both ways
+   (docs/05 56.1 from aspiration, docs/06 §7.8 52.1 from Inject Start).
+7. docs/13 §10.1 says M5a runs "only after E1.1/E1.2/E1.2b", while its approved slot (weeks 6–8) overlaps E1.2b
+   (weeks 5–7). Only M5a step 5 (escape) needs E1.2b's chemical floor; docs/06 M5a orders the steps accordingly.
+8. docs/09 header records "on-board reagents" and docs/09 F1 "≥ 96 %": both superseded/relaxed (docs/16 §2, §8 Q2).
+9. docs/09 §7: U5/E2.4 10⁻³ vs 10⁻⁴ (N10), still open.
+
+**Trivial cross-reference fixes made in docs/13** (marked "(cross-reference updated with docs/16)"): finding map rows
+S9 and S10 and §12.1 item 8 said docs/14's contamination pinning and comparison table were "open for their owners";
+docs/14 has since been revised and the master table is docs/16 §1. No number was changed. docs/14 needed no
+cross-reference fix (it already points to docs/16).
