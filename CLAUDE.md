@@ -48,7 +48,8 @@ The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orch
 ## Status (2026-11-11)
 In silico phase complete; the final review's findings are resolved or listed as open in docs/08 §10. **Next:
 bench Stage 0 (instrument facts, ordering) and Stage 1A (E1.1 readout, E1.2 U3 free HQ, E1.3 U1 conjugate NSB with
-the reservoir-ageing arm)** — no flow hardware needed. **G1a (week 5)** applies the G1 rule to U1 + U3; BLI/SPR and
+the reservoir-ageing arm; plus E1.2b HQDP pre-electrolysis "guard cell" test, weeks 5–7, informational, not a G1a/G1
+input — no guard cell in the hardware until its result)** — no flow hardware needed. **G1a (week 5)** applies the G1 rule to U1 + U3; BLI/SPR and
 NISTmAb are ordered only after it. **G1 rule (fixed before data, docs/06 §4.11, `gates.yaml` G1_rule):** model
 P(success) with all Stage-1 values entered by `model_feedback` — GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30 (Stage 2 +
 Stage 1C), STOP < 0.10 (no hardware; Stage 1C, then G1′). Current model (thin-layer default cell, review corrections):

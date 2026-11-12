@@ -36,3 +36,13 @@ G3:
   lod_pgml:            {confirm_max: 1.0, source: "docs/00 / docs/05 s5 U7"}
   carryover:           {confirm_max: 1.0e-4, source: "docs/08 S6 (10 ng/mL challenge, docs/06 s7.6); was 1e-3 (docs/05 s5 U7)"}
   time_to_result_min:  {max: 60, source: "docs/00"}
+# INFORMATIONAL ONLY (added 2026-11-12, user decision): docs/06 E1.2b, HQDP pre-electrolysis ("guard cell") bench
+# test. NOT a G1a/G1 input and not read by any code; the G1 rule and every gate above are unchanged. Its outcome
+# decides at G1 whether a guard cell is considered at Stage 2 / kept in the cartridge design (docs/12) / dropped.
+informational:
+  E1_2b_pre_electrolysis:
+    escape_fraction:     {pass_max: 0.01, drop_min: 0.10, source: "derived docs/06 E1.2b: 1e-5/1e-3 (S4a -> U3 acceptance; docs/12 1 % assumption, UNVERIFIED) and 1e-5/1e-4 (U3 kill line); pass on the upper 95 % bound, drop on the point estimate"}
+    regrowth_k_h_per_s:  {pass_max: 1.0e-9, max_ratio_to_control: 2.0, source: "U3 hydrolysis acceptance (docs/05 s5 U3); ratio derived docs/06 E1.2b"}
+    hq_like_product_nM:  {pass_max: 1.0, source: "derived docs/06 E1.2b: 1e-6 mol/mol in 1 mM HQDP"}
+    alp_and_readout_ratio: {min: 0.85, max: 1.15, source: "derived docs/06 E1.2b (s12.2 resolution)"}
+    hqdp_consumed_frac:  {pass_max: 0.01, source: "derived docs/06 E1.2b"}
