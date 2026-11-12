@@ -1,0 +1,16 @@
+D 9.0e-10: Q_net weight of accumulated product 0.9156; constant turnover during the read contributes -6.93 s-equivalents (vs 780 s accumulation: -0.89 %); single window a alone collects 0.9710
+          docs/13 pair 90/15/90: weight 0.9891; turnover term -2.83 %
+D 7.0e-10: Q_net weight of accumulated product 0.8287; constant turnover during the read contributes -11.79 s-equivalents (vs 780 s accumulation: -1.51 %); single window a alone collects 0.9392
+          docs/13 pair 90/15/90: weight 0.9670; turnover term -3.56 %
+D 1.1e-09: Q_net weight of accumulated product 0.9591; constant turnover during the read contributes -3.22 s-equivalents (vs 780 s accumulation: -0.41 %); single window a alone collects 0.9862
+          docs/13 pair 90/15/90: weight 0.9964; turnover term -2.33 %
+
+linear drift d: pair error d*Delta*T; three-window error 0 (exact); curvature d2: error d2*Delta^2*T = d2*337500 s^3
+  repository drift 5 pA/min (hw.gamry.baseline_drift): docs/13 pair (105 s, 90 s) 0.79 nC; 60/75 pair 0.37 nC
+  curvature allowed for 0.025 nC residual: 7.41e-17 A/s2 = 0.267 pA/min2 -> a 5 pA/min drift must keep its rate for a time constant >= 19 min
+  curvature allowed for 0.05 nC residual: 1.48e-16 A/s2 = 0.533 pA/min2 -> a 5 pA/min drift must keep its rate for a time constant >= 9 min
+
+white noise (model form i*sqrt(T/2B), B = 1 Hz): per-window 5.48 s * i; SD(Q_net) = sqrt(6) * that = 13.42 s * i
+  SD(Q_net) <= 0.05 nC needs i_rms <= 3.73 pA (pair: 5.27 pA at 90 s)
+  SD(Q_net) <= 0.08 nC needs i_rms <= 5.96 pA (pair: 8.43 pA at 90 s)
+model mapping (docs/15 S2): sigma_Q,model = i_ref*sqrt(60/2)*sqrt(2) = 7.746 s * i_ref -> 3 pA = 2.324e-11 C

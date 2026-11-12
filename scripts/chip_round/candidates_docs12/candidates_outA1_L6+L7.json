@@ -1,0 +1,43 @@
+[
+ {
+  "key": "A1 L6+L7 pre-el 3 mM",
+  "nominal": 0.1453571667393982,
+  "median": 1.1408679445528804,
+  "p05": 0.289943690421524,
+  "p95": 7.216281978403362,
+  "p_lod": 0.418,
+  "p": 0.3915,
+  "uloq": 2326.3050671536284,
+  "t": 57.6,
+  "flags": "",
+  "note": "",
+  "enz1": 15553.985859568438,
+  "nsb": 5693.711823032155,
+  "bead_share": 0.9997160048920076,
+  "capture": 0.24935362739591832,
+  "label": 0.17434036976977785,
+  "vacc": 1.9999999999999998,
+  "carry_top": 2.834298887182749e-05,
+  "nsb_area_mm2": 11.032983701753299,
+  "cap_area_mm2": 10.939752141719376,
+  "steps": {
+   "sample_injection_overhead": 1.0,
+   "sample_load": 6.6,
+   "post_sample_wash": 1.5,
+   "substrate_fill": 0.5,
+   "accumulation": 15.0,
+   "readout": 1.0,
+   "bead_release_and_cleaning": 2.0
+  },
+  "vf": {
+   "nsb_variability": 0.883,
+   "label_counting": 0.012,
+   "carryover": 0.0,
+   "substrate_background": 0.001,
+   "electrode_sensitivity": 0.032,
+   "electrochemical_noise": 0.027,
+   "baseline_drift": 0.045,
+   "contamination": 0.0
+  }
+ }
+]

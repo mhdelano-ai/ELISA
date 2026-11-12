@@ -1,0 +1,5 @@
+C'1                                                     nom 0.64 med 2.13 [0.46-23.3] P 0.165 P(LOD<=1) 0.216 ULOQ 1039 (20s)
+C'1 cont pinned 1e-30 (docs14 method)                   nom 0.64 med 2.08 [0.27-24.0] P 0.244 P(LOD<=1) 0.289 ULOQ 1039 (3s)
+C'1 r=1e-4 Cprev 1000 pinned (docs14)                   nom 0.70 med 2.10 [0.40-24.0] P 0.222 P(LOD<=1) 0.277 ULOQ 1039 (3s)
+C'1 r=1e-4 Cprev 1000 ADDED to default                  nom 0.70 med 2.16 [0.56-23.3] P 0.152 P(LOD<=1) 0.204 ULOQ 1039 (3s)
+C'1 r=3e-4 Cprev 1000 ADDED                             nom 1.10 med 2.50 [1.18-23.4] P 0.006 P(LOD<=1) 0.008 ULOQ 1039 (3s)

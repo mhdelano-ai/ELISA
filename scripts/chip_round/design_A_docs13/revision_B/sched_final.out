@@ -1,0 +1,39 @@
+parameters: {'T_inc': 28.5, 'T_acc': 11.0, 'C': 31.0, 'g': 0.25, 'G': 2.0, 'R': 3.3, 'D': 2.25, 'read': 4.0, 'pe2': 4.0, 'opt': 0.0, 'dose': -5.0, 'cfill': -10.0, 'pre': -3.45, 'trans_end': 3.35, 'clean': 4.5}
+end-of-transfer valve switch at 3.35 min; extra BSM A1 into IC_k 5.30 uL
+t_c 30.00; PE2 30.10-34.10; gather 34.20; rinses 36.20; drag 39.50-41.75; accumulation 41.75-52.75; READ 52.75-56.75; RESULT 56.75 (margin 3.25; from aspiration start 57.75); flush end 58.65; chamber clean end 46.85
+
+activity table (own frame):
+   -10.00 -   -9.50  conjugate meter fill (P_c, V8)                               P_c
+    -5.00 -   -4.00  bead dose S_b + V(4/5)k                                      S_b,chamber
+    -4.00 -   -3.50  conjugate push (P_mv, V(6/7)k)                               P_mv,chamber
+    -3.45 -   -3.40  V(1/2)k open, V3 closed (pre-switch; BSM 1 uL/min into IC_k) inlet
+     3.35 -    3.40  V(1/2)k closed, V3 open (end transfer; BSM 1 uL/min 1.5->switch, then 2-min flush to bypass) inlet
+     3.40 -    3.55  C_k chase 3 uL A1 (S_A, V17/18) after the transfer           S_A,chamber
+    30.00 -   30.10  M_c,k lift (collection start)                                Mc_k
+    34.10 -   34.20  M_c,k lower                                                  Mc_k
+    34.20 -   36.20  gather (M_d raster, carriage)                                carriage
+    36.20 -   39.50  rinses (S_ICk drain, S_A fill, V9/10, V17/18)                carriage,S_A,S_IC_k,chamber
+    39.50 -   41.75  drag + M_h up + gates                                        carriage,RC,WLc
+    41.75 -   42.35  WL_k refresh J->IC_k + WLc to waste (S_A, V11, V12, G_k)     S_A,WLc
+    42.35 -   46.85  chamber cleaning: drain + 3x(150 uL, 2 tidal, drain) + port chases S_A,S_IC_k,chamber,S_b
+    56.75 -   57.15  bead-out (M_h down, M_d, G4)                                 carriage,RC
+    57.15 -   57.65  RC + BW flush (S_RC, V13, G4, V16)                           S_RC,RC
+    57.65 -   58.65  PE1 removal step (Gamry, not a read)                         RC,Gamry
+    30.10 -   34.10  PE2 (quiet window)
+    52.75 -   56.75  READ (quiet window)
+
+(1) activities vs read windows, all offsets k*C (k=-4..4), guard +-0.25 min:
+  none
+
+(2) exclusive resources across runs (incl. same chamber two runs apart):
+  none
+  chamber idle reserve before next dose: 10.15 min (room for post-high extra rinses)
+  RC slack: next PE2 starts 61.10 vs flush end 58.65 -> 2.45 min
+
+(3) tidal pauses in own incubation 1.5-30.00: [(1.5, 3.35, 'PE2', -1), (21.5, 26.0, 'READ', -1)] total 6.35 min; stirred 22.15 of 28.5 min
+(4) 12 determinations: last result 413 min after insertion = 6.88 h (docking 15.0 min)
+(4) 13 determinations: last result 444 min after insertion = 7.40 h (docking 15.0 min)
+(4) 14 determinations: last result 475 min after insertion = 7.91 h (docking 15.0 min)
+(4) 16 determinations: last result 537 min after insertion = 8.95 h (docking 15.0 min)
+(6) PE2 monitor: open-circuit hold PE1 end -> PE2 window a start = 2.95 min; 5700 residual enzymes x 968/s x hold -> 0.313 nC
+(5) escape timeline: stubs filled at previous flush end 27.65; PE2 end 34.10; READ start 52.75

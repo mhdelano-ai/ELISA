@@ -1,0 +1,19 @@
+| REF C2 (docs/12) | 0.64 | 2.4 [0.48-25] | 0.16 | 0.21 | 1.04e+03 | 45.0 | carry_top 1e-09 | 5s
+| C'0 fresh layer, dock valves | 0.64 | 2.4 [0.5-26] | 0.15 | 0.20 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 = C'0 + pre-electrolysis | 0.64 | 2.1 [0.46-23] | 0.16 | 0.22 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 + L6+L7 | 0.53 | 1.8 [0.42-21] | 0.21 | 0.27 | 794 | 45.5 | carry_top 1e-09 | 4s
+| C'1 acc 15 min, 3 mM | 0.62 | 2 [0.43-23] | 0.19 | 0.24 | 1.36e+03 | 53.0 | carry_top 1e-09 | 4s
+| C'1 under S4a | 0.64 | 2.2 [0.47-26] | 0.17 | 0.23 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 bed-dose CV (blank CV 0.14) | 0.86 | 2.8 [0.55-31] | 0.13 | 0.17 | 1.04e+03 | 45.5 | carry_top 1e-09 | 5s
+| C'1 packed-bed factor 1 | 0.27 | 0.95 [0.26-5.4] | 0.43 | 0.53 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 packed-bed factor 2 | 0.45 | 1.2 [0.35-9] | 0.30 | 0.38 | 1.04e+03 | 45.5 | carry_top 1e-09 | 3s
+| C'1 packed-bed factor 3 | 0.64 | 1.6 [0.42-12] | 0.23 | 0.30 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 packed-bed factor 5 | 1 | 2.4 [0.54-20] | 0.14 | 0.19 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 packed-bed factor 10 | 2 | 4.4 [0.83-40] | 0.06 | 0.08 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 packed-bed factor 30 | 6 | 13 [1.7-1.2e+02] | 0.01 | 0.02 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 residual analyte 0.0001 | 0.65 | 2.1 [0.31-23] | 0.23 | 0.29 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 residual analyte 0.001 | 1.6 | 2.8 [1.1-23] | 0.03 | 0.04 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 residual analyte 0.01 | 15 | 17 [5.9-31] | 0.00 | 0.00 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1 residual analyte 0.08 | 1.2e+02 | 1.3e+02 [39-2.2e+02] | 0.00 | 0.00 | 1.04e+03 | 45.5 | carry_top 1e-09 | 4s
+| C'1+L6+L7 residual analyte 0.0001 | 0.55 | 1.7 [0.28-21] | 0.27 | 0.33 | 794 | 45.5 | carry_top 1e-09 | 4s
+| C'1+L6+L7 residual analyte 0.001 | 1.6 | 2.5 [0.99-21] | 0.04 | 0.05 | 794 | 45.5 | carry_top 1e-09 | 4s

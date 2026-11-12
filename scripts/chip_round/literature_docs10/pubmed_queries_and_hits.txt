@@ -1,0 +1,216 @@
+=== Q: Sista digital microfluidic immunoassay magnetic beads -> ['19023486', '19023472', '22964771']
+## PMID 19023486 | Sista 2008 | Lab Chip | doi:10.1039/b807855f
+## PMID 19023472 | Sista 2008 | Lab Chip | doi:10.1039/b814922d
+## PMID 22964771 | Emani 2012 | Blood Coagul Fibrinolysis | doi:10.1097/MBC.0b013e328358e982
+=== Q: Choi Ahn integrated microfluidic biochemical detection magnetic bead -> ['15100857']
+## PMID 15100857 | Choi 2002 | Lab Chip | doi:10.1039/b107540n
+=== Q: Do J Ahn CH electrochemical immunoassay magnetic beads lab-on-a-chip -> ['18369508']
+## PMID 18369508 | Do 2008 | Lab Chip | doi:10.1039/b715569g
+=== Q: Herrmann Verpoorte microfluidic ELISA magnetic -> []
+=== Q: 10.1038/srep21163[doi] -> ['26883474']
+## PMID 26883474 | Asghar 2016 | Sci Rep | doi:10.1038/srep21163
+=== Q: Ramachandran S[Author] Yager P[Author] dry storage -> ['26835678', '24496140', '22068336']
+## PMID 26835678 | Ramachandran 2013 | Diagnostics (Basel) | doi:10.3390/diagnostics3020244
+## PMID 24496140 | Ramachandran 2014 | Analyst | doi:10.1039/c3an02296j
+## PMID 22068336 | Govindarajan 2012 | Lab Chip | doi:10.1039/c1lc20622b
+=== Q: Smith S[Author] blister pouches -> []
+=== Q: p-nitrophenyl phosphate spontaneous hydrolysis substrate stability -> []
+=== Q: alkaline phosphatase conjugate stability storage dried -> []
+=== Q: thin-film Ag/AgCl reference electrode -> ['41257543', '28605581', '11394309', '25789490']
+## PMID 41257543 | Qi 2025 | ACS Chem Neurosci | doi:10.1021/acschemneuro.5c00397
+## PMID 28605581 | Branch 2017 | Anal Chem | doi:10.1021/acs.analchem.7b00258
+## PMID 11394309 | Hiratsuka 2001 | Analyst | doi:10.1039/b008036p
+## PMID 25789490 | Kim 2015 | Sensors (Basel) | doi:10.3390/s150306469
+=== Q: screen-printed electrode p-aminophenol fouling -> []
+=== Q: microfluidic immunosensor regeneration cycles -> ['41259987', '34551048', '19704983', '25626958']
+## PMID 41259987 | Sun 2026 | Talanta | doi:10.1016/j.talanta.2025.129122
+## PMID 34551048 | Oliveira 2021 | J Mater Chem B | doi:10.1039/d1tb01404h
+## PMID 19704983 | Tseng 2009 | Lab Chip | doi:10.1039/b823449c
+## PMID 25626958 | Uthuppu 2015 | Analyst | doi:10.1039/c4an01576b
+=== Q: Pluronic PDMS protein adsorption -> ['19458853', '38794609', '20834118', '18537270']
+## PMID 19458853 | Wu 2009 | Lab Chip | doi:10.1039/b901651a
+## PMID 38794609 | Gonçalves 2024 | Polymers (Basel) | doi:10.3390/polym16101416
+## PMID 20834118 | Blinka 2010 | Nanotechnology | doi:10.1088/0957-4484/21/41/415302
+## PMID 18537270 | Matsunaga 2008 | Anal Chem | doi:10.1021/ac800352j
+=== Q: sulfobetaine fibrinogen adsorption ultralow -> ['32255065', '22385371']
+## PMID 32255065 | Chou 2018 | J Mater Chem B | doi:10.1039/c8tb01054d
+## PMID 22385371 | Liu 2012 | Biomacromolecules | doi:10.1021/bm201814p
+=== Q: cyclic olefin copolymer protein adsorption immunoassay -> ['19250814', '21489776', '39215774', '24857498']
+## PMID 19250814 | Raj 2009 | Biosens Bioelectron | doi:10.1016/j.bios.2009.01.026
+## PMID 21489776 | Sung 2011 | Biosens Bioelectron | doi:10.1016/j.bios.2011.03.005
+## PMID 39215774 | Zhong 2025 | Anal Bioanal Chem | doi:10.1007/s00216-024-05490-8
+## PMID 24857498 | Kucerova 2014 | Mater Sci Eng C Mater Biol Appl | doi:10.1016/j.msec.2014.04.011
+=== Q: PEEK protein adsorption -> ['30465995', '37929192', '15265724', '42832734']
+## PMID 30465995 | Mei 2019 | Colloids Surf B Biointerfaces | doi:10.1016/j.colsurfb.2018.10.081
+## PMID 37929192 | Chen 2023 | Front Bioeng Biotechnol | doi:10.3389/fbioe.2023.1271629
+## PMID 15265724 | Jenkins 2004 | Anal Biochem | doi:10.1016/j.ab.2004.03.072
+## PMID 42832734 | DeSantis 2026 | ACS Biomater Sci Eng | doi:10.1021/acsbiomaterials.6c00745
+=== Q: carryover microfluidic immunoassay -> ['34854666', '24521980', '41863926']
+## PMID 34854666 | Reis 2021 | ACS Sens | doi:10.1021/acssensors.1c01524
+## PMID 24521980 | Costa 2014 | Nanotechnology | doi:10.1088/0957-4484/25/9/094006
+## PMID 41863926 | Porycka 2026 | Talanta | doi:10.1016/j.talanta.2026.129682
+=== Q: Jiang S[Author] zwitterionic polycarboxybetaine fibrinogen -> ['18819709', '18785772', '30299969', '17107002']
+## PMID 18819709 | Zhang 2008 | Biomaterials | doi:10.1016/j.biomaterials.2008.08.030
+## PMID 18785772 | Zhang 2008 | Biomacromolecules | doi:10.1021/bm800407r
+## PMID 30299969 | Belanger 2019 | Langmuir | doi:10.1021/acs.langmuir.8b03078
+## PMID 17107002 | Zhang 2006 | Langmuir | doi:10.1021/la062175d
+=== Q: lyophilized magnetic beads microfluidic -> ['33916235', '35362685']
+## PMID 33916235 | Wang 2021 | Micromachines (Basel) | doi:10.3390/mi12040384
+## PMID 35362685 | Li 2022 | Se Pu | doi:10.3724/SP.J.1123.2021.09005
+=== Q: lyophilised reagent pellet microfluidic -> []
+=== Q: pinch valve microfluidic cartridge -> ['27858026', '19023474', '20865195']
+## PMID 27858026 | Isiksacan 2016 | Lab Chip | doi:10.1039/c6lc01036a
+## PMID 19023474 | Do 2008 | Lab Chip | doi:10.1039/b811169c
+## PMID 20865195 | Xu 2010 | Lab Chip | doi:10.1039/c005265e
+=== Q: normally closed microvalve thermoplastic elastomer cartridge -> []
+=== Q: Li N[Author] PDMS compound adsorption -> ['19196703', '15754825']
+## PMID 19196703 | Li 2009 | J Biomol Screen | doi:10.1177/1087057108327326
+## PMID 15754825 | Deng 2005 | J Sep Sci | doi:10.1002/jssc.200401912
+=== Q: freeze-dried alkaline phosphatase stability -> ['14304254', '7917235', '8095538', '7904631']
+## PMID 14304254 | NEALE 1965 | J Clin Pathol | doi:10.1136/jcp.18.3.359
+## PMID 7917235 | Ford 1994 | Biologicals | doi:10.1006/biol.1994.1026
+## PMID 8095538 | Ford 1993 | J Pharm Pharmacol | doi:10.1111/j.2042-7158.1993.tb03689.x
+## PMID 7904631 | Ford 1993 | J Pharm Pharmacol | doi:10.1111/j.2042-7158.1993.tb05617.x
+=== Q: Herrmann M[Author] magnetic beads ELISA microchannel -> ['16572219', '17960284']
+## PMID 16572219 | Herrmann 2006 | Lab Chip | doi:10.1039/b516031f
+## PMID 17960284 | Herrmann 2007 | Lab Chip | doi:10.1039/b707883h
+=== Q: Wijayawardhana Halsall Heineman microfluidic immunoassay electrochemical -> []
+=== Q: magnetic beads microfluidic electrochemical immunoassay femtomolar -> []
+=== Q: microfluidic electrochemical immunoassay magnetic beads fg/mL alkaline phosphatase -> []
+=== Q: Rusling microfluidic electrochemical immunoarray magnetic beads -> ['22697359']
+## PMID 22697359 | Malhotra 2012 | Anal Chem | doi:10.1021/ac301392g
+=== Q: digital microfluidic electrochemical immunoassay -> ['36795370', '35624631', '24292705', '37603619', '28299696']
+## PMID 36795370 | Matson 2023 | Methods Mol Biol | doi:10.1016/j.jpha.2018.11.004
+## PMID 35624631 | Zhang 2022 | Biosensors (Basel) | doi:10.1016/S0006-3495(99)77456-4
+## PMID 24292705 | Shamsi 2014 | Lab Chip | doi:10.1039/c3lc51063h
+## PMID 28299696 | Peng 2017 | Methods Mol Biol | doi:10.1007/978-1-4939-6911-1_20
+=== Q: Ng Wheeler digital microfluidic ELISA magnetic beads -> []
+=== Q: electrochemical digital ELISA femtoliter electrode -> []
+=== Q: bead-based microfluidic immunoassay sub-picomolar electrochemical lab chip -> []
+=== Q: Wijayawardhana[Author] immunoassay -> ['11284335']
+## PMID 11284335 | Purushothama 2001 | Analyst | doi:10.1039/b006798i
+=== Q: magnetic beads AND microfluidic AND electrochemical AND immunoassay AND femtomolar -> []
+=== Q: magnetic beads AND microfluidic AND electrochemical AND immunoassay AND alkaline phosphatase -> []
+=== Q: microfluidic AND electrochemical AND immunoassay AND fg/mL AND magnetic -> ['22287094', '31450419', '34074431', '31128756', '22697359', '28056439']
+## PMID 22287094 | Rusling 2012 | Chem Rec | doi:10.1002/tcr.201100034
+## PMID 31450419 | Freitas 2019 | Talanta | doi:10.1016/j.talanta.2019.07.005
+## PMID 34074431 | Baldo 2021 | Talanta | doi:10.1016/j.talanta.2021.122447
+## PMID 31128756 | Proença 2019 | Anal Chim Acta | doi:10.1016/j.aca.2019.04.047
+## PMID 22697359 | Malhotra 2012 | Anal Chem | doi:10.1021/ac301392g
+## PMID 28056439 | Sharafeldin 2017 | Biosens Bioelectron | doi:10.1016/j.bios.2016.12.052
+=== Q: Otieno Rusling microfluidic immunoarray -> ['27558535', '26143063', '24144557']
+## PMID 27558535 | Otieno 2016 | Anal Chem | doi:10.1021/acs.analchem.6b02637
+## PMID 26143063 | Krause 2015 | Anal Bioanal Chem | doi:10.1007/s00216-015-8873-1
+## PMID 24144557 | Otieno 2014 | Biosens Bioelectron | doi:10.1016/j.bios.2013.09.054
+=== Q: digital microfluidic AND ELISA AND magnetic beads AND Wheeler -> []
+=== Q: Shamsi digital microfluidic electrochemical -> ['24292705', '24001207', '26516684']
+## PMID 24292705 | Shamsi 2014 | Lab Chip | doi:10.1039/c3lc51063h
+## PMID 24001207 | Dryden 2013 | Anal Chem | doi:10.1021/ac402003v
+## PMID 26516684 | Shamsi 2016 | Biosens Bioelectron | doi:10.1016/j.bios.2015.10.036
+=== Q: Gijs[Author] magnetic beads immunoassay microfluidic -> ['24145920', '19865734']
+## PMID 24145920 | Tekin 2013 | Lab Chip | doi:10.1039/c3lc50477h
+## PMID 19865734 | Moser 2009 | Lab Chip | doi:10.1039/b907724c
+=== Q: Tekin HC[Author] magnetic -> ['26124131', '41202349', '32811142', '30619842', '32424490']
+## PMID 26124131 | Durmus 2015 | Proc Natl Acad Sci U S A | doi:10.1073/pnas.1509250112
+## PMID 41202349 | Anil-Inevi 2026 | Biomater Adv | doi:10.1016/j.bioadv.2025.214581
+## PMID 32811142 | Yaman 2020 | Anal Chem | doi:10.1021/acs.analchem.0c02479
+## PMID 30619842 | Yaman 2018 | Front Bioeng Biotechnol | doi:10.3389/fbioe.2018.00192
+## PMID 32424490 | Anil-Inevi 2020 | Adv Exp Med Biol | doi:10.1007/5584_2020_539
+=== Q: magnetic bead trapping efficiency microchannel flow rate -> ['21253647']
+## PMID 21253647 | Teste 2011 | Lab Chip | doi:10.1039/c0lc00510j
+=== Q: magnetic bead capture efficiency flow velocity microfluidic permanent magnet -> ['34620919', '24051541']
+## PMID 34620919 | Li 2021 | Sci Rep | doi:10.1038/s41598-021-99331-8
+## PMID 24051541 | Wang 2013 | Analyst | doi:10.1039/c3an01166f
+=== Q: rotating magnetic field magnetic bead mixing microfluidic immunoassay -> ['20938545']
+## PMID 20938545 | Karle 2010 | Lab Chip | doi:10.1039/c0lc00129e
+=== Q: acoustic resuspension magnetic beads microfluidic -> ['27444649']
+## PMID 27444649 | Iranmanesh 2016 | Biomed Microdevices | doi:10.1007/s10544-016-0097-4
+=== Q: Pamme magnetic particle plug microfluidic -> ['30404252', '19592004']
+## PMID 30404252 | Phurimsak 2016 | Micromachines (Basel) | doi:10.3390/mi7050077
+## PMID 19592004 | Peyman 2009 | J Chromatogr A | doi:10.1016/j.chroma.2009.06.039
+=== Q: magnetic beads resuspension microfluidic chip immunoassay washing -> ['19023486']
+## PMID 19023486 | Sista 2008 | Lab Chip | doi:10.1039/b807855f
+=== Q: porous polymer monolith immunoassay microfluidic -> ['23478568', '26160546', '20598520', '11721904', '28530809']
+## PMID 23478568 | Kang 2013 | Analyst | doi:10.1039/c3an36744d
+## PMID 26160546 | Wiederoder 2015 | Analyst | doi:10.1039/c5an00988j
+## PMID 20598520 | Liu 2010 | Biosens Bioelectron | doi:10.1016/j.bios.2010.06.007
+## PMID 11721904 | Yu 2001 | Anal Chem | doi:10.1021/ac0106288
+## PMID 28530809 | Zinggeler 2017 | Anal Chem | doi:10.1021/acs.analchem.7b01182
+=== Q: monolith microchip immunoaffinity antibody immobilized -> ['18479142', '29136068', '31553343']
+## PMID 18479142 | Sun 2008 | Anal Chem | doi:10.1021/ac800322f
+## PMID 29136068 | Sonker 2017 | Analyst | doi:10.1039/c7an01357d
+## PMID 31553343 | Chu 2019 | Lab Chip | doi:10.1039/c9lc00575g
+=== Q: packed bead bed microchannel immunoassay weir -> []
+=== Q: Sato Kitamori microchip immunoassay polystyrene beads -> ['10740851', '11305654']
+## PMID 10740851 | Sato 2000 | Anal Chem | doi:10.1021/ac991151r
+## PMID 11305654 | Sato 2001 | Anal Chem | doi:10.1021/ac000991z
+=== Q: micropillar array immunoassay microfluidic sensitivity -> ['40976104', '25774709', '22526636', '25459055']
+## PMID 40976104 | Ji 2025 | Biosens Bioelectron | doi:10.1016/j.bios.2025.117972
+## PMID 25774709 | Doan 2015 | Sensors (Basel) | doi:10.3390/s150306091
+## PMID 22526636 | Li 2012 | Anal Bioanal Chem | doi:10.1007/s00216-012-5952-4
+## PMID 25459055 | Kim 2015 | Biosens Bioelectron | doi:10.1016/j.bios.2014.10.042
+=== Q: Gyrolab nanoliter affinity column immunoassay -> []
+=== Q: regeneration microfluidic immunosensor cycles reuse antibody -> []
+=== Q: reusable microfluidic immunoassay regeneration carry-over -> []
+=== Q: interdigitated array redox cycling amplification gap microchannel -> []
+=== Q: nanogap redox cycling immunoassay -> []
+=== Q: redox cycling interdigitated electrodes enzyme immunoassay p-aminophenol microfluidic -> []
+=== Q: interdigitated electrode redox cycling chip immunoassay alkaline phosphatase -> []
+=== Q: on-chip Ag/AgCl pseudo-reference electrode stability microfluidic -> ['34203488']
+## PMID 34203488 | Tomar 2021 | Micromachines (Basel) | doi:10.3390/mi12070762
+=== Q: thin-film Ag/AgCl reference electrode lifetime chloride microfluidic -> []
+=== Q: Goluch Lemay nanofluidic redox cycling -> ['19125239', '19743869', '19722652']
+## PMID 19125239 | Goluch 2009 | Anal Bioanal Chem | doi:10.1007/s00216-008-2575-x
+## PMID 19743869 | Zevenbergen 2009 | Anal Chem | doi:10.1021/ac9014885
+## PMID 19722652 | Zevenbergen 2009 | J Am Chem Soc | doi:10.1021/ja902331u
+=== Q: Dam Wolfrum redox cycling multichannel -> []
+=== Q: PLL-g-PEG protein adsorption ng/cm2 -> ['14559008']
+## PMID 14559008 | Tosatti 2003 | Biomaterials | doi:10.1016/s0142-9612(03)00420-4
+=== Q: zwitterionic ultralow fouling surface protein adsorption ng/cm2 -> ['26407144']
+## PMID 26407144 | Ye 2015 | ACS Appl Mater Interfaces | doi:10.1021/acsami.5b06500
+=== Q: Pluronic F127 PDMS protein adsorption reduction microfluidic -> []
+=== Q: blocking agents microfluidic immunoassay nonspecific binding comparison -> []
+=== Q: Gyrolab immunoassay compact disc -> ['23862708']
+## PMID 23862708 | Fraley 2013 | Bioanalysis | doi:10.4155/bio.13.145
+=== Q: Simple Plex Ella immunoassay cartridge glass nanoreactor -> []
+=== Q: Minicare cardiac troponin magnetic nanoparticles optomagnetic -> []
+=== Q: i-STAT cardiac troponin immunoassay electrochemical -> []
+=== Q: Honda N[Author] compact disc immunoassay -> ['16081503']
+## PMID 16081503 | Honda 2005 | Clin Chem | doi:10.1373/clinchem.2005.053348
+=== Q: Simple Plex[Title] -> ['27170460', '27855508']
+## PMID 27170460 | Aldo 2016 | Am J Reprod Immunol | doi:10.1111/aji.12512
+## PMID 27855508 | Gupta 2016 | Bioanalysis | doi:10.4155/bio-2016-0196
+=== Q: Dittmer WU[Author] magnetic -> ['20211616', '20024029', '18657543']
+## PMID 20211616 | Dittmer 2010 | Clin Chim Acta | doi:10.1016/j.cca.2010.03.001
+## PMID 20024029 | Bruls 2009 | Lab Chip | doi:10.1039/b913960e
+## PMID 18657543 | Dittmer 2008 | J Immunol Methods | doi:10.1016/j.jim.2008.07.001
+=== Q: Bruls DM[Author] -> ['20024029']
+## PMID 20024029 | Bruls 2009 | Lab Chip | doi:10.1039/b913960e
+=== Q: Rissin DM[Author] digital ELISA bead -> ['20495550', '37229528', '23719780', '22370429']
+## PMID 20495550 | Rissin 2010 | Nat Biotechnol | doi:10.1038/nbt.1641
+## PMID 37229528 | Zhang 2023 | Anal Chem | doi:10.1021/acs.analchem.3c00918
+## PMID 23719780 | Rissin 2013 | Lab Chip | doi:10.1039/c3lc50416f
+## PMID 22370429 | Chang 2012 | J Immunol Methods | doi:10.1016/j.jim.2012.02.011
+=== Q: Unger MA[Author] monolithic microfabricated valves -> ['10753110']
+## PMID 10753110 | Unger 2000 | Science | doi:10.1126/science.288.5463.113
+=== Q: Grover WH[Author] monolithic membrane valves -> ['18497911', '16652177']
+## PMID 18497911 | Grover 2008 | Lab Chip | doi:10.1039/b800600h
+## PMID 16652177 | Grover 2006 | Lab Chip | doi:10.1039/b518362f
+=== Q: paraffin wax valve microfluidic -> ['23505528', '38920617', '20565080', '29180835']
+## PMID 23505528 | Al-Faqheri 2013 | PLoS One | doi:10.1371/journal.pone.0058523
+## PMID 38920617 | Lu 2024 | Biosensors (Basel) | doi:10.3390/bios14060313
+## PMID 20565080 | Ren 2010 | Anal Chem | doi:10.1021/ac100830t
+## PMID 29180835 | Kim 2018 | Sens Actuators B Chem | doi:10.1016/j.snb.2017.10.005
+=== Q: burst valve centrifugal microfluidic -> ['25737025', '20024042', '25723143', '24069169']
+## PMID 25737025 | Choi 2015 | Appl Biochem Biotechnol | doi:10.1007/s12010-015-1546-x
+## PMID 20024042 | Mark 2009 | Lab Chip | doi:10.1039/b914415c
+## PMID 25723143 | Al-Faqheri 2015 | Sensors (Basel) | doi:10.3390/s150304658
+## PMID 24069169 | Kazemzadeh 2013 | PLoS One | doi:10.1371/journal.pone.0073002
+=== Q: blister pouch reagent storage microfluidic -> []
+=== Q: lyophilized reagents microfluidic cartridge immunoassay -> []
+=== Q: dried reagent storage microfluidic immunoassay stability -> []
+=== Q: Hitzbleck Delamarche reagents microfluidics -> ['23925517', '21674120', '22526982', '21752632']
+## PMID 23925517 | Hitzbleck 2013 | Chem Soc Rev | doi:10.1039/c3cs60118h
+## PMID 21674120 | Hitzbleck 2011 | Lab Chip | doi:10.1039/c1lc20282k
+## PMID 22526982 | Hitzbleck 2012 | Lab Chip | doi:10.1039/c2lc00015f
+## PMID 21752632 | Gervais 2011 | Biosens Bioelectron | doi:10.1016/j.bios.2011.06.016

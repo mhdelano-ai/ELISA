@@ -1,0 +1,21 @@
+FINAL no credit (headline)                                 nom 0.54 med 3.67 [0.53-125.7] P 0.150 ULOQ 6813
+FINAL credit x0.01                                         nom 0.46 med 2.33 [0.44-62.9] P 0.215 ULOQ 6813
+FINAL credit x0.07 (stubs 1 mm)                            nom 0.46 med 2.44 [0.46-64.7] P 0.203 ULOQ 6813
+FINAL + L6+L7 no credit                                    nom 0.18 med 1.34 [0.33-9.0] P 0.328 ULOQ 3043
+FINAL + L6+L7 credit x0.01                                 nom 0.18 med 1.33 [0.33-8.9] P 0.330 ULOQ 3043
+FINAL S4a no credit                                        nom 27.87 med 64.66 [5.51-1730.7] P 0.000 ULOQ 6813
+FINAL S4a credit x0.01                                     nom 0.54 med 2.75 [0.51-59.5] P 0.171 ULOQ 6813
+FINAL S4a credit x0.07                                     nom 2.00 med 6.27 [0.90-158.7] P 0.056 ULOQ 6813
+FINAL no credit, tidal allowed during reads (eff 28.5)     nom 0.50 med 3.32 [0.50-116.3] P 0.164 ULOQ 6813
+FINAL no credit, unstirred = 0 capture (22.15)             nom 0.59 med 4.18 [0.58-134.4] P 0.139 ULOQ 8913
+FINAL no credit, dilution /2.2                             nom 0.62 med 4.27 [0.59-147.3] P 0.135 ULOQ 8913
+FINAL no credit, bead CV 0.05                              nom 0.54 med 3.23 [0.54-106.9] P 0.149 ULOQ 6813
+FINAL no credit, bead CV 0.10                              nom 0.62 med 3.78 [0.61-121.7] P 0.124 ULOQ 6813
+FINAL no credit, transfer 0.80                             nom 0.56 med 3.46 [0.54-112.3] P 0.151 ULOQ 8913
+FINAL no credit, read SD 0.023 nC                          nom 0.54 med 3.26 [0.53-109.6] P 0.154 ULOQ 6813
+FINAL no credit, read SD 0.05 nC                           nom 0.58 med 3.46 [0.58-112.5] P 0.141 ULOQ 6813
+FINAL no credit, read SD 0.08 nC                           nom 0.65 med 3.74 [0.62-116.9] P 0.124 ULOQ 6813
+FINAL no credit, read SD 0.155 nC                          nom 0.92 med 4.51 [0.71-126.0] P 0.097 ULOQ 6813
+FINAL no credit, read SD 0.3 nC                            nom 1.55 med 6.03 [0.90-151.7] P 0.061 ULOQ 6813
+FINAL credit x0.01, read SD 0.05 nC                        nom 0.51 med 2.35 [0.47-49.9] P 0.198 ULOQ 6813
+FINAL + L6+L7, read SD 0.05 nC                             nom 0.20 med 1.37 [0.37-10.0] P 0.322 ULOQ 3043

@@ -1,0 +1,35 @@
+== (1) point checks
+  M_c centre, 3.7 mm (fill top)                        |B| 0.187 T  grad (x,y,z) (     -0,      0,    -49) T/m  F_lat   0.00 pN  F_z   5.60 pN
+  M_d edge x=1.0 mm, bead plane                        |B| 0.378 T  grad (x,y,z) (   -377,      0,   -636) T/m  F_lat  43.37 pN  F_z  73.20 pN
+  M_d x=1.1 mm, bead plane                             |B| 0.337 T  grad (x,y,z) (   -439,     -0,   -492) T/m  F_lat  50.50 pN  F_z  56.60 pN
+  M_d x=1.5 mm, bead plane                             |B| 0.189 T  grad (x,y,z) (   -263,      0,   -114) T/m  F_lat  30.29 pN  F_z  13.08 pN
+  M_d x=2.0 mm, bead plane                             |B| 0.102 T  grad (x,y,z) (   -113,      0,    -30) T/m  F_lat  13.01 pN  F_z   3.45 pN
+  M_d x=2.5 mm, bead plane                             |B| 0.061 T  grad (x,y,z) (    -57,      0,    -12) T/m  F_lat   6.52 pN  F_z   1.33 pN
+== (2) raster gather with M_d: capture half-width (bead on the floor, magnet moving +x)
+  v 0.2 mm/s mu 0.0: captured for |y0| <= 3.0 mm  (stripe 6.0 mm)
+  v 0.2 mm/s mu 0.2: captured for |y0| <= 3.0 mm  (stripe 6.0 mm)
+  v 0.2 mm/s mu 0.4: captured for |y0| <= 3.0 mm  (stripe 6.0 mm)
+  v 0.3 mm/s mu 0.0: captured for |y0| <= 2.8 mm  (stripe 5.6 mm)
+  v 0.3 mm/s mu 0.2: captured for |y0| <= 2.8 mm  (stripe 5.6 mm)
+  v 0.3 mm/s mu 0.4: captured for |y0| <= 2.7 mm  (stripe 5.4 mm)
+== (3) lowered / neighbouring magnets: force on a bead in an incubating chamber (saturated m: upper bound)
+  M_c lowered  5 mm, floor centre          : |B| 0.1235 T  F   3.619 pN
+  M_c lowered  5 mm, floor, 4 mm off-axis  : |B| 0.1032 T  F   3.187 pN
+  M_c lowered 10 mm, floor centre          : |B| 0.0394 T  F   0.908 pN
+  M_c lowered 10 mm, floor, 4 mm off-axis  : |B| 0.0349 T  F   0.795 pN
+  M_c lowered 15 mm, floor centre          : |B| 0.0163 T  F   0.292 pN
+  M_c lowered 15 mm, floor, 4 mm off-axis  : |B| 0.0151 T  F   0.267 pN
+  M_c lowered 20 mm, floor centre          : |B| 0.0081 T  F   0.117 pN
+  M_c lowered 20 mm, floor, 4 mm off-axis  : |B| 0.0077 T  F   0.110 pN
+  M_c lowered 25 mm, floor centre          : |B| 0.0046 T  F   0.055 pN
+  M_c lowered 25 mm, floor, 4 mm off-axis  : |B| 0.0044 T  F   0.053 pN
+  M_c lowered 30 mm, floor centre          : |B| 0.0028 T  F   0.029 pN
+  M_c lowered 30 mm, floor, 4 mm off-axis  : |B| 0.0028 T  F   0.028 pN
+  M_c,k up; other chamber near edge (lateral 12 mm)      : F   1.035 pN
+  M_c,k up; other chamber near edge, fill top            : F   0.824 pN
+  M_d up at chamber-k wall; other chamber edge (8 mm)    : F   0.123 pN
+  M_d up; 6 mm away                                      : F   0.354 pN
+  M_d lowered 4 mm (transit under the anvil), bead plane directly above: F   0.917 pN
+  M_d lowered 6 mm (transit under the anvil), bead plane directly above: F   0.277 pN
+  M_d lowered 8 mm (transit under the anvil), bead plane directly above: F   0.111 pN
+  reference: buoyant weight of a bead 0.046 pN (docs/13 s3.3.2)

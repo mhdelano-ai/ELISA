@@ -33,6 +33,8 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 - `docs/09–15` — cartridge round: requirements, literature, fabrication, candidates (corrections box), design A
   (Revision B), alternatives B and C′ (revised), review with resolution of findings (§7). Do not edit docs/09–12.
 - `docs/16_chip_decision.md` — cartridge decision, authoritative comparison table, cartridge gates and kill criteria.
+- `docs/17_session_record.md` — trail of the cartridge round: every question and answer, agent tasks, commits.
+- `scripts/chip_round/` — the agents' working scripts and outputs behind docs/09–16 (record only; see its README).
 - `docs/presentation/` — summary slide decks (in silico phase; cartridge round) as standalone HTML, sources, `build.py`.
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
 - `params/*.yaml` — model parameters (`chem.*`, `hw.*`, `ma.*`; schema in the file headers).

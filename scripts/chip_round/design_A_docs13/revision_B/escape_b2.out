@@ -1,0 +1,17 @@
+PE0 removal F(45 s) = 0.933; residual in the electrolysed RC liquid 0.067
+D = 9e-10
+  G3 stub 0.5 mm (conservative c=1; holds drag A1)                        0.14 %
+  G4 stub 0.5 mm (fresh flush)                                            0.14 %
+  V13 feed stub 0.5 mm (0.3 wide, fresh)                                  0.09 %
+  V14 stub 0.5 mm behind WE2 (conservative c=1)                           0.09 %
+  CE/RE neck+pocket+V15 stub, refreshed with PE0 liquid (c=0.067)         0.23 %
+  TOTAL 0.70 %   (without the pocket refresh the pocket alone gives ~3.3 %)
+  sensitivity: all four stubs 1.0 mm instead of 0.5 mm: 7.91 %
+D = 7e-10
+  G3 stub 0.5 mm (conservative c=1; holds drag A1)                        0.28 %
+  G4 stub 0.5 mm (fresh flush)                                            0.28 %
+  V13 feed stub 0.5 mm (0.3 wide, fresh)                                  0.17 %
+  V14 stub 0.5 mm behind WE2 (conservative c=1)                           0.17 %
+  CE/RE neck+pocket+V15 stub, refreshed with PE0 liquid (c=0.116)         0.40 %
+  TOTAL 1.29 %   (without the pocket refresh the pocket alone gives ~3.3 %)
+  sensitivity: all four stubs 1.0 mm instead of 0.5 mm: 8.91 %

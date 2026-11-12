@@ -1,0 +1,14 @@
+D = 9e-10 m2/s
+  G3 stub 0.5 mm (0.5 x 0.175)                                         0.19 % of the cell's initial free HQ
+  G4 stub 0.5 mm (0.5 x 0.175)                                         0.19 % of the cell's initial free HQ
+  V14 stub 0.5 mm (0.3 x 0.175) behind WE2                             0.11 % of the cell's initial free HQ
+  CE/RE neck 0.3 mm (0.2x0.2) + pocket 0.048 + V15 stub 0.026 uL       3.31 % of the cell's initial free HQ
+  TOTAL escape 3.80 %
+  sensitivity, all three stubs 1.0 mm: 9.97 %
+D = 7e-10 m2/s
+  G3 stub 0.5 mm (0.5 x 0.175)                                         0.34 % of the cell's initial free HQ
+  G4 stub 0.5 mm (0.5 x 0.175)                                         0.34 % of the cell's initial free HQ
+  V14 stub 0.5 mm (0.3 x 0.175) behind WE2                             0.20 % of the cell's initial free HQ
+  CE/RE neck 0.3 mm (0.2x0.2) + pocket 0.048 + V15 stub 0.026 uL       3.32 % of the cell's initial free HQ
+  TOTAL escape 4.20 %
+  sensitivity, all three stubs 1.0 mm: 10.60 %

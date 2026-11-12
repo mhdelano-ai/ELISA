@@ -1,0 +1,20 @@
+D = 9e-10
+  G3 stub 0.5 mm (0.5 wide)                                                       0.05 %
+  G4 stub 0.5 mm (0.5 wide)                                                       0.05 %
+  V14 stub 0.5 mm (0.3 wide) behind WE2                                           0.03 %
+  neck 0.15 mm (0.4x0.2) + pocket 0.4x0.4x0.2 (0.032) + V15 stub 0.3 mm (0.016 uL)  0.07 %
+  TOTAL 0.20 %
+  (docs/13-type slow pocket: neck 0.5 mm 0.2x0.2, 0.074 uL: 2.77 %)
+  sensitivity: stubs 1.0 mm: 4.75 %
+D = 7e-10
+  G3 stub 0.5 mm (0.5 wide)                                                       0.12 %
+  G4 stub 0.5 mm (0.5 wide)                                                       0.12 %
+  V14 stub 0.5 mm (0.3 wide) behind WE2                                           0.07 %
+  neck 0.15 mm (0.4x0.2) + pocket 0.4x0.4x0.2 (0.032) + V15 stub 0.3 mm (0.016 uL)  0.17 %
+  TOTAL 0.49 %
+  (docs/13-type slow pocket: neck 0.5 mm 0.2x0.2, 0.074 uL: 2.58 %)
+  sensitivity: stubs 1.0 mm: 5.61 %
+pocket exchange rate D*A/(L*V) = 0.0100 1/s (time constant 100 s)
+kappa 0.15 S/m: neck R = 12.5 kOhm
+kappa 0.6 S/m: neck R = 3.1 kOhm
+kappa 1.6 S/m: neck R = 1.2 kOhm
