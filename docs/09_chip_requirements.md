@@ -271,7 +271,7 @@ consumption (F17) and the controls overhead (F18).
 |---|---|---|
 | Wash/running buffer (A1) | TBS (50 mM Tris-HCl pH 7.4, 150 mM NaCl) + 0.05 % Tween-20, no protein, no phosphate | docs/05 §4.1; docs/06 §4.0 |
 | Assay buffer (reagent diluent) | the same + 1 % IgG-free BSA, 0.22 µm filtered, no azide | docs/06 §4.0 |
-| Gen-1 wash consumption per determination | BSM A1 ≈ 4.4 mL (Derived: 300 µL to t = 3, 3000 µL during incubation shunt, 6.6 µL during trap loading, 100 µL wash, 900 µL clean); SIA wash 50 µL channel flush + cup rinses (volume not stated) + 653 µL cup emptying (part is sample) | `cycle_primary.yaml` |
+| Gen-1 wash consumption per determination | BSM A1 ≈ 4.3 mL (Derived: 300 µL to t = 3, 3000 µL during incubation shunt, 6.6 µL during trap loading, 100 µL wash, 900 µL clean); SIA wash 50 µL channel flush + cup rinses (volume not stated) + 653 µL cup emptying (part is sample) | `cycle_primary.yaml` |
 | Phosphate inhibition of ALP | K_i 2 µM nominal, **UNVERIFIED for calf-intestinal ALP at pH 9.5**, bounds 0.2 µM–1 mM (final-review override); competitive | `ma.overrides` `chem.enzymes.alp.phosphate_inhibition_Ki`; docs/08 §9 C4 |
 | Size of the effect | 0.5 mM phosphate (a few µL of PBS left on beads in 50 µL of substrate) takes v/V from 0.75 to ≈ 0.01 at S 0.3 mM | docs/08 B1 |
 | Tolerable residual phosphate (Derived) | at S = 1 mM, K_m 0.1 mM (`ma.chemistries.alp_hqdp.Km`, **UNVERIFIED**), K_i 2 µM: 1 µM Pi lowers the rate by ≈ 4 %, 10 µM by ≈ 30 %. Target ≤ 1 µM in the accumulation volume from all sources other than the reaction itself (stored reagents, bead stock, carry-in) | Derived (competitive Michaelis–Menten) |
@@ -290,10 +290,306 @@ consumption (F17) and the controls overhead (F18).
 
 Per determination (one-step gen-1 equivalents): 5×10⁵ beads in 10 µL; 66 fmol conjugate in 10 µL; HQDP ≥ the
 accumulation volume plus fill and baseline volumes (gen-1 uses ≈ 315 µL from the BSM); wash as needed (gen-1:
-≈ 4.4 mL from the BSM, most of it shunted to waste during incubation). For N runs add: controls (2 per 10 samples,
+≈ 4.3 mL from the BSM, most of it shunted to waste during incubation). For N runs add: controls (2 per 10 samples,
 F18); one recovery cycle per expected fault (F17); priming and dead volume of every store (not specified anywhere
 in the repository); the conjugate store's maximum life (default 8 h, docs/07 §5.5); bead suspension mixing losses.
-Waste per determination in gen-1 is ≈ 5–6 mL (Derived: A1 ≈ 4.4 mL + B1 ≈ 0.3 mL + SIA volumes), dominated by
+Waste per determination in gen-1 is ≈ 5–6 mL (Derived: A1 ≈ 4.3 mL + B1 ≈ 0.3 mL + SIA volumes), dominated by
 the incubation shunt; a cartridge that does not shunt the BSM during incubation needs far less.
 
-(Sections 4–6 follow.)
+---
+
+## 4. Hard constraints and risks carried over (docs/04, docs/05, docs/08)
+
+### 4.1 What limits the LOD, in the model
+
+* **Conjugate NSB on the capture surface dominates every blank.** In the primary (P-chamb, thin-layer, nominal)
+  the blank variance is 75 % `nsb_variability`, 8 % drift, 8 % substrate background, 5 % EC noise (computed for this
+  document with `evaluate(...).variance_fractions()`; docs/05 §0 and `results/design/optimum_OS__baseline.json`
+  give the same picture). Nominal: ≈ 4100 specific enzymes at 1 pg/mL against ≈ 6200 NSB enzymes in the blank
+  (blank-equivalent 1.5 pg/mL) — the cartridge has no "signal budget" problem, it has a **blank** problem.
+* **NSB is modelled as linear and irreversible in conjugate exposure** (`N_nsb = k·A·∫C dt`, docs/04 §3.6), with
+  rate `chem.nsb.nsb_effective_rate_constant` (4×10⁻¹¹ m/s, 8×10⁻¹²–4×10⁻¹⁰, low confidence) ×
+  `ma.nsb.label_factor_igg_enzyme_conjugate` (0.04, 0.01–0.15) × a surface factor. Linearity and irreversibility are
+  **UNVERIFIED**. Consequence for the chip: every surface is charged by **area × conjugate exposure (nM·min)**, and
+  wash stringency, short pulses and saturation earn nothing in the model (they might at the bench, S3a).
+* **Surface factors that a chip changes** (all **UNVERIFIED**): blocked beads 1 (1–3) `ma.nsb.surface_factor_magnetic_beads`;
+  packed bed 3 (1–30) `…_packed_bed`; monolith 3 (1–30); capillary 3 (1–30); **chip channel walls including
+  electrode materials 10 (1–100)** `ma.nsb.surface_factor_chip`; PEEK tubing and trap walls 3 (1–30)
+  `…_tubing`.
+* **Exposure matters as much as area.** In the primary, beads see 0.3 nM for ≈ 37 min (≈ 11 nM·min, docs/08 B4)
+  while the trap wall sees conjugate only during the 6.6-min transfer, so the beads carry 92 % of the NSB. Nominal
+  sensitivity computed for this document (P-chamb, LOD × 1/0.96): trap-wall/tubing surface factor 1 → 0.58 pg/mL,
+  3 → 0.60, 10 → 0.67, 30 → 0.90 (bead share 0.97 → 0.54). For the chip bead bed (FRC optimum): chip-wall factor
+  1 → 0.87, 10 → 0.95, 100 → 1.77 pg/mL; packed-bed factor 1 → 0.42, 3 → 0.95, 30 → 8.5 pg/mL. **The capture
+  surface's own NSB factor matters far more than the walls, as long as the walls are not exposed for long.**
+* **Free hydroquinone in the substrate** (U3) and the **detection reagent's k_off** (U2) are the other two
+  first-order uncertainties (docs/05 §0, §3: free HQ 10⁻³ or the old NSB rate kill every design).
+* **Electrochemical noise is second-order** at present (docs/08 S9): the IDA gains 0.02–0.05 in P as specified,
+  0.07–0.09 in favourable scenarios (docs/08 §10).
+
+### 4.2 Constraints the cartridge must respect
+
+| # | Constraint | Value / rule | Source |
+|---|---|---|---|
+| C1 | No reagent in the sample vial; mixing of sample with reagent by the instrument only | – | docs/00 decisions |
+| C2 | Injected volume ≤ 100 µL (full loop, ~200 µL drawn) | – | docs/00 |
+| C3 | Time from injection to result | ≤ 60 min | docs/00 |
+| C4 | Identical, timed incubation for every sample | ±2 min → ±6 % slope; queue-position-dependent incubation biases by up to 2× | docs/05 §4.3 |
+| C5 | No protein or beads through the BSM | – | docs/02 §1.2 |
+| C6 | No phosphate in anything that reaches the enzyme step; wash bead stock (PBS) 3× in TBS | target ≤ 1 µM residual Pi (Derived, §3.4) | docs/08 B1 |
+| C7 | Beads and conjugate stored separately; combined only at the start of the timed incubation | 30 min shared hold → P 0.16 → 0.01 (model upper estimate) | docs/08 B4; `results/design/shared_reservoir_cost.md` |
+| C8 | Carry-over of the analyte path | ≤ 1×10⁻⁴ with a 10 ng/mL challenge, or a cleaning cycle after any sample > 100 pg/mL | docs/08 S6; `gates.yaml` |
+| C9 | Residual beads after cleaning | ≤ 10⁻³ (U5) — **insufficient for C8 if the beads carry the previous sandwich**; design to ≤ 10⁻⁴ | docs/05 §5 U5; Derived |
+| C10 | Bead loading flow at the capture zone | ≤ 100 µL/min until retention is measured at higher flow; retention ≥ 90 % | `ma.design_levers.max_bead_loading_flow`; docs/05 U5 |
+| C11 | Wash minima (wash efficiency not modelled) | post-capture ≥ 1 min; after conjugate ≥ 2 min; ≥ 50 accumulation-zone volumes | `scripts/design_lib.py`; docs/05 §4.1 |
+| C12 | Bead settling | ≈ 7 mm/h for 2.8 µm beads; stores and chamber must keep beads suspended; the SM-FL cannot resuspend | `ma.capture.in_vial_unstirred_rate_factor` note; docs/02 §2.3 |
+| C13 | Capture-zone walls | wall product ≤ 10 % of bead NSB product (U4); coat (PEG/BSA) or re-trap in a clean zone (L2) if > 30 % | docs/05 §5 U4, §2 L1/L2 |
+| C14 | Isolated (sealed) conjugate-exposed area besides the capture phase | minimal; gen-1 limit 2 × 5 mm stubs | `ma.design_levers.min_isolated_connection_length` |
+| C15 | Electrode protection | no protein/beads/low pH over the electrode unless the format reads in place (then fouling-class CV and per-cycle loss apply) | docs/02 §7.2, R4; `src/elisa_sim/model.py` (Scheme C → fouling CV) |
+| C16 | Readout | product swept or read at a fixed flow, baselines before and after at the same flow; generator +0.35 V vs Ag/AgCl (DellaCiana1996 only, docs/08 §9 C3), set from a CV at the bench | docs/08 W5; docs/05 §4.1 |
+| C17 | Reference/counter electrodes | Ag/AgCl with KCl leakage downstream of the WE; CE downstream; IDA collector −0.1 to −0.2 V is marginal against O₂ reduction (W6) | docs/02 §5.2; docs/08 W6 |
+| C18 | Pressure | cell ≤ 0.8 MPa (commercial thin-layer) or ≥ 1 MPa design (custom); outlet to waste ≤ 50–100 psi; packed beds ≤ 10 MPa (Kozeny–Carman) | `hw.flow_cells.metrohm_thin_layer.pressure_limit`; docs/02 §5.1; `scripts/design_lib.py` |
+| C19 | Bubbles | PLPA air gaps are not used (full loop has none), but stopped-flow zones and the cell must not nucleate bubbles; keep back-pressure at the cell outlet | docs/02 R5, §5.1 |
+| C20 | Materials (wetted) | PEEK, PP, glass in gen-1; no metal in the cup; LoBind-type surfaces for fM protein; IgG-free BSA only (bovine IgG in most BSA, `chem.nsb.bovine_IgG_in_BSA`); no azide in ALP reagents (HRP fallback); steel only upstream of the grounded union | docs/07 §5.1–5.5; docs/06 §4.0; docs/05 §4.1 |
+| C21 | Human-IgG contamination | consumables and reagents handled as fM-clean (human IgG on ≥ 1/3 of tip-cone eluates in every one of 19 labs, Parry1997, qualitative); a cartridge is assembled and filled by people: its fill process is a contamination route. Model default 0–3 fM; scenario up to 6.7 fM takes P 0.16 → 0.09 | docs/08 S5, §9 C6; `ma.nsb.blank_igg_contamination_equivalent` |
+| C22 | Detection-on-capture | detection reagent must not bind the capture antibody (blank on capture beads ≤ 1.2× non-immune); model residual factor 1 (1–3) | docs/05 §4.1; `ma.labelling.detection_on_capture_residual_factor` |
+| C23 | Temperature | not controlled in gen-1; the model has no temperature dependence; R12 recommends thermostatting the reactor | docs/02 R12; docs/05 §4.5 |
+| C24 | Fault handling | fail-safe actuator states; latch until a logged recovery cycle (F16, F17) | docs/08 S12 |
+| C25 | Capture renewal | renewed every run (beads) or regenerated (bed) with recalibration when the slope drifts 10 % (`ma.reuse.slope_drift_tolerance`) | docs/00; docs/05 §4.2 |
+
+### 4.3 Risks a cartridge adds that gen-1 does not have
+
+These are not quantified anywhere in the repository (all **UNVERIFIED**); listed so the design agents can bound them.
+* **On-board storage of protein reagents for the cartridge life** (days?): conjugate aggregation, activity loss,
+  NSB growth on storage surfaces (only the 30-h conjugate-only ageing arm exists, docs/06 E1.3).
+* **Liquid HQDP storage** (§3.3 storage consequence).
+* **Large polymer surface area in contact with conjugate** in on-chip stores and channels (`surface_factor_chip`
+  nominal 10, up to 100).
+* **Small-molecule partitioning into, or permeation through, chip polymers** (product HQ, oxygen, water loss from
+  stores): not represented in any parameter.
+* **Electrode on a disposable/multi-run chip**: electrode-to-electrode sensitivity variation (model value for
+  disposable SPEs 0.10, 0.04–0.18, `ma.noise.spe_sensor_to_sensor_cv`, Pemberton1999 INHERITED) cancels only if each
+  cartridge is calibrated; calibrating each cartridge costs determinations.
+* **Fill-and-seal contamination** with human IgG (C21) and phosphate (C6).
+* **Dock–cartridge interfaces** (pressure/valve seals, magnet gap, pogo contacts) add leak, dead-volume and noise
+  paths.
+
+---
+
+## 5. Modelling map
+
+### 5.1 How the model is organised
+
+| File | Role |
+|---|---|
+| `src/elisa_sim/architectures.py` | `Architecture` (scheme A/B/C × capture × chemistry × detector × injection × labelling format × `design` overrides); `CAPTURES`, `DETECTORS`, `INJECTIONS`, `CHEMISTRIES`; `check()` (allowed combinations); `registry()`/`get()` |
+| `src/elisa_sim/model.py` | `evaluate(arch, ps)`: delivery → capture → retention → labelling → NSB → carry-over → contamination → enzyme turnover → transfer to the electrode → charge → noise → LOD/ULOQ. Geometry in `_reactor_geometry`, flow capture in `_flow_capture`, detectors in `_detector` |
+| `src/elisa_sim/transport.py` | slit/tube wall-conversion tables (`march_conversion`, `conversion`), loop transfer (`loop_transfer_interp`), Wilson–Geankoplis, Smoluchowski, thin-layer and wall-jet conversion, Aoki IDA current, tanks-in-series elution. Tables cached in `results/cache/` (git-ignored; built on first call, ≈ 1 min) |
+| `src/elisa_sim/kinetics.py` | `enzyme_accumulation` (closed well-mixed volume, Michaelis–Menten with competitive Pi inhibition, hydrolysis, product decay), `reversible_binding_fraction`, `one_step_sandwich` (homogeneous ODE) |
+| `src/elisa_sim/timing.py` | `cycle_timeline`: fixed step list per scheme, exposure windows for dissociation |
+| `src/elisa_sim/params.py`, `montecarlo.py` | parameter loading (`chem.*`, `hw.*`, `ma.*`, `ma.overrides`), sampling (log-triangular for high/low ≥ 3, else triangular; design variables in `monte_carlo.fixed_patterns` are not sampled), `montecarlo.run` |
+| `scripts/design_lib.py` | design constraints (`constraint_violations`), Monte Carlo wrapper `mc()` (success = L_eff = LOD × max(1, 1000/ULOQ) ≤ 1; `lod_scale` per draw), `SPACES` (design grids per format), `apply_bench_values`, G1 rule |
+| `scripts/final_designs.py`, `inline_chamber.py`, `recovery_options.py`, `mode_choice.py`, `kill_thresholds.py`, `g1_decision_table.py`, `robustness.py`, `optimise_designs.py` | the design studies (docs/05 §6, docs/08 §10) |
+
+### 5.2 How each downstream element is represented today
+
+| Element | Representation | Code / keys |
+|---|---|---|
+| **Sample transfer from the loop** | 2-D convection–diffusion table of plug fraction leaving the loop vs n loop volumes and β = D·V_loop/(Q·r²); beads use the convective limit | `model.evaluate` §1; `transport.loop_transfer_interp`; `hw.smfl.loop_flush_volumes_for_transfer`, `hw.smfl.loop_inner_diameter`, `hw.timing.sample_load_flow` |
+| **Magnetic beads (gen-1 primary)** | capture **in the sample vial** (`labelling_format = "one_step_in_vial"` or sequential with beads in the vial): Smoluchowski × reaction-limited rate per bead, multiplied by `ma.capture.in_vial_unstirred_rate_factor`; one-step via `kinetics.one_step_sandwich`; then `f_del × f_transfer × ma.capture.magnetic_trap_efficiency`; NSB area = bead area × bead factor + trap wall (cylinder from `ma.geometry.magnetic_trap_volume` and `…_tube_inner_diameter`) × tubing factor + isolated tubing (`ma.geometry.reactor_connection_length`) × tubing factor; accumulation volume = trap volume; elution as tanks in series (`ma.readout.tanks_trap`) | `model.capture_chain`, `_reactor_geometry("magnetic_beads")` |
+| **In-line incubation chamber (cup)** | **no chamber element.** Approximation in `scripts/inline_chamber.py` and `final_designs.designs()`: the in-vial formula with the unstirred factor sampled on [0.2, 1.0]/2.2 (mode 0.45 = well mixed / 2.2× dilution); chamber emptying as `hw.smfl.loop_flush_volumes_for_transfer = 6.6` (time and convective bead transfer 0.96); +2 min via `ma.timing.post_sample_wash`; analyte transfer loss as LOD × 1/0.96 applied per draw (`design_lib.mc(lod_scale=…)`). Chamber wall NSB is **not** counted (walls are outside the product path in gen-1) | `scripts/inline_chamber.py`, `scripts/final_designs.py` `chamber_ps_fn`, `CHAMBER_TRANSFER` |
+| **Packed micro-bed (backup)** | single-pass capture with Wilson–Geankoplis film transfer + reaction, site saturation by fixed-point iteration; area 6(1−ε)/d_p × V; NSB = area × packed-bed factor; accumulation volume = void; regeneration step and residual label | `_flow_capture`, `_reactor_geometry("packed_bed")`; `hw.reactors.packed_microbed_10uL.*`, `ma.geometry.packed_bed_column_inner_diameter`; pressure drop `design_lib.reactor_pressure_drop_mpa` |
+| **"FRC" chip bead bed (Scheme C)** | the packed-bed capture model with `ma.geometry.chip_bead_bed_volume` / `…_inner_diameter` (particle size and porosity borrowed from `hw.reactors.packed_microbed_10uL.*`), plus a sealed channel `chip_channel_height × width × length`; NSB = bed area × packed-bed factor + **2 × width × channel length** × `ma.nsb.surface_factor_chip` (top and bottom of the channel; side walls ignored); no isolated tubing; accumulation volume = bed void + channel; readout in place by `ida_chip` | `_reactor_geometry("chip_bead_bed")`; architecture `C-bed-IDA`; optimum `results/design/optimum_FRC__baseline.json` (0.1 µL bed, 10 µm particles, 0.2 mm ID, channel 3 × 0.2 mm, 10 µL/min load, 10 µL conjugate, 2 min stop, 7.5 min accumulation): nominal 0.95, median 3.8 [0.64–46], P 0.10, 45 min (docs/05 §1.2, IDA era; not re-evaluated after the review) |
+| **Wall-coated chip ("chip_planar")** | slit wall conversion (exact slit solution) over `chip_capture_length` × width with Da = k_r·H/D; NSB = 2 × width × channel length × chip factor | `_flow_capture("chip_planar")` |
+| **Capillary, monolith** | tube conversion tables; monolith as straight parallel channels | `_flow_capture` |
+| **Thin-layer cell (default detector)** | single-pass slit conversion of a square electrode of area `hw.flow_cells.thin_layer_basi.we_area` (3 mm disk) in a channel of height `hw.flow_cells.thin_layer_basi.channel_height` (51 µm) and width `ma.geometry.thin_layer_channel_width` (3 mm, **UNVERIFIED**); conversion 0.78 at 10 µL/min (computed here; docs/04 §3.9: 0.36 at 50 µL/min) | `_detector("thin_layer")`; `transport.thin_layer_conversion` |
+| **Flow IDA** | generator conversion of a slit electrode of length `ma.geometry.ida_flow_cell_length` in a channel **`ma.geometry.chip_channel_height` × `chip_channel_width`** × a flow-independent amplification `hw.flow_cells.ida_redox_cycling.amplification` (10, empirical) | `_detector("ida_flow")` |
+| **IDA in a sealed chip channel** | Aoki steady-state generator–collector current × `ma.detection.ida_stopped_efficiency` (0.5, 0.2–1, **UNVERIFIED**); Aoki constants recalled, **UNVERIFIED** (docs/04 §3.9); stopped-flow noise `hw.gamry.noise_rms_stopped_flow` | `_detector("ida_chip")` |
+| **Product transfer reactor → cell** | tanks-in-series elution with `hw.tubing.product_plug_sigma_reactor_to_cell` (1 µL) and `ma.readout.tanks_*`; readout flow `ma.readout.sweep_flow`; window `hw.timing.readout_time` | `model.evaluate` §8 |
+| **Accumulation** | closed well-mixed volume V_acc; product = enzyme turnover (k_cat `chem.enzymes.alp.kcat_conjugate_assay_conditions` 1000 s⁻¹, 100–6000, low), Pi inhibition, hydrolysis during accumulation, impurity = `free_product_impurity × S0 × V_acc` | `kinetics.enzyme_accumulation` |
+| **Carry-over** | SM-FL conjugate carry-over (`hw.smfl.carryover_protein_conjugate`) squared across an intervening injection, plus residual label `chem.regeneration.residual_label_carryover_fraction` (beads: only the wall share persists) | `model.evaluate` §6 |
+| **Noise** | white noise scaled by electrode area^`ma.noise.area_exponent` from 3 pA (flow) / 1 pA (stopped) at a 3 mm disk; drift residual; NSB CV `chem.nsb.blank_CV_analog_electrochemical` 0.1 (0.03–0.2); injection RSD; bead-dose CV × bead share; substrate background CV; electrode sensitivity CV (non-fouling 0.02, fouling or Scheme C 0.10) | `model.evaluate` §9 |
+| **Timing** | fixed step sequence; time to result = cycle + in-vial (chamber) incubation | `timing.cycle_timeline` |
+
+### 5.3 Parameters a chip design would change (existing keys)
+
+| Chip property | Existing key(s) | Effect in the model |
+|---|---|---|
+| Capture-phase amount and type | `chem.surfaces.bead_number_per_100uL_digital_ELISA`; `ma.geometry.magnetic_bead_diameter`; `hw.reactors.packed_microbed_10uL.bead_diameter`, `.void_fraction`; `ma.geometry.chip_bead_bed_volume` | capture rate vs bead NSB area |
+| Capture-zone (accumulation) volume | `ma.geometry.magnetic_trap_volume`; chip channel dims | product concentration and impurity product. Nominal check (P-chamb): trap 0.5 µL → LOD 0.57, ULOQ 1360 pg/mL; 2 µL → 0.60, 5200; 5 µL → 0.74, 11 700 (computed for this document). **Smaller volume barely helps the LOD and costs range** (Pi inhibition) |
+| Surface-to-volume and wall NSB area | `ma.geometry.magnetic_trap_tube_inner_diameter`, `ma.geometry.reactor_connection_length`, `ma.geometry.chip_channel_width`/`length`/`height` | NSB area of sealed surfaces |
+| Wall material / coating | `ma.nsb.surface_factor_chip`, `…_tubing`, `…_packed_bed` | NSB per area (§4.1 sensitivities) |
+| Mixing in the chamber | `ma.capture.in_vial_unstirred_rate_factor` (as used by the chamber approximation) | capture rate |
+| Dilution in the chamber | folded into the same factor (/2.2) | capture rate |
+| Diffusion lengths in flow capture | `ma.geometry.chip_channel_height`, `capillary_inner_diameter`, `monolith_channel_diameter` | slit/tube conversion |
+| Electrode geometry | `hw.flow_cells.thin_layer_basi.we_area`, `.channel_height`, `ma.geometry.thin_layer_channel_width`; `ma.geometry.ida_*`; `hw.flow_cells.ida_redox_cycling.gap`, `.amplification` | conversion, noise via area |
+| Readout | `ma.readout.sweep_flow`, `hw.timing.readout_time`, `ma.readout.tanks_*`, `hw.tubing.product_plug_sigma_reactor_to_cell` | elution fraction, noise integration |
+| Timings | `ma.timing.in_vial_incubation` (chamber incubation), `hw.timing.accumulation_time`, `hw.timing.conjugate_stopped_flow_incubation`, `hw.timing.wash_after_conjugate`, `ma.timing.post_sample_wash`, `ma.timing.bead_flush_and_clean` | time to result, dissociation windows |
+| Trap performance | `ma.capture.magnetic_trap_efficiency`, `ma.capture.bead_dose_cv` | signal, NSB variability |
+| Conjugate dose | `chem.antibodies.conc_detection_antibody_typical`, `ma.delivery.conjugate_injection_volume` | labelling, NSB exposure, ULOQ |
+
+### 5.4 What is missing to evaluate chip candidates (new code or parameters needed)
+
+Each item names where the change would go. None of this exists today.
+
+1. **An on-chip incubation chamber element.** Today the chamber is the in-vial bead model with a sampled
+   correction factor (`scripts/inline_chamber.py`). Needed in `src/elisa_sim/model.py` (`capture_chain`) and
+   `architectures.py`: a capture/labelling format such as `labelling_format = "one_step_chamber"` /
+   `"sequential_chamber"` with parameters `ma.geometry.chamber_volume`, a mixing model
+   (`ma.capture.chamber_mixing_factor`, or a mixing time constant), the dilution computed from sample + reagent +
+   transfer volumes instead of the fixed 2.2, chamber emptying (`ma.timing.chamber_transfer`, bead transfer
+   fraction `ma.capture.chamber_bead_transfer`), and **chamber-wall NSB** when the chamber is also the
+   accumulation zone (`ma.geometry.chamber_wall_area`, material factor). The sample-transfer loss (1/0.96) should be
+   computed from the loop model, not applied as a script-level LOD factor.
+2. **Magnetic beads inside a Scheme C chip.** `architectures.check()` forbids `magnetic_beads` with scheme C and
+   requires `ida_chip` for scheme C. Needed: a capture key such as `chip_magnetic_beads` in `CAPTURES` and
+   `_reactor_geometry` (trap zone dimensions on the chip, wall area × `surface_factor_chip`, beads read in place or
+   swept a short distance), and the check rules relaxed.
+3. **A single-WE stopped-flow detector on the chip.** Only `ida_chip` reads in a sealed channel. Needed in
+   `_detector`: e.g. `thin_layer_chip` (chronoamperometric/coulometric charge from a sealed thin layer of height h,
+   diffusion time h²/D, conversion ≤ 1, background charge) with keys `ma.geometry.chip_we_area`,
+   `ma.geometry.chip_we_layer_height`. Also: the flow IDA reads its channel size from `ma.geometry.chip_channel_*`,
+   the same keys as the Scheme C capture channel — **the two must be decoupled** (e.g. `ma.geometry.ida_channel_height`,
+   `…_width`) before chip candidates with both are compared.
+4. **Conjugate delivered on-chip, not through the SM-FL loop.** For non-one-step formats `evaluate` always disperses
+   the conjugate plug through the loop model (`beta_conj`, `conj_frac`) and multiplies by
+   `ma.delivery.tubing_dilution_factor`; carry-over is computed from `hw.smfl.carryover_protein_conjugate`. Needed:
+   `arch.conjugate_delivery = "smfl" | "onboard"` with an on-board dose model (`ma.delivery.onboard_conjugate_volume`,
+   `ma.delivery.onboard_dose_peak_fraction`) and a cartridge carry-over key (`ma.chip.carryover_fraction`).
+5. **Decoupled flows.** `hw.timing.sample_load_flow` sets both the loop flush and the capture flow. A chip that
+   parks the sample in a chamber and perfuses the capture zone with a dock pump needs a separate
+   `ma.chip.capture_flow` and a transfer-time term in `timing.cycle_timeline`.
+6. **Exposure-resolved NSB per zone.** `model.evaluate` §5 sums areas and applies one exposure (or two, in the
+   one-step branch). A chip with stores, channels, chamber, capture zone and cell needs a list of zones
+   {area, material factor, conjugate exposure (nM·s), in product path yes/no}. Suggested: a `zones` table in
+   `ma.chip.*` and a function `_zone_nsb(zones, k_nsb, label_factor)` in `model.py`. This is also where the B4
+   reservoir pre-exposure (now a script, `scripts/shared_reservoir_cost.py`) belongs.
+7. **On-board storage terms.** (a) Substrate: in stopped-flow schemes the stored-solution hydrolysis is not counted
+   (`ma.timing.substrate_reservoir_age` is used only by Scheme A). Needed: free HQ at the moment of fill =
+   `free_product_impurity + hydrolysis_rate × storage_age` (less oxidation) in `model.evaluate` §8, with
+   `ma.chip.substrate_storage_age` (or storage temperature). (b) Conjugate activity and NSB vs storage time
+   (`ma.chip.conjugate_activity_loss_per_day`, `ma.chip.conjugate_nsb_growth_per_day`), both to be measured.
+   (c) Bead store: dose CV vs time.
+8. **Multi-run cartridges.** No term for within-cartridge drift (electrode sensitivity loss per cycle exists:
+   `ma.reuse.electrode_sensitivity_loss_per_cycle_*`; capture loss only for regenerated beds), residual beads per run
+   (should feed the carry-over: today `persist` uses only the label residual and the wall share), or a recalibration
+   cost in determinations per cartridge. Needed in `model.evaluate` §6 and a cartridge-level script.
+9. **Electrode-to-electrode (cartridge-to-cartridge) variation** for a disposable electrode is available only for the
+   `wall_jet_spe` detector (`ma.noise.spe_sensor_to_sensor_cv`). Needed: a `cv_sens` choice per chip detector and a
+   flag "calibrated per cartridge".
+10. **Parallel / staggered chambers and throughput.** `timing.cycle_timeline` returns one serial cycle. Needed: a
+    throughput calculator (samples/h for k chambers sharing one cell and one BSM), in a script, not in the LOD model.
+11. **Temperature.** Not modelled anywhere (docs/03 §11). If the dock thermostats the chip, kinetics (k_on, k_cat,
+    k_off) would need temperature coefficients — no sourced values exist in the repository.
+12. **Washing efficiency and NSB reversibility.** Only scenario S3a (`ma.design_levers.nsb_fraction_removed_by_wash`)
+    exists; a chip that relies on stringent on-chip washes cannot be credited until E1.3 measures it.
+13. **Pressure and leak budget.** Only `design_lib.reactor_pressure_drop_mpa` (Kozeny–Carman for beds). Needed: a
+    hydraulic-resistance check of the whole chip path against the cell rating and the BSM minimum back-pressure.
+14. **Product loss to chip materials** (sorption/permeation of HQ) and **oxygen** supply in sealed zones: no keys.
+
+### 5.5 How P(success) and LOD distributions are produced, and how long they take
+
+* **Nominal LOD**: `elisa_sim.model.evaluate(arch, ps)` (milliseconds: 0.04–0.12 s per design, measured for this
+  document).
+* **Monte Carlo**: `elisa_sim.montecarlo.run(arch, ps, n, seed)` samples every parameter the model reads, except
+  design variables (`monte_carlo.fixed_patterns`) and pinned keys; default n = 2000, seed 20261111
+  (`params/model_assumptions.yaml` `monte_carlo`). Scripts call it through `scripts/design_lib.mc(arch, ps, n,
+  lod_scale)`, which adds L_eff = LOD × max(1, 1000/ULOQ), **P(success) = P(L_eff ≤ 1)** (docs/05 convention; it
+  counts draws with ULOQ < 1000 when ULOQ/LOD ≥ 1000, so it is 0.01–0.02 above the strict P(LOD ≤ 1 and ULOQ ≥ 1000),
+  docs/08 §10), and applies any LOD scale per draw before P (docs/08 S13). Sampling error at n = 2000 is ±0.02
+  (n = 1000: ±0.03); ΔP < 0.05 is not decision-grade (docs/06 §12.6; docs/08 W7).
+* **Run times measured for this document** (Python 3, this container, n = 2000, transport tables already cached):
+  P-vial 14 s, P-chamb 15 s (the one-step ODE is the slow part), B-bed 3.6 s, F-seq 3.6 s, S-chamb 3.3 s, FRC
+  chip bed ≈ 20 s. The first call in a fresh checkout builds `results/cache/` tables (≈ 1 min extra).
+* **Scripts and their cost** (docs/05 §6, CLAUDE.md, docs/08 §3.1): `scripts/final_designs.py` (5 designs × 13
+  scenarios, n = 2000; ≈ 10 min by the per-design times above, my estimate); `scripts/g1_decision_table.py` ≈ 8 min
+  (CLAUDE.md); `scripts/optimise_designs.py` ≈ 35 min per scenario (coordinate search, n = 300 inside the optimiser,
+  re-evaluated at n = 2000; docs/05 §6); `edge_checks.py`, `gain_decomposition.py`, `robustness.py` "about 35 min or
+  more each" (docs/08 §3.1). `inline_chamber.py`, `recovery_options.py`, `kill_thresholds.py`, `mode_choice.py`,
+  `shared_reservoir_cost.py` are a few minutes each (not timed here).
+* **Bench feedback**: `automation/elisa_auto/model_feedback.py` enters `bench/measured_values.yaml` with
+  `design_lib.apply_bench_values` (pins the coupled NSB factors when the label factor is measured) and applies the
+  G1 rule (GO ≥ 0.30, GO-WITH-LEVER 0.10–0.30, STOP < 0.10).
+* **Recommended way to evaluate a chip candidate today** (no new code): express it as an existing architecture
+  with `Architecture.with_design(...)` and scenario modifiers, as `final_designs.designs()` does for the chamber, and
+  state every approximation (as `inline_chamber.py` does). Candidates that need items 1–6 of §5.4 cannot be
+  evaluated honestly without new code.
+* **Current reference numbers to beat** (thin-layer default, n = 2000, docs/08 §10.1): primary one-step chamber
+  median 3.5 [0.51–158] pg/mL, P 0.16 (L6 + L7: 1.3, P 0.32); sequential chamber 3.0, P 0.13; backup bed 3.4,
+  P 0.09; with the optional IDA the primary is P 0.18 (0.39 after L6 + L7).
+
+---
+
+## 6. Open questions for the design agents
+
+**Format and architecture**
+1. Which capture format does the cartridge adopt: magnetic beads renewed every run (gen-1 primary), a fixed bed or
+   wall coating regenerated in place, or a single-use capture zone per determination (renewal by replacement of the
+   chip section)? The model ranks beads ≈ chamber modes > fixed bed today (docs/05 §3), but the capture surface's own
+   NSB factor dominates (§4.1).
+2. One-step or sequential on the chip? The decision depends on the on-bead detection t½ (boundary ≈ 30 min,
+   docs/08 S4) — can the cartridge support both modes from the same stores?
+3. Does the chamber double as the capture/accumulation zone (then its walls enter the product path, §5.4 item 1),
+   or are beads moved to a separate small capture zone as in gen-1?
+4. What mixing method reaches the well-mixed limit in the chamber, and how will its capture factor be measured
+   (docs/06 E3.3 measures it for the cup)?
+5. Is immune-complex transfer (L4) or a clean-zone re-trap (L2) built into the chip from the start? They are the
+   only levers that act robustly on NSB per specific signal (docs/05 §2), and a chip makes a second capture zone cheap.
+
+**Lifetime and batch size**
+6. Single-use, multi-run (N determinations per load) or permanent fluidics with replaceable reagent packs? How is
+   C8/C9 (carry-over ≤ 10⁻⁴, including residual beads) met in a multi-run chip?
+7. What on-board storage life is required (hours, days, weeks), and at what temperature? This drives conjugate,
+   bead and HQDP stability, none of which has data beyond 30 h (docs/06 E1.2, E1.3).
+8. Liquid HQDP on board, HQDP dissolved on demand from a dry form, or substrate kept on the BSM B1 line?
+9. Is each cartridge calibrated (costs determinations), or are electrodes and capture lots consistent enough to
+   carry a factory calibration? No repository value supports the latter.
+
+**Fluidics and interfaces**
+10. What hydraulic resistance does the cartridge present at 10–100 µL/min, and does the BSM accept the resulting
+    back-pressure at the user-stated 1 µL/min minimum (docs/08 §10 open item)?
+11. Where is the BSM flow sent during the incubation (shunt in the dock, on-chip bypass, or BSM parked at its
+    minimum)? Gen-1 shunts 3 mL of A1 per run to waste.
+12. How is the sealed accumulation zone isolated on chip without displacing product when the valves actuate?
+13. How is solution-path electrical isolation between the earthed Waters stack, the cell and the waste achieved on
+    a centimetre-scale chip (§1.2, F20)?
+14. Which materials and coatings (PEG, BSA, other) bring the chip-wall factor (`ma.nsb.surface_factor_chip`, 1–100)
+    towards 1, and which wetted polymers absorb HQ or leak oxygen into the accumulation zone?
+15. Does the dock thermostat the chamber and capture zone, and at what temperature?
+
+**Detector**
+16. Single WE (commercial-style thin layer) or IDA with a second channel on the chip? The G2 rule (EC noise ≥ 30 %
+    of blank SD) still decides; a chip makes the IDA cheaper but adds a collector potential that is marginal against
+    O₂ reduction (docs/08 W6).
+17. Read in place (Scheme C: electrode sees protein; fouling-class CV and per-cycle loss) or sweep the product to a
+    protected electrode (Scheme B-like)?
+18. Where does the Ag/AgCl reference sit on a chip so that KCl leakage stays downstream, and is an on-chip
+    pseudo-reference stable enough over the cartridge life (drift `hw.gamry.baseline_drift`, **UNVERIFIED**)?
+
+**Model and evidence**
+19. Which of the §5.4 model extensions are needed to rank the candidates, and who builds them (src may change only
+    under the model task's rules)?
+20. Which bench measurements on chip materials must come first? Natural candidates: conjugate exposure series on
+    chip-material coupons (the U4 protocol, docs/05 §5, applied to the chip polymer), on-chip bead retention and
+    release (U5 analogue), HQDP storage in the chip material (E1.2 analogue), and the chamber mixing factor (E3.3
+    analogue).
+
+---
+
+## 7. Notes on what surprised me while compiling this
+
+* **Carry-over acceptance is internally inconsistent.** U5 accepts residual beads ≤ 10⁻³ after 3 cup rinses
+  (docs/05 §5), while the analyte-path carry-over criterion is 10⁻⁴ (docs/08 S6). Beads left behind after a
+  10 ng/mL sample carry their sandwiches into the next run; at 10⁻³ that is ten times the allowed carry-over.
+* **Shrinking the accumulation volume does little for the LOD in the model and costs range.** Trap 2 → 0.5 µL
+  changes the nominal primary LOD only from 0.60 to 0.57 pg/mL but lowers the nominal ULOQ from 5200 to 1360 pg/mL,
+  because the product (and its phosphate) are concentrated while the blank scales with the enzymes, not the volume.
+  Miniaturisation alone is not a lever; the capture surface's NSB per area × exposure is.
+* **On-board liquid HQDP**: at the substrate's own acceptance limit for hydrolysis (10⁻⁹ s⁻¹) one day of storage
+  produces about 9× the acceptable free hydroquinone (before oxidation). Storage time on a cartridge is a design
+  variable of the first order unless the measured hydrolysis is at the nominal 10⁻¹⁰ s⁻¹ or below.
+* **The gen-1 design wastes most of its buffer**: about 3 mL of A1 per run is shunted to waste during the
+  incubation, against ≈ 0.3 mL of substrate and ≈ 0.7 mL of SIA liquid actually used.
+* **The model cannot represent the user's cartridge directly**: beads on a Scheme C chip are forbidden by
+  `architectures.check()`, the chamber is a script-level approximation, and conjugate is always dispersed through
+  the SM-FL loop. The model extensions in §5.4 (items 1–6) are a prerequisite for a fair ranking of chip formats.
