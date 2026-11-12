@@ -10,7 +10,54 @@ docs/11 (e.g. Wang2013 = doi:10.1039/c3an01166f, CS_1367). **Derived** = calcula
 estimate** = output of the existing model run on an existing architecture with stated overrides; it is not a
 prediction of the candidate, and the direction of every unrepresented chip effect is stated next to it.
 
-## 0. Summary
+> **Corrections after review (docs/15), 2026-11-12.** This document is kept as written for the user checkpoint; it
+> is not rewritten. Where the text below conflicts with this box, the box wins. docs/15 §3 reproduced every model
+> output quoted here to the last digit, so no number was found arithmetically wrong and **no number was corrected in
+> place**; the corrections concern how numbers are compared, assumptions behind them, and superseded designs.
+>
+> 1. **§0 summary compares unlike rows (docs/15 S10).** It sets A *with* pre-electrolysis credit (1.9 / 0.25) beside
+>    B and C *without* it (2.3 / 0.15, 2.4 / 0.16). Like for like: without credit A0 2.3 / 0.20, B0 2.3 / 0.15,
+>    C2 2.4 / 0.16; with credit A1 1.9 / 0.25, B1 2.1 / 0.17, C2 2.2 / 0.18. **The §6 table, which lists both, is the
+>    correct one.** For the docs/13 design of A (3 mM, 1 µL RC) without credit docs/15 finds 2.45 / 0.196 vs gen-1
+>    3.5 / 0.16 — +0.04, not decision-grade; the cartridge has no LOD case without the credit.
+> 2. **The 1 % escape assumption is unsupported for the named commercial guard cell (docs/15 S8).** §2.3 point 2, §8
+>    row "all", §9 decision 3 and §10 assume that 1 % of the substrate escapes electrolysis (impurity ×0.01). The
+>    commercial coulometric cell of §9 decision 3 (`hw.flow_cells.thermo_6011rs_coulometric`) has collection
+>    efficiency 0.95 (0.8–1.0) — i.e. ≥ 5 % escape at best — and a minimum flow of 300 µL/min, above every flow at
+>    which B, C and gen-1 would use it (C ≤ 20 µL/min; gen-1 fill 200 µL/min, baseline/shunt 10 µL/min). B's 1 mL
+>    holding loop (§4.2, §4.4) ages for up to ≈ 9.5 h, during which HQ re-grows to ≈ 3×10⁻⁵ mol/mol at the
+>    acceptance-limit k_h. For gen-1, electrolysing only the fill creates a **baseline mismatch** (baseline windows
+>    read untreated substrate): a negative bias equal to the impurity in the trap volume. In-chamber electrolysis (A's
+>    RC) has a real escape set by its ports and stubs, ≈ 1–11 % in docs/13's geometry (docs/15 S1); the S4a rescue
+>    (19 → 1.9 pg/mL) needs ≤ 1 %. The credit is therefore a scenario, UNVERIFIED pending E1.2b (docs/06); docs/14
+>    re-derives it for B and C′ (×0.05 with a per-run guard-cell fill at ≥ 300 µL/min) and quotes them without credit
+>    as the headline.
+> 3. **The single-step read on a 37 mm² electrode cannot work as specified (§2.3, §3.3, §3.4 row 53.5 → 54.0, §4.4).**
+>    One potential step charges the double layer by C_dl·A·ΔE = 7.4 µF × 0.35 V = 2.6 µC (docs/15 §2), ≈ 1700× the
+>    1.5 nC signal at 1 pg/mL; subtracting it with a PE1 record from another step needs that charge to repeat to
+>    ≈ 0.05 nC / 2.6 µC ≈ 2×10⁻⁵ (Derived; 0.05 nC is the docs/13 resolution target). **Superseded by docs/13**
+>    (smaller WE, double-step read), whose own drift correction is still open (docs/15 S2).
+> 4. **Candidate A (§3) is superseded by docs/13** in geometry, timing and valve count (2 µL RC, 1 mM, 21 valves,
+>    busiest ≈ 70, 54.0 min, 27.5 min/sample → docs/13: 1 µL RC, 3 mM, 20 valves, busiest 40, 58.0 min — ≈ 58.9 after
+>    docs/15 S4 — 31 min/sample). Read A from docs/13 Revision B, to be finalised by the decision document docs/16.
+> 5. **Candidate C (§5) is superseded by C′ in docs/14** (renewable micro-bed, no valve on the chip). The carry-over
+>    argument of §5.8 and §10 over-reads Sun2008 (docs/15 W10): its 92 % is the elution recovery of FITC-tagged HSA
+>    from an anti-FITC monolith (a hapten system), not a measured residual of human IgG on anti-Fc; "8×10⁻² — 800× the
+>    criterion" should read "no residual measured; one elution recovery of 92 % in a hapten system". The conclusion
+>    (no evidence of ≤ 10⁻⁴) stands.
+> 6. **Otieno2014 (§3.1, docs/15 N4)** moves beads to the detection chamber by removing the magnet and switching a
+>    valve (flow), not by magnetic transfer, and uses 1 µm beads carrying ≈ 3×10⁵ HRP: a precedent for the
+>    two-chamber layout only; its LOD is not comparable.
+> 7. **Kim2015 (§2.4, docs/15 N5)** here means doi:10.3390/s150306469 (thin-film Ag/AgCl); docs/10 uses the same key
+>    for a second paper (doi:10.1016/j.bios.2014.10.042).
+> 8. **F1 relaxed (docs/15 W8).** A and B transfer 1.5 loop volumes (0.90 of the analyte, §2.2) against docs/09 F1
+>    "capture ≥ 96 % of the injected analyte"; the trade is defensible (×1.21 capture rate) but is a requirement
+>    change to be recorded with the user.
+> 9. **User decisions of 2026-11-12.** (a) §9 decision 5 / docs/15 W1: **dock-supplied reagents are accepted** (no
+>    reagent need be factory-filled on the card; §3.6 "factory fill of the three tanks" and §3.10 are superseded).
+>    (b) Carry-over rule: the **1×10⁻⁴ criterion is kept, plus a mandatory cleaning cycle and blank check after any
+>    result > 100 pg/mL** (the docs/08 S6 alternative, offered as optional in §3.8 and §5.8, is now mandatory).
+
 
 Three genuinely different cartridges, one per renewal principle the surveys support or leave open:
 
@@ -27,7 +74,8 @@ Three genuinely different cartridges, one per renewal principle the surveys supp
   outlet protecting a stopped-flow IDA channel, two potentiostat channels. Result 37.5 min; 45 min per sample.
 
 **Nearest-model estimates** (existing architectures with overrides, n = 2000; §8), median / P(success):
-gen-1 primary 3.5 / 0.16 → **A 2.3 / 0.20** (1.9 / 0.25 with pre-electrolysis), **B 2.3 / 0.15**, **C 2.4 / 0.16**.
+gen-1 primary 3.5 / 0.16 → **A 2.3 / 0.20** (1.9 / 0.25 with pre-electrolysis), **B 2.3 / 0.15**, **C 2.4 / 0.16**
+(compare like with like: see the Corrections box, item 1, docs/15 S10).
 After U1–U3 screening: gen-1 1.3 / 0.32 → **A 1.1 / 0.39**, B 1.8 / 0.20, C 1.9 / 0.20. **No candidate beats gen-1 by
 a decision-grade margin as specified**; A gains modestly after screening because it keeps the one-step format. The
 largest single lever found — removing the substrate's free hydroquinone by electrolysing the fill before accumulation
@@ -115,7 +163,8 @@ my estimate, **UNVERIFIED** until measured (risk A5).
    1 %, `ma.noise.substrate_background_cv` 5 %); pre-electrolysis removes it instead. HQ re-formed by hydrolysis during
    a 15-min accumulation is 10⁻¹⁰ s⁻¹ × 900 s = 9×10⁻⁸ mol/mol (`ma.chemistries.alp_hqdp.hydrolysis_rate`), ≈ 1 % of
    the nominal impurity. **Assumption** (UNVERIFIED): 1 % of the fill volume (ports, valve seats) escapes
-   electrolysis, so the impurity is represented in the model as ×0.01 (value 10⁻⁷, bounds 10⁻⁹–10⁻⁵). This turns
+   electrolysis, so the impurity is represented in the model as ×0.01 (value 10⁻⁷, bounds 10⁻⁹–10⁻⁵) (not supported for
+the named guard cell or the real readout geometry: Corrections box, item 2, docs/15 S8). This turns
    scenario S4a (free HQ 10⁻³, which kills every gen-1 design, docs/05 §3) into the nominal 10⁻⁵ case.
 3. **On-board liquid HQDP becomes tolerable.** docs/09 §3.3 showed that at k_h = 10⁻⁹ s⁻¹ one day of storage makes
    ≈ 9× the free-HQ acceptance limit. Pre-electrolysis removes that HQ every run. What remains is the **phosphate**
@@ -749,7 +798,8 @@ rotary selector: gen-1 SIA hardware (IDEX-type, rated life UNVERIFIED here, docs
    inactivated by pH 2, `chem.enzymes.alp.inactivation_by_low_pH_regeneration`, so residual *label* barely matters:
    P 0.16 → 0.15 at 10⁻² in run "C2 residual 1e-2"). Captured IgG that glycine fails to elute is labelled again in
    the next run: carry-over = 1 − elution efficiency. The only chip elution number found is 92 % (FITC-HSA on an
-   affinity monolith, Sun2008, doi:10.1021/ac800322f), i.e. **8×10⁻² — 800× the criterion**. C is viable only if
+   affinity monolith, Sun2008, doi:10.1021/ac800322f), i.e. **8×10⁻² — 800× the criterion** (over-read: an elution
+recovery in a hapten system, not a residual; Corrections box, item 5, docs/15 W10). C is viable only if
    glycine removes ≥ 99.99 % of captured human IgG from the anti-Fc bed; no source in docs/10 shows that.
 2. SM-FL (10⁻⁴, UNVERIFIED) and Vin/N1 seats (sample film) — as A.
 3. Conjugate adsorbed on bed walls and valve seats near N1/N2 that survives glycine — part of the residual-label term.
