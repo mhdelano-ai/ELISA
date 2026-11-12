@@ -28,11 +28,11 @@ on an existing architecture with stated overrides (docs/12 §8); it is not a pre
 
 A 75.5 × 50 mm, 6 mm thick injection-moulded COC card (double-slide footprint, CS_EXPLAINED; thickness custom) with a
 140 µm COC foil floor (magnet and Peltier side), a laminated TPE valve membrane and a top frame, and a 10 × 6 mm glass
-thin-film electrode die bonded face-down into a top pocket. Two stirred 170 µL incubation chambers (IC1, IC2) receive
-the SM-FL plug (1.5 loop volumes) through on-card valves; beads (V2: from a cooled stirred dock vial through a
+thin-film electrode die bonded face-down into a top pocket. Two stirred 176 µL incubation chambers (IC1, IC2) receive
+the SM-FL plug (1.5 loop volumes) through on-card valves; beads (V2: from a cooled, rocked dock vial through a
 face-seal port) and conjugate (on-card cooled tank, fill-to-vent 10.0 µL meter) are dosed into the chamber just before
 injection; after a 30-min one-step incubation with tangential-jet tidal mixing, a dock magnet carriage collects the
-beads, gathers them to the chamber throat, the chamber is drained and rinsed twice, and a small high-gradient magnet
+beads, gathers them to the chamber throat, the chamber is drained, rinsed twice and refilled with clean buffer, and a small high-gradient magnet
 **drags the pellet at 0.20 mm/s through a 20 mm buffer-filled wash lane into a 1.0 µL, 0.20 mm high readout chamber
 (RC)** whose ceiling is the working electrode (WE1, 2.5 × 1.9 mm). The RC was filled with HQDP substrate and
 pre-electrolysed before the beads arrive, and its residual activity was measured (carry-over monitor). Accumulation
@@ -46,19 +46,19 @@ The BSM flushes the loop and inlet line to a bypass after every transfer, then L
 
 | # | docs/12 (§3) | docs/13 | Reason |
 |---|---|---|---|
-| D1 | RC 4 × 10 mm × 50 µm = 2 µL; WE 37 mm² | **RC 2.6 × 2.0 mm × 0.20 mm = 1.04 µL; WE1 2.5 × 1.9 mm = 4.75 mm²**; 3 mM HQDP | A step read on a 37 mm² WE carries a double-layer charge of ≈ 2.6 µC against a 1.5 nC signal at 1 pg/mL (§3.5.4, Derived): the subtraction would need a repeatability of 2×10⁻⁵. Cutting the area 7.8× (thicker layer, half the volume) and the step height (0.35 → 0.15 V) lowers the charge to ≈ 0.14 µC (needed repeatability 3.5×10⁻⁴). Exhaustive collection is kept: τ = 18 s, 90-s steps collect 99.5 % (§3.5.3). The model is neutral to the volume change (P 0.26 at 1 and 2 µL, 3 mM; ULOQ 3040 vs 6810 pg/mL; §3.5.6) |
+| D1 | RC 4 × 10 mm × 50 µm = 2 µL; WE 37 mm² | **RC 2.6 × 2.0 mm × 0.20 mm = 1.04 µL; WE1 2.5 × 1.9 mm = 4.75 mm²**; 3 mM HQDP | A step read on a 37 mm² WE carries a double-layer charge of ≈ 2.6 µC against a 1.5 nC signal at 1 pg/mL (§3.5.4, Derived): the subtraction would need a repeatability of 2×10⁻⁵. Cutting the area 7.8× (thicker layer, half the volume) and the step height (0.35 → 0.15 V) lowers the charge to ≈ 0.14 µC (needed repeatability 3.5×10⁻⁴). Exhaustive collection is kept: τ = 18 s, 90-s steps collect 99.5 % (§3.5.2). The model is neutral to the volume change (P 0.26 at 1 and 2 µL, 3 mM; ULOQ 3040 vs 6810 pg/mL; §3.5.6) |
 | D2 | single step read; background "measured on the same fill" by PE1 | **double-step read** (E_rest → E_det 90 s, back 15 s, E_det 90 s again) with Q_net = Q_a − Q_b; E_rest instead of open circuit before each step | the charging and oxide charge of the second step cancels that of the first on the same electrode within 2 min; PE1 happens 25 min earlier from an undefined open-circuit potential and cannot cancel it [assessment] |
-| D3 | no fallback read mode | **WE2 thin-layer flow detector (1.0 × 3.0 mm channel, 50 µm) downstream of the RC on the same die** | if the double-step background (gate M5b) fails, the RC contents are swept at 10 µL/min over WE2 held at constant potential — the gen-1 readout that the model actually represents (thin-layer conversion 0.78 at 10 µL/min, docs/09 §5.2) — without a new die |
+| D3 | no fallback read mode | **WE2 thin-layer flow detector (1.0 × 3.0 mm channel, 50 µm) downstream of the RC on the same die** | if the double-step background (mock-up M5, §10.3) fails, the RC contents are swept at 10 µL/min over WE2 held at constant potential — the gen-1 readout that the model actually represents (thin-layer conversion 0.78 at 10 µL/min, docs/09 §5.2) — without a new die |
 | D4 | CE and RE at the end of a dead-end 2 mm × 0.1 × 0.05 mm side channel (R = 250 kΩ) | **CE/RE in a 0.024 µL pocket behind a 0.2 × 0.2 × 0.5 mm neck, flushed at every fill through its own valve**; R_u ≈ 12 kΩ | a dead-end branch accumulates CE reaction products over 20 runs next to the reference; R_u·C_dl = 250 kΩ × 7.4 µF = 1.9 s would have overlapped the 1.1-s thin-layer collection (Derived, §3.5.5) |
 | D5 | collection magnets M1a/M1b + drag carriage M2 | **one carriage with a collection magnet (10 × 10 × 5 mm) and a drag magnet (2 × 2 × 4 mm), plus a fixed-position hold magnet under the RC and a permanent magnet under the bead-waste pocket** | field arithmetic §3.3: a block that collects from 3.7 mm height in seconds cannot drag a pellet precisely, and a small magnet with ≈ 350 T/m lateral gradient cannot collect from the far wall of an 8 mm chamber |
 | D6 | gates G1–G4 (type unspecified) | **flat-floor gates, actuated from the top through the TPE membrane** | the magnet path runs under the foil floor, so the gate plungers cannot be there; a flat floor has no seat ridge for beads to catch on (docs/10 §7: no data on bead trapping at seats) |
-| D7 | V1 placement (beads on the card, tidal-resuspended tank) | **V2 recommended** (§5): bead stock in a cooled, rocked dock vial, metered by a Cavro/PSD-class pump | removes the least-evidenced element (on-board liquid bead suspension; docs/10 §9.3, §6.1) and the shelf-storage bead cake; reuses gen-1's reservoir and its E2.2 dose-CV data; −2 card valves and one pressure channel |
+| D7 | V1 placement (beads on the card, tidal-resuspended tank) | **V2 recommended** (§5): bead stock in a cooled, rocked dock vial, metered by a Cavro/PSD-class pump | removes the least-evidenced element (on-board liquid bead suspension; docs/10 §9.3, §6.1) and the shelf-storage bead cake; reuses gen-1's reservoir and its E2.2 dose-CV data; −3 card valves and one pressure channel |
 | D8 | HQDP tank 2 mL at 4–8 °C | **HQDP tank 1.5 mL in the 25 °C assay zone during use** (cold only in storage) | 8 h at 25 °C makes ≤ 0.17 µM Pi at 3 mM even at the acceptance-limit k_h (§5.3), and the HQ formed is removed by pre-electrolysis; filling a 0.2 mm RC with 4 °C liquid that warms to 25 °C invites bubble nucleation [assessment; gas solubility values not in the repository, UNVERIFIED] |
-| D9 | 21 valves; 7 actuations per run for the tidal valves | **16 membrane valves + 4 gates = 20**; tidal mixing by dedicated dock syringes behind normally-open floor-port valves (valve not cycled per stroke) | busiest valve ≈ 4 actuations per run, ≈ 40 per cartridge (§4) vs 70 in docs/12 — inside the only thermoplastic endurance figure (> 50, CHILDERS2024) |
+| D9 | 21 valves; 7 actuations per run for the tidal valves | **16 membrane valves + 4 gates = 20**; tidal mixing by dedicated dock syringes behind floor-port valves that stay open during incubation | busiest valve 2 cycles per run, **40 per cartridge** (60 in the fallback read mode), ≈ 360 in total (§4) vs 70 / 520 in docs/12 — inside the only thermoplastic endurance figure (> 50, CHILDERS2024) |
 | D10 | bead pellet in a 1 × 1 mm pocket at the RC end; beads to a 16-dose bead-waste pocket | pellet held under WE1 by the hold magnet; **bead-waste pocket flushed every run** through its own valve; beads held there by a fixed magnet | product made by spent beads in a stagnant pocket would otherwise leak back into the RC when G4 opens (§3.8) |
 | D11 | cadence 27.5 min; result 54.0 min | **cadence 31.0 min; result 58.0 min** | double-step reads (3.25 min each), 90-s steps, gather step and 2.0-min drag lengthen the transfer and RC occupancy (29.75 min of every 31, §7.1); still ≤ 60 min (docs/00); 16 samples ≈ 8.3 h |
-| D13 | the 10 % plug tail goes to the bypass | **BSM keeps 100 µL/min to the bypass for 2 more min (3.5 loop volumes in all), then Loop Offline** | without it the inlet line holds loop-tail liquid that would carry ≈ 7×10⁻³ of a sample into the next chamber (§3.1, Derived) |
 | D12 | — | RS/RCj **factory-filled only if shelf-life data allow**; default: filled by the dock at insertion from dock bottles | at the acceptance-limit k_h a factory-filled 3 mM HQDP reaches the 1 µM Pi limit in 1.9 days (docs/12 §2.3, Derived again §5.3); no conjugate data beyond 24 h (docs/06 E1.3) |
+| D13 | the 10 % plug tail goes to the bypass | **BSM keeps 100 µL/min to the bypass for 2 more min (3.5 loop volumes in all), then Loop Offline** | without it the inlet line holds loop-tail liquid that would carry ≈ 7×10⁻³ of a sample into the next chamber (§3.1, Derived) |
 
 **What did not change:** chemistry, antibody pair and doses of docs/05 §4.1 (5×10⁵ beads, 0.3 nM conjugate in the
 chamber, HQDP pH 9.5); one-step format with sequential mode possible from the same stores; Waters interface of docs/12
@@ -89,7 +89,7 @@ background are **not** represented by the model; the noise rows show how sensiti
 Reading (Derived from the rows): (i) halving the RC volume is LOD-neutral and keeps ULOQ ≥ 1000 pg/mL only at 3 mM —
 **3 mM HQDP is now a requirement, not an option**; (ii) the bead-dose CV is the reagent-placement parameter the model
 does see: CV 0.05 → 0.10 costs 0.06 in P (decision-relevant for V1 vs V2, §5); (iii) bead loss in the transfer barely
-matters for the LOD (NSB is carried by the beads too) — it matters for carry-over (§3.3.6); (iv) **the read
+matters for the LOD (NSB is carried by the beads too) — it matters for carry-over (§3.3.5); (iv) **the read
 background is a first-order risk**: a charge SD of 0.11 nC (equivalent noise, mapping in §3.5.4) already costs 0.09
 in P. Charge-equivalent mapping: the model integrates white noise as σ_Q = i_rms × √(T/2B) (param note of
 `ma.noise` bandwidth, T = `hw.timing.readout_time` 60 s, B ≈ 1 Hz) → 3 pA ↔ 0.016 nC, 20 pA ↔ 0.11 nC, 100 pA ↔
@@ -213,7 +213,7 @@ Mini Luer (only on RCj and RS, only if factory fill is used, D12).
 | Path | Segments | Swept volume per run | Dead / hold-up volume | Source |
 |---|---|---|---|---|
 | sample → ICk | SM-FL loop (100 µL) + PEEK 0.3 m × 127 µm ID (3.8 µL, Derived π·(63.5 µm)²·0.3 m) + P_in 0.6 + M_in to Vk 2.4 + Vk → IC 1.2 | **150 µL** of A1 at 100 µL/min (1.5 loop volumes) | 4.2 µL card hold-up, rinsed by the tail of the 150 µL push and by the parked BSM flow to bypass | docs/12 §2.2 (transfer 0.90 at 1.5 loop volumes, docs/09 §1.2) |
-| beads → ICk (V2) | dock vial → holding line → P_b → V4/V5 → IC | 10.0 µL bead slug + 3.0 µL A1 chase | 0.6 + 1.2 + 1.0 = 2.8 µL ≤ chase | Derived |
+| beads → ICk (V2) | dock vial → holding line → P_b → V4/V5 → IC | 10.0 µL bead slug between 2 µL air gaps + ≈ 6 µL A1 push | dock outlet line 2.5 µL + card 0.6 + 1.2 + 1.0 = 5.3 µL ≤ push | Derived (§5.2) |
 | conjugate → ICk | RCj → V8 → MC (10.0) → V6/V7 → IC | 10.0 µL, emptied by air | 0.7 µL channel, air-cleared | Derived |
 | tidal mixing | ICk ↔ port ↔ TSk | 50 µL every 30 s | 1.5 µL port channel (inside the stroke) | docs/12 §3.3 |
 | wash lane | WLk + WLc | 0 during the drag (still liquid); 10 µL A1 refresh per run | 1.43 + 0.55 µL | Derived |
@@ -228,8 +228,8 @@ Mini Luer (only on RCj and RS, only if factory fill is used, D12).
 
 * **Volume and flow.** Empower method per line: A1 at 100 µL/min for 1.5 min into ICk (V_k open, V3 closed): 150 µL
   = 1.5 loop volumes, analyte transfer 0.90 (docs/09 §1.2 table; loop ID 0.5 mm UNVERIFIED); the chamber then holds
-  150 + 10 (beads) + 3 (bead chase) + 10 (conjugate) = **173 µL**; capture gain vs gen-1 0.90/1.73 vs 0.96/2.2 =
-  **×1.19** (Derived as docs/12 §2.2, which used 170 µL → ×1.21).
+  150 + 10 (beads) + 6 (A1 push behind the bead slug, §5.2) + 10 (conjugate) = **176 µL**; capture gain vs gen-1
+  (0.90/1.76)/(0.96/2.2) = **×1.17** (Derived as docs/12 §2.2, which used 170 µL → ×1.21).
 * **Metering is by time × BSM flow**, not by a card meter: 100 µL/min × 1.5 min. BSM accuracy at 100 µL/min is
   assumed 1–3 % (`hw.bsm.flow_accuracy`, low-flow bound a guess) and precision 1 % RSD (`hw.bsm.flow_precision_rsd_low_flow`,
   UNVERIFIED); a 1 % volume error changes the chamber dilution by ≈ 0.9 % and the transfer fraction slightly (both
@@ -257,7 +257,7 @@ Mini Luer (only on RCj and RS, only if factory fill is used, D12).
 
 ### 3.2 Stirred incubation chambers IC1, IC2
 
-**3.2.1 Geometry.** Ø 8.0 × 5.0 mm (251 µL), 173 µL working (fill height 3.44 mm), flat foil floor, PTFE vent in the
+**3.2.1 Geometry.** Ø 8.0 × 5.0 mm (251 µL), 176 µL working (fill height 3.5 mm), flat foil floor, PTFE vent in the
 roof, tangential floor port P_dk opposite the throat, throat taper Ø 8 → 0.5 mm over 3 mm on the +x side leading into
 gate G_k and the wash lane.
 
@@ -275,7 +275,7 @@ aspirates 50 µL into the 60 µL on-card serpentine TSk and dispenses it back **
 * Capture factor relative to a well-mixed tube: **UNVERIFIED** — the model samples 0.2–1.0 (/1.73); the single most
   important unmeasured chamber property (docs/08 §10.2; docs/12 risk A2). Mock-up M2 measures it (E3.3 analogue).
 
-**3.2.3 Drain.** After collection, S_ICk aspirates the chamber through P_dk at 200 µL/min (≈ 0.9 min for 173 µL) and
+**3.2.3 Drain.** After collection, S_ICk aspirates the chamber through P_dk at 300 µL/min (≈ 0.6 min for 176 µL) and
 dispenses to waste through its selection valve. The port is 8 mm from the pellet (throat side), so flow near the
 pellet is negligible [assessment]. Residual after draining: wetted area 136 mm² × film 10–30 µm (UNVERIFIED) = 1.4–4.1
 µL + corner meniscus → **≤ 5 µL** design assumption (docs/12 §3.8; gen-1 cup spec ≤ 2 µL, docs/07 §5.1).
@@ -336,7 +336,7 @@ speed and the immobile fraction directly. Aggregated pellets carry a larger mome
 |---|---|---|
 | 31.5–33.5 | collection: M_c under ICk with its +x edge under the throat entrance, Z up | carriage moves at 5 mm/s from park (≤ 10 s) |
 | 33.5–35.0 | gather: M_c moves +x by 4 mm at 0.05 mm/s (80 s); the floor pellet follows the edge field maximum into the throat taper | X |
-| 35.0–38.0 | drain + 2 rinses with M_c holding (§3.4) | — |
+| 35.0–38.0 | drain, 2 rinses, third fill stays (§3.4), M_c holding | — |
 | 38.0–39.75 | hand-over: M_d moved under the throat (M_c lowered when M_d is in place, 0.25 min), G_k and G3 open; drag 20.3 mm at **0.20 mm/s** (101 s) along WLk, WLc into the RC; M_h up; M_d lowered; G_k, G3 closed | X–Y path following the lane centre line |
 | 39.75 | accumulation starts | carriage free for the other chamber |
 | 58.0–58.75 | bead-out: M_h down, M_d under the RC, G4 open, drag 6 mm into BW at 0.5 mm/s (12 s), M_w holds them, G4 closed; RC + BW flush (§3.8) | X |
@@ -365,14 +365,15 @@ carry-over (§3.3.5).
 
 ### 3.4 Wash
 
-* **Chamber rinses** (pellet held by M_c at the throat): drain (0.9 min), then 2 × (100 µL A1 at 200 µL/min, no tidal
-  strokes, drain) ≈ 3.0 min. Free conjugate left: (105/5)² = 441× dilution → 0.3 nM / 441 = 0.7 pM in ≤ 5 µL =
-  2.1×10⁶ molecules (docs/12 §3.8).
+* **Chamber rinses** (pellet held by M_c at the throat, 35.0–38.0 min): drain (0.6 min), 2 × (100 µL A1 in at 300
+  µL/min, no tidal strokes, drain) and a third 100 µL fill that **stays as the drag medium** (the pellet must be under
+  liquid to enter the lane) ≈ 2.6 min. Free conjugate in the drag medium: (105/5)³ = 9261× dilution → 0.3 nM / 9261 =
+  0.032 pM × 105 µL = 2.0×10⁶ molecules (docs/12 used two rinses and the 5 µL residual: 2.1×10⁶, same order).
 * **Wash lane**: refreshed with 10 µL A1 at t = −5 min (before the chamber is dosed): S_RC → P_w → V11 → J → WLk →
   open G_k → empty ICk (5 µL, then drained by S_ICk), then J → WLc → V12 → waste (5 µL). The pellet then crosses
   20 mm of clean, still A1.
 * **Free conjugate carried into the RC**: Wang2013 substrate carry-over with the beads < 2×10⁻⁵ of the source-well
-  content (small molecule; protein UNVERIFIED) × 2.1×10⁶ = **≤ 42 molecules**, against ≈ 5700 NSB enzymes in the nominal
+  content (small molecule; protein UNVERIFIED) × 2.0×10⁶ = **≤ 40 molecules**, against ≈ 5700 NSB enzymes in the nominal
   blank (docs/12 "A0") — the two rinses are essential (≈ 1.8×10⁴ without them, docs/12 §3.8).
 * Wash minima of docs/09 C11 (post-capture ≥ 1 min, ≥ 50 accumulation-zone volumes): 200 µL of rinse vs a 1.04 µL RC
   = 190 volumes; 3.0 min.
@@ -499,3 +500,567 @@ BW → V16 → P_s, 20 µL at 40 µL/min (D10). M_w holds the beads against 40 �
 until the next run's prep.
 
 ---
+## 4. Valve map
+
+All card valves are **membrane valves on the CS_1367 principle** (TPE membrane pressed onto a 0.2 mm seat ridge by a
+dock plunger from the top); gates are **flat-floor** (membrane pressed into the lane, no ridge; D6). Membrane open when
+not pressed. Plungers are **spring-closed, solenoid-opened** (power to open → fail-closed) except V3, which is
+**spring-open, solenoid-closed** (fail-open) so that the BSM, which keeps pumping when the dock loses power, always has
+a path to the bypass (a dead-ended BSM would reach the card's ≈ 3 bar rating, CS_1367, long before its own 18 000 psi
+limit, `hw.bsm.pressure_max_to_1mLmin`). The Empower method also sets a low pressure limit (value to be set at Stage 0;
+existence of the setting on this installation UNVERIFIED).
+
+Cycles = close → open → close. Per cartridge = 20 runs (16 + 2 priming + 2 recovery reserve), i.e. 10 per chamber.
+
+| ID | Type | De-energised | Isolates / function | Open during (t from Inject Start of its run) | Cycles per run | Cycles per cartridge |
+|---|---|---|---|---|---|---|
+| V1, V2 | membrane | closed | P_in → IC1 / IC2 | 0–1.5 (own chamber) | 1 | 10 each |
+| V3 | membrane | **open** | P_in → bypass | always except 0–1.5 of any run | 1 | 20 |
+| V4, V5 | membrane | closed | bead port P_b → IC1 / IC2 (V2 variant) | −4.0 to −3.0 | 1 | 10 each |
+| V6, V7 | membrane | closed | conjugate meter MC → IC1 / IC2 | −2.5 to −2.0 | 1 | 10 each |
+| V8 | membrane | closed | conjugate tank RCj → MC | −3.0 to −2.5 (fill-to-vent) | 1 | 20 |
+| V9, V10 | membrane | closed | IC floor port ↔ serpentine ↔ S_IC1 / S_IC2 | −5.0 to 38.0 and 39.75 to 44.75 | 2 | 20 each |
+| V11 | membrane | closed | WL refresh inlet P_w → J | −5.0 to −4.5 | 1 | 20 |
+| V12 | membrane | closed | WLc → P_wo (refresh outlet) | −4.75 to −4.5 | 1 | 20 |
+| V13 | membrane | closed | RS → RC (fill; flush after read) | 29.0–29.6 and 58.25–58.75 | 2 | **40** (60 with R-flow) |
+| V14 | membrane | closed | RC → WE2 channel → P_s | 29.0–29.4 (fill) [+ fallback read] | 1 (2) | 20 (40) |
+| V15 | membrane | closed | CE/RE pocket → P_s | 29.4–29.6 | 1 | 20 |
+| V16 | membrane | closed | BW → P_s | 58.25–58.75 | 1 | 20 |
+| G1, G2 | flat-floor gate | closed | IC throat ↔ WL branch | −5.0 to −4.75 (refresh) and 38.0–39.75 (drag) | 2 | 20 each |
+| G3 | flat-floor gate | closed | WLc ↔ RC | 38.0–39.75 | 1 | 20 |
+| G4 | flat-floor gate | closed | RC ↔ BW | 58.0–58.75 | 1 | 20 |
+
+**Totals (Derived):** 18 cycles per run; **360 per cartridge**; busiest V13 with 40 (60 in fallback). Evidence:
+eCOC membrane valves "reproducibly actuated > 50 times without failure" (CHILDERS2024); ChipShop's membrane-valve chip
+is single use, tight to 3 bar (CS_1367); ≥ 10⁶ only for PDMS / clean liquids, secondary source (docs/10 §7). The
+busiest valve needs 0.8× (1.2× in fallback) the published thermoplastic figure — **bench gate at 3× life = 180 cycles**
+for every valve type with the real media (bead suspension, 1 % BSA conjugate buffer, HQDP pH 9.5), leak test at
+50 kPa and at 3 bar (§10, M4).
+
+**Requirements per valve** (targets, own; UNVERIFIED feasibility): closed leak ≤ 0.1 µL/min at 20 kPa (would move ≤ 1.5
+µL in a 15-min accumulation — still too much for the RC, which is why the RC valves also see no pressure difference
+during accumulation: all sources are stopped and the ICs are vented); closed solution resistance ≥ 1 GΩ (gen-1
+minimum 15 MΩ, `hw.tubing.peek_isolation_length_each_side_of_cell`); actuation ≤ 0.2 s; **no displacement of RC
+liquid on actuation**: the plungers of G3, G4, V13–V15 close with the RC open to nothing, so the membrane stroke volume
+(≈ seat area 0.5 × 0.7 mm × 0.2 mm stroke = 0.07 µL, Derived) is displaced out of the seat into whichever side is
+compliant — closing order chosen so that the last valve to close on the RC is the one whose stroke pushes away from
+the RC (G3 closes after V13/V14/V15 at the end of the drag; docs/09 F9 "valve switching must not push product out").
+
+**Fail-safe state** (dock power lost, PC lost, or sequencer safe state): all valves and gates closed except V3 open;
+all magnets up (springs: beads stay where they are and cannot reach the RC through closed gates); syringe pumps stop
+(hold position); Gamry cell off; Peltiers off (reagent zone warms; the latch flags the cartridge if > 10 °C,
+docs/12 F16); dock hardware watchdog (heartbeat from Python) drives the same state if the PC dies (closes the Stage-2
+TODO of `sequencer.py`). In this state nothing drains or siphons: every chamber is either vented and isolated, or
+sealed.
+
+---
+
+## 5. Reagent system: V1 versus V2
+
+Both variants keep the conjugate (RCj + MC) and the substrate (RS) on the card. They differ only in where the bead
+stock lives. Doses are the docs/05 §4.1 doses (5×10⁵ beads in 10 µL; 10 µL of conjugate per run). Sizing: 20 doses per
+cartridge (16 + 2 priming + 2 recovery, docs/12 §3.6).
+
+### 5.1 V1 — beads on the card
+
+On-card bead tank RB (0.5 mL, 5 mm deep, reagent zone 4–8 °C), a 150 µL tidal side reservoir driven by a dock
+pressure channel, a 10.0 µL bead meter between two valves emptied by air into the vented IC (docs/12 §3.2–3.3). Card
+gains 3 valves (tank, meter outlet, side reservoir), a pressure port and 0.3 mL of factory-filled bead suspension.
+
+### 5.2 V2 — bead stock in the dock
+
+A 2 mL glass or low-binding PP vial (≥ 0.5 mL working; minimum stirred volume UNVERIFIED) in a cooled (4–8 °C)
+holder that **rocks or rotates end-over-end** (no magnetic stir bar: it collects paramagnetic beads); a Cavro Centris /
+Hamilton PSD/4-class pump S_b (250 µL syringe → ≈ 10 nL/step, docs/11 §5.2) with a selection valve (ports: vial, A1,
+card, waste) and a 0.5 mm ID FEP holding coil of ≈ 40 µL that keeps beads out of the syringe (SIA principle of gen-1,
+docs/07 §2); outlet line 0.25 mm ID × 50 mm (2.5 µL) to the face-seal port P_b. Per dose: (1) return the vial-to-valve
+line content to the vial (beads settled there since the last dose); (2) aspirate 2 µL air, 10.0 µL beads, 2 µL air;
+(3) dispense through P_b and V_k into the vented IC followed by ≈ 6 µL A1 (line 2.5 + card 2.8 + margin), so the whole
+slug and the dead volumes reach the chamber; (4) rinse the outlet line to waste with A1 (V4/V5 closed, via the
+waste port of S_b — the card path is then filled with A1 up to V4/V5).
+
+### 5.3 Quantitative comparison
+
+| Criterion | V1 (beads on card) | V2 (beads in dock vial) | Source / arithmetic |
+|---|---|---|---|
+| Bead volume per cartridge | 20 × 10 µL = 200 µL + tank/meter dead volume 100 µL (UNVERIFIED) = **0.30 mL** = 1.5×10⁷ beads = 230 µg | 200 µL dosed + line priming 2 × (40 + 2.5) µL ≈ **0.29 mL** per 8 h; the remaining vial stock serves the next cartridge if bead-stock life allows | 5×10⁷ /mL (docs/09 §3.1); 6.5×10¹⁰ /g (`chem.surfaces.magnetic_bead_M280_count_per_mass`) |
+| Priming | meter and channel priming 2 doses | holding coil and line priming at day start | docs/12 §3.6 |
+| Settling between doses (31 min) | 7 mm/h × 31 min = **3.6 mm** of a 5 mm tank cleared → each dose needs a full resuspension | vial agitated continuously; the 2.5 µL outlet line is purged every dose | `ma.capture.in_vial_unstirred_rate_factor` note; docs/10 §2 (Stokes ≈ 4 mm/h) |
+| Resuspension | 3 tidal strokes of 150 µL in a tank whose fill falls from 300 to 100 µL over the cartridge — homogeneity and its **trend with fill level** unmeasured (no on-board liquid-bead data, docs/10 §9.3) | rocking vial = the gen-1 reservoir specification (docs/07 §5.5); **dose CV measured by gen-1 E2.2** (20 doses over 8 h, ≤ 5 % target) | docs/06 E2.2 |
+| Shelf storage before use | beads sediment for the whole shelf life (days–weeks) into a cake on the foil of a COC tank; redispersion by pressure tides untested | none: stock prepared in the lab (docs/06 §4.0 protocol) | [assessment] |
+| Stability over 8 h at 4–8 °C | not measured (beads with capture antibody, docs/09 §3.1 UNVERIFIED) — identical for both variants | same | docs/09 §3.1 |
+| Dose precision | geometry of a moulded 10.0 µL cavity: ±10 µm on 2.0 × 1.0 × 5.0 mm → ±(0.5 + 1.0 + 0.2) % = **±1.7 % systematic per card** (tolerance UNVERIFIED) + suspension inhomogeneity (unknown) | syringe 10 nL/step on 10 µL = 0.1 %; holding-coil and air-gap reproducibility; suspension homogeneity in the vial (E2.2) | Derived; docs/11 §5.2 |
+| LOD consequence of dose CV (model) | if CV 0.10: P 0.20; 0.15: 0.17 | if CV 0.05: P 0.26 | §1.3 |
+| Conjugate (both) | RCj 0.5 mL tank, 0.30 mL fill (200 µL + 100 µL dead), 4–8 °C, dark; MC 10.0 µL fill-to-vent | same | docs/12 §3.6 |
+| Conjugate stability | conjugate-only ageing arm of E1.3: 0/2/8/24 h at 4 and 22 °C; nothing beyond 24 h | same | docs/06 E1.3 |
+| HQDP (both): 8 h in use at 25 °C (D8), 3 mM | free HQ formed: k_h·t = 10⁻¹⁰ × 28 800 s = **2.9×10⁻⁶** (nominal) / 2.9×10⁻⁵ at the acceptance limit 10⁻⁹ s⁻¹ → removed per run by PE1/PE2; Pi: 2·k_h·t·S₀ = 2 × 10⁻⁹ × 28 800 × 3 mM = **0.17 µM** at the limit (0.017 µM nominal) vs ≤ 1 µM target → margin ×6 (×60) | same | `ma.chemistries.alp_hqdp.hydrolysis_rate`; acceptance docs/05 §5 U3; target docs/09 §3.4; 2 Pi per HQ (`…phosphate_per_product`) |
+| HQDP shelf (factory-filled card, before use) | Pi limit reached after 1 µM / (2 × 10⁻⁹ s⁻¹ × 3 mM) = 1.7×10⁵ s = **1.9 days** at the acceptance-limit k_h (19 days nominal); cooling helps by an unknown factor (no temperature coefficient, docs/09 §5.4 item 11) | same | Derived (docs/12 §2.3 gives 1.9 days at 3 mM) |
+| Card complexity | +3 valves, +1 pressure port, +0.8 mL of tanks in the cold zone | +1 face-seal port; −3 valves vs V1 | §2, §4 |
+| Dock complexity | one more pressure channel | one more syringe pump + selection valve + cooled rocking vial holder (sourced class: docs/11 §5.2) | |
+| Contamination route (C21) | bead fill at the cartridge factory (another human-IgG-clean fill) | lab bead preparation as gen-1 | docs/09 C21 |
+| Specific risks | dose drift with tank level; bead cake after shelf; beads adhering to cold COC; meter fill with a settling suspension | one more dock–card interface in the bead path (face seal may trap beads; port dead volume chased); vial line maintenance; dock line state affects the dose | [assessment] |
+
+### 5.4 Recommendation: **V2**
+
+Reasons, in order of weight: (1) V1 puts on the consumable the one element with **no precedent and no data** — an
+on-board liquid bead suspension dosed over hours (docs/10 §6.2: "no multi-run cartridge with an on-board liquid bead
+suspension was found"; §9.3) — and adds a shelf-stored bead cake to it; (2) the bead-dose CV is the reagent parameter
+the model does see (CV 0.05 → 0.10: P 0.26 → 0.20), and V2's dose CV is **measured anyway by gen-1 E2.2** with the same
+reservoir concept; (3) V2 is simpler on the card (−3 valves, no cold bead tank) and keeps the bead stock's lifetime
+independent of the cartridge's (docs/11 §4 option 4 and §7.2 reached the same conclusion). The price is one more
+dock pump and a bead path through one face seal, both testable in mock-up M3.
+
+**Refinement (D12, for the user to confirm): fill RCj and RS at insertion from cooled dock bottles** unless the shelf
+data support factory filling: at the acceptance-limit k_h a factory-filled 3 mM HQDP store exceeds the Pi target in
+1.9 days, and no conjugate data exist beyond 24 h. Dock filling costs two face-seal fill ports and ~3 min at
+docking; the card keeps its reagents "on the card" for the run. If E1.2 measures k_h ≤ 10⁻¹⁰ s⁻¹ and a 4 °C
+conjugate ageing series (> 24 h) is flat, factory filling becomes acceptable for ≈ 2 weeks of cold storage (19 days at
+nominal k_h, Derived above).
+
+---
+## 6. Docking station
+
+### 6.1 Block diagram
+
+```
+                     Waters stack (earthed)                                   Lab PC (Windows)
+  BSM (A1 only) -> restrictors -> SM-FL (100 uL loop) --PEEK >= 0.3 m-->+     orchestrator (Python >= 3.10)
+  SM-FL Inject Start (conn. 1, pins 1-2) ------------------------------+  |      |  JSON/TCP   gamry_worker (Gamry Py 3.7)
+                                                                        |  |      |                  |
+  +------------------------------------- DOCK ---------------------------|--|------|------------------|--------------+
+  |  isolated DAQ (Inject Start, line code) <---------------------------'  |      |                  |              |
+  |  dock controller (MCU, to be selected): plungers, Peltier PID,         |   USB/serial          Reference 600+   |
+  |    carriage, interlocks, HARDWARE WATCHDOG (heartbeat from Python) <----------'               (floating)         |
+  |                                                                         |                        |  cell cable   |
+  |  LID (top): 20 plunger actuators (V1-V16, G1-G4) | assay-zone heater    |                 +------+-------+       |
+  |       block 25.0 C | Faraday sub-enclosure with 6 pogo pins + WE1/WE2   |                 | pogo head on |       |
+  |       reed relay -> Gamry WE / RE / CE                                  |                 | die pads     |       |
+  |  CARD NEST: locating pins, face-seal manifold (10 ports) <--------------'  P_in          +--------------+       |
+  |  BELOW: reagent-zone Peltier 4-8 C | RS / wall plate 25 C | magnet bay (25 C air):                             |
+  |       X-Y-Z carriage (M_c 10x10x5, M_d 2x2x4), M_h lift under RC, fixed M_w under BW                         |
+  |  FLUIDICS: S_b (beads, V2) + rocking cooled bead vial | S_IC1, S_IC2 (1 mL) | S_RC (250 uL) on one RS-485 bus;   |
+  |       2 pressure channels (P_c conjugate tank, P_mv meter vent) | A1 bottle | (HQDP + conjugate bottles, D12)    |
+  |       waste bottle with level sensor | drip tray with leak electrodes | sensors: T x6, RH, P on the P_in line      |
+  |  ID: data-matrix scanner (to be selected); lid switch; contact-loop resistance via the pogo head                    |
+  +-------------------------------------------------------------------------------------------------------------------+
+```
+
+### 6.2 Actuators, sensors and controllers
+
+Candidate parts only as sourced in docs/11; otherwise "to be selected". No part number below is new.
+
+| Item | Function | Specification it must meet | Candidate (docs/11) |
+|---|---|---|---|
+| Plunger actuators ×20 | close V1–V16 (V3: open), G1–G4 from the top | stroke ≥ 0.3 mm (TPE 0.3–0.5 mm, UNVERIFIED), force to seal 50 kPa and survive 3 bar on a 0.5 × 0.7 mm seat (UNVERIFIED value; set in M4), ≤ 0.2 s, spring-return fail state per §4, position feedback (Hall or switch) | memetis actuators sold for CS_1367 (named on CS_1367, model not read) — to be selected; solenoid plungers alternative [assessment] |
+| X–Y–Z magnet carriage | collect, gather, drag, bead-out | travel ≥ 45 × 25 mm (x 30–75, y 12–32), repeatability ≤ 10 µm, speed 0.05–5 mm/s, path following of a ≥ 3 mm radius lane, **magnet-to-foil gap 0.16 ± 0.05 mm** (§3.3.2: v_max drops from 0.57 to 0.35 mm/s at +0.2 mm), Z lift 5 mm spring-up; low-EMI drivers, disabled during reads | Zaber stages with the Zaber Motion Library (Python; ZABER_SW) — model, travel, speed UNVERIFIED |
+| M_h lift | hold the pellet under WE1 during accumulation | 4 mm stroke, spring-up | solenoid/spring slide, to be selected (docs/11 §5.4 assessment) |
+| Magnets | §3.3.1 | B_r ≥ 1.2 T class, Ni-coated | to be selected |
+| Syringe pumps S_b, S_IC1, S_IC2, S_RC | bead dosing; tidal mixing, drain, rinse; WL refresh, RC fill/flush, fallback read at 10 µL/min | ≥ 24 000 steps per stroke (10 nL/step on 250 µL; 42 nL on 1 mL), selection valve with ≥ 4 ports, RS-485 bus, pulsation-free at 10 µL/min for the fallback read | Tecan Cavro Centris (RS-232/485/CAN, up to 16 per bus; TECAN_CENTRIS) or Hamilton PSD/4 (HAMILTON_PSD4; smooth-flow variant HAMILTON_97709 for S_RC) |
+| Pressure channels ×2 | conjugate tank headspace (P_c, +5 to +20 kPa) and meter vent/air push (P_mv) | 0–35 kPa, 1 % stability, 30 ms response | Fluigent Flow EZ 345 mbar (FLUIGENT_FLOWEZ, Python SDK FLUIGENT_SDK) or Elveflow OB1 0–200 mbar (ELVEFLOW_OB1); or one regulator + solenoids (docs/11 §5.1 assessment) |
+| Flow sensors | verify the 10 µL/min fallback read and the rinse flows | 1–20 µL/min and 50–500 µL/min | Sensirion LG16-0150D (7 µL/min FS water — marginal for 10 µL/min, SENSIRION_LG16) and SLF3S-0600F (SENSIRION_SLF3S); a 10–300 µL/min part was not identified (docs/11 §5.3) |
+| Peltier zones ×3 | reagent zone 4–8 °C (RCj, MC, bead vial); assay wall plate and top heater block 25.0 ± 0.2 °C | §6.5 | modules and drivers to be selected (docs/11 §5.4: no datasheet read) |
+| Bead vial holder (V2) | 4–8 °C, rocking or end-over-end, low shear, no foaming | dose CV ≤ 5 % over 8 h (docs/06 E2.2 acceptance) | to be selected |
+| Isolated DAQ | Inject Start (and line code) into Python | opto-isolated input, timestamp on the PC clock | LabJack U3 as in gen-1 (`hardware_lab.example.yaml`) |
+| Dock controller | plungers, Peltier PID, carriage interlocks, sensors, heartbeat watchdog → fail-safe state without the PC | independent of the PC; reports state to Python | to be selected |
+| Potentiostat | PE1, PE2, double-step read; fallback CA on WE2 | one channel (two acceptable, docs/00) | Gamry Reference 600+ (in hand; docs/02 §4) |
+| WE1/WE2 relay | select the read electrode on one channel | leakage ≤ 0.1 pA at 0.5 V (≥ 5×10¹² Ω, Derived), thermal EMF ≤ 10 µV | low-leakage reed relay, to be selected; or a second channel |
+| Sensors | card presence (lid switch + contact loop), card ID, leak, temperatures (6), RH (dew point), P_in line pressure, waste level | §6.6–6.8 | to be selected |
+
+### 6.3 Electrical design for nA-level amperometry
+
+* **Signal levels (Derived):** specific product current is irrelevant in the step read (it is a charge); the step pair
+  integrates ≈ 0.14 µC of charging per step (peak ≈ ΔE/R_u = 0.15 V / 12 kΩ = 12 µA, decaying with 11 ms) and 1.5 nC of
+  product at 1 pg/mL; the target background SD is 0.05 nC (§3.5.4). The Ref 600+ resolves 20 aA and has 11 current
+  ranges 60 pA–600 mA (docs/02 §4.1): the step needs a µA range at the start and a nA range afterwards → **autoranging
+  or a fixed 60 µA range** with the charge integrated digitally; which of the two gives the lower charge SD is a bench
+  question (M5).
+* **Shielding:** the die, pogo head and the first 10 cm of lead sit in a grounded metal sub-enclosure in the lid (Faraday
+  cage, docs/02 §4.4); shielded leads ≤ 0.3 m to the Gamry cell-cable connector; shield connection per the Gamry manual
+  for floating operation (wording UNVERIFIED, docs/02 §4.4).
+* **Contact resistance:** gold-plated spring pins on Au pads (part numbers UNVERIFIED, docs/11 §5.4); mΩ–Ω-scale
+  resistance is negligible against R_u = 12 kΩ; what matters is that it does not change during a step pair →
+  **no carriage, plunger or pump movement within 0.5 m during a read window** where avoidable (§7.1 "quiet windows");
+  contact-loop resistance logged at docking and every hour.
+* **Leakage:** pads ≥ 3 mm from any wetted edge, on the dry side of the die bond; SU-8/PI passivation; any leakage path
+  to WE ≥ 5×10¹² Ω (Derived from ≤ 0.1 pA at 0.5 V); the die area is kept above the dew point (§6.6).
+* **Grounding with the Waters stack:** the Gamry floats (`hw.gamry.floating`; docs/02 §4.4). During PE1, PE2 and the
+  read **the RC is closed on all sides** (G3, G4, V13–V16 closed), so the solution path to the earthed BSM is broken at
+  closed membranes, not merely lengthened (docs/12 §2.4 F20); requirement ≥ 1 GΩ closed-valve solution resistance
+  (§4, measured in M4 by EIS); the 0.3 m PEEK line from the SM-FL stays (`hw.tubing.peek_isolation_length_each_side_of_cell`).
+  The dock waste and A1 bottles are plastic; syringe pumps' metal parts are not in the RC path while the RC is sealed.
+* **Noise sources in the dock:** stepper drivers (carriage, syringe pumps) and Peltier PWM. Rules: Peltier drives linear
+  or PWM ≥ 20 kHz with filtered leads (to be selected); carriage drivers disabled with brake during reads; tidal mixing
+  of the other chamber paused during that chamber-independent read window (identical in every run, so no bias between
+  samples, C4); separate supplies and star ground at the Gamry chassis point.
+
+### 6.4 Magnet and mechanical datum
+
+The card is pressed by the lid onto three datum pads so that the foil's underside sits at a defined height above the
+carriage plane; gap 0.16 ± 0.05 mm (foil 140 µm flatness UNVERIFIED). The foil is not supported under the magnet path
+(the magnets must reach it), so the lid must not pressurise the card interior: chambers are vented and the RC is
+liquid-filled at ambient pressure.
+
+### 6.5 Thermal design
+
+* **Zones:** reagent zone (x 0–20 mm) 4–8 °C from a bottom Peltier plate on the foil side (tank walls are the thin
+  foil, docs/11 §4); assay zone 25.0 ± 0.2 °C (docs/07 §5.1 spec) from (i) a top heater block on the L3 frame over the
+  ICs, WL and die region, (ii) a bottom plate under RS and outside the magnet windows, (iii) the magnet bay air held at
+  25 °C. Thermal break: through-slot x 20–24 mm with two 3 mm bridges (channels from MC and P_b cross there).
+* **Time constants (Derived, COC diffusivity ≈ 1×10⁻⁷ m²/s UNVERIFIED):** through the 6 mm body (3 mm)²/α ≈ 90 s; a 0.2
+  mm RC (water, α ≈ 1.4×10⁻⁷ m²/s UNVERIFIED) 0.3 s. Card equilibration at docking ≈ 10 min (priming runs in parallel).
+* **Liquids crossing zones:** 10 µL of 4–8 °C conjugate into 166 µL at 25 °C (ΔT of the mix ≈ 1 K, recovered in ≈ 1
+  min [assessment]; identical every run); the substrate no longer crosses zones (D8); A1 from room temperature.
+* **Effect sizes:** the model has no temperature dependence (docs/03 §11); ±0.2 °C acts on k_on, k_cat, D (collection
+  at 90 s, §3.5.2) — calibrated out if constant.
+
+### 6.6 Dew point and condensation
+
+At 22 °C and 50 % RH the dew point is ≈ 11 °C (Magnus approximation; constants UNVERIFIED). The reagent zone (4–8 °C)
+is below it: it is enclosed by closed-cell insulation with a dry-gas or desiccant volume and a drip path away from the
+card nest; the die and pogo region is ≥ 35 mm away and at 25 °C (above the dew point), with an RH sensor in the lid
+logging the margin. Condensate on the pogo pads would short the WE (§6.3 leakage requirement).
+
+### 6.7 Cartridge presence, identity and docking check
+
+Lid-closed switch; contact-loop resistance on the die (< 10 Ω expected, two pins); data-matrix code on the frame read
+by a scanner (to be selected) giving card serial, mould/die lot, fill lot and date, expiry and the lot calibration;
+Python keeps a usage log per serial (runs used, faults) and refuses expired or exhausted cards. On docking: leak test
+(§6.8), CV of WE1 in substrate after the first fill (E_det plateau and C_dl → electrode-area check, §8.1).
+
+### 6.8 Leak detection
+
+(1) Docking pressure-hold test: every liquid port pressurised to 20 kPa against closed valves for 30 s, decay limit
+set in M4; (2) drip tray with two interdigitated electrodes (conductivity) and a level switch under the card nest; (3)
+syringe-pump stall/pressure faults; (4) volume balance: liquid dispensed vs waste-bottle level per run; (5) P_in line
+pressure (dock-side sensor, to be selected) during the 150 µL transfer (blocked card or leaking face seal); any of
+these → fault → safe state → latch.
+
+---
+
+## 7. Control and timing
+
+### 7.1 Per-run step table and staggering
+
+Times in minutes from the run's own Inject Start (anchor). Chamber k = 1 for odd runs, 2 for even runs; run n+1 is
+injected 31.0 min after run n. Valves not listed are closed (V3 open unless listed closed). "Res." = resource that is
+exclusive (checked for overlap at the 31.0-min offset).
+
+| t (min) | Step | Flows / volumes | Valves / gates open | Magnets | Gamry | Res. |
+|---|---|---|---|---|---|---|
+| −5.0 → −4.75 | WL branch k refresh into the empty ICk | S_RC: 5 µL A1 via P_w at 20 µL/min | V11, G_k, V(9/10)_k | – | – | S_RC |
+| −4.75 → −4.5 | WLc refresh to waste | S_RC: 5 µL | V11, V12 | – | – | S_RC |
+| −4.5 → −4.0 | drain ICk (refresh liquid) | S_ICk aspirate → waste | V(9/10)_k | – | – | S_ICk |
+| −4.0 → −3.0 | **bead dose (V2)**: line return, aspirate air/10 µL/air, dispense + 6 µL A1 push | S_b | V(4/5)_k | – | – | S_b |
+| −3.0 → −2.5 | conjugate meter fill-to-vent | P_c +10 kPa (value set in M3) | V8 | – | – | P_c |
+| −2.5 → −2.0 | conjugate push into ICk | P_mv air push, 10.0 µL | V(6/7)_k | – | – | P_mv |
+| −1.0 → 0 | SM-FL aspirates ≈ 200 µL (Empower) | BSM 1 µL/min → bypass | V3 | – | – | – |
+| **0** | **Inject Start** (anchor) | | | | | |
+| 0 → 1.5 | transfer 150 µL into ICk | BSM 100 µL/min | V(1/2)_k (V3 closed) | – | – | inlet |
+| 1.5 → 3.5 | loop + line flush to bypass; Loop Offline at 3.5 | BSM 100 µL/min, 200 µL | V3 | – | – | inlet |
+| 1.5 → 31.5 | **incubation 30 min**, 25.0 °C, tidal 50 µL every 30 s (paused in quiet windows) | S_ICk; BSM 1 µL/min → bypass from 3.5 | V(9/10)_k, V3 | – | – | S_ICk |
+| 3.75 → 7.0 and 23.75 → 27.0 | quiet windows: the previous run's PE2 and READ; tidal of this run paused (same times in every run) | | | | | |
+| 29.0 → 29.6 | **RC prep**: RC + WE2 channel then CE/RE pocket filled with 20 + 5 µL HQDP (3 mM) | S_RC pull via P_s at 40 µL/min | V13 + V14, then V13 + V15 | M_h down | – | RC, S_RC |
+| 29.75 → 31.5 | **PE1** (removal; background logged) | sealed | – | – | E_rest 15 s, E_det 90 s, cell off | RC, Gamry |
+| 31.5 → 33.5 | collection in ICk | – | V(9/10)_k (syringe idle) | M_c up under ICk | – | carriage |
+| 33.5 → 35.0 | gather to the throat (4 mm at 0.05 mm/s) | – | – | M_c moving | – | carriage |
+| 34.75 → 38.0 | **PE2** = residual activity of the RC (carry-over monitor) + removal | sealed | – | – | step pair 15/90/15/90 s | RC, Gamry |
+| 35.0 → 38.0 | drain, 2 rinses, third 100 µL fill stays | S_ICk 300 µL/min | V(9/10)_k | M_c holds | – | S_ICk |
+| 38.0 → 39.75 | hand-over M_c → M_d, **drag 20.3 mm at 0.20 mm/s** into the RC; M_h up; gates close (V(9/10)_k closed) | no flow | G_k, G3 | M_d, then M_h | – | carriage, RC |
+| **39.75 → 54.75** | **accumulation 15 min**, RC sealed, cell off | – | – | M_h holds | off | RC |
+| 39.75 → 44.75 | ICk cleaning: 3 × (100 µL, 2 tidal, drain) (+3 if the previous result > 100 pg/mL) | S_ICk | V(9/10)_k | – | – | S_ICk |
+| 54.75 → 58.0 | **READ**: step pair; Q_net = Q_a − Q_b (fallback R-flow: WE2 at E_det, 10 µL at 10 µL/min with 0.5-min baselines) | sealed (R-flow: S_RC pull) | – (R-flow: V13, V14) | M_h | step pair (or CA on WE2) | RC, Gamry |
+| **58.0** | **result** (58.0 min after Inject Start; 59.0 after aspiration start) | | | | | |
+| 58.0 → 58.25 | bead-out to BW (6 mm at 0.5 mm/s) | – | G4 | M_h down, M_d | – | carriage, RC |
+| 58.25 → 58.75 | RC + BW flush, RC left filled | S_RC 20 µL at 40 µL/min | V13, G4, V16 | M_w (fixed) | – | RC, S_RC |
+
+**Resource check at the 31.0-min offset (Derived):** RC occupied 29.0 → 58.75 = 29.75 min per run → slack 1.25 min
+before the next run's RC prep at its 29.0 (= 60.0 here). Gamry used 29.75–31.5, 34.75–38.0, 54.75–58.0; the next run's
+windows fall at 60.75+, 65.75+ and 85.75+ → no overlap. Carriage 31.5–39.75 and 58.0–58.25 (next run 62.5–70.75) → no
+overlap. S_RC: −5.0 → −4.5 (= previous run's 26.0–26.5), 29.0–29.6, 58.25–58.75 → no overlap. ICk busy −5.0 → 44.75 (or
+≈ 49.5 with extra cleaning) of a 62-min period. **Margin to the 60-min limit: 2.0 min.** Throughput 1.94 samples/h;
+16 samples in 15 × 31 + 58 = 523 min (8.7 h from the first Inject Start). Options if the cadence must shrink:
+accumulation 13 min (−2 min; model ≈ −0.01 in P) or a 60-s step pair (τ = 18 s: F(60) = 0.96 — calibrated, but more
+sensitive to D and temperature).
+
+**Quiet windows:** during the step pairs (PE2, READ) the tidal mixing of the other chamber is paused and no carriage
+move is scheduled (only run n's own rinses overlap PE2; PE2's criterion is ten times its background target, §3.6). The pauses take
+6.5 min of tidal mixing out of the 30-min incubation, at the same times in every run (C4).
+
+### 7.2 Trigger chain from Empower
+
+1. The operator docks the card and loads the bead vial (and, under D12, the conjugate and HQDP bottles) and the SM-FL
+   tray; Python runs the docking checks and two priming runs (no injection) (§8.1).
+2. Empower sample set: one line per determination, all with the **same instrument method**: SM-FL full loop 100 µL
+   (2× overfill), BSM A1 100 µL/min 0–3.5 min, **Loop Offline at 3.5 min**, 1 µL/min 3.5–30.0 min, run time 30.0 min;
+   injection overhead ≈ 1 min (`hw.smfl.injection_overhead_time` 0.25–2, UNVERIFIED) → Inject Start every ≈ 31.0 min
+   (measured at Stage 0; the cycle tolerates 30.75–33 min, below 30.75 the RC slack is gone → the watchdog faults the
+   early run).
+3. SM-FL Inject Start (connector 1, pins 1–2, docs/02 §3.1) → isolated DAQ input → Python timestamps t₀, checks the line
+   code if wired (docs/02 §3.2) and the spacing from the previous t₀, assigns the chamber (alternating) and instantiates
+   the run table anchored at t₀. Steps before t₀ (−5.0 → −1.0) are executed against the **predicted** next t₀ (previous
+   t₀ + measured cadence), exactly as gen-1 doses the cup before the injection (`cycle_primary.yaml`).
+4. Python drives the dock (valves, carriage, pumps, pressure), the Gamry worker (steps) and logs everything; Empower
+   only pumps and injects (primary scheme "Empower is the fluidic master", docs/02 §3.2). Watchdog: late/early/unexpected
+   Inject Start beyond 30 s, device error, leak, temperature excursion → safe state (§4) → fault latch.
+
+### 7.3 Mapping onto the existing `automation/` package
+
+| Existing element (automation/) | Reused as is | Needs change / new |
+|---|---|---|
+| `cycle.py` step table (start/end, `valves`, `magnet`, `sia`, `potentiostat`, `bsm`, `smfl`, `empower`, `role`) and `validate()` (no gaps, ≤ 60 min, injects declared, SM-FL actions) | schema and checks | **chamber templating** (`{k}` in valve, pump and gate names), a `resources:` list per step and a **periodic overlap check** at the cadence offset; card valves are two-position valves (`open`/`closed`); new `sia`-type actions: `bead_dose`, `tidal_mix`, `drain_chamber`, `rinse_chamber`, `wl_refresh`, `fill_rc`, `flush_rc`; `magnet` becomes `{carriage: path/position, M_h: up/down}`; potentiostat actions `step` and `step_pair` |
+| `sequencer.py`: anchors on each Inject Start, watchdog, safe state, run log, fault handling | anchoring, watchdog, safe-state discipline, logging | today one cycle runs at a time; A needs **two interleaved run instances** sharing RC, carriage, Gamry and S_RC → a small **scheduler** that instantiates the run table per Inject Start and merges actions (or one 62-min two-inject "super-cycle" table in steady state, which the current single-sequencer can already run because `Cycle` allows several injects — but the first and last runs of a sample set then need their own tables) |
+| `latch.py` fault latch | unchanged; a fault invalidates **both** runs in flight | — |
+| `cycle_recovery.yaml` | concept | new `cycle_cartridgeA_recovery.yaml`: bead-out from RC to BW, RC + BW flush, both chambers drained and rinsed 3×, WL refresh both branches, carriage park (≈ 6 min) — docs/09 F17 |
+| `devices/base.py` interfaces: `Valve`, `SIAModule`, `Magnet`, `InjectStartInput`, `Potentiostat`, `Empower` | `Valve` (two positions), `InjectStartInput`, `Empower` (passive), `Magnet` for M_h | new classes: `MagnetCarriage` (move_to, follow_path(speed), z), several named `SyringePump`s (the `SIAModule` contract per pump), `PressureChannel`, `DockController` (plungers, Peltier, sensors, heartbeat), `ThermalZone`, `CardReader`, `LeakSensor`; simulators for each in `devices/sim.py` |
+| `gamry_worker.py` (JSON-lines protocol, sim backend) | process split (Gamry Python 3.7, 32-bit) and protocol style | new commands `step` / `step_pair` (E_rest, E_det, durations, range) returning the trace and charges; the ToolkitPy calls stay a stub (not verified, docs/02 §4.3) |
+| `signal_proc.py` (baseline-corrected charge in a readout window) | used unchanged for the fallback R-flow read | new `step_pair_charge()` (Q_a − Q_b with fixed integration windows) and a PE2 threshold check |
+| `stats.py`, `analyze.py`, `gates.yaml` (LOD = 3·SD/b, carry-over 10 ng/mL → B1 → B2, criterion 10⁻⁴) | unchanged | new gate entries for the mock-ups M1–M7 (§10) |
+| `model_feedback.py` | unchanged (bench values per docs/06 §9) | — |
+| `hardware_sim.yaml` / `hardware_lab.example.yaml` | format | new `hardware_cartridgeA_sim.yaml` with card valves V1–V16, G1–G4, pumps, carriage, sensors |
+
+Sketch of one templated step (illustrative YAML, not a file in the repository):
+
+```yaml
+- {name: drag_to_rc, start_min: 38.0, end_min: 39.75, chamber: "{k}", resources: [carriage, RC],
+   valves: {"G{k}": open, G3: open, "Vfloor{k}": closed},   # Vfloor1 = V9, Vfloor2 = V10
+   carriage: {path: "throat{k}->RC", speed_mm_s: 0.20, magnet: M_d}, hold_magnet: up}
+```
+
+---
+## 8. Calibration and QC strategy
+
+### 8.1 At docking (per cartridge, ≈ 15 min, no injection)
+
+1. Card ID read, expiry and usage check; lid closed; contact-loop resistance < 10 Ω.
+2. Leak test (§6.8); thermal equilibration of both zones (≥ 10 min, §6.5).
+3. (D12 default) RS and RCj filled from the dock bottles; priming: holding coil and bead line (S_b), MC (one dose to waste
+   through IC1 and its drain), both wash-lane branches and WLc, RC + WE2 + CE/RE pocket.
+4. **Electrode QC on the first RC fill:** CV of WE1 in substrate between E_rest − 0.1 V and E_det + 0.1 V (no HQ beyond
+   the lot's impurity): double-layer capacitance → effective area check against the lot value (±10 %, own target);
+   no unexpected faradaic wave. Then **5 step pairs** on the same fill: SD(Q_a − Q_b) ≤ **0.05 nC** (§3.5.4) — the
+   cartridge's own background acceptance; failure → R-flow mode (WE2) for this card or reject.
+5. Two priming runs (one per chamber) **without an injection**: the chamber receives 150 µL A1 from S_ICk instead of
+   the BSM transfer; checks dosing, collection, drag and read end-to-end; results logged, not used.
+
+### 8.2 Calibration
+
+* **Lot calibration** (per bead lot × conjugate lot × die lot, made by the lab): full curve 0, 1, 3, 10, 30, 100, 300,
+  1000 pg/mL in triplicate spread over ≥ 3 cartridges; 4PL and the 0–10 pg/mL linear slope of docs/06 §7.4
+  (`automation/elisa_auto/stats.py`).
+* **Per cartridge:** 2 blanks (run positions 1 and 16) + 1 mid control (30 pg/mL, position 8) among the 16
+  determinations (docs/12 §3.6; ≈ F18's 2 per 10). Acceptance (own targets): blank within the lot blank mean ± 3 SD;
+  control within ±20 % of its lot value. Blank 1 vs blank 16 tracks within-cartridge drift (NSB growth on stored
+  conjugate, electrode drift).
+* **Why lot calibration might suffice:** the exhaustive read makes the specific charge independent of electrode area
+  and RC height (docs/12 §2.3 point 1; §3.5.2 here: collection 0.989 ± 0.02 over the D range); bead dose and conjugate
+  dose come from the same lot vials. **Assumption to be tested** (M5 on 5 dies, C3 on ≥ 5 cartridges): if the
+  cartridge-to-cartridge slope CV > 10 % (`ma.reuse.slope_drift_tolerance` 10 %), switch to a per-cartridge 4-point
+  curve (costs 6–7 of 16 determinations, docs/12 §9 decision 6).
+
+### 8.3 Carry-over
+
+* **Per run (automatic):** PE2 net charge is compared with a threshold of **0.10 nC** (2× the background target; ≈ 2×10⁻⁵
+  of a 10 ng/mL sample's signal by the §3.6 arithmetic; the same residual would add 0.10 × 900/285 = 0.32 nC ≈ 0.2
+  pg/mL-equivalent to a 15-min accumulation, Derived).
+  Above threshold: the run is flagged, an extra RC + BW flush and a repeat PE2 run before the drag; persistent → fault.
+* **Rule:** any result > 100 pg/mL triggers 6 instead of 3 chamber cleaning rinses (docs/08 S6 alternative) and a
+  flag on the next determination in the same chamber.
+* **Validation (per lot, not per cartridge):** 3 × (10 ng/mL → B1 → B2) per chamber, read through the low-range slope;
+  criterion ≤ 1×10⁻⁴ (`gates.yaml` `carryover`, docs/08 S6), separately for (a) the same chamber (IC + WL branch + RC)
+  and (b) the other chamber (inlet manifold + WLc + RC).
+
+---
+
+## 9. Tolerance and failure analysis (top 10, FMEA style)
+
+S = severity, O = occurrence (before mitigation), D = detectability (1 = always detected), each 1–5 [assessment].
+
+| # | Failure mode | Cause | Effect | Detection | Mitigation | S/O/D |
+|---|---|---|---|---|---|---|
+| FM1 | Step-read background SD > 0.05 nC | double-layer/oxide charge not reproducible between Q_a and Q_b; E_rest window absent; contact or relay instability | LOD × up to 4 (§1.3: 0.55 nC → P 0.05) | docking QC (5 step pairs, §8.1); blank SD | small WE (D1), low ΔE, step pair (D2), quiet windows; **fallback R-flow on WE2 (D3)** | 5/3/2 |
+| FM2 | Beads stranded in the wash lane or not following the drag | bead–foil friction/adhesion; gap > 0.2 mm; magnet speed too high | carry-over into the next run of chamber k; signal loss | 10 ng/mL challenge series (§8.3); optical check in mock-ups only | 0.20 mm/s (0.35 v_max), gap 0.16 ± 0.05 mm, flat-floor gates, second pass option, WLc flush each run | 5/3/3 |
+| FM3 | Residual activity in the RC > 10⁻⁴ | beads not fully dragged out; enzyme adsorbed on WE/foil; HQ from BW through G4 | carry-over; biased low samples after high ones | **PE2 every run** | bead-out + flush with BW (D10); threshold 0.10 nC; extra flush | 4/3/1 |
+| FM4 | Chamber mixing factor near 0.2 | swirl does not lift beads; beads settle on the floor between strokes | capture × 0.2–0.5 → LOD × 2–5 (docs/08 §10.2) | M2 capture-vs-time | tangential jet, 30-s strokes, pauses identical in every run; switch to faster strokes or magnetic agitation with M_c if M2 fails | 4/3/2 (bench) |
+| FM5 | Bead dose CV > 5 % or drift over 8 h | vial agitation insufficient; settling in the line; air-gap variation; port trapping | NSB variability → P 0.26 → 0.20 at CV 0.10 | E2.2 (gen-1) and M3 counts; blank 1 vs 16 | V2 (§5.4), line return before each dose, chase volume | 4/2/2 |
+| FM6 | Valve or gate leak / failure within 40 (60) cycles; bead trapping at a seat | TPE creep, seat fouling with BSA/beads, bond delamination | RC not sealed (product loss, noise path), cross-talk between chambers | docking leak test; PE2; isolation EIS in M4 only | 3× life endurance gate (M4), flat-floor gates, fail-closed springs | 4/3/3 |
+| FM7 | Pre-electrolysis ineffective or harmful | escape > 4 %; E_det oxidises HQDP or forms side products; BQ reduced back at E_rest | free-HQ background as without PE (S4a kill if the lot is bad) | E1.2b (gen-1), M5; PE1 background trend | stubs ≤ 0.2 mm, small CE/RE pocket, PE2 as second removal; lot acceptance U3 still applies | 4/3/2 |
+| FM8 | Bubble in the RC or wet-out of a PTFE vent | gas from warming liquids; nucleation at the die edge; Tween wetting the PTFE | RC volume and area wrong (exhaustive read assumes a full layer); vent leaks liquid | CV area check at docking; PE1 charge anomaly; drip tray | HQDP stored at 25 °C (D8), fill at 40 µL/min from the floor side, degassed A1 (option); vent material test in M6 | 4/3/2 |
+| FM9 | Reference drift > 20 mV or E_det off-plateau | Au QRE surface change; Cl⁻ change in the pocket; Ag/AgCl dissolution | collection < 1, background changes | step-pair background trend; control at position 8 | substrate-only RE pocket flushed each run; Ag/AgCl if available; E_det chosen mid-plateau; docked Ag/AgCl check in M5 | 3/3/3 |
+| FM10 | On-card conjugate or HQDP degraded (shelf or 8 h) | storage time/temperature; Pi from hydrolysis; conjugate aggregation | NSB rise, slope change, ULOQ loss | blank 1 vs 16, control at 8; card expiry | dock fill at insertion (D12) until shelf data exist; 4–8 °C conjugate zone; HQDP ≤ 8 h at 25 °C (≤ 0.17 µM Pi) | 3/3/2 |
+
+Tolerances that matter most (from §2–3; values UNVERIFIED unless derived): RC height 0.20 ± 0.02 mm (affects τ only:
+18 ± 3.7 s; F(90 s) ≥ 0.98 even at +0.02 mm and the low D); magnet gap 0.16 ± 0.05 mm (drag margin 2.8× → ≈ 2×); MC
+volume ±1.7 % (systematic, calibrated per lot); die position ±0.1 mm in the pocket (rim 50 µm → WE edge must not
+leave the RC: requires ±0.05 mm, so the die is located on moulded datum edges, not by the adhesive bead).
+
+---
+## 10. Staged development plan with gates
+
+Rule (docs/12 §10, user checkpoint): **no cartridge spend before G1** (docs/06 §4.11, weeks 7–8) unless justified;
+mould tooling only after the bead-transfer, valve and readout risks are retired. Risks A1–A5 are those of docs/12
+§3.11; A6 (read background, new here) is added.
+
+### 10.1 Stage C0 — desk work and quotes (weeks 0–8, no orders)
+
+* Quotes and lead times only: milled COC prototype bodies and the 6 mm mould insert (ChipShop, CS_FAB: "price on
+  request"); custom die with WE1/WE2/CE/RE and an Ag/AgCl option (Micrux custom, MICRUX_TF; IMT, IMT_FLYER); TPE
+  membrane lamination; dock items of §6.2.
+* Questions to the foundries (§12): TPE/COC bond under cycling; 0.20 mm web tolerance under the die; die datum and
+  bonding; Ag/AgCl availability; 50 µm boss for the WE2 channel.
+* **Justified exception — M5a, weeks 6–8, cost class low:** step-pair background and collection on a **catalogue**
+  Micrux thin-film single electrode (DI_MICRUX_SINGLE, geometry UNVERIFIED) or IDA die used as a single WE (BASI_IDA)
+  under a laser-cut 0.2 mm spacer, with the Gamry already in hand and the Stage-1 substrate and HQ standards. Why
+  before G1: it decides the read mode (step pair vs flow) for A **and** for the fallback B (same detector), it uses no
+  Stage-2 hardware, and its pre-electrolysis arm adds the cell-geometry escape fraction to E1.2b. Run only after
+  E1.1/E1.2/E1.2b (it must not delay G1a) and only if the user approves the spend.
+
+### 10.2 What the gen-1 rig answers for A (no cartridge needed)
+
+| Question for A | gen-1 experiment | Feeds |
+|---|---|---|
+| bead-dose CV of a cooled, agitated bead reservoir over 8 h (V2) | E2.2 (docs/06) | §5, FM5 |
+| pre-electrolysis removes free HQ; side effects | E1.2b | §3.6, FM7 |
+| U1 conjugate NSB, U3 free HQ / k_h, conjugate reservoir ageing (shelf, D12) | E1.3 (+ ageing arm), E1.2 | G1; §5.3 |
+| Inject Start wiring, line code, Empower injection overhead (cadence 31 min), Loop Offline behaviour | S0.3 and Stage-2 commissioning | §7.2 |
+| BSM at 1 µL/min into a bypass (back-pressure) | open bench item docs/08 §10 | §3.1 |
+| SM-FL + inlet-line carry-over with the 2-min flush (D13) | E1.10 with a 10 ng/mL challenge, extended by the flush programme | §3.1 |
+| phosphate tolerance and ULOQ at 3 mM HQDP | E1.7 | §3.5.6 |
+
+### 10.3 Stage C1 — mock-ups (after G1 GO / GO-WITH-LEVER; weeks 9–16, in parallel with gen-1 Stage 2)
+
+Prototype route: CNC-milled COC (or laser-cut PMMA laminate for M1/M2) bodies, 140 µm COC foil, adhesive-tape or
+solvent bonding (docs/11 §1.3), CS_1367 catalogue chips for valve tests, magnets on a motorised stage, catalogue
+Micrux dies; PDMS only for visualising bead motion, never for electrochemistry (docs/11 §1.4).
+
+| Mock-up | Retires | Method | Acceptance (quantitative) |
+|---|---|---|---|
+| **M1** bead collection, gather, drag, bead-out, BW hold | A1 | IC + throat + 20 mm lane + RC + BW geometry; M-280 SA beads (blocked, as docs/06 §4.0) counted (fluorescent or hemocytometer, ≥ 400 counted per sample); magnet gap 0.16 mm; speeds 0.1–0.8 mm/s; n = 20 transfers | overall transfer ≥ 0.95 (mean), every run ≥ 0.90; **stranded in lanes ≤ 50 beads per pass (10⁻⁴ of 5×10⁵)**; beads left in RC after bead-out ≤ 50; BW retention at 40 µL/min ≥ 99.9 %; follow speed v_max ≥ 0.5 mm/s (≥ 2.5× design) |
+| **M2** chamber mixing and analyte recovery | A2 | E3.3 analogue on the 176 µL foil-floor chamber with tangential tidal jets (with the pause pattern of §7.1) vs rotated tube; IgG spike recovery after 30 min vs LoBind tube | capture at 30 min ≥ 0.80 of the rotated tube (docs/06 E3.3 criterion); analyte recovery ≥ 0.90 |
+| **M3** dosing | A3 | V2: 20 bead doses through a face-seal port over 8 h, counted; conjugate fill-to-vent meter: 20 doses read by ALP activity; vent wet-out after 20 fills | bead CV ≤ 5 % and 8-h trend ≤ 5 %; conjugate CV ≤ 5 %; no vent wet-out |
+| **M4** valves and gates | A4 | each type (seat valve, flat-floor gate) 180 cycles (3× the busiest valve's life incl. fallback) with bead suspension, 1 % BSA conjugate buffer, 3 mM HQDP pH 9.5; leak at 20 kPa and 50 kPa; burst at 3 bar (CS_1367 rating); EIS across a closed valve; bead count at gate seats | leak ≤ 0.1 µL/min at 20 kPa after 180 cycles; ≥ 1 GΩ closed; ≤ 10 beads retained per gate per 20 passes; no delamination |
+| **M5** readout (M5a may run before G1) | A5, A6 | 1 µL / 0.2 mm cell on a die: (a) step pairs on substrate fills, E_rest window and E_det plateau by CV, autorange vs fixed range; (b) HQ standards 1–100 nM, collection; (c) HQDP spiked with 10⁻⁴ HQ before/after PE1 + PE2; (d) 5 dies; (e) Au QRE vs docked Ag/AgCl over 8 h | **SD(Q_a − Q_b) ≤ 0.05 nC** (n ≥ 20, ≥ 3 dies); collection ≥ 0.95, die-to-die slope CV ≤ 5 %; escape ≤ 4 %; QRE drift ≤ 20 mV / 8 h. If the SD criterion fails: same tests in R-flow on a WE2-type channel, baseline-corrected charge SD ≤ 0.05 nC |
+| **M6** thermal, bubbles, dew point | FM8, §6.5–6.6 | two-zone dock mock-up with a milled card; 8 h of fills | zones ±0.2 °C (assay) and 4–8 °C (reagent); no bubble in the RC in 20 fills; no condensation at the die |
+| **M7** integrated single-chamber mock-up | system | one IC + lane + RC on a milled card with a custom or catalogue die, gen-1 reagents, sample delivered by a syringe pump (no Waters); 10 blanks + 3 × (1, 10, 100, 1000 pg/mL); 3 × (10 ng/mL → B1 → B2) | LOD ≤ 1.5 pg/mL (G2 go threshold, `gates.yaml` G2 `lod_pgml`); carry-over ≤ 1×10⁻⁴; PE2 flags the challenge correctly |
+
+**Gate GC1** (end of C1): M1, M4 and M5 pass (A1, A4, A5/A6 retired); M2/M3 pass or have a defined fix. Enter the
+measured mixing factor, dose CV and transfer into the model (docs/06 §9 path; scratch-copy scenario runs for the
+chip-specific factors as docs/12 §8). GO → C2.
+
+### 10.4 Stage C2 — prototype cartridges and dock (after GC1 and gen-1 G2, ≈ weeks 17–28)
+
+10–20 milled COC cards with laminated TPE membranes and the custom die; first dock (plunger head, carriage, pumps,
+two thermal zones, pogo head, controller with watchdog); automation as §7.3. Tests on the Waters stack: three
+16-run cartridges in staggered two-chamber operation. Acceptance (**Gate GC2**): LOD ≤ 1.5 pg/mL per cartridge and
+≤ 1.0 pooled (G3 target, `gates.yaml`), blank CV ≤ 0.10, card-to-card slope CV ≤ 10 % (else per-cartridge calibration,
+§8.2), carry-over ≤ 1×10⁻⁴ for both paths of §8.3, time to result ≤ 60 min in every run, zero valve failures in 3
+cartridges, docking leak test pass rate 100 %. GO → C3.
+
+### 10.5 Stage C3 — moulded pre-series and validation
+
+Mould insert and injection moulding (MOQ 100, CS_FAB), bonded die, factory or dock fill per D12; validation per
+docs/06 Stage 4 (G3: LOD ≤ 1 pg/mL, blank CV ≤ 0.10, carry-over ≤ 1×10⁻⁴, ≤ 60 min).
+
+### 10.6 Order relative to gen-1 gates
+
+```
+gen-1:  Stage 0/1A ──E1.1─E1.2─E1.3── G1a(wk5) ──E1.2b, E1.4-1.10── G1(wk7-8) ── Stage 2 (wk 9-16) ── G2(wk16) ── Stage 3
+cart A: C0 quotes ─────────────────────────── [M5a, wk 6-8, if approved] ──┤ C1 mock-ups M1-M7 ── GC1 ──┤ C2 ── GC2 ── C3
+                                              STOP at G1 → no cartridge spend (C0 stays desk work)
+```
+
+---
+
+## 11. BOM additions by stage
+
+Cost class [assessment, no prices seen unless stated]: **low** < €1 k, **medium** €1–10 k, **high** > €10 k.
+
+| Stage | Item | Qty | Cost class / price | Source |
+|---|---|---|---|---|
+| M5a | Micrux catalogue thin-film single electrode or IDA dies (used as single WE) | 5–10 | price on request → low–medium | DI_MICRUX_SINGLE, BASI_IDA, PALMSENS_IDA |
+| M5a | laser-cut 0.2 mm spacers, clamp cell (machined PMMA/PEEK), pogo pins | — | low | docs/11 §1.3 |
+| C1 | ChipShop membrane-valve chip Fluidic 1367 (valve endurance baseline, M4) | 10 | **€34.40 each from 10** (€42.20 single) | CS_1367 |
+| C1 | CNC-milled COC mock-up bodies (IC/lane/RC, valve and gate test coupons), COC foil 140 µm | 20–40 | price on request → medium | CS_FAB, DARWIN_CS4CH |
+| C1 | NdFeB magnets (10×10×5, 2×2×4, 3×3×4 mm), motorised X–Y–Z stage | 1 set | stage: medium (Zaber, price not read) | ZABER_SW |
+| C1 | bead-dosing pump with selection valve and holding coil; cooled rocking vial holder (V2) | 1 | medium (Cavro Centris / Hamilton PSD/4, price not read) | TECAN_CENTRIS, HAMILTON_PSD4 |
+| C1 | pressure controller 2 channels (conjugate tank, meter vent) | 1 | medium (Fluigent Flow EZ / Elveflow OB1, price not read) | FLUIGENT_FLOWEZ, ELVEFLOW_OB1 |
+| C1 | catalogue Micrux dies for M7; custom die design (mask) if M7 uses it | — | medium–high (custom: price on request) | MICRUX_TF |
+| C2 | custom electrode die (WE1, WE2, CE, RE, contact loop; Au; Ag/AgCl option), wafer run | 1 run | high (price on request) | MICRUX_TF, IMT_FLYER |
+| C2 | milled COC prototype cards with TPE membrane lamination and PTFE vents | 10–20 | medium–high | CS_FAB |
+| C2 | dock: 20 plunger actuators, X–Y–Z carriage, M_h lift, 4 syringe pumps (S_b, S_IC1, S_IC2, S_RC), 3 Peltier zones with drivers, controller with hardware watchdog, face-seal manifold, pogo head and shielded sub-enclosure, low-leakage relay, sensors (T, RH, leak, pressure, card ID), flow sensors | 1 | high (mostly "to be selected") | docs/11 §5; §6.2 |
+| C3 | mould insert, injection-moulded pre-series (MOQ 100), die bonding, fill | 100 | high (price on request) | CS_FAB |
+| all | reagents as gen-1 (beads, conjugate, HQDP 3 mM — ≈ 3× the substrate mass of 1 mM per volume, but ≈ 45 µL per run vs ≈ 315 µL in gen-1) | — | as docs/07 | docs/09 §3.3 |
+
+Reused from gen-1 (docs/07): Gamry Reference 600+, LabJack-class isolated DAQ, Python orchestration, SM-FL/BSM;
+gen-1's IDEX valves and SIA pump are not needed by the cartridge (the SIA pump class is reused as S_b).
+
+---
+
+## 12. Open questions and UNVERIFIED list
+
+### 12.1 Open questions (for the user or the next agent)
+
+1. Accept **cadence 31 min / result 58.0 min** (vs 27.5 / 54.0 in docs/12), or trade 2 min of accumulation for margin?
+2. Accept **D12** (dock fills RCj and RS at insertion) until shelf data exist? It changes the card's fill ports and the
+   docking time, not the run.
+3. Accept **3 mM HQDP** as a requirement (ULOQ 3040 vs 1360 pg/mL at 1 mM with the 1 µL RC)? It quadruples the free-HQ
+   charge that pre-electrolysis must remove (§3.6).
+4. Approve **M5a before G1** (§10.1)? It is the only pre-G1 spend proposed.
+5. Second potentiostat channel for WE2 (fallback), or a dock relay?
+6. Should the gen-1 inlet-line flush finding (D13: 7×10⁻³ carry-over without a post-transfer flush; Derived) be carried
+   into gen-1's own step table? Gen-1 pushes 2 loop volumes into the cup and keeps the loop in line during the
+   incubation shunt (`cycle_primary.yaml`), so its line is flushed by the 3 mL shunt — probably not affected; to be
+   confirmed by whoever owns docs/06.
+7. Foundry questions: TPE–COC bond endurance; 0.20 ± 0.02 mm web under a 10 × 6 mm pocket; 50 µm boss; die datum edges;
+   Ag/AgCl on the die; PTFE vent heat-staking on COC.
+8. Model extensions (docs/09 §5.4 items 1, 2, 3, 6, 8) remain unbuilt by user decision; the read background (§3.5.4)
+   is a new item for such an extension (step-read charge noise of a stopped single-WE detector).
+
+### 12.2 UNVERIFIED values used in this document
+
+| Value | Where used | Status |
+|---|---|---|
+| M-280 saturation magnetisation 1×10⁴ A/m (moment 1.15×10⁻¹³ A·m²); saturation above 0.15 T | §3.3.2 forces | UNVERIFIED (no bead magnetic data in the repository) |
+| NdFeB B_r 1.3 T | §3.3.2 | UNVERIFIED |
+| near-wall drag factor 3 | §3.3.2 | UNVERIFIED (textbook order) |
+| bead–foil friction / adhesion | §3.3.2 | unknown; measured in M1 |
+| C_dl ≈ 20 µF/cm² for thin-film Au | §3.5.4 | UNVERIFIED (repository note) |
+| E_rest window, E_det plateau, Au oxide onset at pH 9.5 | §3.5.4 | UNVERIFIED; CV in M5 |
+| Au QRE drift ≤ 20 mV / 8 h; Ag/AgCl availability on custom dies | §3.5.5 | UNVERIFIED |
+| buffer/substrate conductivity 1.6 S/m | §3.5.5 R_u | `hw.tubing.buffer_conductivity`, UNVERIFIED |
+| K_m 0.1 mM, k_cat 1000 s⁻¹, free HQ 10⁻⁵, k_h 10⁻¹⁰ s⁻¹ | §3.5.3, §3.6, §5.3 | repository values, UNVERIFIED / low confidence |
+| loop ID 0.5 mm; transfer 0.90 at 1.5 loop volumes | §3.1 | `hw.smfl.loop_inner_diameter` UNVERIFIED |
+| injection overhead ≈ 1 min (cadence 31 min) | §7.2 | `hw.smfl.injection_overhead_time` UNVERIFIED |
+| drain residual ≤ 5 µL; film 10–30 µm | §3.2.3 | UNVERIFIED |
+| Wang2013 2×10⁻⁵ carry-over applied to protein | §3.4 | measured for a small molecule; protein UNVERIFIED |
+| chamber mixing factor; analyte loss to blocked COC | §3.1, §3.2.2 | UNVERIFIED; M2 |
+| valve leak, isolation, endurance beyond 50 cycles; TPE thickness and bond | §4 | UNVERIFIED; M4 |
+| PTFE vent wet-out with Tween/BSA | §3.2.4 | UNVERIFIED; M3/M6 |
+| moulding tolerances (±10 µm meter, ±0.02 mm web, ±0.05 mm die position) | §5.3, §9 | UNVERIFIED |
+| COC thermal diffusivity, water diffusivity, gas solubility vs T, Magnus constants | §6.5–6.6, D8 | UNVERIFIED |
+| bead-dose CV of the V2 vial | §5 | to be measured (E2.2, M3) |
+| pre-electrolysis efficacy and escape fraction 1–4 % | §3.6 | Derived from geometry; efficacy UNVERIFIED pending E1.2b/M5 |
+| NaCl addition to the substrate (fixed Cl⁻) and its effect on ALP | §3.5.5 | UNVERIFIED |
+| ToolkitPy step commands; Empower pressure-limit setting | §7.3, §4 | UNVERIFIED (docs/02 §4.3) |
+| plunger force to seal; part numbers of actuators, Peltiers, relay, pogo pins, scanner | §6.2 | to be selected |
+
+---
+
+## Appendix A — scratch runs (not in the repository)
+
+Model runs: the docs/12 Appendix A script, run from a copy of the repository in the session scratchpad, with these
+additions (n = 2000, seed 20261111):
+
+```python
+A13 = Aarch(vol=1.0)          # docs/12 A with "ma.geometry.magnetic_trap_volume": 1.0 added to the design overrides
+S3  = lambda p: p.with_values({"ma.chemistries.alp_hqdp.substrate_concentration": 3e-3})
+base = lambda p: S3(pre_el(A_ps(p)))
+L.mc(A13, base(ps0), n=2000, lod_scale=1/0.90)                                     # docs/13 A
+L.mc(A13, base(F.scen("L6+L7")[1](ps0)), n=2000, lod_scale=1/0.90)                 # + screening
+L.mc(A13, base(ps0).with_values({"ma.capture.bead_dose_cv": 0.10}), ...)          # dose-CV rows (0.05/0.10/0.15)
+L.mc(A13, base(ps0).with_values({"ma.capture.magnetic_trap_efficiency": 0.80}), ...)
+L.mc(A13, base(ps0).with_values({"hw.gamry.noise_rms_flow": 2e-11}), ...)         # read-background sensitivity (2e-11, 1e-10)
+```
+
+Magnet fields (§3.3.2): uniformly magnetised blocks (B_r = 1.3 T) represented by their two charged pole faces,
+B(r) = (B_r/4π) ∬ (r − r′)/|r − r′|³ dA′ summed over the faces (60 × 60 grid), |B| and its gradients by central
+differences (±20 µm) at the bead plane 0.30 mm above the magnet face; results quoted in the §3.3.2 table.
