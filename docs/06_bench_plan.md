@@ -346,9 +346,9 @@ loading so no phosphate is carried into any step (revised after final review, B1
     not a model parameter (`design_lib.apply_bench_values` raises KeyError), and the value must not enter G1. It is
     used only in scenario runs of the guard-cell / cartridge variants: free_product_impurity × f_esc (and its
     bounds) in place of docs/12's × 0.01.
-  * **k_h,post** → `ma.chemistries.alp_hqdp.hydrolysis_rate` — the same quantity of the same lot as E1.2. It is
-    entered (at G1, not G1a) only if E1.2's time course could not resolve k_h and the two are consistent; this is a
-    better measurement of an existing G1 input, not a new input, and the rule is unchanged.
+  * **k_h,post** → `ma.chemistries.alp_hqdp.hydrolysis_rate` — the same quantity of the same lot as E1.2. It is a
+    consistency check only and is **not** entered for G1a or G1 (E1.2 keeps the entered value). If E1.2's time course
+    could not resolve k_h, report that to the user with the E1.2b value; using it as a G1 input is the user's decision.
   * HQ t½ in electrolysed substrate → consistency check of `ma.chemistries.alp_hqdp.product_half_life` (E1.2 keeps
     the entered value).
   * CV of the residual background over replicate electrolyses → informs `ma.noise.substrate_background_cv` for the
@@ -951,7 +951,7 @@ is stored as a second quantity (redox-cycling check). Same code in `automation/e
 | detection-on-capture R (E1.4) | `ma.labelling.detection_on_capture_residual_factor` | model_feedback | pair acceptance |
 | k_on, k_off (E1.5/E1.6) | `chem.antibodies.kon_capture`, `koff_capture`, `kon_detection`, `koff_detection` | model_feedback | one-step vs sequential mode |
 | free HQ, hydrolysis, HQ t½ (E1.2) | `ma.chemistries.alp_hqdp.free_product_impurity`, `.hydrolysis_rate`, `.product_half_life` | model_feedback; `scripts/kill_thresholds.py` | substrate accept/purify/replace; B1 line vs vial |
-| pre-electrolysis escape fraction f_esc, side-effect ratios (E1.2b, added 2026-11-12) | **no key**: `results.yaml` in the E1.2b folder and a comment line in `measured_values.yaml` (a non-parameter key would make `model_feedback` stop); k_h,post → `ma.chemistries.alp_hqdp.hydrolysis_rate` only as described in E1.2b | scenario runs only: `free_product_impurity` × f_esc for the guard-cell / cartridge variants (docs/12 §8 method, scratch copy) | guard cell considered at Stage 2 / kept in the cartridge design / dropped — **not** G1a/G1 |
+| pre-electrolysis escape fraction f_esc, side-effect ratios (E1.2b, added 2026-11-12) | **no key**: `results.yaml` in the E1.2b folder and a comment line in `measured_values.yaml` (a non-parameter key would make `model_feedback` stop); k_h,post is a consistency check of `ma.chemistries.alp_hqdp.hydrolysis_rate`, not entered | scenario runs only: `free_product_impurity` × f_esc for the guard-cell / cartridge variants (docs/12 §8 method, scratch copy) | guard cell considered at Stage 2 / kept in the cartridge design / dropped — **not** G1a/G1 |
 | K_i, Km (E1.7) | `chem.enzymes.alp.phosphate_inhibition_Ki`, `ma.chemistries.alp_hqdp.Km` | `scripts/optimise_designs.py` (HQDP, accumulation) | ULOQ ≥ 1000: HQDP 1 vs 3 mM |
 | B, slope (E1.8) | consistency check of the above (no key) | — | G1 consistency |
 | contamination (E1.9) | `ma.nsb.blank_igg_contamination_equivalent` | model_feedback | handling SOP |
