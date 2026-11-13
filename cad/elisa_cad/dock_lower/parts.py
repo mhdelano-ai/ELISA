@@ -275,7 +275,7 @@ def fan():
     f = G.FAN
     s = boxc(f["x"][0], f["y"][0], f["z"][0], f["x"][1], f["y"][1], f["z"][1])
     cx, cz = 0.5 * sum(f["x"]), 0.5 * sum(f["z"])
-    return s.cut(cq.Workplane("XZ").workplane(offset=-f["y"][1] - 1).center(cx, cz).circle(13).extrude(-(f["y"][1] - f["y"][0]) - 2))
+    return s.cut(cq.Workplane("XZ").workplane(offset=-f["y"][1] - 1).center(cx, cz).circle(11).extrude(-(f["y"][1] - f["y"][0]) - 2))
 
 
 def duct():

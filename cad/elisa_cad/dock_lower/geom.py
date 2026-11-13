@@ -168,7 +168,7 @@ CARD_PRESENCE = {"xy": (-6.0, 10.0), "z": 2.5, "size": (5.0, 4.0, 3.0),
 # four beams carrying the anvil (lift-off on dowels). Boxes (x0, y0, z0, x1, y1, z1).
 BAY_BASE = (-40.0, -55.0, -130.0, 130.0, 125.0, -126.0)
 BAY_WALLS = {"wall_W": (-38.0, -20.0, -126.0, -30.0, 70.0, -15.0), "wall_E": (124.0, -20.0, -126.0, 130.0, 70.0, -15.0)}
-BAY_BEAMS = {"beam_SW": (-30.0, -15.0, -25.0, -4.0, -8.0, -15.0), "beam_NW": (-30.0, 54.0, -25.0, -4.0, 62.0, -15.0),
+BAY_BEAMS = {"beam_SW": (-30.0, -15.0, -25.0, -5.0, -8.0, -15.0), "beam_NW": (-30.0, 54.0, -25.0, -4.0, 62.0, -15.0),
              "beam_SE": (82.0, -15.0, -25.0, 124.0, -8.0, -15.0), "beam_NE": (82.0, 54.0, -25.0, 124.0, 62.0, -15.0)}
 BEAM_DOWELS = [(-8.0, -11.5), (-8.0, 58.0), (86.0, -11.5), (86.0, 58.0)]
 # =====================================================================================================
@@ -181,9 +181,9 @@ PELTIER = {"x": (-10.0, 20.0), "y": (2.0, 32.0), "t": 3.3,
                    "Qmax 33.4 W, Vmax 15.4 V, DTmax 67 degC (spec sheet opened 2026-11-13)"}
 HEATSINK = {"x": (-12.0, 20.0), "y": (-4.0, 33.0), "base_t": 6.0, "fin_to": -52.0,   # west tubes pass below at z -56..-60
             "spec": "Al extrusion, fins along y, R_th <= 1.0 K/W at the duct flow -- part UNVERIFIED"}
-FAN = {"x": (-12.0, 18.0), "y": (-14.0, -4.0), "z": (-55.0, -25.0),
-       "spec": "30 x 30 x 10 mm class axial fan, exhausting -y into a duct to the front panel -- part UNVERIFIED"}
-DUCT = {"x": (-12.0, 18.0), "y": (-55.0, -14.0), "z": (-55.0, -25.0)}
+FAN = {"x": (-4.0, 20.0), "y": (-14.0, -4.0), "z": (-52.0, -26.0),
+       "spec": "25 x 25 x 10 mm class axial fan, exhausting -y into a duct to the front panel -- part UNVERIFIED"}
+DUCT = {"x": (-4.0, 20.0), "y": (-55.0, -14.0), "z": (-52.0, -26.0)}   # x >= -4: clear of beam_SW for lift-off
 FOAM_T = 5.0                                     # closed-cell foam (k ~0.035 W/m K UNVERIFIED) round the cold block
 
 # =====================================================================================================
