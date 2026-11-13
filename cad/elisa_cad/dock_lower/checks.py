@@ -160,6 +160,35 @@ def tip_margins():
     return res
 
 
+MODULE_PREFIX = ("anvil", "nest_frame", "datum", "pusher", "guide_bush", "gasket", "insert", "ret_", "tube_", "heater",
+                 "peek_break", "cold_block", "peltier", "heatsink", "fan_env", "exhaust", "foam", "M_w", "ebay", "pogo",
+                 "WE_relay", "RH_", "thermistor", "card_presence", "Mc")
+
+
+def service_lift(dz_list=(5, 10, 20, 40, 60, 90, 120)):
+    """Anvil module (everything except bay frame, M_d system, Gamry cable) lifted straight up in state 'load'
+    (M_c parked, M_d parked lowered, pogo down): intersections with the parts that stay."""
+    items = [it for it in assy.state_items("load", card=False)]
+    mod = [(n, _shape(s)) for n, s, m, k in items if n.startswith(MODULE_PREFIX)]
+    stay = [(n, _shape(s)) for n, s, m, k in items if not n.startswith(MODULE_PREFIX) and n != "gamry_cable"]
+    res = {}
+    for dz in dz_list:
+        hits = []
+        for na, sa in mod:
+            sa2 = sa.translate(cq.Vector(0, 0, dz))
+            ba = sa2.BoundingBox()
+            for nb, sb in stay:
+                bb = sb.BoundingBox()
+                if (ba.xmax < bb.xmin or bb.xmax < ba.xmin or ba.ymax < bb.ymin or bb.ymax < ba.ymin or
+                        ba.zmax < bb.zmin or bb.zmax < ba.zmin):
+                    continue
+                v = sa2.intersect(sb).Volume()
+                if v > TOL_VOL:
+                    hits.append((na, nb, round(v, 3)))
+        res[f"lift_{dz}mm"] = hits
+    return res
+
+
 def run(states=None, md=True):
     out = {"interference": {}, "tube_bend_radius_min": tube_bend_radii(), "tip_margins": tip_margins(),
            "plate_clearance_2d": plate_clearance_2d()}
@@ -167,6 +196,7 @@ def run(states=None, md=True):
         out["interference"][st] = interference(assy.state_items(st))
         out["interference"][st + "+card"] = [h for h in interference(assy.state_items(st), card=True)
                                             if "CARD" in h[0] or "CARD" in h[1]]
+    out["service_lift"] = service_lift()
     if md:
         out["md_sweep"] = md_sweep_check()
     return out

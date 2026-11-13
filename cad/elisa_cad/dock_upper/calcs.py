@@ -196,7 +196,7 @@ HEAD_CONTACT_S = 8.0
 def latch_reaction(F_head):
     """Lid-frame reactions: cam at dock Y 100 pushes the frame up; hinge Y 195, front draw latches Y ~36."""
     y_cam = IF.card_to_dock((0, P.CAM["y"]))[1]
-    y_h, y_l = P.HINGE["point"][1], 36.0
+    y_h, y_l = P.HINGE["point"][1], P.LID_Y[0] - P.LATCH["H"] / 2   # latch line Y 44.5 (Derived)
     F_latch = F_head * (y_h - y_cam) / (y_h - y_l)
     return dict(F_latches_total=F_latch, F_hinge=F_head - F_latch, per_latch=F_latch / 2)
 

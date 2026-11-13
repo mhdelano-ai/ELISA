@@ -1,0 +1,207 @@
+{
+ "plate": {
+  "q_N_per_mm2": 0.0971,
+  "span_short_mm": 30.0,
+  "span_long_mm": 50.0,
+  "w_uniform_um": 0.77,
+  "w_uniform_with_openings_x5_um": 3.8,
+  "w_local_point_16N_um": 0.25,
+  "foil_span_at_slot_valves_[id, width mm, deflection um at 1.5 N]": [
+   [
+    "G1",
+    4.44,
+    19.1
+   ],
+   [
+    "G2",
+    4.44,
+    19.1
+   ],
+   [
+    "G3",
+    3.4,
+    11.2
+   ],
+   [
+    "G4",
+    3.4,
+    11.2
+   ],
+   [
+    "V11",
+    4.0,
+    15.5
+   ],
+   [
+    "V12",
+    3.4,
+    11.2
+   ]
+  ],
+  "budget": "magnet gap 0.16 +- 0.05 (docs/13 \u00a76.2)"
+ },
+ "seal": {
+  "annulus_mm2": 6.28,
+  "compression": 0.24,
+  "shape_factor": 0.8,
+  "F_per_seal_50ShA_N": 6.7,
+  "F_per_seal_60ShA_N": 12.0,
+  "F_per_seal_70ShA_N": 16.0,
+  "n_liquid_seals": 11,
+  "recommendation": "50-60 ShA EPDM/FFKM keeps 7-12 N per seal; > 10 N at 60+ ShA exceeds the docs/18 budget"
+ },
+ "thermal": {
+  "loads_W": {
+   "PEEK_break_strip": 1.162,
+   "card_laminate_and_bridges": 0.052,
+   "card_top_via_PEEK_lid_plate": 0.5,
+   "foam_shell": 0.84,
+   "P_cf_line_and_fill": 0.05
+  },
+  "Q_total_W": 2.6,
+  "Q_design_x1.5_W": 3.91,
+  "TEC_S_V_per_K": 0.0513,
+  "TEC_R_ohm": 2.99,
+  "TEC_K_W_per_K": 0.357,
+  "operating_point_[I A, V, P_el W, Qc W] at Th 35 / Tc 3 degC": [
+   1.25,
+   5.38,
+   6.73,
+   3.95
+  ],
+  "Q_hot_W": 10.64,
+  "heatsink_Rth_required_K_per_W (Th - 25 degC air)": 0.94,
+  "anvil_heater_loss_to_cold_zone_W": 1.16
+ },
+ "dewpoint_C": {
+  "22C_50%": 11.1,
+  "25C_60%": 16.7,
+  "22C_70%": 16.3
+ },
+ "motion": {
+  "rows_[step, needed s, window s]": [
+   [
+    "M_c up (30.0-30.1)",
+    5.0,
+    6.0
+   ],
+   [
+    "M_c park (34.1-34.2)",
+    5.0,
+    6.0
+   ],
+   [
+    "M_d park -> gather start, 3 passes, returns (34.2-36.2)",
+    71.2,
+    120.0
+   ],
+   [
+    "drag 23.41 mm at 0.20 mm/s + 2 gate actuations (39.5-41.75)",
+    117.5,
+    135.0
+   ],
+   [
+    "bead-out 4.55 mm at 0.20 mm/s (56.75-57.15)",
+    22.8,
+    24.0
+   ],
+   [
+    "M_d down + transit to park after bead-out (57.15-57.65 flush, no conflict)",
+    2.8,
+    30.0
+   ],
+   [
+    "pogo lift (after the head is latched; once per card)",
+    0.5,
+    null
+   ]
+  ],
+  "chord_error_0.5mm_segments_on_R3_um": 10.4,
+  "stage_repeatability_um": "< 3 (X-LSM050A) vs <= 10 required (docs/13 \u00a76.2)",
+  "speed_range": "0.000029-26 mm/s (X-LSM050A) covers 0.05-5 mm/s"
+ },
+ "gap_budget": {
+  "M_d_um": {
+   "anvil top flatness (card datum)": 20,
+   "X stage flatness of travel": 11,
+   "Y stage flatness of travel": 11,
+   "X pitch x 20 mm lever": 10,
+   "Y roll x 20 mm lever": 10,
+   "up-stop setting": 10,
+   "magnet bond/face": 10
+  },
+  "M_d_worst_um": 82,
+  "M_d_rss_um": 32.3,
+  "M_c_um": {
+   "anvil top flatness": 20,
+   "plate thickness 5.000 (ground both faces)": 5,
+   "holder flange-to-magnet-top 4.840": 10,
+   "magnet face flatness after bonding": 5
+  },
+  "M_c_worst_um": 40,
+  "M_c_rss_um": 23.5,
+  "budget_um": 50
+ },
+ "pogo": {
+  "F_per_pin_N": 1.209,
+  "F_total_N": 7.25,
+  "budget_N": 9.0,
+  "press_pad_N": 12.0,
+  "tip_retracted_z": -1.66
+ },
+ "magnetics": {
+  "Mc_park_this_design": {
+   "centre_top": [
+    40.0,
+    56.7,
+    -45.58
+   ]
+  },
+  "F_bead_own_chamber_floor_Mc_parked_pN": 0.0047,
+  "F_bead_own_chamber_floor_interface_park_pN": 0.0258,
+  "F_bead_own_chamber_floor_Zonly_25mm_pN_docs13": 0.055,
+  "F_bead_own_chamber_wall_foot_Mc_parked_pN": 0.0053,
+  "F_bead_other_chamber_near_edge_Mc1_up_pN": 0.0827,
+  "B_at_WE_relay_Mc1_up_mT": 1.011,
+  "B_at_pads_Mc1_up_mT": 7.917,
+  "B_at_WE_relay_Mc1_parked_mT": 1.936,
+  "B_at_pads_Mc1_parked_mT": 0.48,
+  "B_at_WE_relay_Mc2_up_mT": 0.735,
+  "B_at_pads_Mc2_up_mT": 2.881,
+  "B_at_WE_relay_Md_hold_RC_mT": 0.043,
+  "B_at_pads_Md_hold_RC_mT": 5.106,
+  "B_at_WE_relay_Mw_mT": 0.058,
+  "B_at_pads_Mw_mT": 0.954,
+  "F_Md_at_beadout_stop_from_Mw_N": [
+   -0.0,
+   0.2452,
+   -0.065
+  ],
+  "F_Md_at_hold_from_Mw_N": [
+   -0.0041,
+   0.0307,
+   -0.0054
+  ],
+  "F_Md_parked_from_Mc1_up_N": [
+   0.00037,
+   -0.00033,
+   -0.02366
+  ],
+  "F_Md_gather_IC1_from_Mc1_parked_N": [
+   0.00011,
+   0.0005,
+   -0.00058
+  ],
+  "F_Mc2_parked_from_Mc1_up_N": [
+   0.0,
+   0.0053,
+   -0.0015
+  ],
+  "post_stiffness_N_per_mm": 23.61,
+  "post_deflection_um_at_max_lateral_magnet_force": 10.38,
+  "V4_pin_B_T": 0.1,
+  "V4_pin_gradB_T_per_m": 11.7,
+  "F_pin_austenitic_chi0.01_N": 5.3e-05,
+  "F_pin_ferromagnetic_saturated_Ms1.5e6_N": 0.0996
+ }
+}

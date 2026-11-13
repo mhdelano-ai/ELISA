@@ -105,7 +105,7 @@ def yoke(vid, dz=0.0):
     slot = P.FORK_SLOT[k]
 
     def strip(a, b, z0, z1, width=w):
-        ln = LineString([a, b]).buffer(width / 2, cap_style=2)
+        ln = LineString([a, b]).buffer(width / 2, cap_style=2, join_style=2)
         return slab_from_poly(ln, z0 + dz, z1 + dz)
 
     if vid == "V3":                                 # push yoke: everything above the button
@@ -132,7 +132,8 @@ def yoke(vid, dz=0.0):
         top = tab1
     # fork slot (open toward the far side of the rod) at the eye
     fx, fy = px - ux * 2 * eye_r, py - uy * 2 * eye_r
-    fork = slab_from_poly(LineString([(px, py), (fx, fy)]).buffer(slot / 2, cap_style=1), -10, 100)
+    sx_, sy_ = px + ux * (slot / 2 + 0.1), py + uy * (slot / 2 + 0.1)     # slot end beyond the neck
+    fork = slab_from_poly(LineString([(sx_, sy_), (fx, fy)]).buffer(slot / 2, cap_style=2, join_style=2), -10, 100)
     body = body.cut(fork)
     return body, top + dz
 
@@ -379,13 +380,13 @@ def cylinder_block_layers(routes):
         lay["cap"] = lay["cap"].cut(cyl(x, y, kz0 - 0.1, kz1 + 0.1, 1.0))                # vent / sensing hole
     for vid, r in routes.items():
         vx, vy = r["via"]
-        g = slab_from_poly(LineString(r["path"]).buffer(P.GALLERY_W / 2, cap_style=2), az0 - 0.01,
+        g = slab_from_poly(LineString(r["path"]).buffer(P.GALLERY_W / 2, cap_style=2, join_style=2), az0 - 0.01,
                            az0 + P.GALLERY_W)
         lay["air_plate"] = lay["air_plate"].cut(g).cut(cyl(vx, vy, az0 - 0.1, az1 + 0.1, 0.8))
         if vid == "V3":   # vertical passage to the cap and a groove to the V3 bore top
             lay["bore_block"] = lay["bore_block"].cut(cyl(vx, vy, bz0 - 0.1, bz1 + 0.1, 0.8))
             cx, cy = IF.CYLINDERS["V3"]["xy"]
-            lay["cap"] = lay["cap"].cut(slab_from_poly(LineString([(vx, vy), (cx, cy)]).buffer(0.3), kz0 - 0.01,
+            lay["cap"] = lay["cap"].cut(slab_from_poly(LineString([(vx, vy), (cx, cy)]).buffer(0.3, cap_style=2), kz0 - 0.01,
                                                        kz0 + 0.6))
     for (x, y) in P.STANDOFFS_HB + P.STANDOFFS_PEEK:
         lay["cover"] = lay["cover"].cut(cyl(x, y, cz0 - 0.1, cz1 + 0.1, 3.2))
@@ -482,7 +483,7 @@ def thrust_units(follower_top_card_z):
     for x in P.CAM["x"]:
         y = P.CAM["y"]
         z0 = P.BRIDGE_Z[1]
-        hous = tube(x, y, z0, z0 + 8.0, 22.0, 17.0).union(cyl(x, y, z0, z0 + 1.0, 22.0))
+        hous = tube(x, y, z0, z0 + 8.0, 19.0, 17.0).union(cyl(x, y, z0, z0 + 1.0, 19.0))
         cap_top = follower_top_card_z
         cap = cyl(x, y, cap_top - 8.0, cap_top, 16.8).cut(cyl(x, y, cap_top - 8.1, cap_top - 2.0, 14.4))
         spr = tube(x, y, z0 + 1.0, cap_top - 2.0, P.CLAMP_SPRING["OD"], P.CLAMP_SPRING["OD"] - 6.0)
@@ -606,9 +607,16 @@ def handle_and_latches():
     h = h.union(box(205.0, 211.0, y0 - 20.0, y0, 240.0, 248.0)).union(box(244.0, 250.0, y0 - 20.0, y0, 240.0, 248.0))
     out.append(("lid_handle", h, "steel"))
     for x0 in (P.LATCH["x_dock"][0], P.LATCH["x_dock"][1] - P.LATCH["W"]):
-        env = box(x0, x0 + P.LATCH["W"], y0 - P.LATCH["H"], y0, 170.0, 170.0 + P.LATCH["L"])
+        env = box(x0, x0 + P.LATCH["W"], y0 - P.LATCH["H"], y0, P.LID_BOTTOM_Z, P.LID_BOTTOM_Z + P.LATCH["L"])
         out.append((f"ENV_latch_Kipp_K0045.1541092_X{x0:.0f}", env, "envelope"))
     return out
+
+
+def latch_keepout_lower():
+    """NOT an UPPER part: keep-out for the catch plates the LOWER agent must provide (ICR-U2), drawn for reference."""
+    y0 = P.LID_Y[0]
+    return [box(x0, x0 + P.LATCH["W"], y0 - P.LATCH["H"], y0, 161.0, 176.0)
+            for x0 in (P.LATCH["x_dock"][0], P.LATCH["x_dock"][1] - P.LATCH["W"])]
 
 
 def lid_switch_and_umbilical():

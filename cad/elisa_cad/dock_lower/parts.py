@@ -312,10 +312,11 @@ def bay_frame():
     for (x, y) in G.BEAM_DOWELS:
         bp = bp.union(cyl(x, y, -G.ANVIL_T, 6.0, 3.98))      # lift-off dowels into the anvil
     # holes for tubes and the Gamry cable through the walls (D4 / D7)
-    for k in G.TUBE_PORTS:
+    for k in G.TUBE_PORTS:   # open-top U-slots 4 wide: the anvil module lifts out with its tubes (CHOICE-L15)
         e = G.tube_route(k)[-1]
-        bp = bp.cut(cq.Workplane("YZ").workplane(offset=e[0] - 10 if e[0] > 0 else e[0] - 1).center(e[1], e[2])
-                    .circle(2.0).extrude(12))
+        x0 = e[0] - 10 if e[0] > 0 else e[0] - 1
+        bp = bp.cut(boxc(x0, e[1] - 2.0, e[2], x0 + 12, e[1] + 2.0, -14.0))
+        bp = bp.cut(cq.Workplane("YZ").workplane(offset=x0).center(e[1], e[2]).circle(2.0).extrude(12))
     bp = bp.cut(cq.Workplane("YZ").workplane(offset=G.TUBE_EXIT["E"] - 10).center(
         I.dock_to_card(G.GAMRY_BULKHEAD)[1], I.dock_to_card(G.GAMRY_BULKHEAD)[2]).circle(3.5).extrude(12))
     return bp

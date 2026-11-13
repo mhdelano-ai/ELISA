@@ -64,7 +64,7 @@ def interference(parts, tol=1e-4, extra=None):
     return hits, npairs, len(items)
 
 
-def claim_check(parts, claim=P.CLAIM, allowed=("guide_pin_", "guide_ear_")):
+def claim_check(parts, claim=P.CLAIM, allowed=("guide_pin_", "guide_ear_", "pin_", "press_pad_")):
     """Portions of solids outside the UPPER claim box (volume)."""
     (x0, y0, z0), (x1, y1, z1) = claim
     big = Pt.box(x0 - 500, x1 + 500, y0 - 500, y1 + 500, z0 - 500, z1 + 500).val()

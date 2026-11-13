@@ -159,7 +159,7 @@ NEST_OPEN = {"x": (-1.8, I.CARD_L + 1.8), "y": (-1.8, I.CARD_W + 1.8)}   # card 
 NEST_CHAMFER = 1.5                              # 45 deg lead-in at the top inner edge [assessment]
 DATUM_PIN_Z = (0.2, I.DATUM_PIN_PROTRUSION)     # pins held in the frame, 0.2 above the anvil (gutter passes below)
 DATUM_PIN_MATERIAL = "zirconia ceramic dowel D4 (non-magnetic, hard) -- part UNVERIFIED (CHOICE-L9)"
-PUSHER = {"body_d": 6.0, "body_len": 12.0, "tip_d": 3.0, "z": 3.5, "stroke": 1.5,
+PUSHER = {"body_d": 4.0, "body_len": 12.0, "tip_d": 2.5, "z": 2.5, "stroke": 1.5,
           "note": "spring plunger with domed POM tip, 5 N at the seated card (interface PUSHERS) -- part UNVERIFIED"}
 CARD_PRESENCE = {"xy": (-6.0, 10.0), "z": 2.5, "size": (5.0, 4.0, 3.0),
                  "note": "reflective IR sensor in the W wall aimed +x at the L3 side face -- part UNVERIFIED"}

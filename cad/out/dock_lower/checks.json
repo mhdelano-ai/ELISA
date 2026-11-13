@@ -1,0 +1,760 @@
+{
+ "interference": {
+  "load": [],
+  "load+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "collect_IC1": [],
+  "collect_IC1+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "collect_IC2": [],
+  "collect_IC2+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "gather_IC1": [],
+  "gather_IC1+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "gather_IC1_low": [],
+  "gather_IC1_low+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "drag_mid_IC1": [],
+  "drag_mid_IC1+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "hold_RC": [],
+  "hold_RC+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ],
+  "beadout_end": [],
+  "beadout_end+card": [
+   [
+    "gasket_P_in",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_byp",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_b",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_a2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d1",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_d2",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_wo",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_s",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_rf",
+    "CARD_envelope_ref",
+    0.7478
+   ],
+   [
+    "gasket_P_cf",
+    "CARD_envelope_ref",
+    0.7478
+   ]
+  ]
+ },
+ "tube_bend_radius_min": {
+  "P_in": 25.0,
+  "P_byp": 25.0,
+  "P_b": 25.0,
+  "P_a": 25.0,
+  "P_a2": 25.0,
+  "P_d1": 25.0,
+  "P_d2": 25.0,
+  "P_wo": 25.0,
+  "P_s": 25.0,
+  "P_rf": 25.0,
+  "P_cf": 25.0
+ },
+ "tip_margins": {
+  "V1": {
+   "klass": "anvil",
+   "min_mm": 2.005,
+   "nearest": "gaskets"
+  },
+  "V2": {
+   "klass": "anvil",
+   "min_mm": 2.411,
+   "nearest": "gaskets"
+  },
+  "V3": {
+   "klass": "anvil",
+   "min_mm": 0.357,
+   "nearest": "gaskets"
+  },
+  "V4": {
+   "klass": "anvil",
+   "min_mm": 1.85,
+   "nearest": "openings"
+  },
+  "V5": {
+   "klass": "anvil",
+   "min_mm": 1.85,
+   "nearest": "openings"
+  },
+  "V6": {
+   "klass": "anvil",
+   "min_mm": 1.4,
+   "nearest": "cold_seam"
+  },
+  "V7": {
+   "klass": "anvil",
+   "min_mm": 1.4,
+   "nearest": "cold_seam"
+  },
+  "V8": {
+   "klass": "cold",
+   "min_mm": 5.549,
+   "nearest": "gaskets"
+  },
+  "V9": {
+   "klass": "anvil",
+   "min_mm": 0.85,
+   "nearest": "gaskets"
+  },
+  "V10": {
+   "klass": "anvil",
+   "min_mm": 0.85,
+   "nearest": "gaskets"
+  },
+  "V11": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  },
+  "V12": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  },
+  "V14": {
+   "klass": "anvil",
+   "min_mm": 1.8,
+   "nearest": "openings"
+  },
+  "V15": {
+   "klass": "anvil",
+   "min_mm": 0.25,
+   "nearest": "openings"
+  },
+  "V16": {
+   "klass": "anvil",
+   "min_mm": 0.5,
+   "nearest": "M_w_recess"
+  },
+  "V17": {
+   "klass": "anvil",
+   "min_mm": 2.8,
+   "nearest": "gaskets"
+  },
+  "V18": {
+   "klass": "anvil",
+   "min_mm": 2.8,
+   "nearest": "gaskets"
+  },
+  "G1": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  },
+  "G2": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  },
+  "G3": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  },
+  "G4": {
+   "klass": "slot",
+   "min_mm": 0.0,
+   "nearest": "openings"
+  }
+ },
+ "plate_clearance_2d": {
+  "drag_IC1": {
+   "min_clearance_holder_to_opening_edge": 0.339,
+   "always_inside": true
+  },
+  "gather_IC1_pass1": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "gather_IC1_pass2": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "gather_IC1_pass3": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "drag_IC2": {
+   "min_clearance_holder_to_opening_edge": 0.339,
+   "always_inside": true
+  },
+  "gather_IC2_pass1": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "gather_IC2_pass2": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "gather_IC2_pass3": {
+   "min_clearance_holder_to_opening_edge": 0.9,
+   "always_inside": true
+  },
+  "bead_out": {
+   "min_clearance_holder_to_opening_edge": 0.3,
+   "always_inside": true
+  }
+ },
+ "service_lift": {
+  "lift_5mm": [
+   [
+    "fan_env",
+    "bay_frame",
+    240.0
+   ],
+   [
+    "exhaust_duct",
+    "bay_frame",
+    12.0
+   ]
+  ],
+  "lift_10mm": [
+   [
+    "fan_env",
+    "bay_frame",
+    480.0
+   ],
+   [
+    "exhaust_duct",
+    "bay_frame",
+    17.0
+   ]
+  ],
+  "lift_20mm": [
+   [
+    "fan_env",
+    "bay_frame",
+    554.646
+   ],
+   [
+    "exhaust_duct",
+    "bay_frame",
+    10.0
+   ]
+  ],
+  "lift_40mm": [
+   [
+    "fan_env",
+    "bay_frame",
+    74.646
+   ]
+  ],
+  "lift_60mm": [],
+  "lift_90mm": [],
+  "lift_120mm": []
+ },
+ "md_sweep": {
+  "drag_IC1": {
+   "n_samples": 94,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC1_pass1": {
+   "n_samples": 26,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC1_pass2": {
+   "n_samples": 26,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC1_pass3": {
+   "n_samples": 25,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "drag_IC2": {
+   "n_samples": 94,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC2_pass1": {
+   "n_samples": 26,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC2_pass2": {
+   "n_samples": 26,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "gather_IC2_pass3": {
+   "n_samples": 25,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "bead_out": {
+   "n_samples": 19,
+   "up": true,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "transit_park_to_IC1": {
+   "n_samples": 41,
+   "up": false,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "transit_park_to_IC2": {
+   "n_samples": 41,
+   "up": false,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "transit_beadout_to_park": {
+   "n_samples": 23,
+   "up": false,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "transit_gather_return_IC1": {
+   "n_samples": 13,
+   "up": false,
+   "collisions": [],
+   "n_collisions": 0
+  },
+  "transit_gather_return_IC2": {
+   "n_samples": 13,
+   "up": false,
+   "collisions": [],
+   "n_collisions": 0
+  }
+ }
+}

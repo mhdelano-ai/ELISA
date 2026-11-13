@@ -29,7 +29,7 @@ def static_items():
     for k in G.LIQ_PORTS:
         it.append((f"insert_{k}", P.port_insert(k), "PEEK", "custom"))
         it.append((f"gasket_{k}", P.gasket(k), "elastomer", "custom"))
-        it.append((f"tube_{k}", P.tube_solid(k), "PEEK", "catalogue"))
+        it.append((f"tube_{k}", P.tube_solid(k), "TPE", "catalogue"))   # PEEK tube, drawn orange
     for k in G.RETAINERS:
         it.append((k, P.retainer(k), "aluminium", "custom"))
     for k, s, m, kind in P.ebay_internals():
