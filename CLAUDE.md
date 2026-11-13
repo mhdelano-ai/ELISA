@@ -38,6 +38,9 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
   (docs/18, Revision C), card (19), dock lid (20), lower bay (21), base and enclosure (22), integration with the
   authoritative tables of choices, deviations from docs/13 and open items (23), independent review and resolution of
   findings (24, §8), session record (25). docs/13 stays the specification; docs/18–24 list departures as deviations.
+- `docs/26_multianalyte_electrode_chip.md` — exploratory desk note (outside docs/00 scope, no model run, changes no
+  decision): multi-analyte electrode die with ligands beside the metal for bioreactor samples, on the gen-1 tubing rig;
+  estimated electrochemical cleaning pulses in §5.3 (UNVERIFIED starting values).
 - `cad/` — parametric CadQuery model behind docs/18–24 (`cad/elisa_cad/interface.py` is the single source of truth
   for interface geometry; packages `card`, `dock_upper`, `dock_lower`, `dock_base`, `assembly`); outputs (STEP, DXF,
   PNG, check results) in `cad/out/`. See `cad/README.md`.
