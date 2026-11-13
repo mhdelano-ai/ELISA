@@ -78,6 +78,12 @@ def render(items, path, eye, title=None, size=(11, 8), dpi=140, labels=None, xli
                     note=note, alpha_thresh=0.99, label_units="mm")
 
 
+# ============================================================================================ 2D drawings
+def _r(ax, b2, **kw):
+    (x0, y0), (x1, y1) = b2
+    ax.add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, **kw))
+
+
 def top_plan(path, sweep_region=None):
     fig, ax = plt.subplots(figsize=(12, 11), dpi=140)
     claimc = {"UPPER": (0.95, 0.55, 0.25, 0.15), "LOWER": (0.30, 0.65, 0.35, 0.15), "BASE": (0.35, 0.45, 0.85, 0.06)}
