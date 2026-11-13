@@ -1,0 +1,857 @@
+{
+ "closed_read_hold_RC": {
+  "pairs_tested": 734,
+  "unintended": [],
+  "intended": [
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_in",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_byp",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_b",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_a",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_a2",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_d1",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_d2",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_wo",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_s",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_rf",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L0_foil",
+    "LOWER:gasket_P_cf",
+    0.7826,
+    "face-seal compression 0.12 (FACE_SEAL, by design) [expected 0.789 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V1",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V2",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V4",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V5",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V6",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V7",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V8",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V9",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V10",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V11",
+    0.1689,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.169 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V12",
+    0.1689,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.169 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V14",
+    0.1081,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.108 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V15",
+    0.1081,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.108 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V16",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V17",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_V18",
+    0.2086,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.209 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_G1",
+    0.1689,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.169 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_G2",
+    0.1689,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.169 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_G3",
+    0.1368,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.137 mm3]"
+   ],
+   [
+    "CARD:L2_TPE",
+    "UPPER:pin_G4",
+    0.1689,
+    "closed valve presses the TPE membrane (by design, tip z 0.50) [expected 0.169 mm3]"
+   ],
+   [
+    "CARD:die_metal",
+    "LOWER:pogo_probes",
+    0.0002,
+    "pogo tips on the die pads (by design) [expected 0.000 mm3]"
+   ]
+  ]
+ },
+ "pins_in_bores": {
+  "ok": true,
+  "per_valve": {
+   "V1": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V2": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V3": {
+    "tip_xy_err": 0.0,
+    "tip_z": 1.3,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V4": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V5": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V6": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V7": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V8": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V9": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V10": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V11": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V12": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V14": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.2,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V15": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.2,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V16": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V17": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "V18": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "G1": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "G2": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "G3": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   },
+   "G4": {
+    "tip_xy_err": 0.0,
+    "tip_z": 0.5,
+    "vol_in_L3": 0.0,
+    "vol_in_L1": 0.0,
+    "min_gap_to_L3": 0.15,
+    "tip_on_channel": true,
+    "tip_covered_by_TPE": true
+   }
+  },
+  "note": "V3 is drawn OPEN (de-energised, fail-open): tip 0.8 above closed"
+ },
+ "ports": {
+  "ok": true,
+  "per_port": {
+   "P_in": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_byp": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_b": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_a": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_a2": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_d1": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_d2": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_wo": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_s": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_rf": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   },
+   "P_cf": {
+    "foil_hole_at_port": true,
+    "gasket_centre_err": 0.0,
+    "gasket_foil_overlap_mm3": 0.7826,
+    "expected_mm3": 0.7888,
+    "insert_vs_foil_mm3": 0.0
+   }
+  }
+ },
+ "pogo": {
+  "vol_vs": {
+   "L0_foil": 0.0,
+   "L1_channel_sheet": 0.0,
+   "L1b_die_film": 0.0,
+   "L2_TPE": 0.0,
+   "L3_body": 0.0,
+   "seam_adhesive": 0.0
+  },
+  "tips": [
+   [
+    56.2,
+    30.6,
+    0.34
+   ],
+   [
+    58.0,
+    30.6,
+    0.34
+   ],
+   [
+    59.8,
+    30.6,
+    0.34
+   ],
+   [
+    56.2,
+    32.4,
+    0.34
+   ],
+   [
+    58.0,
+    32.4,
+    0.34
+   ],
+   [
+    59.8,
+    32.4,
+    0.34
+   ]
+  ],
+  "on_pad": [
+   [
+    "WE1",
+    1,
+    0.34
+   ],
+   [
+    "WE2",
+    1,
+    0.34
+   ],
+   [
+    "CE",
+    1,
+    0.34
+   ],
+   [
+    "RE",
+    1,
+    0.34
+   ],
+   [
+    "LOOP_A",
+    1,
+    0.34
+   ],
+   [
+    "LOOP_B",
+    1,
+    0.34
+   ]
+  ],
+  "vol_vs_die_metal": 0.000236,
+  "ok": true
+ },
+ "datums": {
+  "datum_pin_A1": {
+   "dist": 0.0,
+   "overlap": 0.0
+  },
+  "datum_pin_A2": {
+   "dist": 0.0,
+   "overlap": 0.0
+  },
+  "datum_pin_B": {
+   "dist": 0.0,
+   "overlap": 0.0
+  },
+  "pusher_A": {
+   "dist": 0.0,
+   "overlap": 0.0
+  },
+  "pusher_B": {
+   "dist": 0.0,
+   "overlap": 0.0
+  },
+  "nest_frame_to_card_min": 0.3,
+  "rotated_card_vs_nest_mm3": 21.91,
+  "mirrored_card_vs_nest_mm3": 21.91,
+  "ok": true
+ },
+ "pad_gas_vents": {
+  "pad_vs_die_mm3": 0.0,
+  "pad_footprint_card": [
+   55.5,
+   60.5,
+   29.6,
+   33.1
+  ],
+  "pad_inside_die": "True",
+  "pad_vs_L3_mm3": 0.0,
+  "pad_foot_vs_L3_mm3": 0.0,
+  "gas_ring_P_c_bottom_z_card": 6.215,
+  "gas_ring_P_c_contact_mm2": 18.85,
+  "gas_ring_P_c_annulus_mm2": 18.85,
+  "gas_ring_P_c_centre_err": 0.0,
+  "gas_ring_P_mv_bottom_z_card": 6.215,
+  "gas_ring_P_mv_contact_mm2": 18.85,
+  "gas_ring_P_mv_annulus_mm2": 18.85,
+  "gas_ring_P_mv_centre_err": 0.0,
+  "pad_to_die_gap": 0.0,
+  "heater_block_vs_L3_mm3": 0.0,
+  "peek_plate_vs_L3_mm3": 0.0,
+  "head_vs_L4_mm3": 0.0,
+  "ok": true
+ },
+ "contact_areas": {
+  "heater_block_on_L3_top_mm2": 1432.0,
+  "peek_plate_on_L3_top_mm2": 928.3,
+  "guide_plate_lower_on_L3_top_mm2": 839.1,
+  "anvil_under_foil_mm2": 2084.6,
+  "cold_block_under_foil_mm2": 755.8,
+  "peek_break_frame_under_foil_mm2": 356.2,
+  "L3_top_area_mm2": 3347.4,
+  "foil_area_mm2": 3681.7
+ },
+ "guide_pins": {
+  "GP1": {
+   "centre_err": 0.0,
+   "pin_tip_z_card": -2.5,
+   "bush_top_z_card": 5.0,
+   "overlap_mm3": 0.0
+  },
+  "GP2": {
+   "centre_err": 0.0,
+   "pin_tip_z_card": -2.5,
+   "bush_top_z_card": 5.0,
+   "overlap_mm3": 0.0
+  },
+  "ok": true
+ },
+ "tube_handover": {
+  "P_in": {
+   "lower_end": [
+    150.0,
+    102.3,
+    114.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    102.3,
+    114.0
+   ]
+  },
+  "P_byp": {
+   "lower_end": [
+    150.0,
+    98.3,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    98.3,
+    112.0
+   ]
+  },
+  "P_b": {
+   "lower_end": [
+    150.0,
+    100.0,
+    108.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    100.0,
+    108.0
+   ]
+  },
+  "P_a": {
+   "lower_end": [
+    150.0,
+    100.0,
+    110.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    100.0,
+    110.0
+   ]
+  },
+  "P_d1": {
+   "lower_end": [
+    150.0,
+    116.0,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    116.0,
+    112.0
+   ]
+  },
+  "P_d2": {
+   "lower_end": [
+    150.0,
+    84.0,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    84.0,
+    112.0
+   ]
+  },
+  "P_cf": {
+   "lower_end": [
+    150.0,
+    110.0,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    150.0,
+    110.0,
+    112.0
+   ]
+  },
+  "P_rf": {
+   "lower_end": [
+    320.0,
+    80.5,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    320.0,
+    80.5,
+    112.0
+   ]
+  },
+  "P_s": {
+   "lower_end": [
+    320.0,
+    95.5,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    320.0,
+    95.5,
+    112.0
+   ]
+  },
+  "P_wo": {
+   "lower_end": [
+    320.0,
+    110.5,
+    115.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    320.0,
+    110.5,
+    115.0
+   ]
+  },
+  "P_a2": {
+   "lower_end": [
+    320.0,
+    161.5,
+    112.0
+   ],
+   "gap_mm": 0.0,
+   "interface": [
+    320.0,
+    161.5,
+    112.0
+   ]
+  },
+  "ok": true
+ },
+ "open_load_no_card": {
+  "pairs_tested": 480,
+  "unintended": [],
+  "intended": []
+ },
+ "loading_path_card": {
+  "card_dz_120": [],
+  "card_dz_60": [],
+  "card_dz_20": [],
+  "card_dz_5": []
+ },
+ "magnet_states": {
+  "collect_IC1": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  },
+  "collect_IC2": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  },
+  "gather_IC1": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  },
+  "gather_IC1_low": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  },
+  "drag_mid_IC1": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  },
+  "beadout_end": {
+   "pairs": 61,
+   "unintended": [],
+   "intended_n": 12
+  }
+ },
+ "lid_sweep": {
+  "angles": [
+   0.0,
+   5.0,
+   10.0,
+   15.0,
+   20.0,
+   25.0,
+   30.0,
+   35.0,
+   40.0,
+   45.0,
+   50.0,
+   55.0,
+   60.0,
+   65.0,
+   70.0,
+   75.0,
+   80.0,
+   85.0
+  ],
+  "pairs_tested": 4796,
+  "hits": [],
+  "moving_lid_x_range": [
+   152.5,
+   "cover",
+   320.0,
+   "cam_lever"
+  ],
+  "clearance_to_partitions_mm": [
+   3.5,
+   3.0
+  ]
+ },
+ "run_time_s": 160.2,
+ "step_sizes_MB": {
+  "dock_closed.step": 9.38,
+  "dock_open_loading.step": 9.45
+ }
+}

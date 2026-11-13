@@ -1,0 +1,31 @@
+closed scene: 529 solids (38 s)
+[closed/read] 734 cross-module bbox pairs; unintended 0: []
+[closed/read] intended 32 (by class): [('CARD:L0', 'LOWER:gasket'), ('CARD:L2', 'UPPER:pin'), ('CARD:die', 'LOWER:pogo')]
+pins in bores ok=True
+ports ok=True
+pogo ok=True on_pad=[('WE1', 1, np.float64(0.34)), ('WE2', 1, np.float64(0.34)), ('CE', 1, np.float64(0.34)), ('RE', 1, np.float64(0.34)), ('LOOP_A', 1, np.float64(0.34)), ('LOOP_B', 1, np.float64(0.34))]
+datums ok=True {'datum_pin_A1': {'dist': 0.0, 'overlap': 0.0}, 'datum_pin_A2': {'dist': 0.0, 'overlap': 0.0}, 'datum_pin_B': {'dist': 0.0, 'overlap': 0.0}, 'pusher_A': {'dist': 0.0, 'overlap': 0.0}, 'pusher_B': {'dist': 0.0, 'overlap': 0.0}, 'nest_frame_to_card_min': 0.3, 'rotated_card_vs_nest_mm3': 21.91, 'mirrored_card_vs_nest_mm3': 21.91, 'ok': True}
+pad/gas/vents ok=True {'pad_vs_die_mm3': 0.0, 'pad_footprint_card': [np.float64(55.5), np.float64(60.5), np.float64(29.6), np.float64(33.1)], 'pad_inside_die': np.True_, 'pad_vs_L3_mm3': 0.0, 'pad_foot_vs_L3_mm3': 0.0, 'gas_ring_P_c_bottom_z_card': np.float64(6.215), 'gas_ring_P_c_contact_mm2': 18.85, 'gas_ring_P_c_annulus_mm2': 18.85, 'gas_ring_P_c_centre_err': 0.0, 'gas_ring_P_mv_bottom_z_card': np.float64(6.215), 'gas_ring_P_mv_contact_mm2': 18.85, 'gas_ring_P_mv_annulus_mm2': 18.85, 'gas_ring_P_mv_centre_err': 0.0, 'pad_to_die_gap': 0.0, 'heater_block_vs_L3_mm3': 0.0, 'peek_plate_vs_L3_mm3': 0.0, 'head_vs_L4_mm3': 0.0, 'ok': True}
+contact areas {'heater_block_on_L3_top_mm2': 1432.0, 'peek_plate_on_L3_top_mm2': 928.3, 'guide_plate_lower_on_L3_top_mm2': 839.1, 'anvil_under_foil_mm2': 2084.6, 'cold_block_under_foil_mm2': 755.8, 'peek_break_frame_under_foil_mm2': 356.2, 'L3_top_area_mm2': 3347.4, 'foil_area_mm2': 3681.7}
+guide pins {'GP1': {'centre_err': 0.0, 'pin_tip_z_card': np.float64(-2.5), 'bush_top_z_card': np.float64(5.0), 'overlap_mm3': 0.0}, 'GP2': {'centre_err': 0.0, 'pin_tip_z_card': np.float64(-2.5), 'bush_top_z_card': np.float64(5.0), 'overlap_mm3': 0.0}, 'ok': True}
+tube hand-over ok=True
+[open/load] 480 pairs; unintended 0: []
+[loading] card above the nest: {'card_dz_120': [], 'card_dz_60': [], 'card_dz_20': [], 'card_dz_5': []}
+[state collect_IC1] 61 pairs; unintended []
+[state collect_IC2] 61 pairs; unintended []
+[state gather_IC1] 61 pairs; unintended []
+[state gather_IC1_low] 61 pairs; unintended []
+[state drag_mid_IC1] 61 pairs; unintended []
+[state beadout_end] 61 pairs; unintended []
+[lid sweep] 4796 pairs; hits []; moving x [152.5, 'cover', 320.0, 'cam_lever']; partitions [3.5, 3.0]
+STEP sizes MB: {'dock_closed.step': 9.38, 'dock_open_loading.step': 9.45}
+render dock_iso_front_left_closed
+render dock_iso_front_right_closed
+render dock_open_loading
+render section_chamber_full_height
+render section_chamber_zoom
+render section_cell_die
+render section_port
+render bench_layout
+render exploded
+total 1508 s

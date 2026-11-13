@@ -1,0 +1,405 @@
+{
+ "route_item_collisions": [],
+ "route_pair_clashes": [],
+ "item_overlaps": [],
+ "containment_failures": [],
+ "outside_footprint": [
+  "estop",
+  "status_light"
+ ],
+ "intrusions": [
+  [
+   "UPPER_lid_closed",
+   []
+  ],
+  [
+   "LOWER_nest_anvil",
+   []
+  ],
+  [
+   "LOWER_bay",
+   []
+  ],
+  [
+   "lid_sweep_0-85",
+   []
+  ],
+  [
+   "loading_path",
+   []
+  ]
+ ],
+ "sweep_clearance_mm": {
+  "rear_low_cover": 1.94,
+  "well_rear_wall": 6.98,
+  "partition_left": 1.0,
+  "partition_right": 3.0,
+  "panel_top_left": 1.0,
+  "panel_top_right": 3.0,
+  "panel_top_rear": 24.54,
+  "rail_well_rear": 22.79
+ },
+ "sweep_region_bounds_YZ": [
+  29.4,
+  175.3,
+  305.0,
+  388.3
+ ],
+ "liquid_budget": {
+  "A1 (dock)": {
+   "per_card": 38.313446448177935,
+   "per_day": 114.94033934453381,
+   "bottle_mL": 500,
+   "note": "14 x 1.52 + 2 x 1.0 + prime 15.0",
+   "cards_per_fill": 11.745223719527862
+  },
+  "conjugate": {
+   "per_card": 0.3962034262390761,
+   "per_day": 0.3962034262390761,
+   "bottle_mL": 2,
+   "note": "fresh tube per card (daily)",
+   "cards_per_fill": 4.543120732413476
+  },
+  "HQDP": {
+   "per_card": 0.8365074507265347,
+   "per_day": 0.8365074507265347,
+   "bottle_mL": 15,
+   "note": "fallback mode 0.99 mL; fresh per card",
+   "cards_per_fill": 16.138529296152473
+  },
+  "beads": {
+   "per_card": 0.2437413963228655,
+   "per_day": 0.2437413963228655,
+   "bottle_mL": 2,
+   "note": "fresh vial per card",
+   "cards_per_fill": 7.3848760495967545
+  },
+  "waste": {
+   "per_card": 44.613446448177925,
+   "per_day": 133.8403393445338,
+   "bottle_mL": 1000,
+   "note": "alarm at 800 mL",
+   "cards_per_fill": 17.931813470839195
+  }
+ },
+ "prime": {
+  "prime_mL": 15.033446448177932,
+  "lines_uL": 3844.4821493926443,
+  "syringes_uL": 3500.0
+ },
+ "carryover_budget": {
+  "rows": [
+   {
+    "path": "1 SM-FL needle/loop/injector",
+    "cls": "consec",
+    "docs13": 3e-05,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 3e-05,
+    "basis": "unchanged (E1.10)"
+   },
+   {
+    "path": "2 P_in line + M_in",
+    "cls": "consec",
+    "docs13": 1e-05,
+    "ratio_RevB": 1.725,
+    "ratio_RevC": 0.957,
+    "RevC": 9.56712698654351e-06,
+    "basis": "wetted area: line pi d L + M_in 1.35 mm2/mm x 19.0 mm [assumption]"
+   },
+   {
+    "path": "7 J, WLc, G_k'/V11/V12 stubs",
+    "cls": "consec",
+    "docs13": 2e-05,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 2e-05,
+    "basis": "bead count (M1), unchanged"
+   },
+   {
+    "path": "8 cell beads/enzyme",
+    "cls": "consec",
+    "docs13": 2e-05,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 2e-05,
+    "basis": "bead count (M1), unchanged"
+   },
+   {
+    "path": "9 cell stubs",
+    "cls": "consec",
+    "docs13": 1e-06,
+    "ratio_RevB": 0.8,
+    "ratio_RevC": 0.794,
+    "RevC": 7.942307692307663e-07,
+    "basis": "stub volume (docs/13 liquid arithmetic)"
+   },
+   {
+    "path": "10 BW",
+    "cls": "consec",
+    "docs13": 1e-06,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 1e-06,
+    "basis": "gate leak, unchanged"
+   },
+   {
+    "path": "3 C_k + valve stubs (sample-wetted)",
+    "cls": "same",
+    "docs13": 1e-06,
+    "ratio_RevB": 3.692,
+    "ratio_RevC": 3.692,
+    "RevC": 3.6919831223628693e-06,
+    "basis": "wetted area of the sample path V1 bridge -> chamber [assumption]"
+   },
+   {
+    "path": "4 IC walls",
+    "cls": "same",
+    "docs13": 1e-05,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 1e-05,
+    "basis": "185 uL working fill unchanged"
+   },
+   {
+    "path": "5 tidal coil",
+    "cls": "same",
+    "docs13": 2e-06,
+    "ratio_RevB": 2.672,
+    "ratio_RevC": 1.308,
+    "RevC": 2.6165825458968044e-06,
+    "basis": "coil wall area vs 60 uL D0.508 [assumption]"
+   },
+   {
+    "path": "6 WL branch",
+    "cls": "same",
+    "docs13": 1e-06,
+    "ratio_RevB": 1.0,
+    "ratio_RevC": 1.0,
+    "RevC": 1e-06,
+    "basis": "bead count, unchanged"
+   }
+  ],
+  "totals": {
+   "docs13": {
+    "consecutive": 8.2e-05,
+    "same_chamber": 1.4000000000000001e-05,
+    "worst": 9.6e-05
+   },
+   "RevB": {
+    "consecutive": 8.904676286741675e-05,
+    "same_chamber": 2.0036058001911145e-05,
+    "worst": 0.0001090828208693279
+   },
+   "RevC": {
+    "consecutive": 8.136135775577427e-05,
+    "same_chamber": 1.7308565668259674e-05,
+    "worst": 9.866992342403395e-05
+   }
+  },
+  "sensitivity": {
+   "RevC_with_docs13_literal_coil_320mm2": 9.99164056604651e-05,
+   "RevC_if_P_in_0.102_fallback": 0.0001032777049525579,
+   "RevB_reviewer_basis_whole_rail_Ck": 0.00011079083774696503,
+   "face_seal_annulus_RevB": "0.110 uL per port unswept (reviewer); Rev C: 0 (gasket on the tube OD)"
+  },
+  "criterion": 0.0001,
+  "coil_mm": {
+   "P_d1": 387,
+   "P_d2": 376
+  }
+ },
+ "cold_box_heat": {
+  "A_out": 0.094444,
+  "A_in": 0.044008,
+  "A_m": 0.06446930705382213,
+  "dT": 25.0,
+  "q_wall": 2.0146658454319417,
+  "q_door": 1.0073329227159709,
+  "q_shaft": 0.2513274122871834,
+  "q_tubes": 0.0036762524533226057,
+  "q_purge": 0.05025,
+  "q_total": 3.3272524328884185,
+  "C_th": 272.64216,
+  "cap_at_dT": 9.600000000000001,
+  "t_pull_min": 9.7334896398226,
+  "dT_skin": 2.6664820494578025,
+  "T_skin_min": 19.3335179505422
+ },
+ "power": {
+  "rails": {
+   "M": [
+    210.0,
+    51.2
+   ],
+   "L": [
+    12.0,
+    10.0
+   ],
+   "T": [
+    137.6,
+    75.0
+   ]
+  },
+  "peak_W": 359.6,
+  "avg_W": 136.2,
+  "mains_peak_W": 408.6363636363637,
+  "mains_avg_W": 154.77272727272725,
+  "q_bay_W": 37.57272727272726,
+  "airflow_m3s": 0.003115483190110055,
+  "airflow_Lmin": 186.9289914066033,
+  "airflow_cfm": 6.601335021860393
+ },
+ "air": {
+  "free_per_act_mL": 0.35538005923000987,
+  "acts_per_h": 32.903225806451616,
+  "q_cyl_Lh": 0.011693150335955164,
+  "q_pogo_Lh": 0.0002168272490561193,
+  "q_purge_Lh": 6.0,
+  "p_lid_kPa": 400.0,
+  "p_supply_min_kPa": 450.0,
+  "q_fez_Lh": 60.0,
+  "total_Lh": 66.061909977585,
+  "total_Lmin": 1.1010318329597502,
+  "free_air_8h_L": 528.49527982068,
+  "tank_L_at_7bar_for_8h": 88.08254663678001
+ },
+ "mass_cog_full": {
+  "base_mass": 35.75221940000001,
+  "total": 48.75221940000001,
+  "cog": [
+   226.01591382524828,
+   209.1880346620691,
+   126.01986798164103
+  ],
+  "margin": 179.1880346620691,
+  "groups": {
+   "frame": 8.0301,
+   "enclosure": 4.926094400000001,
+   "tray": 1.68,
+   "sensors": 0.15000000000000002,
+   "cold": 1.5803499999999997,
+   "bracket": 1.498675,
+   "pumps": 6.5,
+   "bottles": 2.71,
+   "pneumatics": 2.038,
+   "electronics": 6.189000000000001,
+   "gamry": 0.45
+  },
+  "tip_front_N": 259.6919365601727
+ },
+ "mass_cog_empty_waste": {
+  "base_mass": 34.75221940000001,
+  "total": 47.75221940000001,
+  "cog": [
+   222.67608819664616,
+   208.15537134385002,
+   125.89463543552071
+  ],
+  "margin": 178.15537134385002,
+  "groups": {
+   "frame": 8.0301,
+   "enclosure": 4.926094400000001,
+   "tray": 1.68,
+   "sensors": 0.15000000000000002,
+   "cold": 1.5803499999999997,
+   "bracket": 1.498675,
+   "pumps": 6.5,
+   "bottles": 1.7100000000000002,
+   "pneumatics": 2.038,
+   "electronics": 6.189000000000001,
+   "gamry": 0.45
+  },
+  "tip_front_N": 252.89925474199094
+ },
+ "mass_cog_base_only": {
+  "base_mass": 35.75221940000001,
+  "total": 35.75221940000001,
+  "cog": [
+   222.74917620079265,
+   244.55491458804363,
+   116.7259214290903
+  ],
+  "margin": 145.44508541195637,
+  "groups": {
+   "frame": 8.0301,
+   "enclosure": 4.926094400000001,
+   "tray": 1.68,
+   "sensors": 0.15000000000000002,
+   "cold": 1.5803499999999997,
+   "bracket": 1.498675,
+   "pumps": 6.5,
+   "bottles": 2.71,
+   "pneumatics": 2.038,
+   "electronics": 6.189000000000001,
+   "gamry": 0.45
+  },
+  "tip_front_N": 228.03239110562726
+ },
+ "bench": {
+  "width": 963.0,
+  "depth": 712.0,
+  "bench_depth": 750.0,
+  "fits_depth": true,
+  "card_height_above_floor": 1070.0,
+  "lid_top_open": 1288.3
+ },
+ "gamry_cable_mm": 107.0,
+ "dp_kPa": {
+  "P_in (SM-FL -> card)": {
+   "10": 194.46,
+   "100": 1944.57,
+   "500": 9722.85,
+   "1500": 29168.54
+  },
+  "P_b (SV_b -> card)": {
+   "10": 13.09,
+   "100": 130.87,
+   "500": 654.37,
+   "1500": 1963.1
+  },
+  "P_cf (conjugate tube -> card)": {
+   "10": 0.52,
+   "100": 5.19,
+   "500": 25.94,
+   "1500": 77.81
+  },
+  "P_d1 coil (S_IC1 <-> card)": {
+   "10": 0.04,
+   "100": 0.35,
+   "500": 1.76,
+   "1500": 5.27
+  },
+  "P_d2 coil (S_IC2 <-> card)": {
+   "10": 0.03,
+   "100": 0.34,
+   "500": 1.71,
+   "1500": 5.12
+  },
+  "P_s (card -> FS2 -> S_RC)": {
+   "10": 0.97,
+   "100": 9.72,
+   "500": 48.59,
+   "1500": 145.78
+  },
+  "P_rf (HQDP tube -> card)": {
+   "10": 0.52,
+   "100": 5.23,
+   "500": 26.15,
+   "1500": 78.46
+  }
+ },
+ "step_sizes_bytes": {
+  "base_frame.step": 408920,
+  "base_enclosure_panels.step": 977111,
+  "base_drip_tray.step": 107435,
+  "base_brackets.step": 134371,
+  "base_cold_compartment.step": 176598,
+  "base_pumps.step": 168238,
+  "base_bottles_pneumatics.step": 183781,
+  "base_electronics.step": 402305,
+  "base_sensors.step": 150962,
+  "base_gamry_route_bench.step": 49729,
+  "base_tubing.step": 1258474
+ }
+}
