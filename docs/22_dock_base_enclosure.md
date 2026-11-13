@@ -4,7 +4,7 @@ Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK BASE age
 13 Revision B (§2.5–§2.6, §3.1, §3.7, §5, §6, §7.3), 16 §2–§3, 18 (binding ICD), `cad/elisa_cad/interface.py`
 (imported, not edited), `automation/config/hardware_lab.example.yaml`. Nothing is ordered. docs/13 and docs/18 are not
 edited; departures are listed in §13, interface change requests in §14.
-CAD: `cad/elisa_cad/dock_base/` (`python -m elisa_cad.dock_base.build` from `cad/`, ≈ 4 min, `--fast` without
+CAD: `cad/elisa_cad/dock_base/` (`python -m elisa_cad.dock_base.build` from `cad/`, ≈ 5 min, `--fast` without
 renders ≈ 15 s). Outputs: `cad/out/dock_base/` (STEP, PNG/SVG, `tubing_schedule.csv`, `check_results.json`).
 
 Source tags as docs/18: docs section | `interface.NAME` | **Derived** (arithmetic shown or in `calcs.py`) |

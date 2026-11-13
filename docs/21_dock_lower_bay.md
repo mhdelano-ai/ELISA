@@ -84,7 +84,7 @@ Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_syst
 | Pogo block | PEEK unfilled (volume resistivity class > 1e14 Ω m, UNVERIFIED) | nose 5.2 × 3.2 × 4.84 (0.1 radial in the 5.4 × 3.4 opening), shoulder 6.3 × 3.4, body to z −24; 6 × Ø0.87 probe bores on the pad centres (`I.POGO`) | probe bores ± 0.02 to the nose; shoulder-to-nose-top 4.84 (tips free at z 1.34 when up) | micro-mill, ream |
 | Pogo guide block, wedge | PEEK | wedge 2:1 ramp, 6 mm stroke → 3 mm lift | ramp angle | CNC |
 | Leak electrode | FR4/PTFE PCB, ENIG interdigitated | 6.9 × 6.1 | — | PCB |
-| Exhaust duct | PEEK / ABS sheet | 30 × 30 duct to the front panel | — | fold/print |
+| Exhaust duct | PEEK / ABS sheet | 24 × 26 duct, y −55…−14, to the front panel | — | fold/print |
 | Bay frame | Al 6061 | base 170 × 180 × 4; walls 8 / 6 thick; beams 8 × 10; dowels Ø4 | dowel positions ± 0.02 | CNC |
 
 ## 4. Catalogue parts
@@ -100,7 +100,7 @@ Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_syst
 | Pogo lift cylinder | — | single-acting spring-return, bore 6–8, stroke ≥ 6, **non-magnetic piston (no sensor magnet)** | UNVERIFIED |
 | WE relay | — | reed, 1 Form A, insulation ≥ 1e13 Ω, internal mu-metal screen; Pickering "Series X, Y & Z > 1e13 Ω" seen only in a search snippet (page 403) | UNVERIFIED |
 | Peltier | **Custom Thermoelectric 12711-5L31-04CL** (spec sheet opened): 30.0 × 30.0 × 3.3 lapped, 127 couples, Imax 4.0 A, Qmax 33.4 W, Vmax 15.4 V, DTmax 67 °C (Th 27 °C curves) | — | opened |
-| Heat sink, fan | — | R_th ≤ 0.94 K/W at 10.6 W (fins along y, 32 × 37 base); 30 × 30 × 10 axial fan | UNVERIFIED |
+| Heat sink, fan | — | R_th ≤ 0.94 K/W at 10.6 W (fins along y, 32 × 37 base); 25 × 25 × 10 axial fan class | UNVERIFIED |
 | Anvil foil heaters ×4 | — | polyimide, 0.3 thick, ≈ 10 W total, cut-outs per `parts.anvil_heaters()` | UNVERIFIED |
 | Thermistors ×4, RH/T sensors ×2 | — | 10 kΩ NTC class; digital RH/T (one in the electrode bay, one in the nest W wall) | UNVERIFIED |
 | Datum pins ×3 | — | zirconia dowel Ø4 m6 × 4.8 (non-magnetic) | UNVERIFIED |
@@ -175,12 +175,12 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 
 | # | Check | Method | Result |
 |---|---|---|---|
-| 6.1 | Interference inside the lower assembly, 8 states | OCC boolean intersection of every solid pair (bbox pre-filter), tolerance 0.001 mm³; designed fits listed in `checks.ALLOWED` | RESULT_INTERF |
-| 6.2 | M_d swept volume: holder + magnet + neck + post + Z unit + umbrella vs every static part, both M_c parked | 14 paths (drag IC1/IC2, 3 gather passes × 2, bead-out, 5 lowered transits), ≈ 60 samples each, up/lowered as used | RESULT_SWEEP |
+| 6.1 | Interference inside the lower assembly, 8 states | OCC boolean intersection of every solid pair (bbox pre-filter), tolerance 0.001 mm³; designed fits listed in `checks.ALLOWED` | **0 interferences** in all 8 states (`load`, `collect_IC1/IC2`, `gather_IC1`, `gather_IC1_low`, `drag_mid_IC1`, `hold_RC`, `beadout_end`); with the card envelope only the 11 gaskets (0.12 compression, by design) and the pogo tips (by design) touch it |
+| 6.2 | M_d swept volume: holder + magnet + neck + post + Z unit + umbrella vs every static part, both M_c parked | 14 paths (drag IC1/IC2, 3 gather passes × 2, bead-out, 5 lowered transits), ≈ 60 samples each, up/lowered as used | **0 collisions** on all 14 paths (incl. the 0.30 slot clearance, M_c units parked, electrode bay, P_s boss 0.45 from the post at the bead-out stop, tubes, M_c carriers ≥ 1.4 above/beside the Z unit) |
 | 6.3 | Holder plan clearance in the plate openings | shapely, 2.6-sq holder at 0.25-mm steps | drag ≥ **0.34**, gather 0.90, bead-out 0.30 (interface slot alone: **0.03** at the J fillet, 0.16 on the 45° arcs, corners outside the round end cap → DEV-L4) |
 | 6.4 | Tube bend radii | circumradius of consecutive route points | all 11 routes **25.0** (≥ 25, MTC rule) |
 | 6.5 | Valve tips vs anvil-top features | shapely: tip edge to openings, M_w recess, gasket seats, cold-zone seams | anvil/cold class min: V15 **0.25** (accepted, CHOICE-5), V3 → P_byp seat **0.36** (≥ 0.3 face-seal rule, < 0.5 generic, ICR-7), V16 0.50, others ≥ 0.5; slot-class tips inside the slot (as docs/18 §11) |
-| 6.6 | Service: can the anvil be removed? | anvil module translated +5 … +120 mm in z (state `load`) against the bay frame and M_d system | RESULT_LIFT |
+| 6.6 | Service: can the anvil be removed? | anvil module translated +5 … +120 mm in z (state `load`) against the bay frame and M_d system | first run: fan + duct hit the SW beam at 5–40 mm → fan/duct moved to x ≥ −4, beam ends at x −5; **re-run: 0 hits at 5, 10, 20, 40, 60, 90, 120 mm** (prerequisites: card out, M_c parked, M_d parked lowered, tube unions outside the walls opened, Gamry cable unplugged at the bulkhead, heater/sensor/fan/cylinder connectors and the purge line unplugged) |
 | 6.7 | Port insert replacement | by construction | gasket: from the top, card out, no tools beyond tweezers. Insert: lift the anvil module (6.6), unscrew the retainer (2 × M2), push the insert down; insert + bonded tube + wall union are one spare "port line" (11 spares) |
 
 ## 7. Choices (open points decided here; the user may overrule)
@@ -190,7 +190,7 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 | CHOICE-L1 | anvil outline, material, finish | one Al plate x −12…90 / y −16…66; cast tooling plate, hard-anodised, top lapped with the cold block | non-magnetic, stable after pocketing, insulating top | Ti plate (stiffer, costlier); ceramic |
 | CHOICE-L2 | nest construction | separate 5-mm frame on the anvil holds pins, pushers, sensor, bushes; card + 1.8 opening with lead-in | vertical drop, frame never touches the foil; gutter visible | pins pressed into the anvil |
 | CHOICE-L3 | pocket / thick-zone layout | one bottom pocket x 32.5–62.5, y 0–50, bosses for island, P_a2, P_s | M_c flange, M_d sweep and electrode bay share one 5-mm plate | separate pockets per window |
-| CHOICE-L4 | cold zone | cold block in a PEEK U-frame, one 30 × 30 Peltier under a spreader, front exhaust | 8× margin on Qmax; fits x ≤ 20 | two small modules |
+| CHOICE-L4 | cold zone | cold block in a PEEK U-frame, one 30 × 30 Peltier under a spreader, 25-mm fan + front exhaust duct | 8× margin on Qmax; fits x ≤ 20 | two small modules |
 | CHOICE-L5 | port inserts, gasket | insert from below, retainer plates, 50 ShA gasket | gasket swap from the top; seal force ≤ budget | 6-32 fittings (pitch) |
 | CHOICE-L6 | head guide pins | Ø6 pins at (−7, 46) and (83, 4), bronze bushes in anvil + frame | diagonal = best rotational location; outside card, ports, pushers | 3 pins |
 | CHOICE-L7 | drips | perimeter gutter 1.5 × 1 with drains at both front corners → BASE drip tray; umbrella on the Z unit | spills never reach the magnet bay stage | drip pan |
@@ -227,7 +227,7 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 | ICR-3 | `POGO["tip_z_retracted"]` | −1.0 | −1.66 (or `block_lift_stroke` 2.34) | lift 3.0 − 1.34 free tip = 1.66 compression > 1.27 full travel |
 | ICR-4 | `MAGNETS["M_c1"/"M_c2"]` motion, `parked_xy`, `z_top_down` | Z 25 + y 18, (40, 56)/(40, −6), −25.16, "spring returns to UP" | swing R 64.5, (40, 56.7)/(40, −6.7), top −45.6, fail = hold | DEV-L1/L2 |
 | ICR-5 | `ANVIL_THICK_ZONES` | island x ≤ 39.5; no P_s boss; west strip to 33.5 | as DEV-L3 | insert bore walls; M_c flange |
-| ICR-6 | `PASS_THROUGHS["liquid_lines_west"/"east"]`, `LOWER_SUBCLAIMS_CARD` | points (22, 25, −60), (75, 25, −60) | west lines exit dock X 150, Y 84–116, Z 108–114; east lines dock X 320, Y 80.5/95.5/110.5/161.5, Z 112–115; Peltier exhaust at dock Y 20, X 178–208, Z 115–145 (10.6 W) | BASE must take the lines and the exhaust there |
+| ICR-6 | `PASS_THROUGHS["liquid_lines_west"/"east"]`, `LOWER_SUBCLAIMS_CARD` | points (22, 25, −60), (75, 25, −60) | west lines exit dock X 150, Y 84–116, Z 108–114; east lines dock X 320, Y 80.5/95.5/110.5/161.5, Z 112–115; Peltier exhaust duct outlet at dock Y 20, X 186–210, Z 118–144 (10.6 W) | BASE must take the lines and the exhaust there |
 | ICR-7 | `VALVE_TIP_EDGE_MARGIN` vs `FACE_SEAL` | 0.5 "any opening/gasket" vs 0.3 "outside a seat" | state which governs; V3 → P_byp seat is 0.36 | geometry from interface |
 | ICR-8 | `DATUM_PIN` comment "hardened steel" / `MATERIALS["pins"]` | steel | datum pins zirconia; valve pins annealed austenitic or Ti (UPPER) | magnet bay field 0.1 T at V4 |
 | ICR-9 | docs/18 §8 `LOWER_nest_anvil` "anvil … up to z = card top only outside the card" | — | confirm nest frame top 5.0 and M_c bracket stubs below z −15 | lid sweep min Z 175.3 (z 5.3) |
