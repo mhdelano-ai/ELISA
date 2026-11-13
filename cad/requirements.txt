@@ -1,0 +1,7 @@
+# CAD environment for cad/ (tested 2026-11-13, Python 3.13)
+cadquery==2.8.0          # pre-installed (with cadquery-ocp 7.9.3.1.1)
+matplotlib>=3.11         # pre-installed; PNG rendering (VTK offscreen has no GL backend here)
+numpy
+scipy                    # actuator assignment in the scratch study (linear_sum_assignment)
+shapely>=2.0             # installed this round (pip install shapely): 2D buffers for channels/slots
+networkx                 # installed this round: yoke tier ordering (scratch study only)
