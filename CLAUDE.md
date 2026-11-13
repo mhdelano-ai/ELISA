@@ -34,6 +34,13 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
   (Revision B), alternatives B and C′ (revised), review with resolution of findings (§7). Do not edit docs/09–12.
 - `docs/16_chip_decision.md` — cartridge decision, authoritative comparison table, cartridge gates and kill criteria.
 - `docs/17_session_record.md` — trail of the cartridge round: every question and answer, agent tasks, commits.
+- `docs/18–25` — physical design of cartridge A and its dock (stage C0 desk work, C2 prototype level): interface
+  (docs/18, Revision C), card (19), dock lid (20), lower bay (21), base and enclosure (22), integration with the
+  authoritative tables of choices, deviations from docs/13 and open items (23), independent review and resolution of
+  findings (24, §8), session record (25). docs/13 stays the specification; docs/18–24 list departures as deviations.
+- `cad/` — parametric CadQuery model behind docs/18–24 (`cad/elisa_cad/interface.py` is the single source of truth
+  for interface geometry; packages `card`, `dock_upper`, `dock_lower`, `dock_base`, `assembly`); outputs (STEP, DXF,
+  PNG, check results) in `cad/out/`. See `cad/README.md`.
 - `scripts/chip_round/` — the agents' working scripts and outputs behind docs/09–16 (record only; see its README).
 - `docs/presentation/` — summary slide decks (in silico phase; cartridge round) as standalone HTML, sources, `build.py`.
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
@@ -55,10 +62,12 @@ python -m pytest -q automation/tests   # automation tests (50 passed after the r
 python -m elisa_auto.run_sim --cycle automation/config/cycle_primary.yaml   # simulated cycle, virtual clock
 python -m elisa_auto.analyze bench/<folder>         # gate quantities from bench results
 python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the model with bench values
+pip install -r cad/requirements.txt && pip install -e cad         # CAD model (CadQuery; no test suite, one-off checks)
+python -m elisa_cad.card.build         # card (~1 min); likewise dock_upper, dock_lower, dock_base (`--fast`), assembly (~25 min)
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
 
-## Status (2026-11-12)
+## Status (2026-11-13)
 In silico phase complete; the final review's findings are resolved or listed as open in docs/08 §10. **Next:
 bench Stage 0 (instrument facts, ordering) and Stage 1A (E1.1 readout, E1.2 U3 free HQ, E1.3 U1 conjugate NSB with
 the reservoir-ageing arm; plus E1.2b HQDP pre-electrolysis "guard cell" test, weeks 5–7, informational, not a G1a/G1
@@ -83,3 +92,9 @@ Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/
 `automation/templates/`). Record measured model inputs in `bench/measured_values.yaml` (value, low, high,
 source = experiment folder) — do not edit `params/chemistry.yaml` or `params/hardware.yaml`; accepted bench
 values go into the `overrides` section of `params/model_assumptions.yaml` with the experiment as source.
+**Physical design of cartridge A and its dock complete as desk work (2026-11-13, docs/18–25, `cad/`):** card
+75.5 × 50 mm with 21 valves and 11 liquid ports; dedicated bench dock 470 × 420 × 330 mm (388 lid open), ≈ 43 kg,
+lab air ≥ 450 kPa. Integrated assembly has 0 unintended interferences (one-off check). Paper budgets hold thinly:
+carry-over 9.87e-5 vs 1e-4 (needs 0.0635 mm ID sample line, UNVERIFIED part; shown only by E1.10/M7), 31.0 min
+cadence, 3.25 min margin to 60 min, 14 runs per card. Choices the user may overrule: docs/23 §8; deviations from
+docs/13: docs/23 §9; open items: docs/23 §10. Nothing is ordered or built: the cartridge still waits for G1 and E1.2b.
