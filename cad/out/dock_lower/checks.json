@@ -624,49 +624,10 @@
   }
  },
  "service_lift": {
-  "lift_5mm": [
-   [
-    "fan_env",
-    "bay_frame",
-    240.0
-   ],
-   [
-    "exhaust_duct",
-    "bay_frame",
-    12.0
-   ]
-  ],
-  "lift_10mm": [
-   [
-    "fan_env",
-    "bay_frame",
-    480.0
-   ],
-   [
-    "exhaust_duct",
-    "bay_frame",
-    17.0
-   ]
-  ],
-  "lift_20mm": [
-   [
-    "fan_env",
-    "bay_frame",
-    554.646
-   ],
-   [
-    "exhaust_duct",
-    "bay_frame",
-    10.0
-   ]
-  ],
-  "lift_40mm": [
-   [
-    "fan_env",
-    "bay_frame",
-    74.646
-   ]
-  ],
+  "lift_5mm": [],
+  "lift_10mm": [],
+  "lift_20mm": [],
+  "lift_40mm": [],
   "lift_60mm": [],
   "lift_90mm": [],
   "lift_120mm": []

@@ -1,11 +1,11 @@
 # 21 — Dock LOWER bay: nest, anvil, magnet bay, electrode bay, reagent cold plate (C2 prototype)
 
-Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK LOWER. Cartridge A only (docs/13 Rev B),
+Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK LOWER — design and checks complete for this round. Cartridge A only (docs/13 Rev B),
 dedicated bench dock, **C2 prototype** (catalogue actuators + machined parts). Inputs: docs/18 (binding),
 `cad/elisa_cad/interface.py` (imported, not edited), docs/13 §2.2/§2.5/§2.7/§3.3/§3.8/§6/§7.2, docs/11 §5.4, docs/16
 §2–§3, `mag_b.py`/`mag_far.py`. Nothing is ordered. This document changes no other document.
-CAD: `cad/elisa_cad/dock_lower/` — `cd cad && python -m elisa_cad.dock_lower.build` (≈ 6 min; `--fast` skips the
-M_d sweep, ≈ 4 min) → `cad/out/dock_lower/` (STEP in **dock** coordinates, PNG in card coordinates,
+CAD: `cad/elisa_cad/dock_lower/` — `cd cad && python -m elisa_cad.dock_lower.build` (≈ 4.5 min; `--fast` skips the
+M_d sweep, ≈ 2.5 min) → `cad/out/dock_lower/` (STEP in **dock** coordinates, PNG in card coordinates,
 `calcs.json`, `checks.json`, `build_summary.json`). The card is the interface envelope (card agent's model not yet
 available).
 
