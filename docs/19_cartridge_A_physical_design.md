@@ -1,6 +1,9 @@
 # 19 — Cartridge A: physical design of the card (C2 laminated prototype)
 
-Status: 2026-11-13, **stage C0 desk work**, physical design round (CARD). Nothing is ordered. Inputs: docs/13 Revision B
+Status: 2026-11-13, **stage C0 desk work**, physical design round (CARD); **revised at integration** (docs/23,
+interface.py Revision B): all §9 requests resolved (docs/18 §15) — the card now reads MC.d, the V8 lead-in exception,
+the poka chamfer and the tooling holes from the interface (geometry unchanged); the real card was checked against the
+lid, nest, anvil and electrode bay in docs/23 §4. Nothing is ordered. Inputs: docs/13 Revision B
 (§2–§5), docs/18 (binding interface), `cad/elisa_cad/interface.py` (imported, not edited), docs/11 §1–§4, docs/16
 §2–§3/§6.4. This document changes no other document. CAD: `cad/elisa_cad/card/` (CadQuery 2.8); outputs:
 `cad/out/card/`; rebuild: `cd cad && python -m elisa_cad.card.build` (≈ 25 s, 35 files).
@@ -234,12 +237,17 @@ the window edge at 90°, not a web.
 All 21: tip centre on the intended channel centreline (≤ 0.0003, the G1/G2 arc-length rounding); tip disc
 inside the L3 bore with ≥ 0.15 radial clearance; disc + 0.14 worst-case error entirely on TPE; no other cut under
 the tip. Lateral overlap beyond the channel walls: 0.30 (Ø1.0 on 0.4 lines), 0.25 (Ø1.0 on 0.5), 0.20 (V11/V12),
-**0.15 for G1–G4 (Ø0.8 on 0.5 lanes) vs 0.14 worst-case error — 0.01 margin**. Tip edge to the nearest TPE cut:
+**0.15 for G1–G4 (Ø0.8 on 0.5 lanes) vs 0.14 worst-case error — 0.01 margin**. (revised at integration) The anvil
+slot under the slot-class valves is widened for the square M_d holder (interface `slot_polygon()`, DEV-L4): foil span
+4.44 at G1/G2 → 19 µm deflection at 1.5 N (docs/13: 15 µm at 4.0; M4 acceptance ≤ 20 µm), 4.0 at V11 (15.5 µm),
+3.4 at G3/G4/V12 (11 µm). Tip edge to the nearest TPE cut:
 0.25 at G3, G4, V14, V15 (die cut), 0.70 at V8 (RCj), ≥ 0.95 elsewhere.
 
 ### 6.5 Lid gas rings (ID 5 / OD 7)
 P_c: land clear by 6.2, inner land 0.3 to the disc recess. **P_mv: with the interface lead-in 0.3 at V8 the ring
 overlaps the V8 lead-in by 0.16**; with no lead-in at V8 (CHOICE-C10) the land is clear by 0.14 (§9 request).
+(revised at integration) Adopted in the interface (`PLUNGER['card_bore_lead_in_except']`); the integrated check finds
+the full ring annulus (18.85 mm²) on flat L3 for both P_c and P_mv (docs/23 §4).
 
 ### 6.6 Registration and the stack at J and the cell
 Dowels: round at (59, 42), slot at (59, 5) (19.2 from J, 17.1 from the RC). Budget §5: L1-to-L3 RSS 0.021, WC 0.051
@@ -287,6 +295,12 @@ UNVERIFIED); PTFE 0.03 g; adhesives < 0.01 g → **20.3 g dry**; + 0.86 g of con
 
 ## 9. Interface change requests (interface.py not edited)
 
+(revised at integration) All resolved in interface.py Revision B (docs/18 §15): V8 → no lead-in
+(`PLUNGER['card_bore_lead_in_except']`, ring OD 7.0 kept); `MC.d` = 1.5958 (round); `CARD_POKA_CHAMFER` + LOWER nest
+corner block (`NEST_POKA_BLOCK`, 0.3 clear); `CARD_TOOLING_HOLES` (no anvil feature; 7.8 / 11.2 mm from the nearest
+anvil opening); `CER_NECK['len']` (alias 'h' kept); `WE2_CHANNEL` 2.9 confirmed → cell 1.31 µL (DEV-C4 stands);
+`DIE_WINDOW` states the CHOICE-C1 reading.
+
 | Name | Current | Needed | Why |
 |---|---|---|---|
 | `GAS_SEAL_LID["od"]` or `PLUNGER["card_bore_lead_in"]` at V8 | OD 7.0; lead-in 0.3 everywhere | OD ≤ 6.6, **or** record "no lead-in at V8" | ring overlaps the V8 lead-in by 0.16 (§6.5); card uses no lead-in at V8 |
@@ -314,8 +328,8 @@ parameters (thermal press, UV/ozone TPE–COC bond strength); laser positional a
 whether L1-to-L3 ±0.05 holds); die thickness, dicing tolerance vs 0.05 trace margins, passivation thickness; seam
 adhesive chemistry vs HQ/BQ; wicking of the seam adhesive; G1–G4 lateral margin 0.01 under worst-case error; TPE
 compression over the film rim (leak path at the seam); MC reaming; P_c disc effect on the RCj air push (flow
-resistance); mass densities of TPE, glass, PTFE. **Not built in CAD:** the lid/dock-side vent pockets, gas rings
-(dock parts). Not done: escape/collection model re-run for DEV-C2 (G4 finger strip) — add to M5.
+resistance); mass densities of TPE, glass, PTFE. (revised at integration) The lid vent pockets, gas rings, press pad,
+pins, gaskets, pogo pins, datum pins and the nest corner block were checked against this card in docs/23 §4. Not done: escape/collection model re-run for DEV-C2 (G4 finger strip) — add to M5.
 
 ## 12. Sources opened this session (2026-11-13)
 * TOPAS 5013L-10 technical data sheet (German), https://topas.com/wp-content/uploads/2023/05/TDS-5013L-10_d.pdf —

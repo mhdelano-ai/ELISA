@@ -1,6 +1,10 @@
 # 20 — Dock upper part (lid and head) for cartridge A, C2 prototype
 
-Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK UPPER (complete for this round). Inputs: docs/18 (binding),
+Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK UPPER (complete for this round); **revised at
+integration** (docs/23, interface.py Revision B): guide pins at (−8, 46)/(84, 4) with the tip 0.5 above the real bush
+top (z 5.0), non-magnetic spring/yoke/plate materials, latch catch plates and hinge pedestals provided by LOWER, clamp
+design value 300 N, PLUNGER 400 kPa / Ø6 now in the interface (all §8 requests resolved, docs/18 §15); by default
+only `lid_assembly_closed.step` is written (`--all-states` for raised/open/head). Inputs: docs/18 (binding),
 `cad/elisa_cad/interface.py`, docs/13 Rev B §2.1, §2.7, §4, §6, §7.2; docs/11 §3, §5; docs/16 §2–§3, §6.4. Nothing
 is ordered. This document changes no other document. CAD: `cad/elisa_cad/dock_upper/` (regenerate with
 `cd cad && python -m elisa_cad.dock_upper.build`, ≈ 3 min; `--fast` skips STEP/PNG, ≈ 1.5 min); outputs
@@ -18,7 +22,8 @@ P_dock = P_card + (190, 75, 170) (`interface.CARD_ORIGIN_IN_DOCK`).
   (Ø0.8 / Ø1.2) with collars, coil springs and bonded buttons; a stainless spring plate; 21 yoke blades on two tiers;
   a four-layer Al cylinder block with **21 Ø6 single-acting cylinders** on the 9 mm grid of `interface.CYLINDERS`,
   single-layer air galleries, piston marker magnets read by 21 linear Hall ICs; a bridge carrying the cam thrust
-  units, four guide posts and two SMC S070 pilot-valve manifolds (21 stations); two Ø6 guide pins into the nest;
+  units, four guide posts and two SMC S070 pilot-valve manifolds (21 stations); two Ø6 guide pins into the nest at card (−8, 46) / (84, 4) (revised at
+  integration);
   die-back press pad 12 N; two gas rings (P_c, P_mv); three vent pockets; two foil heaters, two Pt100.
 * **Lid frame** (hinged): two side plates on a rear hinge (axis `interface.LID_HINGE_AXIS`, 85° stop on fixed
   blocks), front/rear beams, four post bearing blocks, eccentric cam shaft (e 4.5, stroke 9 = 8 drop + 1 spring
@@ -69,7 +74,7 @@ mechanical lock = series item).
 | 16.215–29.3 | heater fins y 0–2 and 48–50 | one 12.7 × 50.8 foil heater on each outer face |
 | 16.415–16.915 | pin collars (closed) | land on the block top at 0.2 below closed (no card) = `PLUNGER` extension limit |
 | 16.915–24.5 | pin springs (L 7.585 closed) | `HEAD_Z` pin_spring_zone |
-| 24.5–26.0 | spring plate 1.4301, 1.5 | reacts all springs; V3 open stop and V3 button lower stop |
+| 24.5–26.0 | spring plate 1.4404, 1.5 (revised at integration, was 1.4301) | reacts all springs; V3 open stop and V3 button lower stop |
 | 27–31 / 32–36 | yoke tiers 0 / 1 | `HEAD_Z`; eye 1.5 thick at the bottom of the tier |
 | 28.7–29.5 / 33.7–34.5 | pin buttons tier 0 / 1 (closed) | 0.2 above the eye (hook gap); +0.8 when open |
 | 37–68 | cylinder block: cover 37–38, air plate 38–44, bore block 44–62, cap 62–68 | `HEAD_Z` cylinder_block 38–68 (+1 mm cover) |
@@ -82,16 +87,24 @@ Plan of cylinders and yokes: `plan_cylinders_yokes.png`; air galleries: `plan_ai
 
 ### 2.3 Valve pin, spring, yoke and cylinder (one channel)
 
-* **Pin** (custom, Swiss-turned non-magnetic stainless, e.g. 1.4404 or Nitronic 60 [assessment]): flat tip land
+* **Pin** (custom, Swiss-turned non-magnetic stainless: **Nitronic 60** (UNS S21800), fallback 1.4404 solution-annealed,
+  μr ≤ 1.02 checked on incoming parts — revised at integration, interface `MATERIALS` [assessment; permeability UNVERIFIED]): flat tip land
   Ø1.0 on Ø1.2 pins (0.1 × 45° step), Ø0.8 flat on Ø0.8 pins, edges broken 0.05 (`PLUNGER` tip_edge_chamfer);
   shank ground g5-class (−2…−6 µm) in H7 guide holes (0…+6 µm): radial play 1–6 µm [assessment]; collar Ø1.4 / Ø2.0
   × 0.5; neck Ø0.5 / Ø0.8; button = hypotube sleeve Ø1.3/Ø1.8 × 0.8, **bonded (Loctite-class anaerobic) or
   laser-welded after assembly with a 0.20 mm feeler gauge** between eye and button (sets the hook gap) (CHOICE-U6).
+  (revised at integration, I-13) The gauge setting is done with the head down on a **reference card** (real closed tip
+  height): the nominal tip z 0.17 of `PLUNGER` lies 0.145 below the L1 top over the channel lands (the integration
+  check finds the tip volume inside L1 and L2), so the real tip stops higher, on compressed TPE; setting the gap on the
+  nominal would leave the button resting on the eye and steal closing force.
 * **Retention with the lid open**: the collar cannot pass the Ø0.8/1.2 guide hole (pin cannot fall out); the spring
   pushes the collar onto the block top 0.2 below "closed" (`PLUNGER` pin_extension_limit, collar stop); the button
   then rests on the eye (gap 0) — so with no card the yoke is also at its stop. Pins are removable only after the
   yoke is slid off (fork open away from the rod) and the button removed.
-* **Spring** (custom-wound 1.4310, ground ends; catalogue sizes not found this session → UNVERIFIED part, spec here):
+* **Spring** (custom-wound, ground ends; catalogue sizes not found this session → UNVERIFIED part, spec here). **Material
+  revised at integration: Co-Cr-Ni non-magnetic spring wire (Elgiloy/Phynox class)** instead of 1.4310, which is partly
+  martensitic (magnetic) when work-hardened and sits ≤ 25 mm above the M_c/M_d magnets; the table keeps G = 70 GPa
+  (Co-Cr-Ni class similar, UNVERIFIED) — the preload is shimmed per pin, only the force at +0.8 moves:
 
 | Class | wire d / mean D / n | k (N/mm) | F closed (±10 %) | F open (+0.8) | L free / closed / solid | τ at F_open max | OD |
 |---|---|---|---|---|---|---|---|
@@ -104,7 +117,7 @@ Plan of cylinders and yokes: `plan_cylinders_yokes.png`; air galleries: `plan_ai
   of R_m ≈ 2000–2500 MPa at these diameters (UNVERIFIED) — acceptable for ≈ 10⁴ cycles/year per valve (16 runs/day,
   docs/13 §4), fatigue to be confirmed on the M4 rig. Preload set per pin by shim washers (0.05 steps) under the
   spring plate [assessment]. Card-stack tolerance ±0.06 changes F by 0.03–0.08 N (Derived k × 0.06).
-* **Yoke** (laser-cut 1.4310 sheet 1.0, CHOICE-U8): boss Ø3 at the rod, full-height web (4.0) stopping 0.3 short of
+* **Yoke** (laser-cut **1.4404** sheet 1.0 — revised at integration, was 1.4310; CHOICE-U8): boss Ø3 at the rod, full-height web (4.0) stopping 0.3 short of
   the button, 1.5-thick tongue to an eye (Ø1.5 / Ø1.8) with a fork slot 0.7 / 1.0 open away from the rod. Two
   **J-yokes** where the rod is too close to the pin for a web (V1 L 2.74, V9 L 0.71): tongue under the button, a post
   3 mm behind the rod, a top tab under the rod (tab up to tier top + 1.0). **V3 push yoke**: whole blade at z 28–31
@@ -119,7 +132,7 @@ Plan of cylinders and yokes: `plan_cylinders_yokes.png`; air galleries: `plan_ai
 ### 2.4 Inverted V3 (fail-open), CHOICE-U7
 
 Rest (no air): open spring 0.5 N lifts the pin until the collar touches the spring-plate underside (open stop, tip
-z 1.015). Closing: air pushes the piston down 2.0; the rod/eye moves 1.0 (0.2 gap + 0.8 pin travel), the tip lands on
+z 0.97, revised at integration: interface Rev B tip_z_open = closed + stroke). Closing: air pushes the piston down 2.0; the rod/eye moves 1.0 (0.2 gap + 0.8 pin travel), the tip lands on
 the TPE, the remaining 1.0 compresses the limit spring to 3.1 N → TPE force 3.1 − 0.58 (open spring at closed) −
 0.05 = 2.47 N (1.94–2.66 with ±10 % spring tolerance and friction sign; limit 3.0). No card: the V3 button lands on
 the spring-plate top 0.2 below "closed". Air or power lost → piston vents → open spring lifts the pin → V3 open.
@@ -168,7 +181,8 @@ on a low-level bus — allowed during read windows (docs/13 §7.2); marker field
   readable → envelope 26 × 21 × 109 UNVERIFIED). Catch plates K0045.9143372 belong on the LOWER nest front (ICR-U2).
 * Hinge: two fixed blocks (X 150–153.8, 316.2–320, Y 185–200) with a Ø6 pin through the side-plate knuckles (r 5),
   flanged plain bushes (iglidur class, part UNVERIFIED), **85° stop faces** on the fixed blocks; the blocks bolt to
-  a hinge rail provided by DOCK BASE in the unclaimed volume Y 185–200, Z 155–176 (ICR-U3).
+  two **hinge pedestals of DOCK LOWER** (top Z 160, on the bay base plate; revised at integration, ICR-U3 asked BASE
+  for a rail), so the clamp loop closes inside LOWER + UPPER.
 * Lid mass 2.32 kg (CAD volumes × densities; envelopes at assessed densities), CoM dock (233, 113, 236): closing
   torque 1.88 N·m at 0°, 0 at ≈ 60°, −0.89 N·m at 85° (lid rests on the stop) → **no gas strut**; lift force at the
   handle 12 N. A rotary damper on the hinge is optional (series note).
@@ -185,9 +199,9 @@ on a low-level bus — allowed during read windows (docs/13 §7.2); marker field
 | V8_bush | CuSn8 | Ø3 × 8.7 (starts 1.5 above the face) | Ø1.2 H7 | turned |
 | pin_family (21) | 1.4404 / Nitronic 60 | Ø0.8 or Ø1.2 × ≈ 30–36 | shank g5, tip land square to axis 0.005, length ±0.01 | Swiss turn + centreless grind |
 | button_family (21) | stainless hypotube | Ø1.3 or 1.8 × 0.8 | bonded at gauge 0.20 | cut tube |
-| spring_plate | 1.4301, 1.5 | 75 × 44 | flatness 0.02 | laser + grind |
+| spring_plate | 1.4404, 1.5 (revised at integration) | 75 × 44 | flatness 0.02 | laser + grind |
 | standoff_family | PEEK | Ø6, two lengths | length ±0.01 (pairs ground) | turned |
-| yoke_family (21) | 1.4310 sheet 1.0 | per channel, 0.7–10.9 offset | eye-to-boss distance ±0.02; tongue thickness 1.5 ±0.02 | laser/wire-EDM, J-yokes brazed |
+| yoke_family (21) | 1.4404 sheet 1.0 (revised at integration) | per channel, 0.7–10.9 offset | eye-to-boss distance ±0.02; tongue thickness 1.5 ±0.02 | laser/wire-EDM, J-yokes brazed |
 | rod_family (21) | 1.4305 ground Ø1.5 | 13–21 long | g6 | cut + grind |
 | piston_family (21) | POM-C (or Al) | Ø5.95 × 2.5, O-ring groove | O-ring groove per O-ring maker | turned |
 | cyl_block_cover / air_plate / bore_block / cap | Al 6061 | 95.5 × 50 × 1 / 6 / 18 / 6 | bores Ø6 H8 Ra 0.4 honed; gallery grooves 0.6 ± 0.02 | CNC; gasket between cover and air plate |
@@ -274,7 +288,8 @@ Head force 2 × 150 − 20 (return springs) = **280 N** (±0.5 mm stack → 265�
 (≥ 198 N)** vs docs/18 §6 requirement ≥ 50–165 N. Mean pressure on the L3 top ≈ 0.07 MPa (Derived 213 N / ≈ 3000 mm²);
 chamber roofs (0.5 mm COC over Ø8) are inside Ø6 vent pockets. Cam: e 4.5, contact at 141° of rotation, peak shaft
 torque 0.87 N·m incl. journal friction → **14.5 N at the 60-mm lever**. Lid reactions at 295 N: latches 186 N
-(93 N each vs F1 2000 N), hinge 109 N. Press pad: spring 0.8 / D 6 / 9.4 turns, 2.0 N/mm, 11.0 N at the stop (0.5
+(93 N each vs F1 2000 N), hinge 109 N; at the Rev B design value 300 N (revised at integration): latches 189 N (95 N
+each, on the LOWER catch brackets), hinge 111 N (on the LOWER pedestals). Press pad: spring 0.8 / D 6 / 9.4 turns, 2.0 N/mm, 11.0 N at the stop (0.5
 below the nominal die back) → 12.0 N at DIE_T 0.70, 10.6–13.8 N over DIE_T 0.5–1.1 (`DIE_PRESS_PAD`) (Derived).
 
 ### 4.7 Thermal (calcs.thermal)
@@ -294,8 +309,8 @@ driver, 0.01 K resolution front end (part to be selected). PEEK plate (reagent z
   X 150–320, Y ≥ 34.
 * Closing arc (head raised, air off): lowest pin tip 1.75 mm above the card top, at 0° (tip height rises
   monotonically with the angle); guide-pin tips 0.5 above the nest claim top at 0°.
-* Head descent: guide pins fully engaged (nose 1.0 passed, bush top assumed at the nest claim top Z 176.0) after
-  1.5 mm; pin tips reach the bore lead-in after 2.76 mm with air on (pins lifted; docking state) and after 1.76 mm with
+* Head descent: guide pins fully engaged (nose 1.0 passed, bush top at the real nest/bush top z 5.0 = dock Z 175.0,
+  revised at integration; pin tip z 5.5 raised, −2.5 down) after 1.5 mm; pin tips reach the bore lead-in after 2.76 mm with air on (pins lifted; docking state) and after 1.76 mm with
   air off → **guided travel before the bores 1.26 mm (0.25 mm worst case)**; bore capture radius ≥ 0.45 (clearance +
   lead-in, `PLUNGER card_bore_lead_in`) vs head-to-nest tolerance ±0.03 (`TOL`). Pins move only along −Z.
 * Sweep 0–85° (5° steps, raised head, all lid solids except the guide pins, which are below the claim only when the
@@ -337,7 +352,7 @@ standoffs are all part of the 3D check. Section views: `section_pin_G4.png`, `se
 | CHOICE-U12 | clamp drive | eccentric shaft e 4.5 + 2 × 135 N preloaded springs (15 N/mm), lever 60 | force set by springs, self-locking at BDC, 14.5 N hand force | toggle clamps; pneumatic head drive (series) |
 | CHOICE-U13 | lid latch | two Kipp K0045 draw latches at the front, catch plates on the nest | 186 N reaction ≪ 2000 N; standard part | hinge-side lock (cantilever 27 N·m) |
 | CHOICE-U14 | counterbalance | none (CoM passes the hinge at ≈ 60°, 12 N lift), optional rotary damper | weight 23 N | gas strut (enters the rear claims) |
-| CHOICE-U15 | guide pins | Ø6 on ears at card (−5, 44) and (80.5, 6), protrusion 7.7 below the face; tips 0.5 above the nest claim when raised | diagonal, clear of datums and pushers; engage before the pins | pins in the nest (docs/18 wording "located in the nest" kept: bushes are in the nest) |
+| CHOICE-U15 | guide pins | Ø6 on ears at card **(−8, 46) and (84, 4)** (revised at integration, interface `HEAD_GUIDE_PINS`; the bush at (−5, 44) cut into the nest opening), protrusion 8.7 below the face; tips 0.5 above the bush top (z 5.0) when raised | diagonal, clear of datums and pushers; engage before the pins | pins in the nest (docs/18 wording "located in the nest" kept: bushes are in the nest) |
 | CHOICE-U16 | docking state | pull valves energised (pins lifted) during descent | 1.26 mm guided travel before the bores instead of 0.25 | descend de-energised |
 | CHOICE-U17 | press pad | spring 11 N at a stop 0.5 below the die back, rate 2 N/mm, 1 mm silicone | 12.0 N at DIE_T 0.7; 10.6–13.8 over 0.5–1.1 | pneumatic pad |
 
@@ -347,7 +362,7 @@ standoffs are all part of the 3D check. Section views: `section_pin_G4.png`, `se
 |---|---|---|---|
 | DEV-U1 | docs/18 §5 / `PLUNGER pilot_pressure_kPa` 300 | **400 kPa** (switch trip 350) | margin 1.20 → 1.60 on the worst channel (§4.2); S070 0.5 W coil rated 0.5 MPa |
 | DEV-U2 | `PLUNGER cylinder_bore` 5.0 | **Ø6** (pitch 9 kept, walls 3) | Ø5 at 400 kPa gives 1.10; Ø5 at 300 kPa fails (0.82) |
-| DEV-U3 | docs/18 §6 `CLAMP_DESIGN_FORCE` 250 | head force **280 N nominal, 295 N max** | card-face clamp ≥ 198 N at the upper seal budget (165 N) needs the extra; LOWER must design the nest/anvil for 300 N |
+| DEV-U3 | docs/18 §6 `CLAMP_DESIGN_FORCE` 250 | head force **280 N nominal, 295 N max** | card-face clamp ≥ 198 N at the upper seal budget (165 N) needs the extra; LOWER must design the nest/anvil for 300 N — adopted: interface Rev B 300 N (revised at integration) |
 | DEV-U4 | docs/18 §12 "hardened, reamed guide" | **CuSn8 bearing bronze**, reamed H7 | hardened steels are ferromagnetic 6.4 mm above the M_d drag path (G1–G4, V11, V12 sit over the slot) [assessment] |
 | DEV-U5 | docs/18 §5 `HEAD_Z` pin_head_closed_top 25.0 | collar at 16.4–16.9, spring plate 24.5–26.0, buttons in the tier bands | needed for spring-closed pins (CHOICE-U5); envelope `HEAD_Z` bands unchanged |
 | DEV-U6 | docs/13 §6.2 "solenoid-opened" plungers | pneumatic cylinders with solenoid pilots | already docs/18 CHOICE-2; listed for completeness |
@@ -358,6 +373,11 @@ V3 cylinder vents → V3 open. **Loss of power** → S070 N.C. valves exhaust �
 watchdog de-energises the valves → same. Clamp (manual cam, self-locking) and latches hold in every case.
 
 ## 8. Interface change requests
+
+(revised at integration) All resolved in interface.py Revision B (docs/18 §15): ICR-U1 → `HEAD_GUIDE_PINS` at (−8, 46)/
+(84, 4) (not (−5, 44)/(80.5, 6)); ICR-U2 → `LID_LATCH` (LOWER brackets); ICR-U3 → `HINGE_SUPPORT` (LOWER pedestals, not a
+BASE rail); ICR-U4 → `CLAMP_DESIGN_FORCE` 300; ICR-U5 → `PLUNGER` 400 kPa, Ø6, `HEAD_Z` collar/spring plate; BASE now
+supplies ≥ 450 kPa and regulates 400 kPa.
 
 | # | Name | Current | Needed | Why |
 |---|---|---|---|---|
@@ -390,7 +410,8 @@ modelled: tubes and cables inside the lid, screws, gaskets, O-rings, PCB compone
 
 ## 11. Output files
 
-`cad/out/dock_upper/`: `lid_assembly_{closed,raised,open}.step` (≤ 7.3 MB each), `subassy_head_closed.step`,
+`cad/out/dock_upper/`: `lid_assembly_closed.step` (6.9 MB; revised at integration: `lid_assembly_{raised,open}.step` and
+`subassy_head_closed.step` only with `--all-states`),
 `subassy_lid_frame_closed.step`, `card_envelope_ref.step`, `parts/*.step` (35 files: single custom parts and families);
 PNG: `iso_closed`, `iso_head_closed`, `iso_open`, `kinematics_side`, `head_underside` (+ `_zoom_J_cell`),
 `section_pin_G4`, `section_tightest_pair_V11_V12`, `plan_cylinders_yokes`, `plan_air_galleries`, `exploded_head`;

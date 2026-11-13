@@ -1,15 +1,15 @@
 name,frm,to,tube,base_mm,lower_mm,ext_mm,total_mm,vol_base_uL,vol_total_uL,assumed,note
-P_in (SM-FL -> card),SM-FL outlet (via the P_in sensor),P_in,PEEK 1.59 OD x 0.127 ID,192,158,200,550,2.43,7.97,docs/13 §2.6: PEEK 3.8 uL (0.3 m x 0.127 mm); >= 0.3 m isolation (docs/13 §2.5),sensor swept volume <= 1 uL UNVERIFIED; external 0.2 m UNVERIFIED
-P_b (SV_b -> card),SV_b port P_b,P_b,PEEK 1.59 OD x 0.102 ID,86,152,0,238,0.7,1.93,docs/13 §5.1: outlet line 0.25 mm x 50 mm = 2.5 uL,
-P_cf (conjugate tube -> card),conjugate tube (cold box),P_cf,FEP 1.59 OD x 0.254 ID,251,163,0,414,12.72,20.98,docs/13 §5.2: dead volume ~100 uL in the 0.26 mL fill,
-P_d1 coil (S_IC1 <-> card),S_IC1 valve,P_d1,FEP 1.59 OD x 0.508 ID,561,176,0,736,113.62,149.19,docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin),
-P_d2 coil (S_IC2 <-> card),S_IC2 valve,P_d2,FEP 1.59 OD x 0.508 ID,619,172,0,790,125.38,160.14,docs/13 §3.2.2: 60 uL FEP coil,
-"P_a (S_A -> card, via FS1)",S_A valve port 1,P_a,PEEK 1.59 OD x 0.254 ID,689,150,0,839,34.89,43.49,clean A1 (prime only),FS1 internal volume UNVERIFIED (1 uL allowance)
-"P_byp (card -> waste, air gap)",P_byp,waste air-gap head,FEP 1.59 OD x 0.762 ID,930,142,0,1071,423.89,488.6,waste (docs/13 §3.7),
-P_s (card -> FS2 -> S_RC),P_s,S_RC valve (pull only),PEEK 1.59 OD x 0.254 ID,574,154,0,728,29.08,37.89,"product side, pulled to waste (no budget)",
-P_a2 (S_A -> card),S_A valve port 2,P_a2,PEEK 1.59 OD x 0.254 ID,523,192,0,715,26.48,36.22,clean A1 (DEV-6 of docs/18),
-"P_wo (card -> waste, air gap)",P_wo,waste air-gap head,FEP 1.59 OD x 0.762 ID,606,150,0,756,276.13,344.76,waste,
-P_rf (HQDP tube -> card),HQDP tube (dark sleeve),P_rf,FEP 1.59 OD x 0.254 ID,266,181,0,447,13.48,22.65,docs/13 §5.2: dead ~200 uL in the 0.6 mL fill,
+P_in (SM-FL -> card),SM-FL outlet (via the P_in sensor),P_in,PEEK 1.59 OD x 0.127 ID,204,119,200,523,2.58,7.63,docs/13 §2.6: PEEK 3.8 uL (0.3 m x 0.127 mm); >= 0.3 m isolation (docs/13 §2.5),sensor swept volume <= 1 uL UNVERIFIED; external 0.2 m UNVERIFIED
+P_b (SV_b -> card),SV_b port P_b,P_b,PEEK 1.59 OD x 0.102 ID,102,129,0,231,0.83,1.87,docs/13 §5.1: outlet line 0.25 mm x 50 mm = 2.5 uL,
+P_cf (conjugate tube -> card),conjugate tube (cold box),P_cf,FEP 1.59 OD x 0.254 ID,265,92,0,357,13.43,18.1,docs/13 §5.2: dead volume ~100 uL in the 0.26 mL fill,
+P_d1 coil (S_IC1 <-> card),S_IC1 valve,P_d1,FEP 1.59 OD x 0.508 ID,573,117,0,689,116.06,139.72,docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin),
+P_d2 coil (S_IC2 <-> card),S_IC2 valve,P_d2,FEP 1.59 OD x 0.508 ID,675,117,0,791,136.73,160.39,docs/13 §3.2.2: 60 uL FEP coil,
+"P_a (S_A -> card, via FS1)",S_A valve port 1,P_a,PEEK 1.59 OD x 0.254 ID,673,117,0,790,34.08,41.02,clean A1 (prime only),FS1 internal volume UNVERIFIED (1 uL allowance)
+"P_byp (card -> waste, air gap)",P_byp,waste air-gap head,FEP 1.59 OD x 0.762 ID,939,121,0,1061,428.31,483.69,waste (docs/13 §3.7),
+P_s (card -> FS2 -> S_RC),P_s,S_RC valve (pull only),PEEK 1.59 OD x 0.254 ID,555,114,0,669,28.13,34.92,"product side, pulled to waste (no budget)",
+P_a2 (S_A -> card),S_A valve port 2,P_a2,PEEK 1.59 OD x 0.254 ID,441,165,0,606,22.35,30.72,clean A1 (DEV-6 of docs/18),
+"P_wo (card -> waste, air gap)",P_wo,waste air-gap head,FEP 1.59 OD x 0.762 ID,584,108,0,692,266.33,315.69,waste,
+P_rf (HQDP tube -> card),HQDP tube (dark sleeve),P_rf,FEP 1.59 OD x 0.254 ID,256,105,0,360,12.95,18.25,docs/13 §5.2: dead ~200 uL in the 0.6 mL fill,
 P_c gas (Flow EZ ch1 -> umbilical),Flow EZ ch1,lid umbilical -> P_c,PTFE 3.17 OD x 1.587 ID,108,0,0,108,213.77,213.77,"gas, compliance only","+ UPPER segment grommet -> (235,200,190) -> lid gas ring (owner DOCK UPPER)"
 P_mv gas (ch2 -> 3/2 valve -> umbilical),switch valve 1 (fed by Flow EZ ch2 from below),lid umbilical -> P_mv,PTFE 3.17 OD x 1.587 ID,63,0,0,63,124.7,124.7,gas,
 gas -> conjugate tube (fill),switch valve 2,conjugate tube cap,PTFE 3.17 OD x 1.587 ID,445,0,0,445,880.8,880.8,gas,
@@ -28,7 +28,7 @@ A1 -> S_RC,A1 manifold,S_RC valve A1 port,FEP 1.59 OD x 0.762 ID,503,0,0,503,229
 S_RC -> waste,S_RC valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,286,0,0,286,130.47,130.47,waste,
 A1 bottle -> manifold,A1 bottle cap,A1 manifold,FEP 1.59 OD x 0.762 ID,124,0,0,124,56.55,56.55,supply,
 lab air -> FR1,right-panel push-in (behind the Gamry),FR1,PU 6.00 OD x 4.000 ID,300,0,0,300,3769.91,3769.91,,
-FR1 300 kPa -> lid pilots (umbilical),FR1,umbilical grommet,PU 4.00 OD x 2.500 ID,144,0,0,144,706.86,706.86,,
+FR1 400 kPa -> lid pilots (umbilical),FR1,umbilical grommet,PU 4.00 OD x 2.500 ID,144,0,0,144,706.86,706.86,,
 R2 120 kPa -> Flow EZ supplies,R2,Flow EZ supply (tee to both),PU 4.00 OD x 2.500 ID,375,0,0,375,1841.27,1841.27,,
 Flow EZ ch2 -> switch valves,Flow EZ ch2,switch valve manifold,PTFE 3.17 OD x 1.587 ID,2,0,0,2,3.96,3.96,,
 dry-air purge -> cold box,purge restrictor,cold box,FEP 1.59 OD x 0.762 ID,540,0,0,540,246.26,246.26,,"gas, ~0.1 L/min dry air"

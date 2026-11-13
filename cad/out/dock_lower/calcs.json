@@ -1,21 +1,21 @@
 {
  "plate": {
-  "q_N_per_mm2": 0.0971,
+  "q_N_per_mm2": 0.1165,
   "span_short_mm": 30.0,
   "span_long_mm": 50.0,
-  "w_uniform_um": 0.77,
-  "w_uniform_with_openings_x5_um": 3.8,
+  "w_uniform_um": 0.92,
+  "w_uniform_with_openings_x5_um": 4.6,
   "w_local_point_16N_um": 0.25,
   "foil_span_at_slot_valves_[id, width mm, deflection um at 1.5 N]": [
    [
     "G1",
-    4.44,
-    19.1
+    4.42,
+    19.0
    ],
    [
     "G2",
-    4.44,
-    19.1
+    4.42,
+    18.9
    ],
    [
     "G3",
@@ -158,7 +158,7 @@
    ]
   },
   "F_bead_own_chamber_floor_Mc_parked_pN": 0.0047,
-  "F_bead_own_chamber_floor_interface_park_pN": 0.0258,
+  "F_bead_own_chamber_floor_interface_park_pN": 0.0047,
   "F_bead_own_chamber_floor_Zonly_25mm_pN_docs13": 0.055,
   "F_bead_own_chamber_wall_foot_Mc_parked_pN": 0.0053,
   "F_bead_other_chamber_near_edge_Mc1_up_pN": 0.0827,

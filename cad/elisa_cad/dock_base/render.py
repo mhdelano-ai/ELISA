@@ -357,7 +357,7 @@ def schematic(path):
     box("fez1", 64, 84, 11, 7, "Flow EZ ch1\n0-345 mbar", (1.0, 0.95, 0.7))
     box("fez2", 78, 84, 11, 7, "Flow EZ ch2\n0-345 mbar", (1.0, 0.95, 0.7))
     box("sw", 78, 70, 11, 8, "3/2 valves x3\nP_mv | conj |\nHQDP bottle", (1.0, 0.95, 0.7))
-    box("air", 96, 82, 12, 9, "lab air 400-700 kPa\nFR1 300 kPa (lid)\nR2 120 kPa (FEZ)", (1.0, 0.9, 0.6))
+    box("air", 96, 82, 12, 9, "lab air 500-700 kPa\nFR1 400 kPa (lid)\nR2 120 kPa (FEZ)", (1.0, 0.9, 0.6))
     box("fs1", 32, 5, 6, 4, "FS1", (0.95, 0.8, 0.9))
     box("fs2", 72, 5, 6, 4, "FS2", (0.95, 0.8, 0.9))
     cl = {"liq": (0.15, 0.4, 0.9), "smp": (0.85, 0.2, 0.6), "bead": (0.6, 0.2, 0.85), "reag": (0.1, 0.6, 0.6),

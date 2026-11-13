@@ -131,17 +131,20 @@ def power_budget():
 
 # ============================================================================================== air supply
 def air_supply():
-    # lid cylinders: D5 bore, stroke ~1 mm + 30 mm^3 dead each, 300 kPa gauge -> free air per actuation
-    v_cyl = (math.pi / 4 * 5.0 ** 2 * 1.0 + 30.0) * 1e-9          # m^3
-    free_per_act = v_cyl * (300e3 + 101.3e3) / 101.3e3
-    acts_per_h = 16 * 2 * 60 / 31.0                               # 16 cycles per run (docs/13 §4), 31-min cadence
+    # (revised at integration) lid cylinders: D6 bore, 90 mm^3 chamber per actuation at 400 kPa gauge (docs/20 §4.3/4.4:
+    # 0.36 NmL per actuation, 17 per run); pogo-lift cylinder (LOWER, bore 6 x stroke 6, 2 actuations per card)
+    v_cyl = 90.0e-9                                                # m^3 per actuation (docs/20 §4.3)
+    free_per_act = v_cyl * P.AIR_LID_KPA / 101.3   # gauge ratio: chamber vents to ambient
+    acts_per_h = 17 * 60 / 31.0                                    # 17 actuations per run (docs/20 §4.4), 31-min cadence
     q_cyl = free_per_act * acts_per_h * 1000                       # L/h
+    q_pogo = (math.pi / 4 * 6.0 ** 2 * 6.0 + 50.0) * 1e-9 * P.AIR_LID_KPA / 101.3 * 2 * 1000 / 8.0
     q_purge = 0.1 * 60                                             # L/h
     q_fez_bleed = 2 * 0.5 * 60                                     # L/h, Flow EZ consumption allowance UNVERIFIED
     q_fill = 0.05                                                  # L/h, bottle pressurisation (negligible)
-    total = q_cyl + q_purge + q_fez_bleed + q_fill
+    total = q_cyl + q_pogo + q_purge + q_fez_bleed + q_fill
     reservoir_8h = total * 8                                       # L free air for an 8-h card without supply
-    return dict(free_per_act_mL=free_per_act * 1e6, acts_per_h=acts_per_h, q_cyl_Lh=q_cyl, q_purge_Lh=q_purge,
+    return dict(free_per_act_mL=free_per_act * 1e6, acts_per_h=acts_per_h, q_cyl_Lh=q_cyl, q_pogo_Lh=q_pogo,
+                q_purge_Lh=q_purge, p_lid_kPa=P.AIR_LID_KPA, p_supply_min_kPa=P.AIR_SUPPLY_MIN_KPA,
                 q_fez_Lh=q_fez_bleed, total_Lh=total, total_Lmin=total / 60, free_air_8h_L=reservoir_8h,
                 tank_L_at_7bar_for_8h=reservoir_8h / 6.0)
 

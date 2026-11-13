@@ -16,11 +16,11 @@ QS = 32  # shapely quad_segs for circles: 128 segments, chord error <= 1.2 um at
 
 # ------------------------------------------------------------------------------------------------ card numbers
 # Laminate layer outline = L3 outline offset inward by LAMINATE_INSET (interface, CHOICE-13).
-POKA_CHAMFER = 4.0          # CHOICE-C7: 4 x 45 deg chamfer at the (75.5, 50) corner, all layers (poka-yoke)
+POKA_CHAMFER = I.CARD_POKA_CHAMFER["leg"]   # 4.0, CHOICE-C7 (interface Rev B CARD_POKA_CHAMFER; nest block: LOWER)
 TANK_CORNER_R = 1.0         # CHOICE-C3: RCj/RS L3 cavities milled with a D2 end mill (vertical corners R1.0)
 FUNNEL_X = (2.0, 4.0)       # docs/13 §2.3: funnel in L1 from x_c + 2.0 to x_c + 4.0 (the bore wall)
 FUNNEL_W = (2.5, 0.5)       # docs/13 §2.3: 2.5 -> 0.5 wide
-MC_D = math.sqrt(4.0 * I.MC.size[0] * I.MC.size[1] / math.pi)   # DEV-C1: round meter of the same area, Derived
+MC_D = I.MC.d               # DEV-C1 (interface Rev B MC.d): round meter of the same area, Derived
 #   sqrt(4 x 2.0 / pi) = 1.596 mm; 2.000 mm^2 x 5.0 mm (foil to stop) = 10.0 uL as docs/13 §2.3
 MC_STOP_Z = I.MC.z[1]       # 5.14: lower face of the PTFE stop disc (docs/13 §2.3, interface MC.z)
 TPE_CUT_CLEAR = 0.10        # docs/18 CHOICE-14: TPE cut-out = die + 0.10
@@ -31,10 +31,10 @@ WIN_RELIEF_R = 0.5          # CHOICE-C1: D1.0 corner reliefs (die corners clear 
 WE2_SHIM_T = 0.15           # docs/13 §2.3: 0.15 mm COC shim on the foil in the L1 cut-out -> 0.05 channel
 WE2_SHIM_GAP = 0.01         # CHOICE-C5: shim cut 0.01 smaller per side than the L1 slot (press fit, UNVERIFIED)
 PIN_D = 2.0                 # CHOICE-C4: lamination dowels D2.0 [assessment]
-PIN_ROUND = (59.0, 42.0)    # CHOICE-C4: round registration hole (free area, 19.7 mm from J, 17.6 mm from the RC)
-PIN_SLOT = (59.0, 5.0)      # CHOICE-C4: slot hole, elongated along the pin-to-pin line (y)
-PIN_SLOT_LEN = 3.0          # CHOICE-C4: slot 2.0 x 3.0
-PIN_L3_DEPTH = 3.0          # CHOICE-C4: blind dowel holes in the L3 underside
+PIN_ROUND = I.CARD_TOOLING_HOLES["round"]["xy"]   # (59, 42) CHOICE-C4 (interface Rev B CARD_TOOLING_HOLES)
+PIN_SLOT = I.CARD_TOOLING_HOLES["slot"]["xy"]     # (59, 5) slot hole, elongated along the pin-to-pin line (y)
+PIN_SLOT_LEN = I.CARD_TOOLING_HOLES["slot"]["len_y"]   # 3.0
+PIN_L3_DEPTH = I.CARD_TOOLING_HOLES["depth_L3"]        # 3.0
 VENT_RECESS_D = 4.4         # docs/18 §4 (vents recessed in D4.4 x 0.3)
 VENT_RECESS_T = I.LAYERS["L4_vents"][1] - I.LAYERS["L4_vents"][0]   # 0.3 (interface LAYERS L4)
 VENT_HOLE_D = 2.0           # docs/18 DEV-7 (D2 vent hole in the 0.5 roof)
@@ -49,7 +49,7 @@ ARROW = [(10.0, 4.0), (8.5, 1.5), (11.5, 1.5)]   # CHOICE-C7: engraved orientati
 ARROW_DEPTH = 0.2
 MIN_WEB_L3 = 0.5            # [assessment]: minimum milled COC web 5.5 mm tall; narrower bore pairs are merged
 LEAD_IN = I.PLUNGER["card_bore_lead_in"]          # 0.3 x 45 deg (CHOICE-2)
-LEAD_IN_LOCAL = {"V8": 0.0}   # CHOICE-C10: no lead-in at V8 (edge break only) so the P_mv lid gas ring (OD 7)
+LEAD_IN_LOCAL = dict(I.PLUNGER["card_bore_lead_in_except"])   # {"V8": 0.0} CHOICE-C10 (interface Rev B): no lead-in at V8 (edge break only) so the P_mv lid gas ring (OD 7)
 #                               keeps 0.14 mm of flat land to the bore
 
 TIP_TOL_WC = 0.14           # Derived worst case tip-to-channel: head-to-nest 0.03 + datum pin 0.01 + L3 edge-to-

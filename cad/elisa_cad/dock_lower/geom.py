@@ -29,7 +29,8 @@ def mirror_y(p):
 # =====================================================================================================
 # 1. Anvil plate (Al, heated 25.0 degC) -- CHOICE-5 (interface), CHOICE-L1..L3 (here)
 # =====================================================================================================
-ANVIL_X = (-12.0, 90.0)        # CHOICE-L1: card +12 W / +14.5 E: room for datum B, guide bush W, pusher B, bush E
+ANVIL_X = (-15.0, 91.0)        # CHOICE-L1; (revised at integration, docs/23 I-1): -12/90 -> -15/91 so the head guide
+#                                bushes at interface.HEAD_GUIDE_PINS keep a 2-mm anvil wall (was 0 at x -12)
 ANVIL_Y = (-16.0, 66.0)        # CHOICE-L1: card +16 S / +16 N: datum A pins, pusher A, gutter, bushes
 ANVIL_T = 15.0                 # interface ANVIL_THICK_ZONES t = 15.0
 T_THIN = I.ANVIL_TOP_PLATE_T_THIN   # 5.0 (CHOICE-5)
@@ -43,10 +44,14 @@ PEEK_GAP = 1.0                                                          # PEEK w
 # P_s boss added at x 60.3-62.5 (P_s bore D3.3 reaches x 61.35 < 62.5), west strip narrowed to x 32.5 at the windows
 # (M_c flange 12.6 wide must clear it).
 POCKET_RECT = (32.5, 0.0, 62.5, I.CARD_W)
-ISLAND_BOSS = (24.0, 19.0, 40.5, 31.0)                    # DEV-L3 (interface 24-39.5 x 19-31)
-P_A2_BOSS = (I.ANVIL_THICK_ZONES["P_a2_boss"]["x"][0], I.ANVIL_THICK_ZONES["P_a2_boss"]["y"][0],
-             I.ANVIL_THICK_ZONES["P_a2_boss"]["x"][1], I.ANVIL_THICK_ZONES["P_a2_boss"]["y"][1])
-P_S_BOSS = (60.3, 17.8, 62.5, 23.2)                       # DEV-L3: bore D3.3 at (63, 20.5) + 1.0 wall
+def _tz(k):
+    z = I.ANVIL_THICK_ZONES[k]
+    return (z["x"][0], z["y"][0], z["x"][1], z["y"][1])
+
+
+ISLAND_BOSS = _tz("island_boss")                          # DEV-L3, in interface Rev B (24-40.5 x 19-31)
+P_A2_BOSS = _tz("P_a2_boss")
+P_S_BOSS = _tz("P_s_boss")                                # DEV-L3, interface Rev B: bore D3.3 at (63, 20.5) + 1.0 wall
 POCKET_CORNER_R = 1.0                                     # end-mill D2 [assessment]
 
 
@@ -63,8 +68,7 @@ def window_poly(c):
     return box(c[0] - h + r, c[1] - h + r, c[0] + h - r, c[1] + h - r).buffer(r, quad_segs=8)
 
 
-SLOT_HOLDER_CLEAR = 0.30   # DEV-L4: plan clearance of the axis-aligned 2.6-sq M_d holder to the slot edge [assessment:
-#                            stage accuracy 0.020 + post/holder run-out 0.05 + 0.2 margin]
+SLOT_HOLDER_CLEAR = I.SLOT_HOLDER_CLEAR   # DEV-L4, in interface Rev B (0.30)
 
 
 def slot_poly_interface():
@@ -83,11 +87,10 @@ def holder_sweep(path, clear=SLOT_HOLDER_CLEAR, step=0.1):
 
 
 def slot_poly():
-    """Anvil drag slot = interface slot U swept holder footprint + 0.30 (DEV-L4: the interface slot leaves 0.04 mm at
-    the J fillet and 0.16 mm on the 45-deg lane arcs for the 2.6-sq holder, and the round cap at the bead-out stop
-    cuts the holder corners)."""
-    paths = [I.DRAG_PATH["IC1"], I.DRAG_PATH["IC2"], I.BEAD_OUT_PATH]
-    return unary_union([slot_poly_interface()] + [holder_sweep(p) for p in paths]).simplify(0.005)
+    """Anvil drag slot = interface slot U swept holder footprint + 0.30 (DEV-L4, adopted in interface Rev B as
+    interface.slot_polygon(): the buffers alone leave 0.04 mm at the J fillet and 0.16 mm on the 45-deg lane arcs for
+    the 2.6-sq holder, and the round cap at the bead-out stop cuts the holder corners)."""
+    return I.slot_polygon()
 
 
 def contact_poly():
@@ -136,7 +139,9 @@ RETAINERS = {
 
 # Head guide pin bushes (lid head located on the nest, interface TOL head_to_nest 0.03). Positions are NOT in
 # interface.py -> chosen here (CHOICE-L6) and listed as an interface change request (docs/21 §10).
-GUIDE_BUSH = {"pins": [(-7.0, 46.0), (83.0, 4.0)], "pin_d": 6.0, "bush_od": 10.0, "bush_len": 15.0,
+GUIDE_BUSH = {"pins": [I.HEAD_GUIDE_PINS["GP1"], I.HEAD_GUIDE_PINS["GP2"]],   # (revised at integration): interface
+              # Rev B HEAD_GUIDE_PINS (-8, 46), (84, 4) (was (-7, 46), (83, 4) here, (-5, 44), (80.5, 6) in UPPER)
+              "pin_d": I.HEAD_GUIDE_PINS["pin_d"], "bush_od": I.HEAD_GUIDE_PINS["bush_od"], "bush_len": 15.0,
               "material": "CuSn8 bronze, non-magnetic, reamed D6 H7 [assessment]"}
 
 # Drip gutter on the anvil top just outside the card (CHOICE-L7)
@@ -154,7 +159,7 @@ HEATER_T = 0.3
 # =====================================================================================================
 # 2. Nest frame (on the anvil top, z 0 .. 5.0 <= LOWER_nest_anvil top 6.0)
 # =====================================================================================================
-NEST_T = 5.0                                    # = datum pin protrusion (interface DATUM_PIN_PROTRUSION)
+NEST_T = I.NEST_FRAME_TOP_Z                     # 5.0 = datum pin protrusion (interface Rev B NEST_FRAME_TOP_Z)
 NEST_OPEN = {"x": (-1.8, I.CARD_L + 1.8), "y": (-1.8, I.CARD_W + 1.8)}   # card + 1.8: gutter visible, lead-in
 NEST_CHAMFER = 1.5                              # 45 deg lead-in at the top inner edge [assessment]
 DATUM_PIN_Z = (0.2, I.DATUM_PIN_PROTRUSION)     # pins held in the frame, 0.2 above the anvil (gutter passes below)
@@ -271,7 +276,7 @@ POGO_PROBE = {  # PTR Hartmann series 1007.70 (opened 2026-11-13): centre 1.27 m
 POGO_F_WORK = POGO_PROBE["f_pre"] + (POGO_PROBE["f_full"] - POGO_PROBE["f_pre"]) * POGO_PROBE["work_travel"] / \
     POGO_PROBE["full_travel"]                        # Derived linear spring: 1.21 N
 POGO_TIP_Z_ENGAGED_FREE = I.POGO["tip_z_engaged"] + I.POGO["working_travel"]   # 1.34: free tip height at the up stop
-POGO_TIP_Z_RETRACTED = POGO_TIP_Z_ENGAGED_FREE - I.POGO["block_lift_stroke"]   # -1.66 (interface says -1.0: ICR-3)
+POGO_TIP_Z_RETRACTED = I.POGO["tip_z_retracted"]   # -1.66 (ICR-3, adopted in interface Rev B)
 POGO_NOSE = (5.2, 3.2)                               # PEEK nose in the 5.4 x 3.4 opening (0.1 radial) [assessment]
 POGO_NOSE_TOP_UP = POGO_TIP_Z_ENGAGED_FREE - POGO_PROBE["exposed"]   # -0.16
 POGO_SHOULDER = (7.0, 6.2, 4.0)                      # block body under the plate; hits z -5.0 at the up position
@@ -346,6 +351,26 @@ def tube_route(port):
 
 
 TUBE_PORTS = list(LIQ_PORTS)
+
+# =====================================================================================================
+# 7b. Integration additions (revised at integration, docs/23): poka-yoke block, latch catch brackets, hinge
+#     pedestals, mounting to the BASE deck
+# =====================================================================================================
+POKA = I.NEST_POKA_BLOCK                          # 0.3 clear of the card chamfer, z 0.2-5.0, lead-in 1.5
+LATCH_BRACKETS = []                               # card-coord boxes (x0, y0, z0, x1, y1, z1) per latch
+for (_p0, _p1) in I.LID_LATCH["catch_keepouts_dock"]:
+    _a, _b = I.dock_to_card(_p0), I.dock_to_card(_p1)
+    LATCH_BRACKETS.append({"x": (_a[0], _b[0]), "y": (_a[1], ANVIL_Y[0]),     # y -41 ... -16 (anvil front face)
+                           "shelf_z": (-9.0, -4.0), "flange": (-20.0, -15.0, -4.0),   # flange y -20..-16, z -15..-4
+                           "catch": {"y": (_a[1] + 1.0, _a[1] + 15.0), "z": (-4.0, 1.0)}})
+#   Al 6061, 5 mm shelf + flange, 2 x M5 into the anvil front face [assessment]; catch plate K0045.9143372 envelope
+#   (UNVERIFIED dims). Load 95 N up per bracket (interface LID_LATCH): bending 95 x 25 = 2.4 N m on a 26 x 5 section
+#   -> 22 MPa (Derived), well below Al 6061-T6 yield (~240 MPa, handbook UNVERIFIED)
+HINGE_PEDESTALS = [tuple(I.dock_to_card(p) for p in b) for b in I.HINGE_SUPPORT["pedestals_dock"]]
+#   Al 6061 blocks 4 x 15 x 116, bolted to the bay base plate (2 x M5 from below) + gusset to the wall [assessment]
+MOUNT_BOLTS = [I.dock_to_card((x, y, 0))[:2] for (x, y) in I.LOWER_MOUNT["bolts_dock"]]
+MOUNT_DOWELS = [I.dock_to_card(I.LOWER_MOUNT["dowel_round_dock"] + (0,))[:2],
+                I.dock_to_card(I.LOWER_MOUNT["dowel_slot_dock"] + (0,))[:2]]
 
 # =====================================================================================================
 # 8. Machine states for the assembly and the checks

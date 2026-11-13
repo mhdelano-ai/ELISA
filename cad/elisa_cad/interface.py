@@ -11,6 +11,26 @@ Source tags on every value:
   UNVERIFIED     not checked against a source in this session
   [assessment]   engineering judgement
 
+Revision B (integration, 2026-11-13, docs/18 §15 and docs/23). Changes against Revision A (each line: request ->
+decision; tag I-n = integration choice, docs/23 §8):
+  * HEAD_GUIDE_PINS new: GP1 (-8, 46), GP2 (84, 4), D6, bush top z 5.0 = NEST_FRAME_TOP_Z (ICR-U1/ICR-1, I-1)
+  * PLUNGER pilot 300 -> 400 kPa, cylinder bore 5 -> 6, supply >= 450 kPa, lid switch 350 kPa (DEV-U1/U2, ICR-U5, I-2)
+  * CLAMP_DESIGN_FORCE 250 -> 300 N; LID_LATCH catch plates on LOWER brackets (DEV-U3, ICR-U2/U4, I-3)
+  * HINGE: UPPER hinge blocks on LOWER hinge pedestals (top Z 160); new claims (ICR-U3, IR-5, I-4)
+  * PASS_THROUGHS: per-line exits taken from the LOWER routes; cable window, Peltier exhaust, umbilical grommet,
+    Gamry bulkhead flange (ICR-6, IR-2/4/6, I-5); LOWER_MOUNT bolt pattern (IR-1, I-6)
+  * drag slot = buffers U swept 2.6-sq holder + 0.30 (slot_polygon(); DEV-L4/ICR-2, I-7)
+  * POGO tip_z_retracted -1.0 -> -1.66; class force 1.21 N/pin (ICR-3, I-8)
+  * MAGNETS M_c: parallelogram swing, parked (40, 56.7)/(40, -6.7), top z -45.6, fail state HOLD (ICR-4, I-9)
+  * ANVIL_THICK_ZONES per DEV-L3 (ICR-5, I-9); NON_MAGNETIC_ZONE materials (ICR-8, I-10)
+  * card: MC round D1.596 (DEV-C1), CARD_POKA_CHAMFER + nest block, CARD_TOOLING_HOLES, DIE_WINDOW (CHOICE-C1),
+    CER_NECK 'len', lead-in exception V8 (docs/19 §9, I-11); WE2 channel 2.9 confirmed (I-11)
+  * VALVE_TIP_SEAT_MARGIN 0.3 (gasket seat) beside VALVE_TIP_EDGE_MARGIN 0.5 (openings) (ICR-7, I-12)
+  * SPACE_CLAIMS: BASE_front_strip, BASE_lane_gap, LOWER_hinge_pedestals, UPPER_hinge_blocks; LOWER sub-claims per
+    DEV-L6 (IR-3, ICR-6/9)
+  * PLUNGER tip_z_open 1.015 -> 0.97 (= closed + 0.8 stroke; Rev A inconsistent by 0.045) (I-16)
+  * slot_polygon simplified at 0.02 (STEP size); LOWER/BASE tubes as compounds (no Boolean fuse) (I-15)
+
 Coordinate systems (docs/18 §2):
   CARD: origin at the lower-left corner of the card seen from the TOP (docs/13 §2.1); x along 75.5, y along 50;
         z = 0 is the foil (L0) underside = anvil top plane (datum C); +z up into the card.
@@ -128,9 +148,11 @@ RCJ = Bore("RCj", (8.0, 38.0), size=(10.0, 10.0), z=(Z_L0[1], CARD_T - CHAMBER_R
            note="conjugate tank, docs/13 §2.3 (3-13, 33-43), 0.50 mL + 0.06 mL in L1/L2")
 RS = Bore("RS", (68.0, 10.0), size=(12.0, 12.0), z=(Z_L0[1], CARD_T - CHAMBER_ROOF_T),
           note="HQDP tank, docs/13 §2.3 (62-74, 4-16)")
-MC = Bore("MC", (16.0, 30.0), size=(2.0, 1.0), z=(Z_L0[1], Z_L0[1] + 5.0),
-          note="conjugate meter 10.0 uL = 2.0 x 1.0 x 5.0 from foil to PTFE stop (docs/13 §2.3); "
-               "L3 cavity depth Derived 5.0 - 0.575 = 4.425 (CHOICE-16)")
+MC = Bore("MC", (16.0, 30.0), d=round(math.sqrt(4.0 * 2.0 * 1.0 / math.pi), 4), size=(2.0, 1.0),
+          z=(Z_L0[1], Z_L0[1] + 5.0),
+          note="conjugate meter 10.0 uL from foil to PTFE stop (docs/13 §2.3); Rev B: ROUND bore d = sqrt(4 x 2.0 x "
+               "1.0 / pi) = 1.5958 of the same 2.000 mm^2 area as the docs/13 2.0 x 1.0 rectangle (DEV-C1, docs/19); "
+               "'size' kept as the equivalent rectangle; L3 cavity depth Derived 5.0 - 0.575 = 4.425 (CHOICE-16)")
 BW = Bore("BW", (57.85, 17.2), size=(2.5, 2.5), z=(Z_L0[1], Z_L2[1]),
           note="bead-waste pocket 2.5 x 2.5 x 0.575 = 3.6 uL (docs/13 §2.3); MOVED from (56.8, 20.5): DEV-5")
 CHAMBERS = {b.name: b for b in (IC1, IC2, RCJ, RS, MC, BW)}
@@ -149,14 +171,29 @@ DIE_X = (55.0, 61.0)
 DIE_Y = (23.35, 33.35)
 DIE_T = 0.70                    # UNVERIFIED ("foundry standard", docs/13 §2.1); press-pad stroke covers 0.5-1.1
 DIE_Z = (Z_L1B[1], Z_L1B[1] + DIE_T)
-DIE_WINDOW_CLEAR = 0.05         # L3/L2 window = die outline + 0.05 (TPE cut-out die + 0.10, CHOICE-14)
+DIE_WINDOW_CLEAR = 0.05         # L3/L2 window = die outline + 0.05 (TPE cut-out die + 0.10, CHOICE-14). Rev B reading
+#                                 (CHOICE-C1, docs/19): the same total clearance 0.10 is put on the two FREE faces only;
+#                                 the datum faces are flush with the nominal die -> use DIE_WINDOW for the L3 window.
 DIE_DATUM_EDGES = ("x = 55.0 for y 27.0-33.35", "y = 33.35")  # CHOICE-14: notch-free window edges
+DIE_WINDOW = {"x": (DIE_X[0], DIE_X[1] + 2 * DIE_WINDOW_CLEAR),   # (55.00, 61.10) Rev B (CHOICE-C1)
+              "y": (DIE_Y[0] - 2 * DIE_WINDOW_CLEAR, DIE_Y[1])}   # (23.25, 33.35); D1.0 corner reliefs (card)
 # Readout cell (docs/13 §2.3, §3.5.1)
 RC_CENTER = (56.8, 25.0)
 RC_SIZE = (2.6, 2.0)            # x 55.5-58.1, y 24.0-26.0, height 0.200
-WE2_CHANNEL = {"x": (58.1, 61.0), "y_c": 25.0, "w": 1.0, "h": 0.05}   # docs/13 §2.3
+WE2_CHANNEL = {"x": (58.1, 61.0), "y_c": 25.0, "w": 1.0, "h": 0.05}   # docs/13 §2.3; Rev B CONFIRMED 2.9 long
+#   (bounded by the RC edge x 58.1 and the die edge x 61.0; docs/13's "1.0 x 3.0" is nominal) -> cell 1.31 uL in the
+#   card CAD instead of 1.34 (DEV-C4, docs/19 §6.1; I-11, docs/23)
 CER_POCKET = {"x": (55.3, 55.7), "y": (23.45, 23.85)}                 # 0.4 x 0.4, DEV-2 (moved to x 55.5)
-CER_NECK = {"x": (55.5, 55.9), "y": (23.85, 24.0), "h": 0.15}          # 0.4 wide x 0.15 long, docs/13 §2.3
+CER_NECK = {"x": (55.5, 55.9), "y": (23.85, 24.0), "len": 0.15,       # 0.4 wide x 0.15 long, docs/13 §2.3; height =
+            "h": 0.15}  # cell height 0.200. Rev B: 'len' is the name; 'h' is a deprecated alias of 'len' (docs/19 §9)
+
+# Card poka-yoke and tooling holes (Rev B, docs/19 CHOICE-C7/C4)
+CARD_POKA_CHAMFER = {"corner": (CARD_L, CARD_W), "leg": 4.0}   # CHOICE-C7: 4 x 45 deg chamfer at (75.5, 50), all layers
+NEST_POKA_BLOCK = {"clear": 0.3, "z": (0.2, 5.0), "lead_in": 1.5}   # I-11: nest corner block parallel to the chamfer,
+#   0.3 clear of it, 0.2 above the anvil (gutter passes below), same 1.5 lead-in as the nest (owner DOCK LOWER)
+CARD_TOOLING_HOLES = {"round": {"xy": (59.0, 42.0), "d": 2.0}, "slot": {"xy": (59.0, 5.0), "w": 2.0, "len_y": 3.0},
+                      "depth_L3": 3.0, "note": "CHOICE-C4: open in the foil (L0-L2), blind 3.0 into L3 from below; "
+                      "over the 5-mm anvil plate, clear of every opening (checked docs/23 §4)"}
 G3_FINGER = {"x": (55.0, 55.5), "y_c": 25.0, "w": 0.5}                # docs/13 §2.3 (0.5 mm)
 G4_FINGER = {"x_c": 57.85, "y": (23.35, 24.0), "w": 0.5}               # docs/13 §2.3 (0.65 mm); x DEV-2
 # Pads on the die's lower face, inside the dry contact window (docs/13 §2.7). Layout 2 x 3: CHOICE-9
@@ -378,14 +415,20 @@ PLUNGER = {
                  "yoke; V3 inverted (spring lifts, cylinder closes through a 2.5 N force-limiting spring)",
     "stroke_pin": 0.8,                 # CHOICE-2: >= 0.5 required (docs/13 §6.2); 0.175 + TPE + 0.3 clearance
     "tip_z_closed": Z_L1[0] + 0.03,    # Derived: TPE pressed onto the foil top (z 0.14) less ~30 um residual TPE
-    "tip_z_open": Z_L2[1] + 0.3,       # Derived: 0.3 mm above the TPE top (1.015)
+    "tip_z_open": Z_L1[0] + 0.03 + 0.8,   # Rev B (I-16): = tip_z_closed + stroke_pin = 0.97 (Rev A wrote Z_L2 top
+                                       # + 0.3 = 1.015, inconsistent with the 0.8 stroke by 0.045); 0.255 above the TPE
     "pin_extension_limit_below_open": 1.0,  # collar stops the pin 0.2 mm below 'closed' when no card is present
     "tip_edge_chamfer": 0.05,          # flat land, edge-broken [assessment]
     "card_bore_lead_in": 0.3,          # 0.3 x 45 deg chamfer at the L3 top of each bore (CHOICE-2)
+    "card_bore_lead_in_except": {"V8": 0.0},   # Rev B (CHOICE-C10, docs/19 §6.5): no lead-in at V8, edge break only,
+                                       # so the P_mv gas ring (OD 7.0 kept) has 0.14 mm of flat land to the V8 bore
     "actuation_time_max_s": 0.2,       # docs/13 §4
-    "pilot_pressure_kPa": 300.0,       # CHOICE-2 [assessment]; pilot valves rated >= 400 kPa, to be selected
-    "cylinder_bore": 5.0,              # CHOICE-2: custom block, O-ring piston; lift force Derived 300 kPa x 19.6
-                                       # mm^2 = 5.9 N vs spring 2.5 N + friction <= 1.5 N [assessment]
+    "pilot_pressure_kPa": 400.0,       # Rev B (DEV-U1, docs/20 §4.2): 300 -> 400 kPa; worst force margin 1.60 (V14)
+                                       # with D6; SMC S070B-5DG 0.5 W coil rated 0.5 MPa (docs/20 §2.5)
+    "pilot_switch_trip_kPa": 350.0,    # Rev B: pressure switch on the lid manifold -> fault latch (docs/20 §2.5)
+    "air_supply_min_kPa": 450.0,       # Rev B: at the dock inlet, upstream of the BASE regulator FR1 (docs/22 §8)
+    "cylinder_bore": 6.0,              # Rev B (DEV-U2): 5 -> 6 (pitch 9 kept); pull area Derived pi/4 (6^2 - 1.5^2)
+                                       # = 26.5 mm^2 -> 10.6 N at 400 kPa vs need <= 6.6 N (docs/20 §4.2)
     "cylinder_pitch_min": 9.0,         # CHOICE-2: bore 5 + walls/seals
     "pin_pitch_min": {"0.8-0.8": 1.4, "0.8-1.2": 1.6, "1.2-1.2": 1.8},   # shank/2 + shank/2 + 0.6 web [assessment]
     "position_feedback": "per-yoke sensor, type to be selected (UNVERIFIED); minimum: pilot-line pressure switch",
@@ -423,7 +466,9 @@ CYLINDERS = {
 HEAD_Z = {  # card z of the lid-head stack (CHOICE-2/7); dock Z = card z + 170.0
     "heater_block": (CARD_T, CARD_T + 10.0),           # Al, 25 degC, pin guide bushings, bears on L3 top
     "pin_spring_zone": (CARD_T + 10.0, 24.5),          # compression spring per pin, seats on the heater block
-    "pin_head_closed_top": 25.0,                       # head/collar top when the valve is closed (+0.8 open)
+    "pin_collar_closed": (16.415, 16.915),             # Rev B (DEV-U5, docs/20 §2.2): collar 0.2 above the block
+    "spring_plate": (24.5, 26.0),                      # Rev B: spring plate reacts all pin springs
+    "pin_head_closed_top": 25.0,                       # Rev A envelope value (kept for reference; real parts above)
     "yoke_tier_0": (27.0, 31.0), "yoke_tier_1": (32.0, 36.0),
     "cylinder_block": (38.0, 68.0),                    # custom block, D5 bores, single acting, spring return
     "cover_top_max": 125.0,                            # = UPPER claim top (dock Z 295)
@@ -493,29 +538,61 @@ SLOT_CENTERLINES = {        # buffers of these polylines (round caps) form the s
     "slot_beadout": BEAD_OUT_PATH,
 }
 SLOT_WIDTHS = {"slot_IC1": SLOT_W, "slot_IC2": SLOT_W, "slot_WLc": SLOT_W_WLC, "slot_beadout": SLOT_W_BEADOUT}
+# Rev B (DEV-L4 / ICR-2, I-7): the anvil slot is the union of the buffers above AND the footprint of the axis-aligned
+# 2.6-sq M_d holder swept along every drag and bead-out path, grown by SLOT_HOLDER_CLEAR (the buffers alone leave
+# 0.03 mm at the J fillet). Max local width 4.44 at G1/G2 -> foil deflection under a 1.5 N slot valve 19 um
+# (docs/13 §2.1: 15 um at 4.0; M4 acceptance <= 20 um). Kept: square holder (a round holder cannot carry the
+# 2 x 2 magnet, diagonal 2.83).
+SLOT_HOLDER_CLEAR = 0.30       # stage accuracy 0.020 + post/holder run-out 0.05 + 0.2 margin [assessment] (docs/21)
+SLOT_MAX_LOCAL_WIDTH = 4.44    # Derived from slot_polygon() at G1/G2 (docs/21 §5.1)
+
+
+def slot_polygon(clear=SLOT_HOLDER_CLEAR, step=0.1):
+    """Anvil drag slot (shapely polygon, card coords): buffers U swept holder squares + clear (Rev B)."""
+    from shapely.geometry import LineString, box as _box
+    from shapely.ops import unary_union
+    h = 0.5 * 2.6 + clear      # M_d holder 2.6 sq (MAGNETS['M_d']['holder'])
+    parts = [LineString(v).buffer(SLOT_WIDTHS[k] / 2, quad_segs=16) for k, v in SLOT_CENTERLINES.items()]
+    for path in (DRAG_PATH["IC1"], DRAG_PATH["IC2"], BEAD_OUT_PATH):
+        ls = LineString(path)
+        n = max(2, int(ls.length / step) + 1)
+        for i in range(n):
+            p = ls.interpolate(i * ls.length / (n - 1)).coords[0]
+            parts.append(_box(p[0] - h, p[1] - h, p[0] + h, p[1] + h))
+    return unary_union(parts).simplify(0.02)   # 0.02 << 0.30 holder clearance; keeps the anvil STEP small
 M_W_RECESS = {"center": BW.center, "size": (3.4, 3.4), "depth": 3.2}   # M_w 3x3x3 top at z = -0.16
 ANVIL_CONTACT_OPENING = {"x": (55.3, 60.7), "y": (29.8, 33.2)}          # = card contact window, docs/13 §2.7
 ANVIL_TOP_PLATE_T_THIN = 5.0   # CHOICE-5: over the magnet bay (card x 31-64): 5 mm non-magnetic Al plate
 ANVIL_THICK_ZONES = {          # CHOICE-5: port inserts need depth; no magnet below these zones
-    "island_boss": {"x": (24.0, 39.5), "y": (19.0, 31.0), "t": 15.0},
-    "west_strip": {"x": (24.0, 33.5), "y": (0.0, 50.0), "t": 15.0},
+    # Rev B (DEV-L3 / ICR-5): island boss to x 40.5 (P_b insert bore wall 0.35 -> 1.35), P_s boss added, west strip
+    # x 24-32.5 (M_c flange 12.6 must clear); thin plate = bottom pocket x 32.5-62.5, y 0-50 minus the bosses
+    "island_boss": {"x": (24.0, 40.5), "y": (19.0, 31.0), "t": 15.0},
+    "west_strip": {"x": (24.0, 32.5), "y": (0.0, 50.0), "t": 15.0},
     "east_block": {"x": (62.5, 75.5), "y": (0.0, 50.0), "t": 15.0},
     "P_a2_boss": {"x": (49.0, 53.5), "y": (34.5, 39.0), "t": 15.0},
+    "P_s_boss": {"x": (60.3, 62.5), "y": (17.8, 23.2), "t": 15.0},
 }
-VALVE_TIP_EDGE_MARGIN = 0.5    # CHOICE-5: tip edge >= 0.5 from any anvil opening/gasket (V15 exception 0.25)
+VALVE_TIP_EDGE_MARGIN = 0.5    # CHOICE-5: tip edge >= 0.5 from any anvil THROUGH-opening (unsupported foil);
+#                                V15 exception 0.25 (accepted, CHOICE-5)
+VALVE_TIP_SEAT_MARGIN = 0.3    # Rev B (ICR-7, I-12): tip edge >= 0.3 from a gasket SEAT edge (the compressed gasket
+#                                supports the foil; FACE_SEAL rule); V3 -> P_byp seat 0.36 passes
 
 # =====================================================================================================
 # 9. Magnets (docs/13 §3.3.1; mag_b.py: B_r 1.3 T UNVERIFIED, gap 0.16 + foil 0.14 = bead plane 0.30)
 # =====================================================================================================
 MAGNET_GAP = 0.16              # docs/13 §6.2, +-0.05 (foil underside to magnet face)
 MAGNETS = {
+    # Rev B (DEV-L1/L2, ICR-4, I-9): parallelogram swing R 64.5 (one worm drive per unit), holder flange seats on the
+    # plate underside (gap by geometry); FAIL STATE = HOLD (self-locking worm) -- a spring return would drive M_c into
+    # the M_d post while M_d works from the window (docs/21 DEV-L1). Departure from docs/13 §3.3.1 "spring-up".
     "M_c1": {"size": (10.0, 10.0, 5.0), "mag_axis": "z", "xy": IC1.center, "z_top_up": -MAGNET_GAP,
-             "motion": "Z down 25 then retract +y 18 (DEV-4 'lower-and-away'); spring returns to UP",
-             "z_top_down": -MAGNET_GAP - 25.0, "parked_xy": (40.0, 56.0), "holder": (10.6, 10.6),
-             "src": "docs/13 §3.3.1; retract DEV-4"},
+             "motion": "parallelogram swing R 64.5 outward (+y) and down to park; fail state HOLD",
+             "swing_R": 64.5, "z_top_down": -45.6, "parked_xy": (40.0, 56.7), "holder": (10.6, 10.6),
+             "fail": "hold", "src": "docs/13 §3.3.1; DEV-4; Rev B DEV-L1/L2 (docs/21)"},
     "M_c2": {"size": (10.0, 10.0, 5.0), "mag_axis": "z", "xy": IC2.center, "z_top_up": -MAGNET_GAP,
-             "motion": "Z down 25 then retract -y 18", "z_top_down": -MAGNET_GAP - 25.0,
-             "parked_xy": (40.0, -6.0), "holder": (10.6, 10.6), "src": "docs/13 §3.3.1; DEV-4"},
+             "motion": "parallelogram swing R 64.5 outward (-y); fail state HOLD", "swing_R": 64.5,
+             "z_top_down": -45.6, "parked_xy": (40.0, -6.7), "holder": (10.6, 10.6), "fail": "hold",
+             "src": "docs/13 §3.3.1; DEV-4; Rev B DEV-L1/L2"},
     "M_d": {"size": (2.0, 2.0, 4.0), "mag_axis": "z (along 4 mm)", "z_top_up": -MAGNET_GAP,
             "z_stroke": 8.0, "holder": (2.6, 2.6), "post_from_below": True,
             "travel_x": (35.0, 59.6), "travel_y": (6.0, 44.0),
@@ -537,20 +614,30 @@ POGO = {
     "pitch_min": 1.8,                  # Derived from PADS
     "barrel_d_max": 1.6,               # UNVERIFIED (part to be selected at <= 1.8 mm pitch)
     "working_travel": 1.0,             # UNVERIFIED class value
-    "force_at_working_N": 1.25,        # class value from PTR series 1064 (opened 2026-11-13; its 2.54 pitch does
-                                       # not fit -> part UNVERIFIED); budget 6 x 1.5 N
+    "force_at_working_N": 1.21,        # Rev B: PTR series 1007.70 class (docs/21 §4, page opened: preload 0.50 N,
+                                       # 1.40 N at 1.27 full travel) linear at 1.0 mm -> 1.21 N; 6 pins 7.25 N
+                                       # (budget 9 N); part number not chosen (UNVERIFIED)
     "tip_z_engaged": DIE_Z[0],         # 0.340: pad plane
-    "block_lift_stroke": 3.0,          # CHOICE-9: tips at z = -1.0 while loading, raised after the lid is latched
-    "tip_z_retracted": -1.0,
+    "block_lift_stroke": 3.0,          # CHOICE-9 (kept)
+    "tip_z_free_up": DIE_Z[0] + 1.0,   # 1.34 Derived: free tip height at the block's up stop (working travel 1.0)
+    "tip_z_retracted": DIE_Z[0] + 1.0 - 3.0,   # Rev B (ICR-3): -1.66 Derived 1.34 - 3.0 (Rev A said -1.0, which would
+                                       # need 1.66 mm compression > 1.27 full travel)
 }
 DIE_PRESS_PAD = {  # lid side, reacts the pogo force on the die back (docs/13 §2.7)
     "footprint_x": (55.5, 60.5), "footprint_y": (29.6, 33.1),   # over the pads only
     "contact_z": DIE_Z[1],                                       # die back z = 1.04 (DIE_T UNVERIFIED)
     "compliant_layer": "1.0 mm silicone 40 ShA on a grounded metal stem [assessment]",
-    "force_N": 12.0,                                             # >= 6 x 1.5 N + 30 % (Derived)
+    "force_N": 12.0,                                             # >= 6 x 1.5 N + 30 % (Derived); Rev B: kept
+    #   12 N > pogo 7.25 N: the die never lifts; net 4.75 N presses the die onto L1b/foil/anvil (0.12 MPa, Derived)
     "stroke_compliance": 1.0,                                    # covers DIE_T 0.5-1.1 UNVERIFIED
 }
 WE_RELAY_AND_LEADS = "reed relay in the electrode bay; shielded leads <= 0.3 m to the Gamry cell cable (docs/13 §6.3)"
+WE_RELAY_FIELD = {  # Rev B (I-10): |B| at the relay 1.9 mT with M_c1 parked (docs/21 §5.5). Decision: relay stays in
+    # the electrode bay (lead length rules); reed relay with internal mu-metal screen + an extra 0.3-mm mu-metal can,
+    # reed axis along y [assessment]; acceptance: no change of state or contact resistance with 5 mT applied at the
+    # parked-magnet direction (incoming test + M5a). Optical (PhotoMOS) relays rejected: off-state leakage too high
+    # for >= 1e13 Ohm [assessment].
+    "B_max_mT": 1.9, "test_field_mT": 5.0, "screen": "internal mu-metal + 0.3 mm mu-metal can (UNVERIFIED part)"}
 
 # =====================================================================================================
 # 11. Thermal interface (docs/13 §6.5) -- card coords
@@ -582,9 +669,46 @@ def clamp_budget(seal_force=10.0, pogo_force=1.5, margin=1.5):
             "gas_seals_N": n_gas * GAS_SEAL_LID["force_N"], "lid_latch_total_N": lid_total}
 
 
-CLAMP_DESIGN_FORCE = 250.0     # CHOICE-8: latch/toggle rated >= 250 N (budget ~ 240 N at upper seal force)
+CLAMP_DESIGN_FORCE = 300.0     # Rev B (DEV-U3, ICR-U4): head force 280 N nominal, 265-295 N over the stack tolerance
+#                                (docs/20 §4.6); design value 300 N for nest, anvil, latches and hinge (Rev A 250 N)
 CLAMP_APPLICATION = "distributed: heater block (assay zone) + PEEK plate (reagent zone) bear on the flat L3 top, " \
                     "minus pockets for vents, gas seals, pins and the die window (CHOICE-8)"
+
+# -----------------------------------------------------------------------------------------------------
+# 12b. Nest, head location, latch and hinge (Rev B, integration; docs/18 §15, docs/23)
+# -----------------------------------------------------------------------------------------------------
+NEST_FRAME_TOP_Z = 5.0         # Rev B (ICR-9): nest frame top = datum-pin protrusion (card z; dock Z 175.0);
+#                                M_c bracket stubs stay below z -15 (docs/21)
+HEAD_GUIDE_PINS = {            # Rev B (ICR-U1 / ICR-1, I-1): one position set for both modules
+    "GP1": (-8.0, 46.0), "GP2": (84.0, 4.0),   # card xy, diagonal; 1.2 / 1.7 mm walls to the nest opening (card+1.8)
+    "pin_d": 6.0,                               # h6, hardened 1.2842 (>= 45 mm from any magnet, docs/20 CHOICE-U15)
+    "bush_bore": "D6 H7", "bush_od": 10.0, "bush_material": "CuSn8",   # LOWER, reamed in place
+    "bush_top_z": NEST_FRAME_TOP_Z,             # 5.0; bush through the anvil (z -15 ... 5)
+    "pin_tip_z_raised": NEST_FRAME_TOP_Z + 0.5,  # 5.5: tip 0.5 above the bush/nest top with the head raised
+    "pin_tip_z_down": NEST_FRAME_TOP_Z + 0.5 - 8.0,   # -2.5 Derived (head stroke 8.0, HEAD_VERTICAL_STROKE)
+    "nose": 1.0,                                # conical lead (docs/20)
+    "src": "positions: LOWER CHOICE-L6 moved 1 mm outward (GP1 x -7 -> -8, GP2 x 83 -> 84) for bush walls; "
+           "UPPER CHOICE-U15 ears follow"}
+LID_LATCH = {                  # Rev B (ICR-U2, I-3): two Kipp K0045 draw latches on the lid front (UPPER), catch plates
+    # K0045.9143372 on two LOWER brackets bolted to the anvil front face; keep-outs (dock boxes) for bail + catch:
+    "catch_keepouts_dock": [((173.0, 34.0, 161.0), (199.0, 55.0, 176.0)), ((271.0, 34.0, 161.0), (297.0, 55.0, 176.0))],
+    "reaction_N_each": 95.0,   # Derived: latches 186 N at 295 N head force (docs/20 §4.6) -> 189 N at 300 N, /2
+    "src": "docs/20 CHOICE-U13; Kipp K0045 catalogue page (opened by UPPER); envelope UNVERIFIED"}
+HINGE_SUPPORT = {              # Rev B (ICR-U3, IR-5, I-4): UPPER hinge blocks bolt onto two LOWER hinge pedestals
+    "blocks_dock": [((150.0, 185.0, 160.0), (153.8, 200.0, 199.0)), ((316.2, 185.0, 160.0), (320.0, 200.0, 199.0))],
+    "pedestals_dock": [((150.0, 185.0, 44.0), (154.0, 200.0, 160.0)), ((316.0, 185.0, 44.0), (320.0, 200.0, 160.0))],
+    "pedestal_top_Z": 160.0,
+    "load": "110 N + 1.9 N m per side at 300 N (docs/20 §2.7, scaled 300/295)",
+    "why": "closes the clamp loop (head -> card -> anvil -> bay frame -> pedestals -> hinge; latches -> anvil) inside "
+           "the LOWER + UPPER modules; BASE carries weight only; BASE has no structure in X 150-154 above the deck",
+    "partition_clearance": "fixed blocks 1.0 mm from the BASE partitions (no relative motion); moving lid parts "
+                           ">= 3 mm (checked docs/23 §4)"}
+LOWER_MOUNT = {                # Rev B (IR-1, I-6): LOWER bay base plate (dock Z 40-44) on the BASE deck (top Z 40)
+    "deck_top_Z": 40.0,
+    "bolts_dock": [(165.0, 35.0), (165.0, 110.0), (165.0, 185.0), (305.0, 35.0), (305.0, 110.0), (305.0, 185.0)],
+    "bolt": "M6, counterbored in the 4-mm base plate (heads below the stages: X stage starts 22 mm above)",
+    "dowel_round_dock": (165.0, 50.0), "dowel_slot_dock": (305.0, 50.0), "dowel_d": 6.0,
+    "unused": "BASE offers 9 holes; the three at X 235 lie under the M_d stage (not used)"}
 
 # =====================================================================================================
 # 13. Optical / identity (docs/13 §6.7)
@@ -630,31 +754,63 @@ SPACE_CLAIMS = {
                         "note": "free for pumps/bottles overflow"},
     "BENCH_gamry": {"box": ((480.0, 90.0, 0.0), (570.0, 360.0, 190.0)), "owner": "DOCK BASE (placement only)",
                     "note": "Gamry Reference 600+ 9 x 19 x 27 cm W x H x D (gamry.com legacy page, opened)"},
+    # Rev B additions (IR-3, ICR-U3, I-4)
+    "BASE_front_strip": {"box": ((0.0, 0.0, 15.0), (470.0, 20.0, 330.0)), "owner": "DOCK BASE",
+                         "note": "cold-box door, Peltier exhaust duct extension + louvre; front controls may protrude "
+                                 "to Y -25 (E-stop), light bar to Y -6"},
+    "BASE_lane_gap": {"box": ((145.0, 200.0, 15.0), (325.0, 205.0, 178.0)), "owner": "DOCK BASE",
+                      "note": "tube lanes between LOWER and BASE_rear_low"},
+    "LOWER_hinge_pedestal_L": {"box": ((150.0, 185.0, 44.0), (154.0, 200.0, 160.0)), "owner": "DOCK LOWER"},
+    "LOWER_hinge_pedestal_R": {"box": ((316.0, 185.0, 44.0), (320.0, 200.0, 160.0)), "owner": "DOCK LOWER"},
+    "UPPER_hinge_block_L": {"box": ((150.0, 185.0, 160.0), (153.8, 200.0, 199.0)), "owner": "DOCK UPPER"},
+    "UPPER_hinge_block_R": {"box": ((316.2, 185.0, 160.0), (320.0, 200.0, 199.0)), "owner": "DOCK UPPER"},
 }
 # sub-claims inside LOWER_bay (card coords; z negative below the anvil top). LOWER agent owns them all; they are
 # listed so that UPPER/BASE agents know the pass-through routes.
 LOWER_SUBCLAIMS_CARD = {
     "electrode_bay": {"x": (54.0, 62.5), "y": (28.8, 36.5), "z": (-70.0, 0.0),
                       "note": "grounded enclosure, pogo block + Z lift, relay, RH sensor; cable exits +X"},
-    "reagent_peltier_stack": {"x": (-5.0, 20.0), "y": (-5.0, 55.0), "z": (-85.0, 0.0)},
+    "reagent_peltier_stack": {"x": (-12.0, 20.0), "y": (-55.0, 55.0), "z": (-85.0, 0.0),
+                              "note": "Rev B (DEV-L6): incl. heat sink, fan and exhaust duct to dock Y 20"},
     "tube_corridor_W": {"x": (20.5, 33.5), "y": (-10.0, 60.0), "z": (-110.0, -15.0),
                         "note": "island + west ports turn west/down here"},
     "tube_corridor_E": {"x": (62.5, 80.0), "y": (-10.0, 60.0), "z": (-110.0, -15.0)},
-    "Mc_units": {"x": (33.0, 47.0), "y": (-20.0, 70.0), "z": (-70.0, 0.0),
-                 "note": "two Z + retract units; columns rise only inside W1/W2"},
-    "Md_stage": {"x": (5.0, 90.0), "y": (-25.0, 75.0), "z": (-115.0, -55.0),
+    "Mc_units": {"x": (28.0, 52.0), "y": (-55.0, 106.0), "z": (-77.0, 0.0),
+                 "note": "Rev B (DEV-L2/L6): two parallelogram swing units; columns rise only inside W1/W2"},
+    "Md_stage": {"x": (-28.0, 123.0), "y": (-50.0, 100.0), "z": (-126.0, -62.0),
                  "note": "X-Y stage (e.g. 2 x 50 mm class, Zaber X-LSM050A opened: 50.8 mm, <3 um, 26 mm/s, "
                          "non-back-driving; footprint UNVERIFIED) and post base; post rises from z -55"},
 }
 PASS_THROUGHS = {
+    # Rev A points inside LOWER (kept for reference): west card (22, 25, -60), east card (75, 25, -60)
     "liquid_lines_west": {"dock": card_to_dock((22.0, 25.0, -60.0)), "lines": ["P_in", "P_byp", "P_b", "P_a",
                                                                              "P_d1", "P_d2", "P_cf"]},
     "liquid_lines_east": {"dock": card_to_dock((75.0, 25.0, -60.0)), "lines": ["P_s", "P_wo", "P_rf", "P_a2"]},
     "lid_umbilical": {"dock": (235.0, 200.0, 190.0),
-                      "carries": "air supply 1 line, 2 gas lines (P_c, P_mv), heater + sensor + pilot-valve cable"},
+                      "carries": "air supply 1 line, 2 gas lines (P_c, P_mv), heater + sensor + pilot-valve cable",
+                      # Rev B (IR-4): BASE hand-over grommet in the rear-low cover; UPPER owns the flexible loop
+                      "base_grommet_dock": {"x": (236.0, 262.0), "y": (205.0, 211.0), "z": 180.0,
+                                            "P_c_x": 240.0, "P_mv_x": 248.0, "air_x": 258.0}},
     "gamry_cell_cable": {"dock": (320.0, card_to_dock((0, 32.0))[1], card_to_dock((0, 0, -35.0))[2]),
-                         "note": "shielded bulkhead on the LOWER claim +X wall; leads <= 0.3 m (docs/13 §6.3)"},
+                         "note": "shielded bulkhead on the LOWER claim +X wall; leads <= 0.3 m (docs/13 §6.3)",
+                         # Rev B (IR-6): flange <= 16 (Y) x 20 (Z) on that axis; connector type to be selected
+                         "flange_YZ": (16.0, 20.0)},
     "smfl_peek_line": {"dock": (0.0, 110.0, 160.0), "note": "left wall; Waters stack stands left of the dock"},
+    # Rev B (ICR-6 / IR-2, I-5): cable window on the LOWER west boundary (motor, heater, sensor, Peltier, pogo-cylinder
+    # air); the LOWER bay frame is open there
+    "cable_window_W": {"x": 150.0, "y": (150.0, 195.0), "z": (60.0, 140.0)},
+    # Rev B (ICR-6): LOWER Peltier exhaust duct outlet (10.6 W); BASE continues it to a louvre in the front-bay panel
+    "peltier_exhaust": {"x": (186.0, 210.0), "y": 20.0, "z": (118.0, 144.0), "heat_W": 10.6},
+}
+# Rev B (ICR-6 / IR-2, I-5): exact exit point of every card liquid line on the LOWER claim boundary (dock coords,
+# tube axis, 1/16 in OD), taken from the LOWER routes (dock_lower.geom.tube_route, vertical drop, R 25 bend, run to
+# the wall). BASE routes start here; glands (grommets) sit in the BASE well partitions X 147-149 / 321-323.
+LIQUID_LINE_EXITS = {
+    "P_in": (150.0, 102.3, 114.0), "P_byp": (150.0, 98.3, 112.0), "P_b": (150.0, 100.0, 108.0),
+    "P_a": (150.0, 100.0, 110.0), "P_d1": (150.0, 116.0, 112.0), "P_d2": (150.0, 84.0, 112.0),
+    "P_cf": (150.0, 110.0, 112.0),
+    "P_rf": (320.0, 80.5, 112.0), "P_s": (320.0, 95.5, 112.0), "P_wo": (320.0, 110.5, 115.0),
+    "P_a2": (320.0, 161.5, 112.0),
 }
 LID_HINGE_AXIS = {"point": (150.0, 195.0, 190.0), "direction": (1.0, 0.0, 0.0), "open_angle_deg": 85.0,
                   "note": "CHOICE-10: lid opens upward-back to a stop at 85 deg (beyond 90 deg the lid top would sweep down into the rear claims); head descends vertically 8 mm on 2 guide pins after "
@@ -686,6 +842,15 @@ def lid_sweep_bbox(n=22):
 # =====================================================================================================
 MATERIALS = {
     "card_L3": "COC", "card_L2": "TPE", "card_L1": "COC", "card_L0": "COC", "die": "glass",
-    "anvil": "Al 6061 anodised", "cold_plate": "Al", "heater_block": "Al", "pins": "stainless 303 (non-magnetic "
-    "grade to be confirmed)", "magnet": "NdFeB", "pogo": "Au/CuBe", "insulator": "PEEK",
+    "anvil": "Al cast tooling plate, hard-anodised (docs/21)", "cold_plate": "Al", "heater_block": "Al",
+    # Rev B (ICR-8, I-10): parts within ~40 mm of a magnet are non-magnetic
+    "pins": "Nitronic 60 (UNS S21800) valve pins; fallback 1.4404 solution-annealed; incoming check mu_r <= 1.02 "
+            "with a permeability indicator [assessment; permeability UNVERIFIED]",
+    "pin_springs": "Co-Cr-Ni spring wire (Elgiloy/Phynox class, non-magnetic; G and strength comparable to 1.4310, "
+                   "UNVERIFIED) -- NOT 1.4310 (work-hardened 1.4310 is partly martensitic, magnetic)",
+    "yokes_spring_plate_buttons": "1.4404 (not 1.4310/1.4301)",
+    "guides": "CuSn8 bearing bronze (docs/20 DEV-U4)", "datum_pins": "zirconia (docs/21 CHOICE-L9)",
+    "head_guide_pins": "1.2842 hardened, ferromagnetic -- allowed: >= 45 mm from every magnet position",
+    "magnet": "NdFeB", "pogo": "Au/CuBe", "insulator": "PEEK",
 }
+NON_MAGNETIC_RADIUS = 40.0     # Rev B [assessment]: no ferromagnetic part within 40 mm of a magnet working position

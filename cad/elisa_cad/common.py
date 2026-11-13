@@ -178,6 +178,22 @@ def render_png(items, path, view="iso", size=(9, 6.5), dpi=150, title=None, tol=
     return str(path)
 
 
+def shrink_pngs(directory):
+    """(integration, docs/23 §3.4) Re-save every PNG under `directory` as a 256-colour palette PNG (median cut, no
+    dithering, optimize): ~65 % smaller, visually unchanged for flat-shaded renders and plots. Called at the end of
+    every build."""
+    from PIL import Image
+    n = 0
+    for f in Path(directory).rglob("*.png"):
+        im = Image.open(f)
+        if im.mode == "P":
+            continue
+        im.convert("RGB").quantize(colors=256, method=Image.Quantize.MEDIANCUT,
+                                   dither=Image.Dither.NONE).save(f, "PNG", optimize=True)
+        n += 1
+    return n
+
+
 def box_from_corners(p0, p1):
     """Axis-aligned solid box between two corners (any order)."""
     x0, y0, z0 = (min(a, b) for a, b in zip(p0, p1))
@@ -205,5 +221,5 @@ def rounded_rect(cx, cy, sx, sy, r, z0, h):
             cq.Workplane("XY").workplane(offset=z0).center(cx, cy).rect(sx, sy).extrude(h))
 
 
-__all__ = ["COLORS", "color", "out_dir", "assembly", "export_step", "export_svg", "render_png", "tessellate",
+__all__ = ["shrink_pngs", "COLORS", "color", "out_dir", "assembly", "export_step", "export_svg", "render_png", "tessellate",
            "box_from_corners", "polyline_solid", "polygon_solid", "rounded_rect", "OUT_ROOT", "CAD_ROOT"]

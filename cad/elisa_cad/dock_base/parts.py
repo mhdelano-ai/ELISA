@@ -76,8 +76,10 @@ def custom(it):
                                     ((x0 - 1, 96.0, 18.0), (x1 + 1, 152.0, 32.0))])       # raceway (waste, purge)
     if n == "partition_right":
         g = P.GLAND_E
+        g2 = P.GLAND_E2
         bh = P.BULKHEAD
         return _cut_boxes(_box(b), [((x0 - 1, g["y"][0], g["z"][0]), (x1 + 1, g["y"][1], g["z"][1])),
+                                    ((x0 - 1, g2["y"][0], g2["z"][0]), (x1 + 1, g2["y"][1], g2["z"][1])),
                                     ((x0 - 1, bh[1] - 9, bh[2] - 11), (x1 + 1, bh[1] + 9, bh[2] + 11)),
                                     ((x0 - 1, 205.0, 150.0), (x1 + 1, 275.0, 178.0)),     # rear-low <-> bottles
                                     ((x0 - 1, 136.0, 18.0), (x1 + 1, 146.0, 32.0)),       # raceway
@@ -92,6 +94,13 @@ def custom(it):
         bh = P.BULKHEAD
         return _cut_boxes(_box(b), [((x0 - 1, bh[1] - 6, bh[2] - 6), (x1 + 1, bh[1] + 6, bh[2] + 6)),
                                     ((x0 - 1, 377.0, 42.0), (x1 + 1, 383.0, 48.0))])
+    if n == "peltier_exhaust_ext":   # (revised at integration) open at both Y ends
+        return _box(b).cut(_box(((x0 + 1, y0 - 1, z0 + 1), (x1 - 1, y1 + 1, z1 - 1))))
+    if n == "panel_front_bay":   # (revised at integration) louvre for the LOWER Peltier exhaust
+        e = P.EXHAUST
+        cut = [((e["x"][0] + 2 + 5 * k, y0 - 1, e["z"][0] + 2), (e["x"][0] + 4 + 5 * k, y1 + 1, e["z"][1] - 2))
+               for k in range(int((e["x"][1] - e["x"][0] - 4) / 5) + 1)]
+        return _cut_boxes(_box(b), cut)
     if n == "panel_front_left":
         (cx0, _, cz0), (cx1, _, cz1) = P.COLD_BOX["outer"]
         s = _cut_boxes(_box(b), [((cx0, y0 - 1, cz0), (cx1, y1 + 1, cz1))])
@@ -144,9 +153,11 @@ def solid(it):
 
 
 def tube_solid(route, vis_scale=1.0):
+    """(revised at integration) compound of cylinders + corner spheres without Boolean union (same geometry, much
+    smaller STEP; docs/23 §3.4)."""
     od = F.TUBES[route.tube][2] * vis_scale
     r = od / 2
-    out = None
+    out = []
     pts = route.pts
     for i in range(len(pts) - 1):
         p, q = cq.Vector(*pts[i]), cq.Vector(*pts[i + 1])
@@ -154,13 +165,10 @@ def tube_solid(route, vis_scale=1.0):
         Ln = d.Length
         if Ln < 1e-6:
             continue
-        c = cq.Solid.makeCylinder(r, Ln, p, d.normalized())
-        s = cq.Solid.makeSphere(r, p, angleDegrees1=-90, angleDegrees2=90) if i > 0 else None
-        w = cq.Workplane().add(c)
-        if s is not None:
-            w = w.union(cq.Workplane().add(s))
-        out = w if out is None else out.union(w)
-    return out
+        out.append(cq.Solid.makeCylinder(r, Ln, p, d.normalized()))
+        if i > 0:
+            out.append(cq.Solid.makeSphere(r, p, angleDegrees1=-90, angleDegrees2=90))
+    return cq.Workplane().add(cq.Compound.makeCompound(out)) if out else None
 
 
 def tube_color(route):

@@ -348,6 +348,7 @@ def main():
                  title="Dock space claims (dock coords): orange UPPER, green LOWER, blue BASE, grey Gamry; card")
     C.render_png(solid + [(o, m) for n, o, m in cl if "sweep" in n], OUT / "dock_space_claims_right.png", "right",
                  title="Dock space claims seen from +X, with the lid-opening sweep bounding box (red)")
+    C.shrink_pngs(OUT)   # integration: palette PNGs (docs/23 §3.4)
     print("written to", OUT)
 
 

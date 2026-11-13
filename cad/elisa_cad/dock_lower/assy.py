@@ -20,6 +20,7 @@ def static_items():
           ("bay_frame", P.bay_frame(), "aluminium", "custom"), ("ebay_enclosure", P.ebay_enclosure(), "aluminium", "custom"),
           ("gamry_cable", P.gamry_cable(), "copper", "catalogue"),
           ("card_presence_env", P.card_presence_sensor(), "envelope", "envelope")]
+    it += P.latch_brackets() + P.hinge_pedestals()     # revised at integration (docs/23)
     for k, s in P.anvil_heaters():
         it.append((f"heater_{k}", s, "heater", "envelope"))
     for k, s in P.datum_pins():

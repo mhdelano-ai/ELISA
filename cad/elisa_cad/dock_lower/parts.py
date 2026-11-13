@@ -43,8 +43,16 @@ def boxc(x0, y0, z0, x1, y1, z1):
 
 # ------------------------------------------------------------------------------------------------ card envelope
 def card_envelope():
-    """Card envelope from interface.py only (the CARD agent's model replaces it)."""
-    return C.rounded_rect(I.CARD_L / 2, I.CARD_W / 2, I.CARD_L, I.CARD_W, I.CARD_CORNER_R, 0.0, I.CARD_T)
+    """Card envelope from interface.py only (the CARD agent's model replaces it in the integrated assembly,
+    docs/23); (revised at integration) with the Rev B poka-yoke chamfer, so the nest corner block is checked."""
+    env = C.rounded_rect(I.CARD_L / 2, I.CARD_W / 2, I.CARD_L, I.CARD_W, I.CARD_CORNER_R, 0.0, I.CARD_T)
+    cx, cy = I.CARD_POKA_CHAMFER["corner"]
+    leg = I.CARD_POKA_CHAMFER["leg"]
+    tri = cq.Workplane("XY").workplane(offset=-1).polyline([(cx - leg, cy), (cx + 1, cy), (cx + 1, cy + 1), (cx, cy + 1),
+                                                            (cx, cy - leg)]).close().extrude(I.CARD_T + 2)
+    tri = tri.union(cq.Workplane("XY").workplane(offset=-1).polyline([(cx - leg, cy), (cx, cy - leg), (cx, cy)])
+                    .close().extrude(I.CARD_T + 2))
+    return env.cut(tri)
 
 
 # ------------------------------------------------------------------------------------------------ anvil
@@ -143,17 +151,19 @@ def tube_solid(port, z_from=None):
     pts = G.tube_route(port)
     if z_from is not None:
         pts = [(pts[0][0], pts[0][1], z_from)] + pts[1:]
-    solids = None
+    # (revised at integration) compound of cylinders + joint spheres, no Boolean fuse: same geometry for checks and
+    # renders, ~5x smaller STEP (docs/23 §3.4)
+    solids = []
     r = G.TUBE_OD / 2
-    for p, q in zip(pts[:-1], pts[1:]):
+    for i, (p, q) in enumerate(zip(pts[:-1], pts[1:])):
         v = cq.Vector(q[0] - p[0], q[1] - p[1], q[2] - p[2])
         L = v.Length
         if L < 1e-6:
             continue
-        c = cq.Solid.makeCylinder(r, L, cq.Vector(*p), v.normalized())
-        solids = c if solids is None else solids.fuse(c)
-        solids = solids.fuse(cq.Solid.makeSphere(r, cq.Vector(*q), angleDegrees1=-90, angleDegrees2=90))
-    return cq.Workplane("XY").add(solids.clean())
+        solids.append(cq.Solid.makeCylinder(r, L, cq.Vector(*p), v.normalized()))
+        if i < len(pts) - 2:
+            solids.append(cq.Solid.makeSphere(r, cq.Vector(*q), angleDegrees1=-90, angleDegrees2=90))
+    return cq.Workplane("XY").add(cq.Compound.makeCompound(solids))
 
 
 # ------------------------------------------------------------------------------------------------ nest frame
@@ -187,7 +197,51 @@ def nest_frame():
     sx, sy, sz = G.CARD_PRESENCE["size"]
     f = f.cut(boxc(cx - sx / 2, cy - sy / 2, G.CARD_PRESENCE["z"] - sz / 2, o["x"][0] + 0.01, cy + sy / 2,
                    G.CARD_PRESENCE["z"] + sz / 2))
-    return f
+    return f.union(poka_block())
+
+
+def poka_block():
+    """(revised at integration) Nest corner block matching the card's 4 x 45 deg poka-yoke chamfer at (75.5, 50)
+    (interface CARD_POKA_CHAMFER, NEST_POKA_BLOCK): face 0.3 clear of the chamfer, z 0.2-5.0, 1.5 lead-in at the top.
+    A card in any of the three wrong orientations lands on it (its full corner is where the chamfer should be)."""
+    cx, cy = I.CARD_POKA_CHAMFER["corner"]
+    leg = I.CARD_POKA_CHAMFER["leg"]
+    c0 = cx + cy - leg + I.NEST_POKA_BLOCK["clear"] * math.sqrt(2.0)       # x + y of the block face
+    z0, z1 = I.NEST_POKA_BLOCK["z"]
+    li = I.NEST_POKA_BLOCK["lead_in"]
+    xm, ym = G.NEST_OPEN["x"][1] + 2.0, G.NEST_OPEN["y"][1] + 2.0          # 2 mm into the frame wall
+
+    def tri(c):
+        return [(c - ym, ym), (xm, ym), (xm, c - xm)]
+    low = cq.Workplane("XY").workplane(offset=z0).polyline(tri(c0)).close().extrude(z1 - li - z0)
+    top = (cq.Workplane("XY").workplane(offset=z1 - li).polyline(tri(c0)).close()
+           .workplane(offset=li).polyline(tri(c0 + li * math.sqrt(2.0))).close().loft())
+    return low.union(top)
+
+
+def latch_brackets():
+    """(revised at integration) Two Al brackets on the anvil front face carrying the Kipp K0045.9143372 catch plates
+    of the lid draw latches (interface LID_LATCH keep-outs; catch-plate envelope UNVERIFIED)."""
+    out = []
+    for i, b in enumerate(G.LATCH_BRACKETS):
+        x0, x1 = b["x"]
+        y0, y1 = b["y"]
+        fy0, fz0, fz1 = b["flange"]
+        br = boxc(x0, y0, b["shelf_z"][0], x1, y1, b["shelf_z"][1])
+        br = br.union(boxc(x0, fy0, fz0, x1, y1, fz1))
+        cat = boxc(x0 + 1.0, b["catch"]["y"][0], b["catch"]["z"][0], x1 - 1.0, b["catch"]["y"][1], b["catch"]["z"][1])
+        out.append((f"latch_bracket_{i + 1}", br, "aluminium", "custom"))
+        out.append((f"latch_catch_plate_env_{i + 1}", cat, "steel", "catalogue"))
+    return out
+
+
+def hinge_pedestals():
+    """(revised at integration) Two Al pedestals on the bay base plate carrying the UPPER hinge blocks at dock Z 160
+    (interface HINGE_SUPPORT)."""
+    out = []
+    for i, (p0, p1) in enumerate(G.HINGE_PEDESTALS):
+        out.append((f"hinge_pedestal_{'L' if i == 0 else 'R'}", boxc(*p0, *p1), "aluminium", "custom"))
+    return out
 
 
 def datum_pins():
@@ -319,6 +373,11 @@ def bay_frame():
         bp = bp.cut(cq.Workplane("YZ").workplane(offset=x0).center(e[1], e[2]).circle(2.0).extrude(12))
     bp = bp.cut(cq.Workplane("YZ").workplane(offset=G.TUBE_EXIT["E"] - 10).center(
         I.dock_to_card(G.GAMRY_BULKHEAD)[1], I.dock_to_card(G.GAMRY_BULKHEAD)[2]).circle(3.5).extrude(12))
+    # (revised at integration) mounting to the BASE deck: 6 x M6 counterbored (D6.6 / D11 x 1.5) + 2 dowel holes D6
+    for (x, y) in G.MOUNT_BOLTS:
+        bp = bp.cut(cyl(x, y, b[2] - 1, 6.0, 6.6)).cut(cyl(x, y, b[5] - 1.5, 2.0, 11.0))
+    for (x, y) in G.MOUNT_DOWELS:
+        bp = bp.cut(cyl(x, y, b[2] - 1, 6.0, 6.0))
     return bp
 
 

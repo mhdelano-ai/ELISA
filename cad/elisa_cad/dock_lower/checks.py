@@ -24,7 +24,7 @@ ALLOWED = [("pogo_guide_pins", "pogo_guide_block"), ("pogo_guide_pins", "pogo_bl
            ("tube_P_cf", "cold_block"), ("tube_P_cf", "foam_insulation"), ("insert_P_cf", "foam_insulation"),
            ("Mc1_pivot_shafts", "Mc1_"), ("Mc2_pivot_shafts", "Mc2_"), ("Md_magnet", "Md_holder"),
            ("thermistor_T_cold", "cold_block"), ("pogo_probes", "CARD"), ("thermistor_T_heatsink", "heatsink"),
-           ("pusher_", "nest_frame"), ("pogo_block", "pogo_wedge")]
+           ("pusher_", "nest_frame"), ("pogo_block", "pogo_wedge"), ("latch_catch_plate_env", "latch_bracket")]
 
 
 def _allowed(a, b):
@@ -162,7 +162,8 @@ def tip_margins():
 
 MODULE_PREFIX = ("anvil", "nest_frame", "datum", "pusher", "guide_bush", "gasket", "insert", "ret_", "tube_", "heater",
                  "peek_break", "cold_block", "peltier", "heatsink", "fan_env", "exhaust", "foam", "M_w", "ebay", "pogo",
-                 "WE_relay", "RH_", "thermistor", "card_presence", "Mc")
+                 "WE_relay", "RH_", "thermistor", "card_presence", "Mc", "latch_")   # latch brackets: on the anvil
+#                (revised at integration)
 
 
 def service_lift(dz_list=(5, 10, 20, 40, 60, 90, 120)):

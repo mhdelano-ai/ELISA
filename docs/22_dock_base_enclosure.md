@@ -1,6 +1,9 @@
 # 22 — Dock base: frame, fluidics, electronics, enclosure (cartridge A, C2 prototype)
 
-Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK BASE agent. Inputs: docs/00, 02 §3–§4, 11 §5,
+Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK BASE agent; **revised at integration**
+(docs/23, interface.py Revision B): lid air 400 kPa, exact LOWER line exits and re-routed lines, re-issued tubing
+schedule, Peltier exhaust duct + louvre, right well partition moved to X 323–325, `base_assembly_with_claims.step` only
+with `--all-states`; all §14 requests resolved (docs/18 §15). Inputs: docs/00, 02 §3–§4, 11 §5,
 13 Revision B (§2.5–§2.6, §3.1, §3.7, §5, §6, §7.3), 16 §2–§3, 18 (binding ICD), `cad/elisa_cad/interface.py`
 (imported, not edited), `automation/config/hardware_lab.example.yaml`. Nothing is ordered. docs/13 and docs/18 are not
 edited; departures are listed in §13, interface change requests in §14.
@@ -21,8 +24,8 @@ Y away from the operator, Z up, origin front-left at bench level.
 | Mass | DOCK BASE 34.7 kg (A1 full, waste full); + allowance LOWER 8 kg, UPPER 5 kg (UNVERIFIED) → **≈ 48 kg**; Gamry 3 kg separate | `calcs.mass_cog` |
 | Centre of gravity | X 232, Y 208, Z 126 (full); ≥ 178 mm inside the foot rectangle | §11 |
 | Power | DC peak 358 W, average 136 W; mains ≈ 406 W peak / 155 W average (η 0.88 UNVERIFIED); 2 × 24 V 350 W + 12 V low-noise | §9.2 |
-| Air | lab air / N₂ 400–700 kPa, ≈ 1.1 L/min free air (dominated by an UNVERIFIED Flow EZ allowance); lid pilots 300 kPa | §8 |
-| Liquids per card (14 runs) | A1 38 mL, waste 45 mL, conjugate 0.40 mL, HQDP 0.85 mL, beads 0.24 mL | §6 |
+| Air | lab air / N₂ **500–700 kPa (≥ 450 kPa at the inlet)**, ≈ 1.1 L/min free air (dominated by an UNVERIFIED Flow EZ allowance); lid pilots **400 kPa** (revised at integration, was 300) | §8 |
+| Liquids per card (14 runs) | A1 38 mL, waste 44 mL, conjugate 0.40 mL, HQDP 0.84 mL, beads 0.24 mL (prime 14.9 mL after the re-route) | §6 |
 | Card plane | Z 170 → 1070 mm above the floor on a 900 mm bench (UNVERIFIED bench height) | `interface.ANVIL_TOP_Z_DOCK` |
 
 Key decisions: rear pump bank of five Tecan Cavro Centris (envelope verified) facing a rear service door; insulated cold
@@ -97,10 +100,12 @@ Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.
 
 ### 5.2 Routing principles
 
-* West card lines (P_in, P_byp, P_b, P_a, P_d1, P_d2, P_cf) enter LOWER through gland **G_W** (X 150, Y 95–125, Z
-  100–125); east lines (P_s, P_wo, P_rf, P_a2) through **G_E** (X 320, Y 60–92, Z 100–125); each line has its own Y
-  (no crossing). LOWER routes gland → pass-through (`interface.PASS_THROUGHS`) → port (IR-2); that segment is estimated
-  here as a Manhattan length.
+* (revised at integration) Every card line meets its LOWER tube at the exact exit point of `interface.LIQUID_LINE_EXITS`
+  (west X 150, Y 84–116, Z 108–114; east X 320, Y 80.5–110.5, Z 112–115, P_a2 at Y 161.5) through grommet windows in
+  the well partitions (**G_W** Y 82–118 / Z 106–116; **G_E** Y 78–113 / Z 110–117; P_a2 crosses the right partition at
+  Y 193, Z 122). P_b and P_a share Y 100 (Z 108/110): the deeper line takes the lane further west (x 143 vs 145), so no
+  vertical crosses a horizontal; P_d2 runs at Z 104 under the other lines. The LOWER-internal length is now the real
+  LOWER route (`dock_lower.geom.tube_route`), no longer a Manhattan estimate.
 * Pump lines leave the valves upward, run forward over the pump bodies at Z 232, drop at Y 316.5 (between the well
   rear wall and the pump spine) to lanes at **Z 156–174 ≤ 180** (docs/18 §12: keep Z ≤ 180 behind the bay), run along
   Y 203 (gap between LOWER and rear_low) to the cold-claim strip X 126–143, and down to G_W. East pump lines run along
@@ -110,22 +115,22 @@ Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.
 
 ### 5.3 Tubing schedule (from the CAD routing; `tubing_schedule.csv`)
 
-Length = DOCK BASE routed polyline + LOWER-internal estimate (gland → pass-through → card port, Manhattan, owner
-LOWER) + external. Volume = π/4·ID²·length (mm³ = µL) + 1 µL per inline sensor (UNVERIFIED).
+Length = DOCK BASE routed polyline + LOWER-internal length (revised at integration: the real LOWER route, card port →
+wall exit, `dock_lower.geom.tube_route`) + external. Rows 1–11 re-issued at integration (`tubing_schedule.csv`). Volume = π/4·ID²·length (mm³ = µL) + 1 µL per inline sensor (UNVERIFIED).
 
 | # | Line | From → to | Tube OD × ID | Base | LOWER est. | Ext. | Total mm | µL | docs/13 assumption | Verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | P_in | SM-FL → P_in sensor → P_in | PEEK 1.59 × 0.127 | 192 | 158 | 200 | 550 | **7.97** | PEEK 0.3 m, 3.8 µL; ≥ 0.3 m isolation | **DEV-B1** (isolation met: sensor → port 0.35 m) |
-| 2 | P_b | SV_b → P_b | PEEK 1.59 × 0.102 | 86 | 152 | 0 | 238 | **1.93** | 0.25 × 50 mm = 2.5 µL | volume met (DEV-B3 geometry) |
-| 3 | P_cf | conjugate tube → P_cf | FEP 1.59 × 0.254 | 251 | 163 | 0 | 414 | 21.0 | dead ≈ 100 µL in the fill | OK |
-| 4 | P_d1 coil | S_IC1 ↔ P_d1 | FEP 1.59 × 0.508 | 561 | 176 | 0 | 736 | **149** | 60 µL coil | ≥ 60 OK, larger (DEV-B2) |
-| 5 | P_d2 coil | S_IC2 ↔ P_d2 | FEP 1.59 × 0.508 | 619 | 172 | 0 | 790 | **160** | 60 µL coil | DEV-B2 |
-| 6 | P_a | S_A → FS1 → P_a | PEEK 1.59 × 0.254 | 689 | 150 | 0 | 839 | 43.5 | clean A1 | OK (prime) |
-| 7 | P_byp | P_byp → air-gap head | FEP 1.59 × 0.762 | 930 | 142 | 0 | 1071 | 489 | waste, air gap | OK |
-| 8 | P_s | P_s → FS2 → S_RC | PEEK 1.59 × 0.254 | 574 | 154 | 0 | 728 | 37.9 | pull to waste | OK |
-| 9 | P_a2 | S_A → P_a2 | PEEK 1.59 × 0.254 | 523 | 192 | 0 | 715 | 36.2 | clean A1 (docs/18 DEV-6) | OK |
-| 10 | P_wo | P_wo → air-gap head | FEP 1.59 × 0.762 | 606 | 150 | 0 | 756 | 345 | waste | OK |
-| 11 | P_rf | HQDP tube → P_rf | FEP 1.59 × 0.254 | 266 | 181 | 0 | 447 | 22.7 | dead ≈ 200 µL in the fill | OK |
+| 1 | P_in | SM-FL → P_in sensor → P_in | PEEK 1.59 × 0.127 | 204 | 119 | 200 | 523 | **7.63** | PEEK 0.3 m, 3.8 µL; ≥ 0.3 m isolation | **DEV-B1** (isolation met: sensor → port 0.32 m) |
+| 2 | P_b | SV_b → P_b | PEEK 1.59 × 0.102 | 102 | 129 | 0 | 231 | **1.87** | 0.25 × 50 mm = 2.5 µL | volume met (DEV-B3 geometry) |
+| 3 | P_cf | conjugate tube → P_cf | FEP 1.59 × 0.254 | 265 | 92 | 0 | 357 | 18.1 | dead ≈ 100 µL in the fill | OK |
+| 4 | P_d1 coil | S_IC1 ↔ P_d1 | FEP 1.59 × 0.508 | 573 | 117 | 0 | 689 | **140** | 60 µL coil | ≥ 60 OK, larger (DEV-B2) |
+| 5 | P_d2 coil | S_IC2 ↔ P_d2 | FEP 1.59 × 0.508 | 675 | 117 | 0 | 791 | **160** | 60 µL coil | DEV-B2 |
+| 6 | P_a | S_A → FS1 → P_a | PEEK 1.59 × 0.254 | 673 | 117 | 0 | 790 | 41.0 | clean A1 | OK (prime) |
+| 7 | P_byp | P_byp → air-gap head | FEP 1.59 × 0.762 | 939 | 121 | 0 | 1061 | 484 | waste, air gap | OK |
+| 8 | P_s | P_s → FS2 → S_RC | PEEK 1.59 × 0.254 | 555 | 114 | 0 | 669 | 34.9 | pull to waste | OK |
+| 9 | P_a2 | S_A → P_a2 | PEEK 1.59 × 0.254 | 441 | 165 | 0 | 606 | 30.7 | clean A1 (docs/18 DEV-6) | OK |
+| 10 | P_wo | P_wo → air-gap head | FEP 1.59 × 0.762 | 584 | 108 | 0 | 692 | 316 | waste | OK |
+| 11 | P_rf | HQDP tube → P_rf | FEP 1.59 × 0.254 | 256 | 105 | 0 | 360 | 18.3 | dead ≈ 200 µL in the fill | OK |
 | 12 | P_c gas | Flow EZ ch1 → umbilical grommet | PTFE 3.18 × 1.59 | 108 | UPPER | 0 | 108 | 214 | gas | + UPPER loop |
 | 13 | P_mv gas | ch2 → 3/2 valve → grommet | PTFE 3.18 × 1.59 | 63 | UPPER | 0 | 63 | 125 | gas | + UPPER loop |
 | 14 | gas → conjugate tube | 3/2 valve → cap | PTFE 3.18 × 1.59 | 445 | — | — | 445 | 881 | fill at insertion | OK |
@@ -135,7 +140,7 @@ LOWER) + external. Volume = π/4·ID²·length (mm³ = µL) + 1 µL per inline s
 | 18–27 | A1 → each pump; each pump → waste | manifold → valve; valve → head | FEP 1.59 × 0.762 | 286–711 | — | — | — | 130–324 | supply / waste | OK |
 | 28 | A1 bottle → manifold | cap → 1-in/6-out block | FEP 1.59 × 0.762 | 124 | — | — | 124 | 56.6 | supply | OK |
 | 29 | lab air → FR1 | right-panel push-in (behind the Gamry) | PU 6 × 4 | 300 | — | — | 300 | — | — | — |
-| 30 | FR1 300 kPa → lid | → umbilical grommet | PU 4 × 2.5 | 144 | UPPER | — | 144 | — | — | — |
+| 30 | FR1 400 kPa → lid | → umbilical grommet | PU 4 × 2.5 | 144 | UPPER | — | 144 | — | — | — |
 | 31 | R2 120 kPa → Flow EZ | tee to both supplies | PU 4 × 2.5 | 375 | — | — | 375 | — | — | — |
 | 33 | dry-air purge | restrictor → cold box | FEP 1.59 × 0.762 | 540 | — | — | 540 | — | ≈ 0.1 L/min | — |
 | 34 | cell leads | LOWER bulkhead → junction box | shielded | 132 | (LOWER) | — | 132 | — | ≤ 0.3 m | OK (§9.5) |
@@ -187,22 +192,24 @@ Drip tray: 464 × 414 × 13 gross ≈ 2.5 L, ≈ 2.0 L after displacement [asses
 
 ## 8. Pneumatics and air supply (CHOICE-B12, B13)
 
-Lab air or N₂, 400–700 kPa, oil-free, dry, inlet push-in on the right panel at (470, 380, 45) behind the Gamry →
-**FR1** filter-regulator 5 µm, 300 kPa → lid pilot manifold via the umbilical (`interface.PLUNGER` 300 kPa; pilots ≥ 400 kPa
-rated, docs/18 §12) → tee to **R2** precision regulator 120 kPa → Flow EZ supplies (LU-FEZ-0345 needs 1100 mbar, max
-1300, V:FLUIGENT_FEZ_P) and the purge restrictor. Low-supply pressure switch (< 250 kPa → fault; plungers are
-spring-closed and V3 spring-open, so air loss is fail-safe, docs/13 §4).
+(revised at integration) Lab air or N₂, **500–700 kPa (≥ 450 kPa at the inlet, `PLUNGER air_supply_min_kPa`)**, oil-free,
+dry, inlet push-in on the right panel at (470, 380, 45) behind the Gamry → **FR1** filter-regulator 5 µm, **400 kPa** → lid
+pilot manifold via the umbilical (`interface.PLUNGER` 400 kPa, Rev B; SMC S070 0.5 W pilots rated 0.5 MPa, docs/20) and
+the LOWER pogo-lift cylinder → tee to **R2** precision regulator 120 kPa → Flow EZ supplies (LU-FEZ-0345 needs
+1100 mbar, max 1300, V:FLUIGENT_FEZ_P) and the purge restrictor. Low-supply pressure switch **< 450 kPa** → fault (the
+lid switch trips at 350 kPa; plungers are spring-closed and V3 spring-open, so air loss is fail-safe, docs/13 §4).
 
 | Consumer | Free air | Derived |
 |---|---|---|
-| lid cylinders | 0.012 L/h | Ø5 × 1 mm + 30 mm³ dead = 49.6 mm³ × 401/101 kPa = 0.20 mL per actuation × 16 cycles × 2 strokes / 31 min |
+| lid cylinders | 0.012 L/h | (revised at integration) 90 mm³ per actuation × 400/101.3 = 0.36 NmL (docs/20 §4.4) × 17 actuations per 31-min run |
+| pogo-lift cylinder (LOWER) | < 0.001 L/h | Ø6 × 6 + 50 mm³ dead, 2 actuations per 8-h card |
 | purge | 6 L/h | 0.1 L/min [assessment] |
 | Flow EZ ×2 | 60 L/h | **UNVERIFIED allowance** 0.5 L/min each (consumption not on the page) |
 | total | **≈ 66 L/h ≈ 1.1 L/min** | 8-h card without supply: 530 L → an 88 L tank at 7 bar; therefore lab air, not a tank |
 
 No compressor in the dock (vibration and noise near nA reads). Fallback if no lab air: off-dock oil-free compressor
 with ≥ 20 L receiver on the floor, cycling not synchronised with reads (effect UNVERIFIED → measure in M5a-type test).
-The lid agent sizes the pilot manifold; this supply offers 300 kPa at ≥ 10 L/min (FR1 class, UNVERIFIED).
+The lid agent sizes the pilot manifold; this supply offers 400 kPa at ≥ 10 L/min (FR1 class, UNVERIFIED).
 
 ## 9. Electronics
 
@@ -269,9 +276,11 @@ IEC inlet + switch + fuse, PE stud, USB-B ×3 (controller, DAQ via isolator, LIN
 
 ## 10. Enclosure, access, safety
 
-1. **Panels** 2 mm Al 5754 powder-coated on the frame, inside the footprint; well partitions X 147–149 / 321–323 and
-   rear wall Y 312–314 (to Z 328); rear-low cover Z 178–180 (Y 202–312) with the umbilical grommet slot X 236–262.
-2. **Openings:** top open over X 150–320, Y 0–312 (lid sweep and loading path); front-bay panel only to Z 165 (card
+1. **Panels** 2 mm Al 5754 powder-coated on the frame, inside the footprint; well partitions X 147–149 / **323–325**
+   (right one moved +2 mm at integration: the moving cam lever reaches X 320.0 → 3.0 mm, IR-5) and rear wall Y 312–314
+   (to Z 328); rear-low cover Z 178–180 (Y 202–312) with the umbilical grommet slot X 236–262.
+2. **Openings:** top open over X 150–320, Y 0–312 (lid sweep and loading path); front-bay panel only to Z 165 (louvre X 186–210, Z 118–144 for the LOWER Peltier exhaust, fed by a 24 × 26 PEEK duct
+   extension Y 2–20, revised at integration; card
    plane 170) so the card is reached from the front/top; cold-box door (front-left); bottle door (front-right, X
    327–465, Z 20–255); waste hatch in the top-right panel (Y 200–317) — the waste bottle lifts out vertically; rear pump
    service door (X 152–463, Z 20–301); left panel removable for the electronics; top-left panel removable for SV_b.
@@ -296,7 +305,7 @@ IEC inlet + switch + fuse, PE stud, USB-B ×3 (controller, DAQ via isolator, LIN
 | Check | Method | Result |
 |---|---|---|
 | Intrusion into UPPER_lid_closed, LOWER_nest_anvil, LOWER_bay | OCC boolean common of every base body and tube with the claim boxes (> 0.5 mm³ flags) | **0 intrusions** |
-| Lid sweep 0–85° | sweep = union of the UPPER box rotated about the hinge in 1° steps (convex hulls of consecutive positions, shapely), extruded X 150–320; YZ bounds 29.4–305.0 / 175.3–388.3 = `lid_sweep_bbox()` | **0 intrusions**; clearances: rear-low cover 1.94, well rear wall 6.98, top rails 22.8, top-rear panel 24.5, partitions and top-left/right panels **1.0** (claims touch at X 150/320 → IR-5) |
+| Lid sweep 0–85° | sweep = union of the UPPER box rotated about the hinge in 1° steps (convex hulls of consecutive positions, shapely), extruded X 150–320; YZ bounds 29.4–305.0 / 175.3–388.3 = `lid_sweep_bbox()` | **0 intrusions**; clearances to the claim sweep: rear-low cover 1.94, well rear wall 6.98, top rails 22.8, top-rear panel 24.5, left partition / top-left panel 1.0, **right partition / top-right panel 3.0** (revised at integration). Real lid parts (docs/23 §4): 3.5 mm left (cover), 3.0 mm right (cam lever) |
 | Loading path | common with `OPERATOR_LOADING_PATH.clear_box` | **0** |
 | Base-body overlaps | pairwise AABB (assemblies such as tube-in-holder excluded) | **0** |
 | Tube routes vs bodies | each segment sampled every 0.5 mm, swept tube radius vs every body box (its end devices/walls allowed) | **0** |
@@ -305,7 +314,7 @@ IEC inlet + switch + fuse, PE stud, USB-B ×3 (controller, DAQ via isolator, LIN
 | Footprint | every base body inside `DOCK_FOOTPRINT` | pass except E-stop (Y −25) and light bar (Y −6) |
 | Pump/valve service reach | §10.3 | rear door; 15.5 mm gaps; shelf removable |
 | Bottle capacities | §6 | A1 11.7 cards; waste 17.9 cards; per-card tubes ≥ 4× need |
-| Tube lengths vs docs/13 | §5.3 | P_in 8.0 vs 3.8 µL (DEV-B1); P_b 1.93 ≤ 2.5 µL; coils 149/160 ≥ 60 µL (DEV-B2); fill dead volumes 21/23 µL ≪ 100/200 µL |
+| Tube lengths vs docs/13 | §5.3 | (revised at integration) P_in 7.6 vs 3.8 µL (DEV-B1); P_b 1.87 ≤ 2.5 µL; coils 140/160 ≥ 60 µL (DEV-B2); fill dead volumes 18/18 µL ≪ 100/200 µL |
 | Cell leads | §9.5 | 0.13 m base + ≈ 0.1 m LOWER ≤ 0.3 m |
 | CoG | mass-weighted centroids (+ LOWER 8 kg, UPPER 5 kg allowances) | full (X 232, Y 208, Z 126), margin to the foot rectangle **178 mm**; base only (231, 245, 117), margin 145; lateral force at the top edge to tip forward ≈ 250 N |
 | Footprint vs bench | §11.1 bench plan | 963 mm wide, 712 deep (stack) ≤ 750 bench depth (UNVERIFIED) |
@@ -331,7 +340,7 @@ at X −393…−50, gap 50 (PEEK line), dock 0–470, gap 10, Gamry 480–570.
 | CHOICE-B9 | leak | whole-footprint stainless tray, sump + level switch, 4 electrode strips | docs/13 §6.8 | per-zone trays |
 | CHOICE-B10 | Gamry | bench right, isolated duct + junction box as star point, 60 cm standard cable | leads ≤ 0.3 m; quiet side away from electronics | Gamry on a shelf above the dock (longer cable) |
 | CHOICE-B11 | bead line | PEEK 0.102 mm ID (0.004″), 0.24 m | keeps ≤ 2.5 µL with a realistic route | 0.127 mm ID (3.0 µL, chase 5 µL) |
-| CHOICE-B12 | air | lab air/N₂ 400–700 kPa; FR1 300 kPa, R2 120 kPa; no compressor in the dock | vibration/noise near reads | off-dock compressor + receiver |
+| CHOICE-B12 | air | lab air/N₂ 500–700 kPa; FR1 **400 kPa** (revised at integration), R2 120 kPa; no compressor in the dock | vibration/noise near reads | off-dock compressor + receiver |
 | CHOICE-B13 | pressure channels | 2 × Flow EZ 345 mbar; ch2 shared via 3/2 valves for the bottle fills | fills only at insertion, P_mv idle then (docs/13 §7.1) | third channel |
 | CHOICE-B14 | SM-FL line | P_in flow-through sensor at the upstream (wall) end; PEEK 0.127 mm ID | ≥ 0.3 m PEEK between sensor and card | sensor at the card (breaks isolation if wetted metal) |
 | CHOICE-B15 | flow sensors | FS1 SLF3S-0600F on P_a; FS2 (≥ 20 µL/min FS, TBD) on P_s | docs/13 §6.2 duties | sensors on the waste side |
@@ -340,12 +349,18 @@ at X −393…−50, gap 50 (PEEK line), dock 0–470, gap 10, Gamry 480–570.
 
 | # | What | Change | Effect |
 |---|---|---|---|
-| DEV-B1 | P_in PEEK 0.3 m / 3.8 µL (docs/13 §2.6) is not reachable: stack beside the dock + routing to the bay centre | 0.55 m / **8.0 µL** (0.2 m outside UNVERIFIED, 0.19 m base, ≈ 0.16 m LOWER) | D13 flush (200 µL) still = 25 line volumes; the unflushed-line carry-over term of docs/13 §3.1 scales (3.8 + 1.05 → 8.0 + 1.05 µL); transfer fraction 0.90 to be re-checked (C1 gravimetric / M2); option: 0.102 mm ID → 5.1 µL at 2.5× ΔP (320 kPa at 100 µL/min, upstream of the card) |
-| DEV-B2 | 60 µL tidal coils | 149 / 160 µL (0.5 mm FEP, routed length to the rear pumps) | requirement "stroke stays in the coil" met with more margin; adds dead volume behind the stroke only; ΔP 10–11 kPa at 25 µL/s; option 0.4 mm ID (availability UNVERIFIED) → ≈ 95–100 µL |
-| DEV-B3 | S_b outlet line 0.25 mm × 50 mm (docs/13 §5.1) | 0.102 mm × 238 mm, **1.93 µL** (volume met); holding coil 95 µL (≥ 40) | bead clogging/adhesion in 0.1 mm PEEK unknown → add to M3 / E2.2; fallback CHOICE-B11 alternative |
+| DEV-B1 | P_in PEEK 0.3 m / 3.8 µL (docs/13 §2.6) is not reachable: stack beside the dock + routing to the bay centre | 0.52 m / **7.6 µL** (revised at integration: 0.2 m outside UNVERIFIED, 0.20 m base, 0.12 m LOWER real route) | D13 flush (200 µL) still = 25 line volumes; the unflushed-line carry-over term of docs/13 §3.1 scales (3.8 + 1.05 → 8.0 + 1.05 µL); transfer fraction 0.90 to be re-checked (C1 gravimetric / M2); option: 0.102 mm ID → 5.1 µL at 2.5× ΔP (320 kPa at 100 µL/min, upstream of the card) |
+| DEV-B2 | 60 µL tidal coils | 140 / 160 µL (revised at integration) (0.5 mm FEP, routed length to the rear pumps) | requirement "stroke stays in the coil" met with more margin; adds dead volume behind the stroke only; ΔP 10–11 kPa at 25 µL/s; option 0.4 mm ID (availability UNVERIFIED) → ≈ 95–100 µL |
+| DEV-B3 | S_b outlet line 0.25 mm × 50 mm (docs/13 §5.1) | 0.102 mm × 231 mm, **1.87 µL** (volume met; revised at integration); holding coil 95 µL (≥ 40) | bead clogging/adhesion in 0.1 mm PEEK unknown → add to M3 / E2.2; fallback CHOICE-B11 alternative |
 | DEV-B4 | docs/18 claims: unclaimed space used | cold-box door in the front strip Y 2–20; P_in sensor at X 4–10; tube lanes in the gap Y 200–205; E-stop/light bar outside the footprint (Y −25/−6) | see IR-3 |
 
 ## 14. Interface change requests (for the next interface revision; interface.py and docs/18 not edited)
+
+(revised at integration) All resolved in interface.py Revision B (docs/18 §15): IR-1 → `LOWER_MOUNT` (6 of the 9 holes
+used, X 235 holes under the M_d stage); IR-2 → `LIQUID_LINE_EXITS` (LOWER's exits; BASE re-routed); IR-3 → claims
+`BASE_front_strip`, `BASE_lane_gap`; IR-4 → `PASS_THROUGHS['lid_umbilical']['base_grommet_dock']`; IR-5 → right
+partition moved to X 323–325 (lever 3.0 mm), left side 3.5 mm (cover); hinge blocks are fixed (1.0 mm, no motion) on
+LOWER hinge pedestals; IR-6 → `PASS_THROUGHS['gamry_cell_cable']['flange_YZ']` 16 × 20 (connector UNVERIFIED).
 
 | # | Name | Current | Needed | Why |
 |---|---|---|---|---|
@@ -397,6 +412,6 @@ spec), `fluidics.py` (34 routes, schedule, ΔP, clash checks), `parts.py` (solid
 mass/CoG, checks), `render.py` (views, plans, schematic), `build.py`.
 `cad/out/dock_base/`: `base_frame.step`, `base_enclosure_panels.step`, `base_drip_tray.step`, `base_brackets.step`,
 `base_cold_compartment.step`, `base_pumps.step`, `base_bottles_pneumatics.step`, `base_electronics.step`,
-`base_sensors.step`, `base_gamry_route_bench.step`, `base_tubing.step`, `base_assembly_with_claims.step` (claims and
-the lid sweep as translucent placeholders; 4.9 MB); PNG/SVG views listed in §3; `tubing_schedule.csv`,
+`base_sensors.step`, `base_gamry_route_bench.step`, `base_tubing.step`; `base_assembly_with_claims.step` (claims and
+the lid sweep as translucent placeholders; 5 MB) only with `--all-states` (revised at integration); PNG/SVG views listed in §3; `tubing_schedule.csv`,
 `check_results.json`.

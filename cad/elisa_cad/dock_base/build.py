@@ -1,5 +1,7 @@
 """Build the DOCK BASE: STEP files, PNG/SVG views, tubing schedule and check results -> cad/out/dock_base/.
-Run from cad/:  python -m elisa_cad.dock_base.build   [--fast: skip renders]"""
+Run from cad/:  python -m elisa_cad.dock_base.build   [--fast: skip renders] [--all-states]
+(revised at integration) base_assembly_with_claims.step (~5 MB, the group STEPs + claim placeholders) is written only
+with --all-states (docs/23 §3.4)."""
 from __future__ import annotations
 
 import csv
@@ -88,7 +90,7 @@ def sweep_clearance(sweep):
     return out
 
 
-def export_steps(sol, tubes):
+def export_steps(sol, tubes, all_states=False):
     sizes = {}
     for fname, groups in STEP_GROUPS.items():
         parts = [(it.name, sol[it.name], it.material) for it in L.ITEMS if it.group in groups]
@@ -105,6 +107,8 @@ def export_steps(sol, tubes):
     p = OUT / "base_tubing.step"
     C.export_step(a, p)
     sizes[p.name] = p.stat().st_size
+    if not all_states:
+        return sizes
     # full base assembly with translucent claim placeholders
     A = cq.Assembly(name="dock_base_assembly")
     for it in L.ITEMS:
@@ -246,7 +250,7 @@ def main(argv=None):
               "outside_footprint", "intrusions", "sweep_clearance_mm"):
         print(f"  {k}: {chk[k]}")
     print(f"[dock_base] checks done {time.time() - t0:.1f} s")
-    sizes = export_steps(sol, tubes)
+    sizes = export_steps(sol, tubes, "--all-states" in argv)
     chk["step_sizes_bytes"] = sizes
     write_tables(chk)
     print(f"[dock_base] STEP written {time.time() - t0:.1f} s: {sizes}")
@@ -256,6 +260,7 @@ def main(argv=None):
         RD.bench_plan(OUT / "plan_bench_layout.png", K.bench_layout())
         RD.schematic(OUT / "fluidic_schematic.png")
         print(f"[dock_base] renders written {time.time() - t0:.1f} s")
+    C.shrink_pngs(OUT)   # integration: palette PNGs (docs/23 §3.4)
     print(f"[dock_base] done in {time.time() - t0:.1f} s -> {OUT}")
 
 

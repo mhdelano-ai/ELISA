@@ -15,7 +15,8 @@ from elisa_cad import interface as IF
 # 0. Reference levels (card z)
 # ---------------------------------------------------------------------------------------------------------------
 Z_CARD_TOP = IF.CARD_T                                  # 6.215, interface.CARD_T
-Z_NEST_TOP_MAX = IF.SPACE_CLAIMS["LOWER_nest_anvil"]["box"][1][2] - IF.CARD_ORIGIN_IN_DOCK[2]   # 6.0 (Derived)
+Z_NEST_TOP_MAX = IF.NEST_FRAME_TOP_Z                    # 5.0: nest frame + guide-bush top (revised at integration:
+#                                                         was the LOWER claim top 6.0; interface Rev B NEST_FRAME_TOP_Z)
 HEAD_DROP = IF.HEAD_VERTICAL_STROKE                     # 8.0, interface.HEAD_VERTICAL_STROKE
 HB_Z0, HB_Z1 = IF.HEAD_Z["heater_block"]                # 6.215 .. 16.215 interface.HEAD_Z
 SPRING_ZONE = IF.HEAD_Z["pin_spring_zone"]              # 16.215 .. 24.5
@@ -55,7 +56,7 @@ STANDOFFS_PEEK = [(10.0, 5.0), (12.0, 46.5)]
 # ---------------------------------------------------------------------------------------------------------------
 STROKE = IF.PLUNGER["stroke_pin"]                        # 0.8
 TIP_Z_CLOSED = IF.PLUNGER["tip_z_closed"]                # 0.17
-TIP_Z_OPEN = IF.PLUNGER["tip_z_open"]                    # 1.015
+TIP_Z_OPEN = IF.PLUNGER["tip_z_open"]                    # 0.97 (interface Rev B; Rev A 1.015)
 DROP_BELOW_CLOSED = 0.2                                  # interface.PLUNGER pin_extension_limit (collar stop)
 COLLAR_T = 0.5                                           # [assessment]
 COLLAR_D = {"0.8": 1.4, "1.2": 2.0}                      # spring seat; 1.4 at 1.6 pitch leaves 0.2 [assessment]
@@ -70,8 +71,11 @@ HOOK_GAP = 0.2                                           # eye top -> button und
 #   with no card the pin drops 0.2 and the collar AND button land together (collar on the block is the stop)
 FORK_SLOT = {"0.8": 0.7, "1.2": 1.0}                     # fork slot width (neck + 0.2)
 
-# Pin springs (compression, above the collar, below the spring plate). 1.4310 wire, G = 70 GPa [UNVERIFIED value]
-SPRING_G = 70000.0           # N/mm^2, spring steel 1.4310 handbook value [UNVERIFIED]
+# Pin springs (compression, above the collar, below the spring plate). (revised at integration, docs/23 I-10):
+# material Co-Cr-Ni non-magnetic spring wire (Elgiloy/Phynox class, interface MATERIALS) instead of 1.4310, which is
+# partly martensitic (magnetic) when work-hardened. G kept at 70 GPa for the calculation [UNVERIFIED; Co-Cr-Ni class
+# G is similar]; preload is trimmed per pin by shim washers, so a G error moves only the force at +0.8 open.
+SPRING_G = 70000.0           # N/mm^2 [UNVERIFIED]
 PIN_SPRINGS = {  # klass -> d wire, D mean, n active, target preload at closed (N)  [CHOICE-U5]
     "slot":  {"d": 0.20, "Dm": 1.10, "n": 24, "F_closed": 1.2},
     "anvil08": {"d": 0.25, "Dm": 1.05, "n": 22, "F_closed": 2.5},   # V14, V15 (0.8 pins, 2.5 N)
@@ -98,14 +102,14 @@ BLADE_H = IF.YOKE["blade_h"]                 # 4.0
 PLAN_CLEAR_MIN = IF.YOKE["plan_clearance_min"]   # 0.3
 BOSS_D = 3.0                                 # blade boss on the rod end [assessment]
 ROD_D = 1.5                                  # piston rod (stainless, ground) [assessment]
-BORE_D = 6.0                                 # DEV-U2: interface.PLUNGER cylinder_bore 5.0 -> 6.0 (force margin, docs/20 §4.2)
+BORE_D = IF.PLUNGER["cylinder_bore"]         # 6.0 (DEV-U2, adopted in interface Rev B)
 BORE_D_IF = IF.PLUNGER["cylinder_bore"]      # 5.0 (interface value, kept for reference)
 PISTON_T = 2.5
 PULL_STROKE = HOOK_GAP + STROKE              # 1.0 Derived: gap 0.2 + lift 0.8 (pull cylinders, pressure under piston)
 V3_STROKE = HOOK_GAP + STROKE + 1.0          # 2.0 Derived: gap + 0.8 + limit-spring overtravel 1.0
 RETURN_SPRING_F = 0.5                        # N, piston return spring in the vented chamber [assessment]
-P_SUPPLY_KPA = 400.0                         # CHOICE-U9 / DEV-U1 (interface.PLUNGER pilot_pressure_kPa = 300)
-P_MIN_KPA = 350.0                            # regulator low limit / pressure switch trip [assessment]
+P_SUPPLY_KPA = IF.PLUNGER["pilot_pressure_kPa"]   # 400 (DEV-U1, adopted in interface Rev B)
+P_MIN_KPA = IF.PLUNGER["pilot_switch_trip_kPa"]  # 350: pressure switch trip [assessment], interface Rev B
 CYL_LAYERS = {   # card z of the cylinder block layers (CHOICE-U10)
     "cover": (CYL_Z0 - 1.0, CYL_Z0),         # 37..38 gallery cover (bottom layer grooves are not used: 1 layer)
     "air_plate": (CYL_Z0, CYL_Z0 + 6.0),     # 38..44 rod guides + gallery grooves on its top face
@@ -122,9 +126,10 @@ HALL_PCB_Z = (CYL_Z1 + 0.5, CYL_Z1 + 2.1)    # 1.6 mm FR4 on the cap
 # ---------------------------------------------------------------------------------------------------------------
 # 4. Guide pins to the nest (LOWER provides the bushes -- interface change request ICR-U1)
 # ---------------------------------------------------------------------------------------------------------------
-GUIDE_PINS = {"GP1": (-5.0, 44.0), "GP2": (80.5, 6.0)}    # card xy, diagonal, outside datums/pushers [assessment]
-GUIDE_PIN_D = 6.0                                          # h6 hardened (far from magnets) [assessment]
-GUIDE_PIN_TIP_Z_RAISED = Z_NEST_TOP_MAX + 0.5              # 6.5: tip 0.5 above the nest claim when raised
+GUIDE_PINS = {k: IF.HEAD_GUIDE_PINS[k] for k in ("GP1", "GP2")}   # (revised at integration) interface Rev B
+#   HEAD_GUIDE_PINS (-8, 46), (84, 4); were (-5, 44), (80.5, 6) here (the bush at (-5, 44) broke into the nest opening)
+GUIDE_PIN_D = IF.HEAD_GUIDE_PINS["pin_d"]                  # 6.0, h6 hardened (>= 45 mm from every magnet)
+GUIDE_PIN_TIP_Z_RAISED = IF.HEAD_GUIDE_PINS["pin_tip_z_raised"]   # 5.5: tip 0.5 above the bush top (z 5.0) when raised
 GUIDE_PIN_TIP_Z = GUIDE_PIN_TIP_Z_RAISED - HEAD_DROP       # -1.5 lowered (Derived)
 GUIDE_PIN_NOSE = 1.0                                       # conical lead 1.0 long
 GUIDE_EAR_BOTTOM_Z = 8.0                                   # ears stop 2.0 above the nest top when lowered

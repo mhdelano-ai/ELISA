@@ -318,7 +318,7 @@
   },
   {
    "feature": "MC D1.596 blind 4.4 deep",
-   "tool_d": 1.5957691216057308,
+   "tool_d": 1.5958,
    "depth": 4.3999999999999995,
    "process": "flat-bottom drill/end mill D1.5 + circular interpolation",
    "L_over_D": 2.93

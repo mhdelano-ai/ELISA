@@ -100,6 +100,10 @@ add("panel_front_left", "enclosure", "custom", bx(0, 0, P.BASE_PLATE_Z[1], pl[1]
     149 * 315 * s * AL, "CHOICE-B8", "opening for the cold-box door; E-stop and status light above it", shape="custom")
 add("panel_front_bay", "enclosure", "custom", bx(pl[1], 0, P.BASE_PLATE_Z[1], pr[0], s, 165.0), "aluminium",
     172 * 150 * s * AL, "CHOICE-B8", "stops 5 mm below the anvil top (Z 170) so the card is reached from the top/front")
+add("peltier_exhaust_ext", "enclosure", "custom", bx(P.EXHAUST["x"][0], P.SHEET_T, P.EXHAUST["z"][0], P.EXHAUST["x"][1],
+    P.EXHAUST["y"], P.EXHAUST["z"][1]), "PEEK", 0.02, "(revised at integration) interface Rev B peltier_exhaust",
+    "duct extension 24 x 26, 1 mm wall, from the LOWER Peltier exhaust (Y 20) to the louvre in the front-bay panel "
+    "(10.6 W warm air leaves at the front, below the card plane)", shape="custom")
 add("panel_front_right", "enclosure", "custom", bx(pr[0], 0, P.BASE_PLATE_Z[1], FX, s, FZ), "aluminium",
     149 * 315 * s * AL, "CHOICE-B8", "bottle door (hinged right side) Z 20-255", shape="custom")
 add("panel_rear", "enclosure", "custom", bx(0, FY - s, P.BASE_PLATE_Z[1], FX, FY, FZ), "aluminium",
@@ -208,11 +212,13 @@ add("waste_level_sensor", "sensors", "envelope", bx(437.0, 245.0, 160.0, 447.0, 
 add("bottle_rack", "bracket", "custom", bx(330.0, 6.0, 16.0, 446.0, 97.0, 17.0), "aluminium", 0.15, "[assessment]",
     "location plate with rings for the A1 bottle and HQDP sleeve")
 add("FR1_filter_regulator", "pneumatics", "envelope", bx(340.0, 150.0, 17.0, 380.0, 190.0, 157.0), "envelope", 0.25,
-    "UNVERIFIED (SMC AW20-class filter-regulator, dims not read)", "lab air 400-700 kPa -> 300 kPa (lid pilots), 5 um")
+    "UNVERIFIED (SMC AW20-class filter-regulator, dims not read)", "lab air 500-700 kPa (>= 450 at the inlet) -> 400 kPa (lid pilots, interface Rev B), 5 um "
+    "(revised at integration: was 300 kPa)")
 add("R2_precision_reg", "pneumatics", "envelope", bx(385.0, 150.0, 17.0, 425.0, 190.0, 97.0), "envelope", 0.2,
-    "UNVERIFIED", "300 -> 120 kPa supply for the Flow EZ 345 mbar (needs 1100 mbar, max 1300; V:FLUIGENT_FEZ_P)")
+    "UNVERIFIED", "400 -> 120 kPa supply for the Flow EZ 345 mbar (needs 1100 mbar, max 1300; V:FLUIGENT_FEZ_P)")
 add("air_pressure_switch", "pneumatics", "envelope", bx(385.0, 118.0, 17.0, 405.0, 136.0, 60.0), "envelope", 0.05,
-    "UNVERIFIED", "low-supply alarm (< 250 kPa) -> fault")
+    "UNVERIFIED", "low-supply alarm (< 450 kPa at the inlet) -> fault; the lid switch trips at 350 kPa "
+    "(revised at integration: was 250 kPa)")
 add("switch_valves_3x3-2", "pneumatics", "envelope", bx(250.0, 250.0, 150.0, 286.0, 274.0, 175.0), "envelope", 0.2,
     "UNVERIFIED", "3 x 3/2 solenoid valves on a manifold: ch2 -> P_mv | conjugate bottle | HQDP bottle; bottle vent")
 add("A1_manifold", "bottles", "custom", bx(340.0, 122.0, 170.0, 400.0, 146.0, 190.0), "PEEK", 0.05, "[assessment]",

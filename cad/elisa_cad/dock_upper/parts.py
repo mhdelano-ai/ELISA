@@ -89,7 +89,7 @@ def spring_env(v, dz=0.0):
 
 # ------------------------------------------------------------------------------------------------ yokes
 def yoke(vid, dz=0.0):
-    """Yoke blade (laser-cut 1.4310 sheet 1.0, folded/brazed where noted). Returns (solid, rod_top_z, rod_bot_z).
+    """Yoke blade (laser-cut 1.4404 sheet 1.0 -- revised at integration, was 1.4310, folded/brazed where noted). Returns (solid, rod_top_z, rod_bot_z).
     dz = vertical travel of the yoke (+ up) relative to rest."""
     v = IF.VALVES[vid]
     c = IF.CYLINDERS[vid]
@@ -324,7 +324,7 @@ def standoffs():
 
 
 def spring_plate():
-    """Stainless 1.4301 plate 1.5 (laser-cut, flat-ground): seat of all pin springs, open stop of V3, lower stop
+    """Stainless 1.4404 plate 1.5 (revised at integration, was 1.4301) (laser-cut, flat-ground): seat of all pin springs, open stop of V3, lower stop
     of the V3 button. Holes: necks + 0.3, press-pad stem, standoff screws."""
     z0, z1 = P.SPRING_PLATE_Z
     sp = box(1.0, 76.0, 3.0, 47.0, z0, z1)

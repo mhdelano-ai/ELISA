@@ -21,7 +21,7 @@ TUBES = {  # name: (material, ID mm, OD mm, source)
     "FEP_0.75": ("FEP", 0.030 * IN, 1 / 16 * IN, "[assessment] waste/supply, low resistance"),
     "PTFE_gas": ("PTFE", 1 / 16 * IN, 1 / 8 * IN, "[assessment] gas lines 1/8 x 1/16 in"),
     "PU_6x4": ("PU", 4.0, 6.0, "[assessment] lab-air supply"),
-    "PU_4x2.5": ("PU", 2.5, 4.0, "[assessment] lid pilot supply 300 kPa"),
+    "PU_4x2.5": ("PU", 2.5, 4.0, "[assessment] lid pilot supply 400 kPa (interface Rev B)"),
     "shield_lead": ("shielded coax", 0.0, 3.0, "docs/13 §6.3"),
 }
 
@@ -36,10 +36,11 @@ def port_dock(pid):
     return I.card_to_dock(I.PORTS[pid].xy)
 
 
-# gland entry points (IR-2): west wall X 150, east wall X 320; every line has its own Y (no crossings)
-GW = {"P_b": (96, 120), "P_byp": (100, 104), "P_cf": (104, 120), "P_in": (112, 120), "P_a": (116, 104),
-      "P_d1": (120, 120), "P_d2": (124, 112)}
-GE = {"P_s": (78, 110.75), "P_a2": (70, 122), "P_wo": (86, 112), "P_rf": (64, 118)}
+# gland entry points (revised at integration): the exact LOWER line exits of interface Rev B LIQUID_LINE_EXITS
+# (west wall X 150, east wall X 320). P_b and P_a share Y 100 (Z 108 / 110): the deeper line takes the lane further
+# west so no vertical crosses a horizontal (checked by route_pair_clashes)
+GW = {k: I.LIQUID_LINE_EXITS[k][1:] for k in ("P_in", "P_byp", "P_b", "P_a", "P_d1", "P_d2", "P_cf")}
+GE = {k: I.LIQUID_LINE_EXITS[k][1:] for k in ("P_rf", "P_s", "P_wo", "P_a2")}
 LANE_Y = 316.5        # pump lines descend between the well rear wall (Y 312-314) and the pump spine (Y 319)
 Z_LANE = {"P_a": 156.0, "gas_conj": 162.0, "P_d2": 167.0, "P_d1": 170.0, "S_b": 173.0}   # west lanes at Y 203
 
@@ -97,12 +98,11 @@ class Route:
 
 
 def lower_estimate(g, pid):
-    """Manhattan gland -> pass-through -> card port (owner DOCK LOWER; estimate)."""
-    pt = PW if g[0] == GW_X else PE
-    pd = port_dock(pid)
-    d1 = sum(abs(a - b) for a, b in zip(g, pt))
-    d2 = abs(pd[0] - pt[0]) + abs(pd[1] - pt[1]) + abs(pd[2] - pt[2])
-    return d1 + d2
+    """(revised at integration) LOWER-internal length = the real LOWER route (card port -> vertical drop -> R 25 bend
+    -> wall exit), taken from dock_lower.geom.tube_route (pure module, no CAD). Was a Manhattan estimate."""
+    from ..dock_lower import geom as LG
+    pts = LG.tube_route(pid)
+    return sum(math.dist(pts[i], pts[i + 1]) for i in range(len(pts) - 1))
 
 
 ROUTES: list[Route] = []
@@ -134,18 +134,19 @@ def to_head(key, xa, ya):
 
 # ----------------------------------------------------------------------------------------------- card liquid lines
 R("P_in (SM-FL -> card)", "PEEK_0.127",
-  [(0.0, 110.0, 160.0), (4.0, 110.0, 160.0), (34.0, 110.0, 160.0), (138.0, 110.0, 160.0), (138.0, 112.0, 160.0),
-   (138.0, 112.0, 120.0), gw("P_in")],
+  [(0.0, 110.0, 160.0), (4.0, 110.0, 160.0), (34.0, 110.0, 160.0), (133.0, 110.0, 160.0),
+   (133.0, GW["P_in"][0], 160.0), (133.0, GW["P_in"][0], GW["P_in"][1]), gw("P_in")],
   "SM-FL outlet (via the P_in sensor)", "P_in", port="P_in", external=P.SMFL_OUTLET_TO_DOCK, inline_uL=1.0,
   assumed="docs/13 §2.6: PEEK 3.8 uL (0.3 m x 0.127 mm); >= 0.3 m isolation (docs/13 §2.5)",
   allowed=WALLS + ("P_in_pressure_sensor",), note="sensor swept volume <= 1 uL UNVERIFIED; external 0.2 m UNVERIFIED")
 R("P_b (SV_b -> card)", "PEEK_0.102",
-  [(140.0, 77.0, 177.0), (143.0, 77.0, 177.0), (143.0, 96.0, 177.0), (143.0, 96.0, 120.0), gw("P_b")],
+  [(140.0, 77.0, 177.0), (143.0, 77.0, 177.0), (143.0, GW["P_b"][0], 177.0), (143.0, GW["P_b"][0], GW["P_b"][1]),
+   gw("P_b")],
   "SV_b port P_b", "P_b", port="P_b", assumed="docs/13 §5.1: outlet line 0.25 mm x 50 mm = 2.5 uL",
   allowed=WALLS + ("SV_b_selection_valve",))
 R("P_cf (conjugate tube -> card)", "FEP_0.25",
-  [(65.0, 100.0, iz0 + 45), (65.0, 103.0, iz0 + 45), (65.0, 103.0, 182.0), (135.0, 103.0, 182.0),
-   (135.0, 104.0, 182.0), (135.0, 104.0, 120.0), gw("P_cf")],
+  [(65.0, 100.0, iz0 + 45), (65.0, 103.0, iz0 + 45), (65.0, 103.0, 182.0), (136.0, 103.0, 182.0),
+   (136.0, GW["P_cf"][0], 182.0), (136.0, GW["P_cf"][0], GW["P_cf"][1]), gw("P_cf")],
   "conjugate tube (cold box)", "P_cf", port="P_cf", assumed="docs/13 §5.2: dead volume ~100 uL in the 0.26 mL fill",
   allowed=WALLS + ("conj_tube_2mL", "conj_holder_block"))
 R("P_d1 coil (S_IC1 <-> card)", "FEP_0.5",
@@ -153,32 +154,39 @@ R("P_d1 coil (S_IC1 <-> card)", "FEP_0.5",
   "S_IC1 valve", "P_d1", port="P_d1", assumed="docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin)",
   allowed=WALLS + ("S_IC1_valve_syringe",))
 R("P_d2 coil (S_IC2 <-> card)", "FEP_0.5",
-  pump_head("S_IC2", 0, Z_LANE["P_d2"]) + [(292.0, 203.0, Z_LANE["P_d2"])] + west_strip("P_d2", 129.0, Z_LANE["P_d2"]),
+  pump_head("S_IC2", 0, Z_LANE["P_d2"]) + [(292.0, 203.0, Z_LANE["P_d2"]), (129.0, 203.0, Z_LANE["P_d2"]),
+                                           (129.0, 120.0, Z_LANE["P_d2"]), (129.0, 120.0, 104.0),
+                                           (129.0, GW["P_d2"][0], 104.0), (129.0, GW["P_d2"][0], GW["P_d2"][1]),
+                                           gw("P_d2")],   # (revised at integration) under the other lines, not SV_b
   "S_IC2 valve", "P_d2", port="P_d2", assumed="docs/13 §3.2.2: 60 uL FEP coil", allowed=WALLS + ("S_IC2_valve_syringe",))
 R("P_a (S_A -> card, via FS1)", "PEEK_0.25",
   pump_head("S_A", 0, Z_LANE["P_a"]) + [(304.45, LANE_Y, Z_LANE["P_a"]), (304.45, 203.0, Z_LANE["P_a"])]
-  + west_strip("P_a", 132.0, Z_LANE["P_a"]), "S_A valve port 1", "P_a", port="P_a", inline_uL=1.0,
+  + west_strip("P_a", 145.0, Z_LANE["P_a"]), "S_A valve port 1", "P_a", port="P_a", inline_uL=1.0,
   assumed="clean A1 (prime only)", allowed=WALLS + ("S_A_valve_syringe", "FS1_SLF3S_P_a"),
   note="FS1 internal volume UNVERIFIED (1 uL allowance)")
 R("P_byp (card -> waste, air gap)", "FEP_0.75",
-  [gw("P_byp"), (124.0, 100.0, 104.0), (124.0, 100.0, 24.0), (124.0, 140.0, 24.0), (441.5, 140.0, 24.0),
+  [gw("P_byp"), (124.0, GW["P_byp"][0], GW["P_byp"][1]), (124.0, GW["P_byp"][0], 24.0), (124.0, 140.0, 24.0),
+   (441.5, 140.0, 24.0),
    (441.5, 230.0, 24.0)] + to_head("P_byp", 441.5, 230.0),
   "P_byp", "waste air-gap head", port="P_byp", assumed="waste (docs/13 §3.7)",
   allowed=WALLS + ("waste_airgap_head", "leak_electrode_1"))
 R("P_s (card -> FS2 -> S_RC)", "PEEK_0.25",
-  [ge("P_s"), (330.0, 78.0, 110.75), (330.0, LANE_Y, 110.75), (412.0, LANE_Y, 110.75), (412.0, LANE_Y, 232.0),
+  [ge("P_s"), (330.0, GE["P_s"][0], GE["P_s"][1]), (330.0, LANE_Y, GE["P_s"][1]), (412.0, LANE_Y, GE["P_s"][1]),
+   (412.0, LANE_Y, 232.0),
    (412.0, pump_port("S_RC")[1], 232.0), pump_port("S_RC")],
   "P_s", "S_RC valve (pull only)", port="P_s", inline_uL=1.0, assumed="product side, pulled to waste (no budget)",
   allowed=WALLS + ("FS2_P_s", "S_RC_valve_syringe"))
 R("P_a2 (S_A -> card)", "PEEK_0.25",
-  pump_head("S_A", 2, 122.0) + [(331.5, LANE_Y, 122.0), (331.5, 70.0, 122.0), ge("P_a2")],
+  pump_head("S_A", 2, 122.0) + [(331.5, LANE_Y, 122.0), (331.5, 193.0, 122.0), (322.0, 193.0, 122.0),
+                                 (322.0, 193.0, GE["P_a2"][1]), (322.0, GE["P_a2"][0], GE["P_a2"][1]), ge("P_a2")],
   "S_A valve port 2", "P_a2", port="P_a2", assumed="clean A1 (DEV-6 of docs/18)", allowed=WALLS + ("S_A_valve_syringe",))
 R("P_wo (card -> waste, air gap)", "FEP_0.75",
-  [ge("P_wo"), (327.0, 86.0, 112.0), (327.0, 86.0, 30.0), (327.0, 290.0, 30.0)] + to_head("P_wo", 327.0, 290.0),
+  [ge("P_wo"), (327.0, GE["P_wo"][0], GE["P_wo"][1]), (327.0, GE["P_wo"][0], 30.0), (327.0, 290.0, 30.0)]
+  + to_head("P_wo", 327.0, 290.0),
   "P_wo", "waste air-gap head", port="P_wo", assumed="waste", allowed=WALLS + ("waste_airgap_head",))
 R("P_rf (HQDP tube -> card)", "FEP_0.25",
-  [(443.0, 43.0, 147.0), (443.0, 43.0, 160.0), (443.0, 97.5, 160.0), (326.0, 97.5, 160.0), (326.0, 64.0, 160.0),
-   (326.0, 64.0, 118.0), ge("P_rf")],
+  [(443.0, 43.0, 147.0), (443.0, 43.0, 160.0), (443.0, 97.5, 160.0), (326.5, 97.5, 160.0),
+   (326.5, GE["P_rf"][0], 160.0), (326.5, GE["P_rf"][0], GE["P_rf"][1]), ge("P_rf")],
   "HQDP tube (dark sleeve)", "P_rf", port="P_rf", assumed="docs/13 §5.2: dead ~200 uL in the 0.6 mL fill",
   allowed=WALLS + ("HQDP_holder",))
 
@@ -197,7 +205,7 @@ R("gas -> conjugate tube (fill)", "PTFE_gas",
   "switch valve 2", "conjugate tube cap", assumed="gas", allowed=WALLS + ("switch_valves_3x3-2", "conj_tube_2mL",
   "conj_holder_block"))
 R("gas -> HQDP tube (fill)", "PTFE_gas",
-  [(286.0, 271.0, 162.0), (326.0, 271.0, 162.0), (326.0, 271.0, 205.0), (326.0, 118.0, 205.0), (452.0, 118.0, 205.0),
+  [(286.0, 271.0, 162.0), (327.5, 271.0, 162.0), (327.5, 271.0, 205.0), (327.5, 118.0, 205.0), (452.0, 118.0, 205.0),
    (452.0, 40.0, 205.0), (440.0, 40.0, 205.0), (440.0, 40.0, 147.0)],
   "switch valve 3", "HQDP tube cap", assumed="gas", allowed=WALLS + ("switch_valves_3x3-2", "HQDP_holder"))
 
@@ -233,7 +241,7 @@ R("lab air -> FR1", "PU_6x4",
   [(470.0, 380.0, 45.0), (452.0, 380.0, 45.0), (452.0, 195.0, 45.0), (360.0, 195.0, 45.0), (360.0, 190.0, 45.0)],
   "right-panel push-in (behind the Gamry)",
   "FR1", allowed=WALLS + ("FR1_filter_regulator",))
-R("FR1 300 kPa -> lid pilots (umbilical)", "PU_4x2.5",
+R("FR1 400 kPa -> lid pilots (umbilical)", "PU_4x2.5",
   [(360.0, 190.0, 160.0), (360.0, 196.0, 160.0), (328.0, 196.0, 160.0), (328.0, 196.0, 176.0), (328.0, 210.0, 176.0),
    (258.0, 210.0, 176.0), (258.0, 208.0, 176.0), (258.0, 208.0, 180.0)], "FR1", "umbilical grommet",
   allowed=WALLS + ("FR1_filter_regulator",))

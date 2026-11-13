@@ -1,13 +1,17 @@
 # 21 — Dock LOWER bay: nest, anvil, magnet bay, electrode bay, reagent cold plate (C2 prototype)
 
-Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK LOWER — design and checks complete for this round. Cartridge A only (docs/13 Rev B),
+Status: 2026-11-13, **stage C0 desk work**, physical design round, DOCK LOWER — design and checks complete for this round;
+**revised at integration** (docs/23, interface.py Revision B): guide bushes at (−8, 46)/(84, 4), anvil x −15…91, nest
+corner block for the card's poka-yoke chamfer, two latch catch brackets, two hinge pedestals, bolt/dowel holes to the
+BASE deck, clamp design 300 N, interface now holds the slot, pogo, M_c and thick-zone values of §8/§9 (all §9 requests
+resolved, docs/18 §15); by default only `assy_lower_bay_hold_RC.step` is written (`--all-states` for the rest). Cartridge A only (docs/13 Rev B),
 dedicated bench dock, **C2 prototype** (catalogue actuators + machined parts). Inputs: docs/18 (binding),
 `cad/elisa_cad/interface.py` (imported, not edited), docs/13 §2.2/§2.5/§2.7/§3.3/§3.8/§6/§7.2, docs/11 §5.4, docs/16
 §2–§3, `mag_b.py`/`mag_far.py`. Nothing is ordered. This document changes no other document.
-CAD: `cad/elisa_cad/dock_lower/` — `cd cad && python -m elisa_cad.dock_lower.build` (≈ 4.5 min; `--fast` skips the
-M_d sweep, ≈ 2.5 min) → `cad/out/dock_lower/` (STEP in **dock** coordinates, PNG in card coordinates,
-`calcs.json`, `checks.json`, `build_summary.json`). The card is the interface envelope (card agent's model not yet
-available).
+CAD: `cad/elisa_cad/dock_lower/` — `cd cad && python -m elisa_cad.dock_lower.build` (≈ 5 min; `--fast` skips the
+M_d sweep, ≈ 2.5 min; `--all-states` adds the five other state assemblies and the sub-assemblies) → `cad/out/dock_lower/`
+(STEP in **dock** coordinates, PNG in card coordinates, `calcs.json`, `checks.json`, `build_summary.json`). The
+module checks use the interface card envelope (now with the poka chamfer); the real card is checked in docs/23.
 
 Source tags as docs/13/18: docs § | `I.NAME` (interface.py) | **Derived** (arithmetic shown or in `calcs.py`) |
 **CHOICE-Ln** (§7) | **DEV-Ln** (§8) | **ICR-n** (§9) | **UNVERIFIED** | [assessment]. Units mm, N, °C, card coords
@@ -15,14 +19,20 @@ Source tags as docs/13/18: docs § | `I.NAME` (interface.py) | **Derived** (arit
 
 ## 1. Summary
 
-* **Anvil** — one Al plate (x −12…90, y −16…66, 15 thick) carrying the nest frame on top and the cold zone in a
+* **Anvil** — one Al plate (x −15…91 (revised at integration; was −12…90), y −16…66, 15 thick) carrying the nest frame on top and the cold zone in a
   cut-out; a bottom pocket (x 32.5–62.5, y 0–50) leaves the **5-mm plate** over the magnet bay with windows W1/W2
   (11.4 sq), the drag slot (interface slot ∪ holder sweep + 0.30, DEV-L4), the contact opening and the M_w recess.
   Ten PEEK port inserts (+ P_cf in the cold block) with bonded 1/16″ PEEK tubes and flat gaskets, inserted from
   below and held by seven retainer plates; gaskets replaceable from the top.
 * **Nest** — anodised Al frame 5 mm on the anvil: zirconia datum pins A1/A2/B, two spring pushers, 1.5 × 45° lead-in
   for a vertical drop, 1.8 mm clearance with a perimeter **drip gutter** and two drains, card-presence sensor, two
-  bronze bushes for the lid head guide pins (positions chosen here, ICR-1).
+  bronze bushes for the lid head guide pins at interface `HEAD_GUIDE_PINS` (−8, 46) / (84, 4) (revised at integration;
+  ICR-1 asked (−7, 46)/(83, 4)), and a **corner block** 0.3 clear of the card's 4 × 45° poka-yoke chamfer at (75.5, 50)
+  (revised at integration, `NEST_POKA_BLOCK`: a card in any wrong orientation lands on it, checked with the real card).
+* **Integration parts** (revised at integration): two Al **latch catch brackets** on the anvil front face carrying the
+  Kipp K0045.9143372 catch plates of the lid latches (95 N each up; 22 MPa bending, Derived); two Al **hinge pedestals**
+  (dock X 150–154 / 316–320, Y 185–200, Z 44–160) on the bay base plate carrying the lid hinge blocks; bay base plate
+  bolted to the BASE deck with 6 × M6 (dock X 165/305 × Y 35/110/185) + 2 dowels (`LOWER_MOUNT`).
 * **Cold zone** — Al cold block (x 1.6–20, y 2–48) in a PEEK U-frame (break x 20–24), one 30 × 30 Peltier
   (Custom Thermoelectric 12711-5L31-04CL), heat sink + fan exhausting forward through a duct, 5-mm foam, dry-air purge;
   heat load 2.6 W (3.9 W design) at **1.25 A / 5.4 V / 6.7 W**; heat sink ≤ 0.94 K/W.
@@ -55,7 +65,8 @@ anvil's N and S edges), thermistors.
 under the anvil corners; open-top U-slots in the walls for the tubes and the cable.
 **M_d system** (stays): Y stage, X stage, adapter, Z unit + umbrella, post, holder + magnet.
 
-States modelled (`geom.STATES`, STEP `assy_lower_bay_<state>.step`): `load` (M_c parked, M_d parked lowered under
+States modelled (`geom.STATES`, STEP `assy_lower_bay_<state>.step`; revised at integration: only `hold_RC` written by
+default, the others and the sub-assemblies with `--all-states`): `load` (M_c parked, M_d parked lowered under
 J, pogo down, pushers extended, no card) · `collect_IC1` (M_c1 up) · `gather_IC1` (M_d up at pass-1 start) ·
 `drag_mid_IC1` · `hold_RC` · `beadout_end`; plus `collect_IC2`, `gather_IC1_low` for the checks.
 Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_system`, `sub_electrode_bay`,
@@ -67,8 +78,8 @@ Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_syst
 
 | Part | Material | Key dimensions | Critical tolerances | How made |
 |---|---|---|---|---|
-| Anvil | Al cast tooling plate (stress-relieved class, UNVERIFIED grade) — non-magnetic, hard-anodised 25 µm after machining | 102 × 82 × 15; pocket x 32.5–62.5 / y 0–50 to z −5; openings per `I.WINDOWS`, slot (DEV-L4), `I.ANVIL_CONTACT_OPENING`, `I.M_W_RECESS`; 10 × Ø3.3 H7 insert bores; 2 × Ø10 bush bores; gutter 1.5 × 1.0; 4 dowel holes | top lapped flat **0.010** over the card area (with cold block and PEEK frame lapped as one, target 0.02 total, `I.TOL`); thin plate 5.000 ± 0.005 measured after anodising (sets the M_c gap); openings ± 0.02 to the datum-pin bores of the frame (dowelled) | CNC mill, stress relieve, anodise, lap top as an assembly |
-| Nest frame | Al 6061 hard-anodised | 102 × 82 × 5, opening card + 1.8, lead-in 1.5 × 45°; half-open reamed Ø4 bores for the pins; pusher bores Ø4 | pin bores ± 0.01 (`I.TOL` datum_pin_position) to the anvil dowels | CNC mill + ream |
+| Anvil | Al cast tooling plate (stress-relieved class, UNVERIFIED grade) — non-magnetic, hard-anodised 25 µm after machining | 106 × 82 × 15 (revised at integration); pocket x 32.5–62.5 / y 0–50 to z −5; openings per `I.WINDOWS`, slot (DEV-L4), `I.ANVIL_CONTACT_OPENING`, `I.M_W_RECESS`; 10 × Ø3.3 H7 insert bores; 2 × Ø10 bush bores; gutter 1.5 × 1.0; 4 dowel holes | top lapped flat **0.010** over the card area (with cold block and PEEK frame lapped as one, target 0.02 total, `I.TOL`); thin plate 5.000 ± 0.005 measured after anodising (sets the M_c gap); openings ± 0.02 to the datum-pin bores of the frame (dowelled) | CNC mill, stress relieve, anodise, lap top as an assembly |
+| Nest frame | Al 6061 hard-anodised | 106 × 82 × 5, opening card + 1.8, lead-in 1.5 × 45°; half-open reamed Ø4 bores for the pins; pusher bores Ø4; corner block (poka-yoke) z 0.2–5.0 with 1.5 lead-in (revised at integration) | pin bores ± 0.01 (`I.TOL` datum_pin_position) to the anvil dowels | CNC mill + ream |
 | PEEK break frame | PEEK unfilled | U-frame in the cut-out x 0.6–24 / y 1–49, 15 deep; 4.0 wide at x 20–24, 1.0 elsewhere | top coplanar with anvil after lapping | CNC |
 | Cold block | Al 6061 | top 18.4 × 46 × 22 deep + spreader 30 × 30 × 5 (x −10…20, y 2…32) under the module; Ø3.3 bore for P_cf; thermistor well | top coplanar (lapped with the anvil) | CNC |
 | Port insert (×11) | PEEK | Ø3.29 × 14.62 (anvil) / 21.6 (P_cf); bore Ø1.60 for the bonded tube; top at z −0.38 | length ± 0.01 (sets seal compression 0.12); tube end faced flush with z 0 in a fixture | turn; bond tube (adhesive UNVERIFIED), face |
@@ -85,7 +96,9 @@ Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_syst
 | Pogo guide block, wedge | PEEK | wedge 2:1 ramp, 6 mm stroke → 3 mm lift | ramp angle | CNC |
 | Leak electrode | FR4/PTFE PCB, ENIG interdigitated | 6.9 × 6.1 | — | PCB |
 | Exhaust duct | PEEK / ABS sheet | 24 × 26 duct, y −55…−14, to the front panel | — | fold/print |
-| Bay frame | Al 6061 | base 170 × 180 × 4; walls 8 / 6 thick; beams 8 × 10; dowels Ø4 | dowel positions ± 0.02 | CNC |
+| Bay frame | Al 6061 | base 170 × 180 × 4 (6 × M6 counterbored + 2 × Ø6 dowel holes to the BASE deck, revised at integration); walls 8 / 6 thick; beams 8 × 10; dowels Ø4 | dowel positions ± 0.02 | CNC |
+| Latch catch bracket (×2, revised at integration) | Al 6061 | shelf 26 × 25 × 5 + flange 26 × 4 × 11, 2 × M5 into the anvil front face | catch-plate position ± 0.2 to the latch | CNC |
+| Hinge pedestal (×2, revised at integration) | Al 6061 | 4 × 15 × 116, top at dock Z 160 (hinge blocks of the lid bolt on), 2 × M5 from below + gusset | top height ± 0.05 (hinge axis) | CNC |
 
 ## 4. Catalogue parts
 
@@ -111,10 +124,10 @@ Sub-assemblies: `sub_nest_anvil`, `sub_cold_stack`, `sub_Mc_units`, `sub_Md_syst
 
 ## 5. Calculations (Derived; full numbers in `cad/out/dock_lower/calcs.json`)
 
-**5.1 Anvil plate deflection.** Whole latch force 250 N (`I.CLAMP_DESIGN_FORCE`) on the assay zone (2575 mm²) →
-q = 0.097 N/mm². Thin plate between thick zones b = 30 (x), a = 50 (y), t = 5, E 69 GPa; simply supported
-rectangle α(1.5) = 0.0843 (Roark, recalled, UNVERIFIED): w = α q b⁴/(E t³) = **0.8 µm**, × 5 for the openings
-[assessment] = **3.8 µm**. Local upward loads (M_c preload 6 N + pogo shoulder ≈ 10 N) 0.25 µm. Against the
+**5.1 Anvil plate deflection.** Whole latch force **300 N** (`I.CLAMP_DESIGN_FORCE`, revised at integration; was 250)
+on the assay zone (2575 mm²) → q = 0.117 N/mm². Thin plate between thick zones b = 30 (x), a = 50 (y), t = 5, E 69 GPa;
+simply supported rectangle α(1.5) = 0.0843 (Roark, recalled, UNVERIFIED): w = α q b⁴/(E t³) = **0.9 µm**, × 5 for the
+openings [assessment] = **4.6 µm** (was 3.8 at 250 N). Local upward loads (M_c preload 6 N + pogo shoulder ≈ 10 N) 0.25 µm. Against the
 0.16 ± 0.05 gap: negligible. Foil span under the slot valves (docs/13 §2.1 formula, 1.5 N): G1/G2 local slot width
 4.44 → **19 µm** (docs/13: 15 µm at 4.0), V11 4.0 → 15.5 µm, G3/G4/V12 3.4 → 11 µm.
 
@@ -126,7 +139,8 @@ at 5 positions at assembly with a gauge through the windows; if any > ± 0.05, s
 **5.3 Face seals.** Annulus 6.28 mm², compression 0.12/0.50 = 24 %, shape factor 0.80; E_c = E(1 + 2·0.6·S²)
 (Gent form, k and E UNVERIFIED): **50 ShA 6.7 N, 60 ShA 12.0 N, 70 ShA 16.0 N** per seal. 11 seals at 50–60 ShA:
 74–132 N, inside the docs/18 §6 budget only at ≤ 55 ShA [assessment] → specify 50 ShA (CHOICE-L5); 70 ShA would push
-the latch above 250 N.
+the latch above 250 N. (revised at integration) With the as-built head (card-face clamp ≥ 198 N, docs/20) the 50-ShA
+seals need 1.5 × 74 = 110 N → margin 88 N; 60 ShA (1.5 × 132 = 198 N) is the limit.
 
 **5.4 Thermal (cold zone).** Loads (k: PEEK 0.25, COC 0.15, foam 0.035 W/m·K, UNVERIFIED): PEEK break 1.16 W, card
 laminate + bridges 0.05, card top via the PEEK lid plate 0.50, foam shell 0.84, fill line 0.05 → **2.6 W**, design
@@ -180,7 +194,7 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 | 6.3 | Holder plan clearance in the plate openings | shapely, 2.6-sq holder at 0.25-mm steps | drag ≥ **0.34**, gather 0.90, bead-out 0.30 (interface slot alone: **0.03** at the J fillet, 0.16 on the 45° arcs, corners outside the round end cap → DEV-L4) |
 | 6.4 | Tube bend radii | circumradius of consecutive route points | all 11 routes **25.0** (≥ 25, MTC rule) |
 | 6.5 | Valve tips vs anvil-top features | shapely: tip edge to openings, M_w recess, gasket seats, cold-zone seams | anvil/cold class min: V15 **0.25** (accepted, CHOICE-5), V3 → P_byp seat **0.36** (≥ 0.3 face-seal rule, < 0.5 generic, ICR-7), V16 0.50, others ≥ 0.5; slot-class tips inside the slot (as docs/18 §11) |
-| 6.6 | Service: can the anvil be removed? | anvil module translated +5 … +120 mm in z (state `load`) against the bay frame and M_d system | first run: fan + duct hit the SW beam at 5–40 mm → fan/duct moved to x ≥ −4, beam ends at x −5; **re-run: 0 hits at 5, 10, 20, 40, 60, 90, 120 mm** (prerequisites: card out, M_c parked, M_d parked lowered, tube unions outside the walls opened, Gamry cable unplugged at the bulkhead, heater/sensor/fan/cylinder connectors and the purge line unplugged) |
+| 6.6 | Service: can the anvil be removed? (revised at integration: latch brackets belong to the anvil module; re-run 0 hits) | anvil module translated +5 … +120 mm in z (state `load`) against the bay frame and M_d system | first run: fan + duct hit the SW beam at 5–40 mm → fan/duct moved to x ≥ −4, beam ends at x −5; **re-run: 0 hits at 5, 10, 20, 40, 60, 90, 120 mm** (prerequisites: card out, M_c parked, M_d parked lowered, tube unions outside the walls opened, Gamry cable unplugged at the bulkhead, heater/sensor/fan/cylinder connectors and the purge line unplugged) |
 | 6.7 | Port insert replacement | by construction | gasket: from the top, card out, no tools beyond tweezers. Insert: lift the anvil module (6.6), unscrew the retainer (2 × M2), push the insert down; insert + bonded tube + wall union are one spare "port line" (11 spares) |
 
 ## 7. Choices (open points decided here; the user may overrule)
@@ -192,7 +206,7 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 | CHOICE-L3 | pocket / thick-zone layout | one bottom pocket x 32.5–62.5, y 0–50, bosses for island, P_a2, P_s | M_c flange, M_d sweep and electrode bay share one 5-mm plate | separate pockets per window |
 | CHOICE-L4 | cold zone | cold block in a PEEK U-frame, one 30 × 30 Peltier under a spreader, 25-mm fan + front exhaust duct | 8× margin on Qmax; fits x ≤ 20 | two small modules |
 | CHOICE-L5 | port inserts, gasket | insert from below, retainer plates, 50 ShA gasket | gasket swap from the top; seal force ≤ budget | 6-32 fittings (pitch) |
-| CHOICE-L6 | head guide pins | Ø6 pins at (−7, 46) and (83, 4), bronze bushes in anvil + frame | diagonal = best rotational location; outside card, ports, pushers | 3 pins |
+| CHOICE-L6 | head guide pins | Ø6 pins at (−8, 46) and (84, 4) (revised at integration, interface `HEAD_GUIDE_PINS`; was (−7, 46)/(83, 4) with a 0.2-mm wall to the nest opening and 0 mm to the anvil edge), bronze bushes in anvil + frame | diagonal = best rotational location; outside card, ports, pushers | 3 pins |
 | CHOICE-L7 | drips | perimeter gutter 1.5 × 1 with drains at both front corners → BASE drip tray; umbrella on the Z unit | spills never reach the magnet bay stage | drip pan |
 | CHOICE-L8 | anvil heating | 4 polyimide foil heaters under the thick frame, PID on thermistors at W1 and the RC | no heater near openings | cartridge heaters |
 | CHOICE-L9 | datum pins | zirconia, held in the frame, 0.2 above the anvil (gutter passes under) | non-magnetic, hard, insulating | hardened steel (magnetic) |
@@ -219,6 +233,12 @@ surplus; the die reaction goes through the press pad to the lid (docs/18 §7).
 | DEV-L6 | LOWER sub-claims (`I.LOWER_SUBCLAIMS_CARD`) and west/east pass-throughs | M_d stage z −126…−62; M_c units y −55…106, z to −77; tubes leave through wall W (card x −40) at z −56…−62 and wall E (x 130) at z −55…−58 | internal to DOCK LOWER except the wall exits (ICR-6) |
 
 ## 9. Interface change requests (interface.py / docs/18 not edited)
+
+(revised at integration) All resolved in interface.py Revision B (docs/18 §15): ICR-1 → `HEAD_GUIDE_PINS` (−8, 46)/
+(84, 4), bush top `NEST_FRAME_TOP_Z` 5.0; ICR-2 → `slot_polygon()` (widened slot adopted); ICR-3 → `POGO
+tip_z_retracted` −1.66; ICR-4 → `MAGNETS` M_c swing, parks, fail = hold; ICR-5 → `ANVIL_THICK_ZONES`; ICR-6 →
+`LIQUID_LINE_EXITS`, `PASS_THROUGHS` (cable window, Peltier exhaust: BASE adds a duct extension + louvre); ICR-7 →
+`VALVE_TIP_SEAT_MARGIN` 0.3 / `VALVE_TIP_EDGE_MARGIN` 0.5; ICR-8 → `MATERIALS`; ICR-9 → nest top 5.0 confirmed.
 
 | ICR | Name | Current | Needed | Why |
 |---|---|---|---|---|
@@ -248,8 +268,9 @@ Stage footprint and coordinated-path capability; M_c drive, Z gearmotor, pogo cy
 UNVERIFIED parts); probe length/tip style; gasket modulus and HQ/Tween compatibility; PEEK/COC/foam conductivities;
 Roark coefficients; B_r and bead moment (docs/13); M_d gap at 5 positions (shim); bead hand-over to BW against the
 0.245-N M_w/M_d interaction (DEV-5 M1 test); anodise thickness effect on the 5.000 plate; dry-air dew point.
-Card model not yet available — the interference with the real card (die, L3 bores, vents) must be re-run when
-`cad/out/card/` exists (only the envelope was checked: pogo tips and gaskets touch it by design).
+(revised at integration) The interference with the REAL card was run in docs/23 §4: pogo tips land on the six pads
+through the real contact window, gaskets compress only the foil around the real port holes, datum pins and pushers
+touch the real L3 edges, the corner block clears the chamfer by 0.3; no unintended contact in any magnet state.
 
 ## 12. Sources opened this session (2026-11-13)
 

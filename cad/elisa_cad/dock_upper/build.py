@@ -1,6 +1,8 @@
-"""Regenerate every DOCK UPPER output:  cd cad && python -m elisa_cad.dock_upper.build  [--fast]
-Writes cad/out/dock_upper/: STEP (custom parts, families, sub-assemblies, three lid configurations), PNG views,
-calcs.txt and checks.txt (the numbers quoted in docs/20)."""
+"""Regenerate every DOCK UPPER output:  cd cad && python -m elisa_cad.dock_upper.build  [--fast] [--all-states]
+Writes cad/out/dock_upper/: STEP (custom parts, families, lid frame sub-assembly, the CLOSED lid configuration), PNG
+views, calcs.txt and checks.txt (the numbers quoted in docs/20).
+(revised at integration) --all-states also writes lid_assembly_raised/open.step and subassy_head_closed.step (each
+~7 MB, regenerated on demand; docs/23 §3)."""
 from __future__ import annotations
 
 import math
@@ -34,7 +36,7 @@ def _mat(n, m, see_through=False):
     return m
 
 
-def export_all(cfgs, fh):
+def export_all(cfgs, fh, all_states=False):
     closed = cfgs["closed"]
     custom = [(n, s, m) for (n, s, m, k) in closed["rotating"] + closed["fixed"] if k == "custom"]
     fam = {}
@@ -51,10 +53,13 @@ def export_all(cfgs, fh):
     head = [(n, s, m) for (n, s, m, k) in closed["rotating"] if not n.startswith(("lid_", "cover", "cam_", "ENV_latch",
                                                                                    "lid_handle", "umbilical",
                                                                                    "ENV_umbilical", "ENV_lid_switch"))]
-    export_step(assembly(head, "head_closed"), OUT / "subassy_head_closed.step")
+    if all_states:
+        export_step(assembly(head, "head_closed"), OUT / "subassy_head_closed.step")
     lid = [(n, s, m) for (n, s, m, k) in assy.lid_parts(True) + assy.fixed_parts()]
     export_step(assembly(lid, "lid_frame_closed"), OUT / "subassy_lid_frame_closed.step")
     for name, c in cfgs.items():
+        if name != "closed" and not all_states:
+            continue
         a = assembly([(n, s, _mat(n, m) if isinstance(_mat(n, m), str) else "aluminium")
                       for (n, s, m, k) in c["rotating"] + c["fixed"]], f"lid_{name}")
         export_step(a, OUT / f"lid_assembly_{name}.step")
@@ -343,7 +348,7 @@ def exploded():
 
 
 # ------------------------------------------------------------------------------------------------ main
-def main(fast=False):
+def main(fast=False, all_states=False):
     t0 = time.time()
     fh = open(OUT / "checks.txt", "w")
     rep, text = calcs.report()
@@ -378,11 +383,13 @@ def main(fast=False):
     mh = checks.mass_and_com(head_only)
     log(f"head (moving 8 mm) mass {mh['mass_g']:.0f} g", fh)
     if not fast:
-        export_all(cfgs, fh)
+        export_all(cfgs, fh, all_states)
         render_views(cfgs, fh)
+    from elisa_cad.common import shrink_pngs
+    shrink_pngs(OUT)   # integration: palette PNGs (docs/23 §3.4)
     log(f"done in {time.time() - t0:.0f} s", fh)
     fh.close()
 
 
 if __name__ == "__main__":
-    main(fast="--fast" in sys.argv)
+    main(fast="--fast" in sys.argv, all_states="--all-states" in sys.argv)

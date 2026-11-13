@@ -49,23 +49,32 @@ TRAY = {"z0": 15.0, "floor_t": 1.0, "rim_h": 13.0, "inset": 3.0, "notch": 22.0,
 EXTR = 20.0                      # 20x20 slot-6 profile (dims UNVERIFIED, generic B-type class) [assessment]
 POST_INSET = 2.0                 # posts sit inside the 2 mm panels
 TOP_RAIL_Z = (FZ - SHEET_T - EXTR, FZ - SHEET_T)      # Derived 308-328
-PART_X = {"left": (147.0, 149.0), "right": (321.0, 323.0)}   # well partitions in the 5-mm gaps between claims
+PART_X = {"left": (147.0, 149.0), "right": (323.0, 325.0)}   # (revised at integration) right partition moved +2
+#   so the moving cam lever (X <= 320.0) keeps 3.0 mm (IR-5); left side: cover X 152.5 -> 3.5 mm   # well partitions in the 5-mm gaps between claims
 #   (cold compartment X <= 145 | LOWER X 150-320 | bottles X >= 325), Derived from SPACE_CLAIMS
 
 # Bay deck: carries LOWER_bay at its bottom face Z = 40 (interface request IR-1: bolt pattern below)
 DECK = {"x": (LOWER_BAY[0][0], LOWER_BAY[1][0]), "y": (LOWER_BAY[0][1], LOWER_BAY[1][1]),
         "z": (LOWER_BAY[0][2] - 10.0, LOWER_BAY[0][2]), "material": "Al 6082-T6, 10 mm, fly-cut top"}
 DECK_SPACERS_XY = [(170.0, 40.0), (300.0, 40.0), (170.0, 180.0), (300.0, 180.0), (235.0, 110.0)]  # [assessment]
-DECK_BOLTS = [(x, y) for x in (165.0, 235.0, 305.0) for y in (35.0, 110.0, 185.0)]   # IR-1: 9 x M6 threaded
-#   holes in the deck top (Z 40), 70 x 75 grid; LOWER uses any subset; dowel D6 H7 at (165,35) and slot at (305,35)
-DECK_DOWELS = {"round": (165.0, 50.0), "slot": (305.0, 50.0)}
+DECK_BOLTS = [(x, y) for x in (165.0, 235.0) for y in (35.0, 110.0, 185.0)] + \
+    [(305.0, y) for y in (35.0, 110.0, 185.0)]
+#   (revised at integration) interface Rev B LOWER_MOUNT uses the 6 holes at X 165 / 305; the 3 holes at X 235 lie
+#   under the M_d stage and are kept as spare tapped holes (IR-1)
+DECK_BOLTS_USED = list(I.LOWER_MOUNT["bolts_dock"])
+DECK_DOWELS = {"round": I.LOWER_MOUNT["dowel_round_dock"], "slot": I.LOWER_MOUNT["dowel_slot_dock"]}
 DECK_TUBE_SLOTS = []   # tubes leave LOWER through side-wall glands (IR-2), not through the deck
 
 # Interface request IR-2: tube glands in the LOWER_bay side walls (dock coords)
-GLAND_W = {"x": LOWER_BAY[0][0], "y": (95.0, 125.0), "z": (100.0, 125.0)}   # -X wall, west lines
-GLAND_E = {"x": LOWER_BAY[1][0], "y": (60.0, 92.0), "z": (100.0, 125.0)}    # +X wall, east lines, >= 15 mm from
-#   the Gamry bulkhead (Y ~107, Z 135)
-GLAND_C = {"x": LOWER_BAY[0][0], "y": (150.0, 195.0), "z": (60.0, 140.0)}   # -X wall, power/motor cables
+# (revised at integration) grommet windows in the well partitions around the exact LOWER line exits
+# (interface Rev B LIQUID_LINE_EXITS: west Y 84-116, Z 108-114; east Y 80.5-110.5 Z 112-115 and P_a2 at Y 161.5)
+GLAND_W = {"x": LOWER_BAY[0][0], "y": (82.0, 118.0), "z": (106.0, 116.0)}   # -X wall, west lines
+GLAND_E = {"x": LOWER_BAY[1][0], "y": (78.0, 113.0), "z": (110.0, 117.0)}   # +X wall, P_rf, P_s, P_wo (bulkhead Z 124+)
+GLAND_E2 = {"x": LOWER_BAY[1][0], "y": (190.0, 196.0), "z": (119.0, 125.0)}  # +X partition, P_a2 crossing at Y 193, Z 122
+GLAND_C = {"x": LOWER_BAY[0][0], "y": I.PASS_THROUGHS["cable_window_W"]["y"],
+           "z": I.PASS_THROUGHS["cable_window_W"]["z"]}                     # -X wall, power/motor cables (Rev B)
+EXHAUST = I.PASS_THROUGHS["peltier_exhaust"]   # (revised at integration) LOWER Peltier duct outlet at Y 20 -> BASE
+#   duct extension Y 2-20 + louvre in the front-bay panel (X 186-210, Z 118-144), 10.6 W
 
 # ------------------------------------------------------------------------------------------------ cold compartment
 CC = CL["BASE_cold_compartment"]["box"]        # ((10,20,15),(145,200,220))
@@ -125,3 +134,8 @@ SMFL_OUTLET_TO_DOCK = 200.0   # UNVERIFIED: SM-FL outlet fitting to the dock lef
 
 # ------------------------------------------------------------------------------------------------ tubing
 FLUID = {"eta": 0.89e-3}      # Pa s, docs/13 §3.1
+
+# ------------------------------------------------------------------------------------------------ air (revised at integration)
+AIR_LID_KPA = I.PLUNGER["pilot_pressure_kPa"]      # 400 (interface Rev B; was 300 here)
+AIR_SUPPLY_MIN_KPA = I.PLUNGER["air_supply_min_kPa"]   # 450 at the dock inlet; lab air spec 500-700 kPa [assessment]
+AIR_LOW_SWITCH_KPA = 450.0                         # BASE supply switch (warning/fault before the lid switch trips at 350)

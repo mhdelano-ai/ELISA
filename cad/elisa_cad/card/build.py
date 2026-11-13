@@ -133,6 +133,7 @@ def main():
     sizes = {p.name: round(p.stat().st_size / 1e6, 2) for p in OUT.iterdir()}
     big = {k: v for k, v in sizes.items() if v > 5.0}
     print("files", len(sizes), "largest MB", max(sizes.values()), "over 5 MB:", big)
+    C.shrink_pngs(OUT)   # integration: palette PNGs (docs/23 §3.4)
     print("total", round(time.time() - t0, 1), "s")
 
 

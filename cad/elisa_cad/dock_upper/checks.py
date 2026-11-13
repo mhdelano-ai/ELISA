@@ -64,7 +64,8 @@ def interference(parts, tol=1e-4, extra=None):
     return hits, npairs, len(items)
 
 
-def claim_check(parts, claim=P.CLAIM, allowed=("guide_pin_", "guide_ear_", "pin_", "press_pad_")):
+def claim_check(parts, claim=P.CLAIM, allowed=("guide_pin_", "guide_ear_", "pin_", "press_pad_", "hinge_block_")):
+    # (revised at integration) hinge blocks are in the Rev B claims UPPER_hinge_block_L/R
     """Portions of solids outside the UPPER claim box (volume)."""
     (x0, y0, z0), (x1, y1, z1) = claim
     big = Pt.box(x0 - 500, x1 + 500, y0 - 500, y1 + 500, z0 - 500, z1 + 500).val()
@@ -88,7 +89,8 @@ def sweep_check(rotating_parts, step=5.0, n_ang=None):
     """Rotate the lid (head raised) 0..85 deg; at each angle check overlap with every other space claim and with
     the operator loading-path box (at 85 deg); report the minimum clearance of the lid above the nest claim."""
     from elisa_cad.dock_upper.assy import rotate_lid
-    claims = {k: v["box"] for k, v in IF.SPACE_CLAIMS.items() if k != "UPPER_lid_closed"}
+    claims = {k: v["box"] for k, v in IF.SPACE_CLAIMS.items() if v.get("owner") != "DOCK UPPER"}   # (revised at
+    # integration: the Rev B UPPER_hinge_block claims are UPPER's own and the knuckles turn inside them)
     solids = [(n, s) for (n, s, *_r) in rotating_parts if not n.startswith("guide_pin_")]
     comp = cq.Compound.makeCompound([s.val() for _, s in solids])
     angles = [i * step for i in range(int(IF.LID_HINGE_AXIS["open_angle_deg"] / step) + 1)]

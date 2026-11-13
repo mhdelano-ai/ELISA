@@ -1,5 +1,5 @@
 {
- "step_files": 40,
+ "step_files": 31,
  "png_files": 13,
  "steps_over_8MB": [],
  "interference_hits": {
@@ -476,5 +476,5 @@
   "transit_gather_return_IC1": 0,
   "transit_gather_return_IC2": 0
  },
- "run_time_s": 269.4
+ "run_time_s": 506.9
 }

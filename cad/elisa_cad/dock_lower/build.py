@@ -1,6 +1,9 @@
-"""Regenerate every DOCK LOWER output:  cd cad && python -m elisa_cad.dock_lower.build [--fast]
+"""Regenerate every DOCK LOWER output:  cd cad && python -m elisa_cad.dock_lower.build [--fast] [--all-states]
 STEP files are written in DOCK coordinates (card coords + interface.CARD_ORIGIN_IN_DOCK) so they overlay the other
-agents' models; PNGs are in card coordinates. --fast skips the M_d sweep check (~2 min)."""
+agents' models; PNGs are in card coordinates. --fast skips the M_d sweep check (~2 min).
+(revised at integration) By default only the per-part STEP files and ONE state assembly (assy_lower_bay_hold_RC.step,
+the read state) are written; --all-states also writes the other five state assemblies and the six sub-assemblies
+(each state assembly is ~8 MB and is regenerated on demand, docs/23 §3)."""
 from __future__ import annotations
 
 import json
@@ -29,6 +32,7 @@ def export_parts():
         "retainer_island": P.retainer("ret_island"), "retainer_Ps": P.retainer("ret_Ps"),
         "guide_bush": P.guide_bushes()[0][1], "exhaust_duct": P.duct(), "foam_insulation": P.foam_shell(),
         "bay_frame": P.bay_frame(), "ebay_enclosure": P.ebay_enclosure(), "pogo_block": P.pogo_block(True),
+        "latch_bracket": P.latch_brackets()[0][1], "hinge_pedestal": P.hinge_pedestals()[0][1],
     }
     for n, s, m, k in P.mc_unit(1, 0.0):
         if k == "custom":
@@ -45,9 +49,12 @@ def export_parts():
     return files
 
 
-def export_assemblies():
+DEFAULT_STATES = ["hold_RC"]
+
+
+def export_assemblies(all_states=False):
     files = []
-    for st in G.RENDER_STATES:
+    for st in (G.RENDER_STATES if all_states else DEFAULT_STATES):
         items = assy.state_items(st)
         a = C.assembly([(n, _dock(s), m) for n, s, m, k in items], name=f"lower_bay_{st}")
         f = OUT / f"assy_lower_bay_{st}.step"
@@ -64,6 +71,8 @@ def export_assemblies():
         "sub_electrode_bay": lambda n: n.startswith(("ebay", "pogo", "WE_relay", "RH_", "gamry")),
         "sub_tubes": lambda n: n.startswith("tube_"),
     }
+    if not all_states:
+        return files
     for nm, f_ in subs.items():
         a = C.assembly([(n, _dock(s), m) for n, s, m, k in items if f_(n)], name=nm)
         f = OUT / f"{nm}.step"
@@ -72,7 +81,7 @@ def export_assemblies():
     return files
 
 
-def main(fast=False):
+def main(fast=False, all_states=False):
     t0 = time.time()
     log = {}
     log["calcs"] = calcs.run()
@@ -81,7 +90,7 @@ def main(fast=False):
     chk = checks.run(md=not fast)
     (OUT / "checks.json").write_text(json.dumps(chk, indent=1, default=str))
     print(f"checks done {time.time() - t0:.0f} s")
-    files = export_parts() + export_assemblies()
+    files = export_parts() + export_assemblies(all_states)
     print(f"STEP done {time.time() - t0:.0f} s")
     pngs = render.render_all(OUT)
     print(f"PNG done {time.time() - t0:.0f} s")
@@ -91,8 +100,9 @@ def main(fast=False):
                "md_sweep_collisions": {k: v["n_collisions"] for k, v in chk.get("md_sweep", {}).items()},
                "run_time_s": round(time.time() - t0, 1)}
     (OUT / "build_summary.json").write_text(json.dumps(summary, indent=1))
+    C.shrink_pngs(OUT)   # integration: palette PNGs (docs/23 §3.4)
     print(json.dumps(summary, indent=1))
 
 
 if __name__ == "__main__":
-    main(fast="--fast" in sys.argv)
+    main(fast="--fast" in sys.argv, all_states="--all-states" in sys.argv)
