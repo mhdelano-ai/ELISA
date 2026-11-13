@@ -111,7 +111,7 @@ def _raster(P, depth, cols, ids, W, H, zbuf, cbuf, ibuf, alpha_pass=False, abuf=
 
 def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None, bounds=None, margin=0.04,
            tol=None, light=(-0.35, -0.55, 0.85), cut_plane=None, outline=True, note=None, bg=(1, 1, 1),
-           legend=None, dpi=150):
+           legend=None, dpi=150, alpha_thresh=0.5, label_units="px"):
     """items: [(shape, material|rgba, name), ...]. bounds: optional (xmin, xmax, ymin, ymax) in screen mm.
     labels: [(xyz, text, (dx_px, dy_px))]. Returns path."""
     import matplotlib
@@ -169,7 +169,7 @@ def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None,
             on = (np.abs((cen - cn[0]) @ cn[1]) < 0.02) & (np.abs(n @ cn[1]) > 0.999)
             col[on, :3] = np.clip(rgba[:3] * 0.80 + 0.06, 0, 1)
         ids = np.full(len(t), idx)
-        if rgba[3] < 0.5:
+        if rgba[3] < alpha_thresh:
             trans.append((P, depth, col, ids))
             continue
         _raster(P, depth, col, ids, W, H, zbuf, cbuf, ibuf)
@@ -195,8 +195,13 @@ def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None,
             e = (a1 != a2) | (np.abs(np.nan_to_num(z1 - z2, posinf=1e3, neginf=1e3)) > thr)
             edge[:e.shape[0], :e.shape[1]] |= e
         img[edge] = img[edge] * 0.35
-    fig = plt.figure(figsize=(W / dpi, H / dpi + (0.45 if title else 0.1)), dpi=dpi)
-    ax = fig.add_axes([0, 0, 1, H / (H + (0.45 if title else 0.1) * dpi)])
+    if title:                                   # wrap long titles to the image width instead of clipping them
+        import textwrap
+        width_chars = max(20, int(W / (dpi * 10 / 72 * 0.5)))
+        title = "\n".join(sum((textwrap.wrap(ln, width_chars) or [""] for ln in title.split("\n")), []))
+    th = (0.17 * (title.count("\n") + 1) + 0.28) if title else 0.1
+    fig = plt.figure(figsize=(W / dpi, H / dpi + th), dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, H / (H + th * dpi)])
     ax.imshow(img, interpolation="antialiased")
     ax.set_xlim(0, W)
     ax.set_ylim(H, 0)
@@ -205,8 +210,14 @@ def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None,
         for lab in labels:
             xyz, txt = lab[0], lab[1]
             off = lab[2] if len(lab) > 2 and lab[2] is not None else (40, -40)
+            if label_units == "mm":            # offsets given in screen mm, y up (module renderers)
+                off = (off[0] * scale, -off[1] * scale)
             q = np.array(xyz, float) @ M.T
             u, w = (q[0] - xmin) * scale, (ymax - q[1]) * scale
+            if off[0] == 0 and off[1] == 0:    # label on the point, no leader
+                ax.text(u, w, txt, fontsize=7.5, ha="center", va="center",
+                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="0.4", lw=0.5, alpha=0.9))
+                continue
             ax.annotate(txt, (u, w), xytext=(u + off[0], w + off[1]), fontsize=7.5, ha="center", va="center",
                         bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="0.4", lw=0.5, alpha=0.9),
                         arrowprops=dict(arrowstyle="-", lw=0.6, color="0.2"))

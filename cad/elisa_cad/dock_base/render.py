@@ -64,72 +64,18 @@ EYES = {"iso_fl": (-1, -1.25, 0.9), "iso_fr": (1, -1.25, 0.9), "rear": (0.35, 1,
 
 def render(items, path, eye, title=None, size=(11, 8), dpi=140, labels=None, xlim=None, ylim=None, legend=None,
            note=None, light=(0.3, -0.5, 0.8)):
-    """items: list of (key, cq obj, rgba). labels: list of (xyz, text, (dx, dy) in screen mm or None)."""
-    M = view_matrix(EYES.get(eye, eye) if isinstance(eye, str) else eye)
-    Lg = np.array(light, float)
-    Lg /= np.linalg.norm(Lg)
-    polys, cols, depth = [], [], []
-    for key, obj, rgba in items:
-        if obj is None:
-            continue
-        rgba = np.array(rgba, float)
-        v, t = _tess(key, obj, 0.4)
-        if len(t) == 0:
-            continue
-        p = v @ M.T
-        tri = v[t]
-        n = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-        nn = np.linalg.norm(n, axis=1)
-        nn[nn == 0] = 1
-        n = n / nn[:, None]
-        facing = n @ M[2]
-        shade = 0.50 + 0.50 * np.abs(n @ Lg)
-        keep = facing > -1e-6 if rgba[3] >= 0.99 else np.ones(len(t), bool)
-        idx = np.nonzero(keep)[0]
-        pp = p[t[idx]]
-        cc = np.repeat(rgba[None, :], len(idx), axis=0)
-        cc[:, :3] = np.clip(cc[:, :3] * shade[idx, None], 0, 1)
-        polys.extend(list(pp[:, :, :2]))
-        cols.extend(list(cc))
-        depth.extend(list(pp[:, :, 2].mean(axis=1)))
-    fig, ax = plt.subplots(figsize=size, dpi=dpi)
-    order = np.argsort(depth)
-    pc = PolyCollection([polys[i] for i in order], facecolors=[cols[i] for i in order],
-                        edgecolors=[cols[i] if cols[i][3] >= 0.99 else (0, 0, 0, 0) for i in order], linewidths=0.25)
-    ax.add_collection(pc)
-    allp = np.vstack(polys)
-    ax.set_xlim(*(xlim or (allp[:, 0].min() - 10, allp[:, 0].max() + 10)))
-    ax.set_ylim(*(ylim or (allp[:, 1].min() - 10, allp[:, 1].max() + 10)))
-    if labels:
-        for xyz, txt, off in labels:
-            q = np.array(xyz, float) @ M.T
-            if off:
-                ax.annotate(txt, xy=(q[0], q[1]), xytext=(q[0] + off[0], q[1] + off[1]), fontsize=6.5, ha="center",
-                            va="center", arrowprops=dict(arrowstyle="-", lw=0.5, color="0.2"),
-                            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="0.6", lw=0.3, alpha=0.9))
-            else:
-                ax.text(q[0], q[1], txt, fontsize=6.5, ha="center", va="center",
-                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="0.6", lw=0.3, alpha=0.9))
-    if legend:
-        from matplotlib.patches import Patch
-        ax.legend(handles=[Patch(fc=c, ec="0.3", label=t) for t, c in legend], loc="lower left", fontsize=6.5,
-                  frameon=True, ncol=2)
-    if note:
-        ax.text(0.99, 0.01, note, transform=ax.transAxes, fontsize=6, ha="right", va="bottom", color="0.3")
-    ax.set_aspect("equal")
-    ax.axis("off")
-    if title:
-        ax.set_title(title, fontsize=10)
-    fig.tight_layout()
-    fig.savefig(str(path))
-    plt.close(fig)
-    return str(path)
-
-
-# ============================================================================================ 2D drawings
-def _r(ax, b2, **kw):
-    (x0, y0), (x1, y1) = b2
-    ax.add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, **kw))
+    """items: list of (key, cq obj, rgba). labels: list of (xyz, text, (dx, dy) in screen mm or None).
+    Drawn with the z-buffer renderer (assembly/zrender.py): exact per-pixel occlusion instead of depth sorting."""
+    from ..assembly import zrender as Z
+    e = EYES.get(eye, eye) if isinstance(eye, str) else eye
+    en = np.array(e, float) / np.linalg.norm(e)
+    up = (0, 0, 1) if abs(en[2]) < 0.99 else (0, 1, 0)
+    its = [(obj, tuple(rgba), key) for key, obj, rgba in items if obj is not None]
+    bounds = (xlim[0], xlim[1], ylim[0], ylim[1]) if (xlim is not None and ylim is not None) else None
+    labs = [(xyz, txt, off if off else (0, 0)) for xyz, txt, off in labels] if labels else None
+    return Z.render(its, path, view=(tuple(e), up), px=(int(size[0] * dpi), int(size[1] * dpi)), title=title,
+                    labels=labs, bounds=bounds, margin=0.0 if bounds else 0.04, light=light, dpi=dpi, legend=legend,
+                    note=note, alpha_thresh=0.99, label_units="mm")
 
 
 def top_plan(path, sweep_region=None):

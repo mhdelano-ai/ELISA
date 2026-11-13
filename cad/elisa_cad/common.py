@@ -123,59 +123,20 @@ def tessellate(obj, tol=0.05, ang=0.3):
 
 def render_png(items, path, view="iso", size=(9, 6.5), dpi=150, title=None, tol=0.05, edges=False,
                light=(0.4, -0.6, 0.8), annotate=None, xlim=None, ylim=None):
-    """items: list of (cq object, material or RGBA). Flat-shaded, depth-sorted (painter) orthographic render.
-    annotate: optional list of (world xyz, text). Returns path."""
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.collections import PolyCollection
-
-    M = _view_matrix(view)
-    L = np.array(light, float)
-    L /= np.linalg.norm(L)
-    polys, cols, depth = [], [], []
-    for obj, mat in items:
-        rgba = np.array(color(mat) if isinstance(mat, str) else mat, float)
-        v, t = tessellate(obj, tol)
-        if len(t) == 0:
-            continue
-        p = v @ M.T
-        tri = v[t]
-        n = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-        nn = np.linalg.norm(n, axis=1)
-        nn[nn == 0] = 1
-        n = n / nn[:, None]
-        facing = n @ M[2]
-        shade = 0.45 + 0.55 * np.abs(n @ L)
-        keep = facing > -1e-6 if rgba[3] >= 0.99 else np.ones(len(t), bool)
-        for k in np.nonzero(keep)[0]:
-            polys.append(p[t[k], :2])
-            c = rgba.copy()
-            c[:3] = np.clip(c[:3] * shade[k], 0, 1)
-            cols.append(c)
-            depth.append(p[t[k], 2].mean())
-    fig, ax = plt.subplots(figsize=size, dpi=dpi)
-    if polys:
-        order = np.argsort(depth)
-        pc = PolyCollection([polys[i] for i in order], facecolors=[cols[i] for i in order],
-                            edgecolors=[cols[i] for i in order] if not edges else "k", linewidths=0.15)
-        ax.add_collection(pc)
-        allp = np.vstack(polys)
-        ax.set_xlim(*(xlim or (allp[:, 0].min() - 3, allp[:, 0].max() + 3)))
-        ax.set_ylim(*(ylim or (allp[:, 1].min() - 3, allp[:, 1].max() + 3)))
-    if annotate:
-        for xyz, txt in annotate:
-            q = np.array(xyz, float) @ M.T
-            ax.text(q[0], q[1], txt, fontsize=6, ha="center", va="center",
-                    bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.7))
-    ax.set_aspect("equal")
-    ax.axis("off")
-    if title:
-        ax.set_title(title, fontsize=9)
-    fig.tight_layout()
-    fig.savefig(str(path))
-    plt.close(fig)
-    return str(path)
+    """items: list of (cq object, material or RGBA). Flat-shaded orthographic render with exact per-pixel occlusion
+    (z-buffer renderer of assembly/zrender.py; the earlier depth-sorted painter render drew far faces over near
+    ones on large parts). annotate: optional list of (world xyz, text). xlim/ylim in screen mm. Returns path."""
+    from .assembly import zrender as Z          # lazy: zrender imports this module
+    eye = np.array(_VIEW_DIRS[view], float)
+    up = (0, 0, 1) if abs(eye[2] / np.linalg.norm(eye)) < 0.99 else (0, 1, 0)
+    its = [(o, m, f"item{i}") for i, (o, m) in enumerate(items)]
+    bounds = None
+    if xlim is not None and ylim is not None:
+        bounds = (xlim[0], xlim[1], ylim[0], ylim[1])
+    labels = [(xyz, txt, (0, 0)) for xyz, txt in annotate] if annotate else None
+    return Z.render(its, path, view=(tuple(eye), up), px=(int(size[0] * dpi), int(size[1] * dpi)), title=title,
+                    labels=labels, bounds=bounds, margin=0.0 if bounds else 0.04, light=light, dpi=dpi,
+                    alpha_thresh=0.99)
 
 
 def shrink_pngs(directory):
