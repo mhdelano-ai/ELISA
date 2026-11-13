@@ -189,8 +189,8 @@ def millability():
     t = []
     L3h = I.L3_T
     t.append(("plunger bores D1.5", 1.5, L3h, "twist drill + reamer", round(L3h / 1.5, 2)))
-    t.append(("plunger bores D1.2 / merged slots 1.2 wide / notches", 1.2, L3h,
-              "drill D1.2; slots + notches: D1.0 end mill from both faces (2 x 2.75)", round(2.75 / 1.0, 2)))
+    t.append(("plunger bores D1.2 / D1.3 (slot valves, revised after review) / merged slots 1.3 wide / notches", 1.2, L3h,
+              "drill D1.2 / D1.3; slots + notches: D1.0 end mill from both faces (2 x 2.75)", round(2.75 / 1.0, 2)))
     t.append(("die window corner reliefs D1.0", 1.0, L3h, "D1.0 end mill, both faces", 2.75))
     t.append(("MC D1.596 blind 4.4 deep", P.MC_D, P.MC_STOP_Z - P.ADH_T - I.Z_L3[0], "flat-bottom drill/end mill D1.5 "
               "+ circular interpolation", round((P.MC_STOP_Z - P.ADH_T - I.Z_L3[0]) / 1.5, 2)))
@@ -220,13 +220,16 @@ def tips():
         d = line.distance(Point(v.xy))
         r_tip = v.tip_d / 2
         lat = r_tip - (d + ch["w"] / 2)               # lateral overlap margin of the tip beyond the channel walls
+        wc_dir = I.valve_tip_lateral_wc_dir(k)        # (revised after review) worst case on the channel normal
         disc = P.circ(v.xy, v.tip_d)
         tpe_ok = disc.buffer(P.TIP_TOL_WC).within(l2.buffer(1e-6))
         tpe_margin = round(min(disc.distance(g.boundary) for g in P.l2_cut_named().values()), 3)
         others = [n for n, g in named.items() if n != TIP_CHANNEL[k] and disc.intersection(g).area > 1e-6]
-        bore_ok = disc.buffer(I.TOL["pin_in_card_bore_radial_clearance_min"] - 1e-6).within(through.buffer(1e-6))
+        bore_ok = disc.buffer(I.TOL["pin_in_card_bore_radial_clearance_min"] - 1e-3).within(through.buffer(1e-6))
+        #   (revised after review) 1e-3 instead of 1e-6: D1.0 slot pin = tip in a D1.3 bore is exactly 0.15 radial,
+        #   and the 128-segment bore polygon lies up to 2e-4 inside the true circle (faceting)
         res.append({"id": k, "channel": TIP_CHANNEL[k], "centre_off_mm": round(d, 4),
-                    "lateral_margin_mm": round(lat, 3), "lateral_ok_WC": lat >= P.TIP_TOL_WC,
+                    "lateral_margin_mm": round(lat, 3), "lateral_ok_WC": lat >= wc_dir, "lateral_WC_dir_mm": round(wc_dir, 3),
                     "TPE_full_cover_with_WC_tol": bool(tpe_ok), "tip_to_nearest_TPE_cut_mm": tpe_margin,
                     "other_cuts_touched": others, "tip_inside_L3_bore_with_clearance": bool(bore_ok)})
     return res

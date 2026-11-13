@@ -8,6 +8,11 @@ lid, nest, anvil and electrode bay in docs/23 §4. Nothing is ordered. Inputs: d
 §2–§3/§6.4. This document changes no other document. CAD: `cad/elisa_cad/card/` (CadQuery 2.8); outputs:
 `cad/out/card/`; rebuild: `cd cad && python -m elisa_cad.card.build` (≈ 25 s, 35 files).
 
+**Revision C (revised after review, docs/24 §8; interface.py Revision C, docs/18 §17).** Card changes: slot valves
+G1, G2, G4, V11, V12 have **Ø1.0** pins = tips in **Ø1.3** bores, G3 **Ø0.9** in Ø1.2 at x 54.20, G4 at y 22.50 (S1;
+§5, §6.4); merged slots G1G2 / V11V12 1.3 wide. Every other card number is unchanged (cell 1.31 µL, stubs G3/G4 0.35,
+volumes §6.1). Rebuilt; `checks.json` all 21 tips pass the Rev C worst case.
+
 Source tags as docs/13 and docs/18: docs section | `interface.NAME` | **Derived** (arithmetic shown) | **CHOICE-Cn**
 (§7) | **DEV-Cn** (§8) | **UNVERIFIED** | [assessment]. Units mm, µL = mm³, N, g.
 
@@ -20,8 +25,8 @@ Source tags as docs/13 and docs/18: docs section | `interface.NAME` | **Derived*
 * Fabrication files for a laminate shop: closed-polyline **DXF + SVG** of L0, L1, L1s, L1b, L2 (finished geometry,
   kerf compensation by the shop); **die mask** DXF (layers DIE_OUTLINE, METAL, PASSIVATION_OPEN) + SVG.
 * Checks on the CAD (§6): every docs/13 volume is reproduced within 2 % except where a docs/18 or card deviation
-  is listed; all 21 tips land centred on their channel with full TPE cover under the worst-case 0.14 position
-  error; minimum milled L3 web 0.5 (by construction); dry mass 20.3 g.
+  is listed; all 21 tips land centred on their channel with full TPE cover under the worst-case position error
+  (revised after review: 0.215, the complete list of §5; Rev B used 0.14); minimum milled L3 web 0.5 (by construction); dry mass 20.3 g.
 * Main card-level decisions: meter drawn as a **Ø1.596 bore** of the same area (DEV-C1, a 2.0 × 1.0 × 4.4 blind
   rectangle cannot be milled); **V12 and G3 bores merged** (0.45 web); the die electrode pattern is routed in one
   metal layer, which forces the **G4 finger to stop 0.25 inside the die edge** (DEV-C2, WE1 5.13 mm²); a
@@ -167,8 +172,8 @@ cards only; (e) first article: MC volume gravimetrically, cell height by PE1 dec
 
 | Item | Value | Source |
 |---|---|---|
-| Tip-to-channel position, worst case | 0.14 = 0.03 head-to-nest + 0.01 datum pin + 0.05 L3 edge-to-feature + 0.05 L1-to-L3 | Derived from `TOL` |
-| same, RSS | 0.077 | Derived |
+| Tip-to-channel position, worst case (revised after review, docs/24 S1) | **0.215** = 0.03 head-to-nest + 0.01 datum pin + 0.05 L3 edge-to-feature + 0.05 L1-to-L3 + 0.02 laser kerf per wall + 0.01 guide-hole position + 0.006 pin play + 0.005 tip diameter + 0.024 cold-zone contraction (x only) + 0.010 COC/Al CTE (x only); on the channel normal (`valve_tip_lateral_wc_dir`) 0.186 for x-parallel channels (G3, V3, V9, V14), 0.214 for G1/G2, 0.215 for y-parallel channels (G4, V11, V12, V15). Rev B: 0.14 (first four terms only) | Derived from `TOL` (terms [assessment], α_COC UNVERIFIED) |
+| same, RSS | 0.085 (Rev B 0.077) | Derived |
 | L1-to-L3 budget (dowels, CHOICE-C4) | WC 0.051 / RSS 0.021: laser 0.010, dowel in L1 hole 0.010, L1 shrink 0.05 % over 20 mm 0.010 (UNVERIFIED), L3 hole position 0.010, dowel in H7 0.006, rotation 0.005 | [assessment]/UNVERIFIED; requirement 0.05 met only if the shrink and laser values hold |
 | Stub 0.30 / cell stub 0.35 with RSS error | 0.22–0.38 / 0.27–0.43 (≤ 0.5 rule of docs/13 §2.6 kept) | Derived |
 | Die in window | ±0.05 (datum faces flush, CHOICE-C1) | `TOL['die_in_window']` |
@@ -235,13 +240,18 @@ the window edge at 90°, not a web.
 ### 6.4 Valve tips (all 21, `checks.json` "tips")
 
 All 21: tip centre on the intended channel centreline (≤ 0.0003, the G1/G2 arc-length rounding); tip disc
-inside the L3 bore with ≥ 0.15 radial clearance; disc + 0.14 worst-case error entirely on TPE; no other cut under
-the tip. Lateral overlap beyond the channel walls: 0.30 (Ø1.0 on 0.4 lines), 0.25 (Ø1.0 on 0.5), 0.20 (V11/V12),
-**0.15 for G1–G4 (Ø0.8 on 0.5 lanes) vs 0.14 worst-case error — 0.01 margin**. (revised at integration) The anvil
-slot under the slot-class valves is widened for the square M_d holder (interface `slot_polygon()`, DEV-L4): foil span
-4.44 at G1/G2 → 19 µm deflection at 1.5 N (docs/13: 15 µm at 4.0; M4 acceptance ≤ 20 µm), 4.0 at V11 (15.5 µm),
-3.4 at G3/G4/V12 (11 µm). Tip edge to the nearest TPE cut:
-0.25 at G3, G4, V14, V15 (die cut), 0.70 at V8 (RCj), ≥ 0.95 elsewhere.
+inside the L3 bore with ≥ 0.15 radial clearance; disc + worst-case error entirely on TPE; no other cut under the tip.
+**(revised after review, docs/24 S1)** Lateral overlap beyond the channel walls vs the worst case on the channel normal:
+0.30 (Ø1.0 on 0.4 lines and bridges; V11, V12 now Ø1.0) → margin ≥ +0.085; 0.25 (Ø1.0 on 0.5 lanes, incl. G1, G2,
+G4; Ø0.8 on the 0.3 stubs V14, V15) → +0.035 (G1/G2 +0.036, x-parallel V3/V9/V14 +0.064); **G3 Ø0.9 on 0.5: 0.20 vs
+0.186 → +0.014** (x-only terms do not act across an x-parallel lane); RSS margins ≥ +0.115. Rev B: 0.15 vs 0.14 (G1–G4),
+and −0.01 to −0.02 with the reviewer's complete list. TPE cover with the worst case: G3 and G4 seal edges 0.35 from the
+die edge leave 0.035 to the TPE cut (die − 0.10); a Ø1.0 G3 would leave the TPE (0.015 over) and a Ø1.0 G3 moved to
+x 54.15 breaks the V12 collar gap (0.17 < 0.20), hence Ø0.9. Foil span under the slot valves (round M_d holder, slot
+arms 3.4, interface Rev C): min chord **3.40 at all six** → long-strip model 15.6 µm at 1.32 N, 17.8 µm at 1.5 N
+(M4 limit 20 µm; docs/21 §5.1 Rev C). Rev B: 4.44 at G1/G2 (19 µm by the circular-plate formula, 30 µm by the strip
+model). Tip edge to the nearest TPE cut: 0.15 at G3, G4 (nominal; 0.035 at worst case), 0.25 at V14, V15, 0.70 at V8,
+≥ 0.95 elsewhere.
 
 ### 6.5 Lid gas rings (ID 5 / OD 7)
 P_c: land clear by 6.2, inner land 0.3 to the disc recess. **P_mv: with the interface lead-in 0.3 at V8 the ring
@@ -326,7 +336,10 @@ anvil opening); `CER_NECK['len']` (alias 'h' kept); `WE2_CHANNEL` 2.9 confirmed 
 Stock grades and tolerances of all sheets (COC 140/175/150 µm, TPE 0.40, adhesive film, PTFE membrane); bonding
 parameters (thermal press, UV/ozone TPE–COC bond strength); laser positional accuracy and post-bond shrink (decide
 whether L1-to-L3 ±0.05 holds); die thickness, dicing tolerance vs 0.05 trace margins, passivation thickness; seam
-adhesive chemistry vs HQ/BQ; wicking of the seam adhesive; G1–G4 lateral margin 0.01 under worst-case error; TPE
+adhesive chemistry vs HQ/BQ; wicking of the seam adhesive; tip lateral margins +0.014 (G3) … +0.085 under the Rev C
+worst case (revised after review; Rev B: G1–G4 0.01); **L1 post-bond shrink and laser position: coupon test (5 laminated
+coupons, L1-to-L3 dowel offsets measured at J and the cell) before the 10–20-card order (revised after review, docs/24
+M11)**; TPE
 compression over the film rim (leak path at the seam); MC reaming; P_c disc effect on the RCj air push (flow
 resistance); mass densities of TPE, glass, PTFE. (revised at integration) The lid vent pockets, gas rings, press pad,
 pins, gaskets, pogo pins, datum pins and the nest corner block were checked against this card in docs/23 §4. Not done: escape/collection model re-run for DEV-C2 (G4 finger strip) — add to M5.

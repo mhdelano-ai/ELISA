@@ -5,3 +5,4 @@ numpy
 scipy                    # actuator assignment in the scratch study (linear_sum_assignment)
 shapely>=2.0             # installed this round (pip install shapely): 2D buffers for channels/slots
 networkx                 # installed this round: yoke tier ordering (scratch study only)
+ezdxf>=1.1                # tested 1.4.5 (added after review, docs/24 M9) DXF export of the laser-cut layers in card/build.py

@@ -7,6 +7,12 @@ cross-module interferences**; open items §10. Inputs: docs/13 Rev B (functional
 Nothing is ordered. No source was opened in this step; every number is taken from the repository documents and CAD
 (tags as docs/18: docs §, `interface.NAME`, **Derived**, **I-n** = integration choice §8, **UNVERIFIED**, [assessment]).
 
+**Revision C (revised after review, 2026-11-13).** The independent review docs/24 (2 blockers, 7 significant, 13
+minor) was resolved: interface Revision C (docs/18 §17), module revisions marked "(revised after review)" in docs/19–22,
+all modules and the assembly rebuilt. Resolution table: docs/24 §8. In this document: §5.1 docking timeline and the
+14-run cap (S5), §8.7 the choices made to resolve the review (the user may overrule each), §9.1 the re-computed
+carry-over budget (B1), §9 / §10 updated; superseded Rev B statements are kept only where marked.
+
 ## 1. Scope
 
 * Four module designs written in parallel (card A, dock upper/lid, dock lower bay, dock base) were made one design:
@@ -28,7 +34,7 @@ Nothing is ordered. No source was opened in this step; every number is taken fro
 | 4 | hinge rail vs IR-5 | **LOWER hinge pedestals** (top Z 160); BASE right partition moved +2 mm (lever 3.0 mm) | IF, LOWER, BASE |
 | 5 | pass-throughs | exits = LOWER routes (`LIQUID_LINE_EXITS`); BASE re-routed; exhaust louvre; grommet; flange | IF, BASE |
 | 6 | LOWER mount | 6 × M6 at X 165/305 + 2 dowels | IF, LOWER, BASE |
-| 7 | drag slot | **widened slot** (`slot_polygon()`), square holder kept; foil 19 µm ≤ 20 µm (M4) | IF, LOWER |
+| 7 | drag slot | Rev B: widened slot, square holder (19 µm by the circular formula). **Superseded after review (Rev C): round Ø2.6 holder, Ø2 × 4 magnet, arms 3.4, ≤ 17.9 µm strip model** (§8.7 R-3) | IF, LOWER |
 | 8 | pogo | tips −1.66 retracted; 7.25 N; pad 12 N kept | IF, LOWER |
 | 9 | M_c motion, thick zones | adopted (swing, fail = hold; DEV-L3 zones) | IF |
 | 10 | magnetics / materials / relay | non-magnetic list (`MATERIALS`); screened reed relay, 5 mT acceptance | IF, UPPER |
@@ -50,8 +56,8 @@ Nothing is ordered. No source was opened in this step; every number is taken fro
 ### 3.2 Integrated STEP files (`cad/out/assembly/`)
 | File | State | Size |
 |---|---|---|
-| `dock_closed.step` | closed and latched, head down, read state (M_c parked, M_d holding at the RC, pogo up), real card | 9.1 MB |
-| `dock_open_loading.step` | lid open 85°, head raised, lower `load` state, real card 60 mm above the nest | 9.1 MB |
+| `dock_closed.step` | closed and latched, head down, read state (M_c parked, M_d holding at the RC, pogo up), real card | 9.4 MB |
+| `dock_open_loading.step` | lid open 85°, head raised, lower `load` state, real card 60 mm above the nest | 9.5 MB |
 
 Both are **simplified envelope versions** (full detail stays in the module STEPs): card L3, die and L4 discs real, L0–L2 +
 film + seam as one laminate slab; lid head mechanism (pins, springs, buttons, yokes, rods, pistons, Hall ICs, barbs,
@@ -70,7 +76,7 @@ artefacts of the module renders do not occur (exact depth per pixel); remaining 
 
 ### 3.4 Output policy and repository size (task D)
 Before: `cad/out/` ≈ 120 MB (dock_lower 59 MB with six 7.8 MB state assemblies, dock_upper 36 MB). Now
-(`du -sh cad/out`): **59 MB** — interface 2.8, card 7.7, dock_upper 14, dock_lower 9.8, dock_base 5.9, assembly 19 (two 9.1-MB STEPs). Changes: (i) builds write by default only per-part STEPs
+(`du -sh cad/out`, revised after review): **59 MB** — interface 2.8, card 7.7, dock_upper 14, dock_lower 8.8, dock_base 6.0, assembly 19 (two 9.1-MB STEPs). Changes: (i) builds write by default only per-part STEPs
 and ONE state assembly per module (LOWER `assy_lower_bay_hold_RC.step`, UPPER `lid_assembly_closed.step`, BASE the group
 STEPs); `--all-states` regenerates the dropped files (LOWER five other states + six sub-assemblies, UPPER raised/open/head,
 BASE `base_assembly_with_claims.step`), documented in `cad/README.md`; (ii) LOWER and BASE tubes are compounds of
@@ -90,11 +96,11 @@ overlap); section faces are tinted only where a cut face is exactly on the plane
 ### 4.1 Interference (OCC Boolean on bbox-overlapping pairs from different modules, > 1e-4 mm³ counts)
 | Scene | Pairs tested | Unintended | Intended (classified) |
 |---|---|---|---|
-| closed / read (card + LOWER hold_RC + UPPER closed + BASE) | 1127 | **0** | 52 pairs: 20 closed pins into L1 and L2 (nominal tip height, §4.2), 11 gaskets × foil 0.748 mm³ each (= 0.12 compression), pogo tips × die metal/passivation (contact, 0.0002 mm³) |
-| open, lid 85°, LOWER load, BASE, no card | 535 | **0** | — |
+| closed / read (card + LOWER hold_RC + UPPER closed + BASE) | 734 (revised after review; Rev B 1127) | **0** | 32 pairs, **each within its expected volume** (revised after review, docs/24 M8): 20 closed pins × TPE only (0.108–0.209 mm³ = tip land + shank from z 0.50 to 0.715; **0 mm³ in L1**), 11 gaskets × foil 0.783 mm³ (annulus 6.57 × 0.12 = 0.788 expected), pogo tips × die 0.0002 mm³ (contact ≤ 0.01). Rev B: 52 pairs incl. pins × L1 allowed without a volume bound |
+| open, lid 85°, LOWER load, BASE, no card | 480 | **0** | — |
 | card on the loading path, 120 / 60 / 20 / 5 mm above the seat, vs open lid, LOWER load, BASE | — | **0** at every height | — |
 | magnet states collect_IC1, collect_IC2, gather_IC1, gather_IC1_low, drag_mid_IC1, beadout_end (card + LOWER + UPPER closed) | 60 each | **0** | — |
-| lid sweep 0–85° in 5° steps (raised head) vs LOWER load + BASE + card | 5696 | **0** | moving lid parts X 152.5 (cover) … 320.0 (cam lever) → 3.5 / 3.0 mm to the BASE partitions |
+| lid sweep 0–85° in 5° steps (raised head) vs LOWER load + BASE + card | 4796 | **0** | moving lid parts X 152.5 (cover) … 320.0 (cam lever) → 3.5 / 3.0 mm to the BASE partitions |
 
 Clashes found during the integration and fixed (owner module in brackets):
 1. Guide-pin bushes (LOWER/UPPER): UPPER's GP1 bush at (−5, 44) would cut the nest opening and gutter; LOWER's GP1 bush
@@ -115,10 +121,10 @@ Clashes found during the integration and fixed (owner module in brackets):
 ### 4.2 Feature checks on the real geometry (closed state)
 | Check | Result |
 |---|---|
-| 21 lid pins in the real L3 bores | **0** contact; radial clearance 0.15 (Ø1.2 in Ø1.5) / 0.20 (Ø0.8 in Ø1.2); tip centres on the valve xy (error 0.000) |
-| tips on their channels | all 20 closed tips: centre over an L1 cut (channel), tip disc fully covered by TPE (8 points at 0.95 r); V3 drawn open (fail-open, tip z 0.97) |
-| tip height | nominal z 0.17 (interface) puts 0.02–0.07 mm³ of each tip inside the L1 sheet over the channel lands and 0.2–0.45 mm³ inside the TPE: the real tip stops on compressed TPE above 0.17 → hook gap set on a reference card (I-13, open item O-5) |
-| 11 port gaskets vs the real foil port holes | foil hole Ø1.0 present at every port; gasket concentric (0.000); gasket ∩ foil 0.748 mm³ = full annulus × 0.12 (0.754 expected, faceting) → no other foil opening under any gasket; inserts 0 contact |
+| 21 lid pins in the real L3 bores | **0** contact; radial clearance 0.15 (Ø1.2 in Ø1.5, Ø1.0 in Ø1.3, Ø0.9 in Ø1.2) / 0.20 (Ø0.8 in Ø1.2); tip centres on the valve xy (error 0.000) |
+| tips on their channels | all 20 closed tips: centre over an L1 cut (channel), tip disc fully covered by TPE (8 points at 0.95 r); V3 drawn open (fail-open, tip z 1.30) |
+| tip height | (revised after review) nominal z **0.50** (interface Rev C): 0 mm³ of any tip in L1, 0.11–0.21 mm³ in the TPE; Rev B's 0.17 put 0.02–0.07 mm³ into the L1 lands; preload and hook gap set at the measured height (I-13 extended, O-5) |
+| 11 port gaskets vs the real foil port holes | foil hole Ø1.0 present at every port; gasket concentric (0.000); gasket ∩ foil 0.783 mm³ = full annulus × 0.12 (0.788 expected, faceting; Rev C gasket on the tube OD) → no other foil opening under any gasket; inserts 0 contact |
 | pogo pins / contact window / pads | 6 tips at z 0.340 on the 6 pads (1 per pad); 0 contact with L0, L1, L1b, L2, L3, seam (pass the real window) |
 | datums, pushers, corner block | A1, A2, B and both pushers touch the real L3 (distance 0.000, no overlap); nest frame to card 0.300 (corner block); card rotated 180° or mirrored → 21.9 mm³ into the block (cannot seat) |
 | die-back pad | footprint x 55.5–60.5 / y 29.6–33.1 inside the die; face on the die back (gap 0.000); 0 contact with L3 |
@@ -130,11 +136,13 @@ Clashes found during the integration and fixed (owner module in brackets):
 | card tooling holes | over the 5-mm plate, 7.8 mm (round) and 11.2 mm (slot) from the nearest anvil opening |
 
 ### 4.3 Calculations re-run with the integrated numbers
-Anvil plate at 300 N: 4.6 µm (LOWER calcs); face seals 50 ShA 6.7 N × 11 = 74 N, × 1.5 = 110 N ≤ card-face clamp 198 N
-(min); latches 2 × 95 N on the catch brackets (22 MPa in the bracket); hinge 111 N on the pedestals; pogo 7.25 N < pad
-12 N (net 4.75 N on the die, 0.12 MPa); foil under G1/G2 19 µm (≤ 20 µm M4); lid air 0.36 NmL per actuation at 400 kPa,
-free air total ≈ 1.1 L/min (dominated by the UNVERIFIED Flow EZ allowance); guided head travel before the bores 1.26 mm
-(air on) / 0.25 mm (air off), unchanged.
+Anvil plate at 300 N: 4.6 µm (LOWER calcs); face seals 50 ShA 7.4 N × 11 = 81 N, × 1.5 = 122 N ≤ card-face clamp
+198 N (min) (revised after review: stretched gasket); latches 2 × 95 N on the catch brackets (22 MPa in the bracket);
+hinge 111 N on the pedestals; pogo 7.25 N < pad 12 N (net 4.75 N on the die, 0.12 MPa); foil under every slot valve
+≤ 15.8 µm at 1.32 N / 17.9 µm at 1.5 N by the long-strip model (revised after review; Rev B "19 µm" was the circular
+formula, 30 µm strip); lid air 0.36 NmL per actuation at 400 kPa, free air total ≈ 1.1 L/min (dominated by the
+UNVERIFIED Flow EZ allowance); guided head travel before the bores **1.59 mm (air on) / 0.59 mm (air off)** (revised after
+review: the pins now stop 0.33 higher; Rev B 1.26 / 0.25).
 
 ## 5. Overall dimensions, mass, power, air, consumables
 
@@ -143,10 +151,37 @@ free air total ≈ 1.1 L/min (dominated by the UNVERIFIED Flow EZ allowance); gu
 | Envelope | 470 W × 420 D × 330 H (lid open 388 H); E-stop/light bar to Y −25 / −6 | docs/22 §1 |
 | Bench width | stack 343 + 50 + dock 470 + 10 + Gamry 90 = 963 mm; depth 712 (stack, UNVERIFIED for SM-FL) | docs/22 §11.1 |
 | Mass | BASE 34.7 kg (A1 + waste full) + LOWER 2.1 kg (Derived from the solids, stages 0.34 kg each per Zaber) + UPPER (lid) 2.3 kg + card 0.02 kg = **≈ 39 kg modelled**; + fasteners/cables ≈ 10 % [assessment] → ≈ 43 kg (BASE had allowed 13 kg for LOWER + UPPER → 48 kg) | docs/22, docs/20 §2.7, this check |
-| Power | DC peak 358 W, average 136 W; mains ≈ 406 / 155 W (η 0.88 UNVERIFIED); lid pilots 1.1 W average, lid heaters ≤ 7.3 W, reagent Peltier 6.7 W, anvil heaters ≈ 10 W (inside the BASE allowance) | docs/22 §9.2, docs/20 §4.5/§4.7, docs/21 §5.4 |
+| Power | DC peak 360 W, average 136 W; mains ≈ 409 / 155 W (η 0.88 UNVERIFIED); lid pilots **1.46 W** average (revised after review, docs/20 §4.5), lid heaters ≤ 7.3 W, reagent Peltier **≤ 8.9 W** at the sink acceptance limit (revised after review, docs/21 §5.4; Rev B 6.7 W rested on the under-counted load), anvil heaters ≈ 10 W (inside the BASE allowance) | docs/22 §9.2, docs/20 §4.5/§4.7, docs/21 §5.4 |
 | Air | lab air / N₂ 500–700 kPa (≥ 450 at the inlet), regulated 400 kPa (lid, pogo lift) and 120 kPa (Flow EZ, purge); ≈ 1.1 L/min free air | §2 #2, docs/22 §8 |
-| Consumables per card (14 runs) | card A; A1 38 mL; conjugate 0.40 mL; HQDP 0.84 mL; beads 0.24 mL; waste 44 mL; docking prime 14.9 mL (included in A1) | docs/22 §6 (re-computed after the re-route) |
+| Consumables per card (14 runs) | card A; A1 38 mL; conjugate 0.40 mL; HQDP 0.85 mL; beads 0.24 mL; waste 45 mL; docking prime **15.0 mL** (included in A1; revised after review: one value from `calcs.prime_volume`) | docs/22 §6 |
 | Wear parts | 11 port gaskets (replaceable from the top), lid gas rings ×2, die-back pad silicone, pogo probes ×6; intervals UNVERIFIED | docs/21, docs/20 |
+
+### 5.1 Docking timeline and the 14-run cap (revised after review, docs/24 S5)
+
+t = 0 is the lid latched on a new card (the card's 8-h in-use life of docs/13 §5.2 counts from the reagent fills, which
+follow within minutes). Durations: **Derived** where a calculation is named, otherwise [assessment]; to be measured at
+C2 (stopwatch log of the sequencer).
+
+| t (min) | Step | Who | Duration and basis | Parallel with |
+|---|---|---|---|---|
+| −3 … 0 | open lid; cold-box door: swap bead vial + conjugate tube (taken cold from the fridge, SOP); bottle door: swap HQDP tube; insert card (ID read with the lid open); close lid, two latches, cam lever | operator | ≈ 3 min [assessment]; not inside the 8-h life | — |
+| 0 … 0.5 | latch switches closed → pull valves released, pogo lift up (cylinder, ≈ 2 s), contact-loop check < 10 Ω; reagent Peltier ON (docs/21 CHOICE-L19) | auto | 0.5 min [assessment] | — |
+| 0 … 4 | cold-block pull-down 25 → ≤ 8 °C | auto | ≈ 3–4 min: Derived ≈ 50 J/K (block 42 g Al + spreader 8 g + card reagent zone ≈ 5 g COC, c_p UNVERIFIED) × 20 K / ≈ 5.5 W net at 2.5 A (TEC model docs/21 §5.4) | prime, leak test |
+| 0 … 10 | assay-zone equilibration (card on the 25 °C anvil under the 25 °C head) | auto | ≥ 10 min (docs/13 §6.5) — **governs the start** | everything below |
+| 0.5 … 2.5 | dock-side prime of pump lines and syringes, card valves closed (15.0 mL A1; four pumps in parallel ≤ 5 mL/min); P_in line by the BSM | auto | ≈ 2 min [assessment] | pull-down |
+| 2.5 … 4.0 | leak test: each liquid port 20 kPa against closed valves, 30 s (docs/13 §6.8), in 3 groups of independent sources (S_A, S_IC1, S_IC2, S_RC, S_b, BSM, Flow EZ ch2; P_byp/P_wo from the card side) | auto | 1.5 min [assessment]; sequential 11 × 30 s would take 5.5 min (reviewer) | pull-down |
+| 4.0 … 5.0 | RS fill 0.6 mL on Flow EZ ch2 (RS stays at 25 °C) | auto | ≈ 55 s (Derived by the reviewer, Hagen–Poiseuille, 0.254 × 360 mm FEP at 34.5 kPa) | — |
+| 5.0 … 5.5 | RCj fill 0.26 mL, after the cold plate is ≤ 8 °C | auto | ≈ 25 s (same Derived) | — |
+| 5.5 … 8.5 | card prime (docs/13 §8.1 step 3: bead coil + line, MC dose to waste via IC1, lanes, WLc, cell, WE2 channel, CE/RE pocket; V14, V15 once) | auto | ≈ 3 min [assessment] | — |
+| 10 … 12 | first sample aspiration and Inject Start (blank, IC1); electrode QC during its incubation (docs/13 §8.1) | auto | first Inject Start **≈ 12 min** (docs/13 §5.2 assumption kept) | — |
+
+**14-run cap re-stated.** Last result = docking + 13 × cadence + 56.75 min. With the 31.0-min cadence (unchanged in
+Rev C: no step added to the run, docs/13 §7.1) and docking 12 min: 12 + 403 + 56.75 = **471.75 min = 7.86 h ≤ 8 h,
+8.25 min spare**. The cap of 14 holds for any docking ≤ 20 min (reviewer, Derived); a sequential leak test and 30 %
+slower fills/prime (≈ 16 min) still leave 4.25 min. It fails at a measured cadence > 31.6 min with a 12-min docking
+(docs/13 §5.2: 13 runs then). **Time per result** 31.0 min cadence, 56.75 min from Inject Start to result → **3.25 min
+margin to 60 min (≥ 3 min kept)**; the bead-out step now accounts for G4 and the M_d Z stroke inside its 24-s window
+(docs/21 §5.6, 0.7 s left). Verify at C2: the timeline above, logged on ≥ 3 dockings.
 
 ## 6. Consolidated custom-parts list (C2 build of one dock; per-card parts marked)
 
@@ -187,14 +222,17 @@ free air total ≈ 1.1 L/min (dominated by the UNVERIFIED Flow EZ allowance); gu
 | Zaber X-LSM050A ×2 | M_d X–Y stage | verified (spec page); footprint UNVERIFIED |
 | supermagnete Q-10-10-05-N ×2 | M_c magnets | verified (B_r UNVERIFIED) |
 | PTR Hartmann 1007.70 class ×6 | pogo probes | series verified; part number/tip UNVERIFIED |
-| Custom Thermoelectric 12711-5L31-04CL | reagent Peltier | verified |
+| Custom Thermoelectric **07111-5L31-03CL** (revised after review; replaces 12711-5L31-04CL) | reagent Peltier | verified (spec sheet PDF opened: 30 × 30 × 5.1, Imax 3.0 A, Qmax 15.8 W, Vmax 8.6 V, DTmax 68 °C) |
 | Tecan Cavro Centris ×5 | pumps | verified (dimensions); front-zone depth UNVERIFIED |
 | Fluigent Flow EZ LU-FEZ-0345 ×2 | pressure channels | verified; air consumption, outlet position UNVERIFIED |
 | Laird/Tark DA-024-24-02-00-00 | cold box cooler | verified |
-| Gamry Reference 600+, 60 cm cell cable 985-00071 | potentiostat | verified |
+| Gamry Reference 600+ | potentiostat | verified (size, mass) |
+| 60 cm cell cable 985-00071 | Gamry → junction box | **conditional (revised after review, docs/24 S6)**: order page lists it for the Reference 600 / Interface 1000/1010 only; a Gamry instruction PDF allows it on a 600+ with the IE correction file REF600P_CID14.IECOR + re-calibration → order both or a Gamry-confirmed 600+ cable; connector/lead identities UNVERIFIED |
+| PEEK 1/16″ × 0.0025″ (0.0635 mm) ID | P_in line (revised after review) | **UNVERIFIED** (availability, clogging); fallback 0.004″ leaves the carry-over budget open (§9.1) |
+| Fischer Elektronik LAM 3 75 / LAM 3 50 | reference only for the reagent heat sink (not a fit) | UNVERIFIED (distributor listings via search: ≈ 1.18 / 1.52–1.94 K/W) |
 | Sensirion SLF3S-0600F | FS1 | from docs/11 (not re-opened) |
 | Pt100 M222 class, Omron D2F class, YAGEO, Mean Well LRS-350-24, LabJack U3, DURAN bottles, 20 × 20 profile | various | UNVERIFIED (pages 403/404 or listings only) |
-| M_d/M_w magnets, pin/clamp/return/pad springs, O-rings, rod seals, gas rings, orifices, barbs, iglidur bushes, marker magnets, pressure switches, M_c worm drives, M_d Z gearmotor, pogo-lift cylinder, WE reed relay + mu-metal can, heat sink, fans, anvil heaters, thermistors, RH/T sensors, zirconia datum pins, spring plungers, card-presence sensor, SV_b, FS2, P_in sensor, levelling pads, isolators, E-stop, light bar, leak/level sensors, FR1/R2, Co-Cr-Ni spring wire, Nitronic 60 bar | — | **UNVERIFIED** (to be selected; specs in the module documents) |
+| M_d Ø2 × 4 magnet (Rev C), latch-closed switches (M10), pogo-lift 3/2 valve (M5), 0–25 bar P_in sensor, M_d/M_w magnets, pin/clamp/return/pad springs, O-rings, rod seals, gas rings, orifices, barbs, iglidur bushes, marker magnets, pressure switches, M_c worm drives, M_d Z gearmotor, pogo-lift cylinder, WE reed relay + mu-metal can, heat sink, fans, anvil heaters, thermistors, RH/T sensors, zirconia datum pins, spring plungers, card-presence sensor, SV_b, FS2, P_in sensor, levelling pads, isolators, E-stop, light bar, leak/level sensors, FR1/R2, Co-Cr-Ni spring wire, Nitronic 60 bar | — | **UNVERIFIED** (to be selected; specs in the module documents) |
 
 ## 8. Consolidated table of ALL choices (what the user reads to overrule)
 
@@ -208,7 +246,7 @@ integration.
 | CHOICE-1 | datum C = whole anvil top; A = 2 edge pins (x 12, 63), B = 1 pin (y 25); 5 N pushers | valves need foil support everywhere | IF `DATUM_*`, `PUSHERS`; LOWER nest |
 | CHOICE-2 (R) | spring-closed pins, pneumatic cylinders on a 9-mm grid, yokes on 2 tiers, **Ø6 / 400 kPa** | pin pitch 1.6 unreachable by any actuator body; fail-closed by spring | IF `PLUNGER`, `CYLINDERS`; UPPER |
 | CHOICE-3 | closing forces 1.2 N slot / 2.5 N other | below docs/13 limits 1.5 / 3 | IF `_v()`; UPPER springs; set by M4 |
-| CHOICE-4 | liquid face seal: bonded 1/16″ tube in a PEEK insert + flat gasket 1.7/3.3/0.5; lid gas rings 5/7/1 | no added dead volume, 3.6 port pitch | IF `FACE_SEAL`, `GAS_SEAL_LID`; LOWER, UPPER |
+| CHOICE-4 (C) | liquid face seal: bonded 1/16″ tube in a PEEK insert + flat gasket **free ID 1.50 stretched on the tube**/3.3/0.5 (Rev B 1.7: 0.11 µL annulus); lid gas rings 5/7/1 | no added dead volume, 3.6 port pitch | IF `FACE_SEAL`, `GAS_SEAL_LID`; LOWER, UPPER |
 | CHOICE-5 (R) | 5-mm Al plate over the magnet bay, 15-mm port zones (DEV-L3 shapes); tip margin 0.5 to openings, **0.3 to gasket seats** | magnets must reach the foil; inserts need depth | IF `ANVIL_*`, `VALVE_TIP_*`; LOWER |
 | CHOICE-6 | M_d on an X–Y stage far below, vertical post, cam Z; park under J lowered | post fits the slot; stage away from the electrode bay | IF `MAGNETS['M_d']`; LOWER |
 | CHOICE-7 | Al heater block 10 mm (= pin guide), PEEK top plate, Al cold plate, PEEK break | two thermal zones | IF `THERMAL`; UPPER, LOWER |
@@ -264,7 +302,7 @@ integration.
 | U13 | two Kipp K0045 draw latches, catch plates on LOWER brackets | 95 N each ≪ 2000 N | `LATCH`; IF `LID_LATCH` |
 | U14 | no counterbalance | 12 N lift at the handle | add a strut/damper in `parts.py` |
 | U15 (R) | guide pins Ø6 at **(−8, 46), (84, 4)** (IF) | diagonal, clear of datums/pushers/opening | IF `HEAD_GUIDE_PINS` |
-| U16 | pull valves energised during descent | 1.26 mm guided travel instead of 0.25 | controller sequence |
+| U16 | pull valves energised during descent | 1.59 mm guided travel instead of 0.59 (Rev C; Rev B 1.26 / 0.25) | controller sequence |
 | U17 | press pad spring 11 N at a 0.5 stop, 2 N/mm | 12 N at DIE_T 0.7 | `PAD_SPRING` |
 
 ### 8.4 Dock lower — nest, anvil, magnets, electrode bay (docs/21)
@@ -273,7 +311,7 @@ integration.
 | L1 (R) | one Al cast-tooling-plate anvil, hard-anodised, lapped with the cold block; **x −15…91** (I-1) | non-magnetic, stable | `dock_lower/geom.py ANVIL_*` |
 | L2 | separate 5-mm nest frame (pins, pushers, sensor, bushes, **corner block**) | vertical drop, frame never on the foil | `NEST_*`, `parts.nest_frame()` |
 | L3 | one bottom pocket x 32.5–62.5 + bosses | one 5-mm plate for M_c, M_d, ebay | `POCKET_RECT`; IF thick zones |
-| L4 | cold block in a PEEK U-frame, one 30 × 30 Peltier, fan + front duct | 8× margin on Qmax | `COLD_*`, `PELTIER`, `DUCT` |
+| L4 (C) | cold block x 2.6–20 / y 3–47 behind a 2-mm gap (1.5-mm PEEK lip + foam), TEC 07111-5L31-03CL, 24 × 73 sink + fan + front duct | corrected leak 7.1 W → see §8.7 R-2 | `COLD_*`, `PEEK_*`, `PELTIER`, `HEATSINK`, `DUCT` |
 | L5 | inserts from below with retainers; 50 ShA gaskets | gasket swap from the top; seal force within budget | `INSERT`, `RETAINERS` |
 | L6 (R) | head guide bushes at the IF positions | shared with UPPER | IF `HEAD_GUIDE_PINS` |
 | L7 | perimeter drip gutter + 2 drains | spills never reach the stage | `GUTTER` |
@@ -294,7 +332,7 @@ integration.
 | # | What | Why | How to overrule |
 |---|---|---|---|
 | B1 | Al 10-mm base plate, 20 × 20 profile frame, 2-mm panels; bay deck on 5 spacers | stiff short path for stage + anvil | `dock_base/params.py`, `layout.py` |
-| B2 | 5 × Cavro Centris in a rear row, valves to a rear service door | only pump with verified dimensions | `PUMP_*` |
+| B2 (C) | 5 × Cavro Centris: S_b, S_A, S_RC in a rear row; **S_IC1/S_IC2 beside the bay** (valves −Y, service via the top-left panel) | see §8.7 R-1 | `PUMP_REAR`, `PUMP_FRONT_*` |
 | B3 | A1 500 mL; conjugate + beads in 2-mL tubes in the cold box; HQDP 15 mL dark sleeve; waste 1 L | daily replacement needs small volumes | `DURAN_*`, `TUBE_*` |
 | B4 | one air-gap waste head | breaks the liquid path to earth | `NIPPLES` |
 | B5 | PU/Al cold box, Laird/Tark DA-024-24 on its rear wall | verified part, ×2.9 margin | `COLD_BOX`, `COOLER` |
@@ -306,7 +344,7 @@ integration.
 | B11 | bead line PEEK 0.102 ID | ≤ 2.5 µL on a realistic route | `fluidics.TUBES` |
 | B12 (R) | lab air/N₂ **500–700 kPa**, FR1 **400 kPa** (lid), R2 120 kPa; no compressor | vibration/noise near reads | `AIR_*`, layout FR1/R2 |
 | B13 | 2 × Flow EZ 345 mbar, ch2 shared via 3/2 valves for the fills | fills only at insertion | layout pneumatics |
-| B14 | P_in sensor at the upstream wall end; PEEK 0.127 ID | ≥ 0.3 m PEEK isolation | `fluidics` P_in route |
+| B14 (C) | P_in sensor (0–25 bar) at the upstream wall end; **PEEK 0.0635 ID** | ≥ 0.3 m PEEK isolation; see §8.7 R-1 | `fluidics` P_in route |
 | B15 | FS1 SLF3S-0600F on P_a; FS2 (≥ 20 µL/min, TBD) on P_s | docs/13 §6.2 duties | layout sensors |
 
 ### 8.6 Integration (this document)
@@ -318,16 +356,28 @@ integration.
 | I-4 | hinge pedestals in LOWER (top Z 160); BASE right partition X 323–325 | clamp loop inside LOWER + UPPER; lever 3 mm from the partition | IF `HINGE_SUPPORT`; BASE `PART_X` |
 | I-5 | line exits = LOWER routes; BASE re-routed; exhaust duct extension + louvre | LOWER exits are geometrically forced | IF `LIQUID_LINE_EXITS`, `PASS_THROUGHS` |
 | I-6 | LOWER bolted with 6 × M6 at X 165/305 + 2 dowels | X 235 holes under the stage | IF `LOWER_MOUNT` |
-| I-7 | widened drag slot; square M_d holder | 2 × 2 magnet does not fit a round Ø2.6 holder; foil 19 µm ≤ 20 µm (M4) | IF `slot_polygon`, `SLOT_HOLDER_CLEAR` (a round Ø2 × 4 magnet + round holder would allow the docs/18 slot: changes docs/13 M_d) |
+| I-7 (C) | **round Ø2.6 M_d holder with a Ø2 × 4 magnet; slot arms 3.4** (Rev B: widened slot for the square holder, 4.44 at G1/G2, 30 µm by the strip model) | see §8.7 R-3 | IF `MAGNETS['M_d']`, `SLOT_W`, `slot_polygon` |
 | I-8 | pogo retracted tip −1.66; pad 12 N kept | probe travel 1.27 | IF `POGO`, `DIE_PRESS_PAD` |
 | I-9 | M_c swing + fail-hold; DEV-L3 zones | spring return collides with the M_d post | IF `MAGNETS` (spring-up needs an M_d interlock and a new collision study) |
 | I-10 | non-magnetic parts list; screened reed relay with 5 mT acceptance | work-hardened 1.4310/1.4301 is magnetic; relay must stay near the die | IF `MATERIALS`, `WE_RELAY_FIELD` |
 | I-11 | card requests accepted (V8, MC round, poka block, tooling holes, WE2 2.9, `DIE_WINDOW`, `CER_NECK['len']`) | keeps docs/13 numbers (cell −2.1 % only) | IF entries named |
 | I-12 | tip-margin rule: 0.5 openings / 0.3 seats | gasket supports the foil | IF `VALVE_TIP_*` |
-| I-13 | hook gap 0.20 set with a gauge on a reference card at the real closed height | nominal tip z 0.17 lies inside the L1 lands (§4.2) | UPPER assembly procedure |
+| I-13 (C) | hook gap 0.20 **and the spring preload (force gauge, ±5 %)** set per pin on a reference card at the measured closed height; nominal tip z **0.50** (IF Rev C) | the tip stops on compressed TPE (0.37–0.54); see §8.7 R-4 | UPPER assembly procedure; IF `PLUNGER tip_z_closed` |
 | I-14 | integrated renders by a software z-buffer (zrender.py) | painter's artefacts in the module renders | use `common.render_png` instead |
 | I-15 | committed STEP policy: per-part files + one state per module; `--all-states` regenerates the rest; tubes as compounds (no Boolean fuse); slot outline simplified at 0.02 | repository size | README flags; `parts.tube_solid`, `slot_polygon` |
 | I-16 | `PLUNGER tip_z_open` = closed + stroke = 0.97 (Rev A 1.015, inconsistent with the 0.8 stroke) | the drawn pins already used 0.97 | IF `PLUNGER` |
+
+### 8.7 Choices made to resolve the review docs/24 (agents decided; the user may overrule each)
+
+| # | Finding | Chosen | Why | Alternative and its cost | How to overrule |
+|---|---|---|---|---|---|
+| R-1 | B1 carry-over | (a) P_in line PEEK **0.0635 mm** ID (line + M_in wetted area ×0.96 of docs/13); (b) **S_IC1/S_IC2 beside the bay** (coils 78.5 / 76.3 µL, area ×1.31); (c) C_k and the chase scheme unchanged; no extra wash, no cycle-time cost → budget **9.87×10⁻⁵ ≤ 10⁻⁴** (§9.1) | the only reasonable means that close the paper budget by docs/13's accounting; the criterion 1×10⁻⁴ is a fixed user decision | (i) 0.102 mm line: standard catalogue tubing, ΔP 0.6 MPa instead of 1.9 MPa, but budget **1.03×10⁻⁴ (open by 3 %)**; (ii) pumps back in the rear row: −1 electronics re-layout, budget +2.7×10⁻⁶ (open); (iii) shorter C_k: card island re-layout (ports, fan-out, head), ≈ −1.5×10⁻⁶ [assessment]; (iv) accept that 1×10⁻⁴ rests on E1.10/M7 only | `fluidics.TUBES['PEEK_0.064']`, `params.PUMP_FRONT_*`; rebuild BASE + assembly |
+| R-2 | B2 cold zone | keep the 470 × 420 footprint: 2-mm insulation gap with a 1.5-mm PEEK lip + foam (load 2.31 W, design 3.47 W); TEC 07111-5L31-03CL; sink 24 × 73, required **R ≤ 1.6 K/W** (Th ≤ 50 °C at 30 °C air), exhaust ≤ 12.3 W | the reviewer's 0.3–0.5 K/W came from the 12711 module + the full-wall leak; both removed | heat pipe to a remote sink (rear or front duct): R requirement relaxed, + one heat pipe and a sink, envelope unchanged at the front duct, ≈ +20 mm depth at the rear [assessment]; or keep the 12711 module: runaway above ≈ 1.2 K/W | `dock_lower/geom.py COLD_*`, `PELTIER`, `HEATSINK`; IF `THERMAL` |
+| R-3 | S1/S2 gates, slot | slot valves **Ø1.0 pin = tip in Ø1.3 bores** (G3 Ø0.9 at x 54.20, G4 at y 22.50); **round Ø2.6 holder + Ø2 × 4 magnet**, slot arms 3.4 | worst-case lateral overlap ≥ +0.014 (G3) … +0.085, RSS ≥ +0.115; foil ≤ 15.8 µm at 1.32 N / 17.9 µm at 1.5 N (strip model, limit 20); lanes unchanged → no effect on bead transfer; drag force 0.96× (Derived) | lanes 0.40 under the gates (reviewer's option): constriction for the pellet (M1), overlap 0.20 with Ø0.8 (WC −0.015); square holder + local slot ≤ 4.0: strip model 21.7 µm at 1.32 N (fails) | IF `SLOT_VALVE_*`, `VALVES`, `MAGNETS['M_d']`, `SLOT_W` |
+| R-4 | S3 closing force | nominal closed tip z **0.50**; preload set per pin at the measured height (force gauge) on the reference card | forces ≤ 1.26 / 2.62 N (limits 1.5 / 3.0); not re-shimmed ≤ 1.34 / 2.81 N; cylinder margin ≥ 1.54 (400 kPa), 1.35 at the trip | softer springs / lower preloads (closing force margin for the seal drops; M4 decides) | IF `PLUNGER`; UPPER procedure |
+| R-5 | S4 annulus | gasket free ID 1.50 stretched on the tube OD | removes the 0.110 µL unswept annulus per port | gasket sealing on the foil with the tube recessed 0.1 (adds ≈ 0.08 µL over the tube end) | IF `FACE_SEAL` |
+| R-6 | S5 docking | leak test in 3 parallel groups; fills after the prime; RCj fill only once ≤ 8 °C | first Inject Start ≈ 12 min (§5.1) | sequential leak test: +4 min, cap still 14 | sequencer (automation) |
+| R-7 | S6 cable | 985-00071 + Gamry IECOR file, or a Gamry-confirmed 600+ cable | vendor page + Gamry instructions (opened) | buy the 600+/620 1.5 m cable (exists per Gamry listing via search, UNVERIFIED) and coil it: lead length outside the ≤ 0.3 m rule is the Gamry cable, not the cell leads | BASE BOM |
 
 ## 9. Consolidated table of ALL deviations from docs/13 Rev B
 
@@ -335,10 +385,10 @@ Effect on each docs/13 number and the docs/13 bench test that must absorb it (M1
 
 | # | Deviation | docs/13 number → now | Absorbed by |
 |---|---|---|---|
-| DEV-1 | planar ladder island (no crossings) | C_k 0.26 → 1.42 µL; bead path 3.3 → 3.54 (CAD 3.60) µL; M_in 1.05 → 1.37 µL; conj. lines 0.6 → 0.73/1.43 µL | M3 (C_k chase ≤ 10⁻³; consider 5 µL chases), M1 |
+| DEV-1 | planar ladder island (no crossings) | C_k 0.26 → 1.42 µL (sample-wetted part 1.02 µL + bridge); bead path 3.3 → 3.54 (CAD 3.60) µL; M_in 1.05 → 1.66 µL (19.0 mm, card CAD; Rev B text 1.37); conj. lines 0.6 → 0.73/1.43 µL | carry-over path 3 ×3.7 in §9.1 (revised after review: not "absorbed"); M3 (C_k chase ≤ 10⁻³; consider 5 µL chases), M1, M7 |
 | DEV-2 | Ø0.8 pins, bores into die-window notches | stubs G3/G4 0.044 → 0.031, V14 0.026 → 0.018, V15 0.016 → 0.024 µL; escape not re-run | M5a escape arm, M5 |
 | DEV-3 | lanes arrive at ±40° on R 3 arcs, drag filleted | WL 15.0 → 15.255 mm (1.34 µL); drag 23.3 → 23.41 mm (117.1 s) | M1 (drag), M8 (timing) |
-| DEV-4 | square 11.4 windows; M_c leaves outward; M_h deleted, M_d holds at the RC | gaps/forces unchanged; actuator count −1; no 2-s unheld hand-over | M1, M8 |
+| DEV-4 | square 11.4 windows; M_c leaves outward; M_h deleted, M_d holds at the RC | (revised after review, docs/24 M6) **not "unchanged"**: the hold magnet changes from M_h 3 × 3 × 4 fixed (gap by geometry) to M_d **Ø2 × 4** on a stage (gap chain WC 82 µm / RSS 32 µm, O-9); the pellet footprint under WE1 and the hold force change (smaller magnet, ≈ 0.96× lateral force of 2 × 2 × 4, not compared with 3 × 3 × 4 — UNVERIFIED); actuator count −1; no 2-s unheld hand-over | M1 (pellet footprint and hold under WE1), M5 (collection with the M_d hold), M8 |
 | DEV-5 | BW at (57.85, 17.2) over M_w; M_d stops 3 mm upstream | bead-out 4.5 → 4.55 mm; hand-over by flow (≈ 8 s of 30 s, UNVERIFIED) | M1 (BW retention) |
 | DEV-6 | new port P_a2 for V11 | 10 → 11 liquid ports (+1 seal) | M4 (seal), C2 docking leak test |
 | DEV-7 | blind chambers, roof 0.5 + Ø2 vent | IC total 290 → 280 µL (CAD 278.9); working 185 µL kept | M2 |
@@ -356,13 +406,47 @@ Effect on each docs/13 number and the docs/13 bench test that must absorb it (M1
 | DEV-L1 | M_c fail state **hold** instead of spring-up | docs/13 §3.3.1/§4 fail state changes: beads are held by whichever magnet is engaged at a power loss | M1 (power-loss recovery arm), C2 fault-recovery cycle |
 | DEV-L2 | M_c parallelogram swing, park top z −45.6 | stray force at the own chamber 0.055 → 0.005 pN (better) | M2 (capture unaffected) |
 | DEV-L3 | thick zones changed | none | — |
-| DEV-L4 | slot widened to clear the square holder | foil deflection at G1/G2 under 1.5 N 15 → **19 µm** (M4 acceptance ≤ 20 µm) | **M4 slot variant at 4.44 mm span** |
+| DEV-L4 → DEV-IF-C2 (revised after review) | Rev B: slot widened for the square holder (4.44, 30 µm strip model — fails). **Rev C: round holder + Ø2 × 4 magnet, slot arms 4.0 → 3.4** | docs/13 slot 4 mm → 3.4 (all legs); docs/13 M_d 2 × 2 × 4 → Ø2 × 4 (drag force 0.96×, Derived); foil ≤ 17.9 µm at 1.5 N (strip) | M4 slot variant at 3.4 mm; M1 drag at 0.20 mm/s with the Ø2 magnet |
+| DEV-IF-C1 (revised after review) | slot valves Ø0.8 → Ø1.0 (G3 Ø0.9) in Ø1.3 (Ø1.2) bores; G3 x 54.25 → 54.20, G4 y 22.60 → 22.50 | stubs G3/G4 0.35 (as Rev B 0.031 µL each); seal land per side 0.25 (G3 0.20) | M4 (seal with a Ø1.0 tip at 1.2 N), M5 (cell stubs) |
+| DEV-IF-C3 (revised after review) | closed tip height 0.17 → 0.50 (real stop on compressed TPE) | none of docs/13 (stroke 0.8 kept, open tip 1.30) | M4 (tip-height measurement, 100-cycle TPE endurance at 44 % land compression) |
 | DEV-L5 | pogo retracted tip −1.66 | none | M5a contact route |
 | DEV-L6 | LOWER sub-claims and exits | none | — |
-| DEV-B1 | P_in line 0.55 m (8.0 µL; now 0.52 m, **7.6 µL**) instead of 0.3 m / 3.8 µL | unflushed-line carry-over term scales (3.8 + 1.05 → 7.6 + 1.05 µL); D13 flush still ≈ 26 line volumes | E1.10, M7 (carry-over 100 ng/mL challenge); option 0.102 ID → 4.9 µL |
-| DEV-B2 | tidal coils 60 → **140 / 160 µL** (0.5 mm FEP to the rear pumps) | requirement "stroke stays in the coil" met with margin; extra dead volume behind the stroke | M2 (mixing), C2 |
+| DEV-B1 (revised after review) | P_in line 0.52 m (0.3 m not reachable); Rev B 0.127 mm ID 7.63 µL → **Rev C 0.0635 mm ID, 2.66 µL incl. 1 µL sensor** | carry-over path 2 ×0.96 of docs/13 (§9.1; Rev B ×1.72); D13 flush 75 line volumes (Rev B 26); analyte-transfer path volume see S7 row | E1.10, M7 (100 ng/mL challenge); C1 gravimetric / M2 |
+| DEV-B2 (revised after review) | tidal coils 60 → Rev B 140 / 160 µL → **Rev C 78.5 / 76.3 µL** (S_IC beside the bay) | carry-over path 5 ×1.31 (§9.1; Rev B ×2.67) | M2 (mixing), M7, C2 |
+| S7 (revised after review, docs/24 S7) | loop-to-chamber volume: docs/13 4.66 µL (3.8 + 0.6 + 0.26); Rev B 10.4 µL (reviewer); **Rev C 5.74 µL** by the reviewer's accounting (line 1.66 + sensor 1.0 + whole M_in 1.66 + whole C_k 1.42) or 4.2 µL along the sample path only (M_in to V1 0.42 + bridge 0.07 + C_k sample part 1.02) | the fixed 150 µL push clears −0.5 … +1.1 µL of the loop relative to docs/13 → analyte-transfer fraction (0.90, docs/13 §3.1) changes by order ±1 % [assessment, estimate]; the model is **not** extended and no LOD effect is claimed | C1 gravimetric transfer test, M2 |
 | DEV-B3 | bead outlet line 0.25 × 50 mm → 0.102 × 231 mm (**1.87 µL**, volume met) | bead adhesion/clogging in 0.1 mm PEEK unknown | M3, docs/06 E2.2 |
 | DEV-B4 | unclaimed space used (now claimed, Rev B) | none | — |
+
+### 9.1 Carry-over budget re-computed (revised after review, docs/24 B1; `dock_base/calcs.carryover_budget()`, `check_results.json`)
+
+Same accounting as docs/13 §8.3: docs/13's allocations (all UNVERIFIED placeholders) × the ratio of the as-built
+quantity that each allocation scales with. **Scaling assumptions (not measured):** wetted area for the paths whose
+docs/13 allocation covers wall adsorption (2, 3, 5 — the reviewer's basis), stub volume for path 9 (docs/13's own
+liquid arithmetic), unchanged for bead-count, leak and SM-FL paths. Worst determination = consecutive (n−1) + same
+chamber (n−2).
+
+| Path (docs/13 §8.3) | docs/13 | Scaling quantity | Rev B ratio | **Rev C ratio** | Rev C allocation |
+|---|---|---|---|---|---|
+| 1 SM-FL needle, loop, injector | 3×10⁻⁵ | — | 1 | 1 | 3.0×10⁻⁵ |
+| 2 P_in line + M_in | 1×10⁻⁵ | area: π d L (L 523 mm) + M_in 19.0 mm × 1.35 mm²/mm vs 0.3 m × Ø0.127 + 12 mm | 1.72 | **0.96** (Ø0.0635) | 0.96×10⁻⁵ |
+| 7 J, WLc, G_k′/V11/V12 stubs | 2×10⁻⁵ | bead count (M1) | 1 | 1 | 2.0×10⁻⁵ |
+| 8 cell beads, adsorbed enzyme | 2×10⁻⁵ | bead count (M1) | 1 | 1 | 2.0×10⁻⁵ |
+| 9 cell stubs | 1×10⁻⁶ | stub volume G3 + G4 + V14 + V15: 0.104 vs 0.130 µL | 0.80 | 0.79 | 0.8×10⁻⁶ |
+| 10 BW | 1×10⁻⁶ | gate leak | 1 | 1 | 1.0×10⁻⁶ |
+| **consecutive sum** | 8.2×10⁻⁵ | | 8.90×10⁻⁵ | | **8.14×10⁻⁵** |
+| 3 C_k + valve stubs | 1×10⁻⁶ | area of the sample path (V1 bridge → chamber, 11.6 mm + 1.6-mm bridge) vs 3.0 mm + 2 × 0.3 stubs | 3.69 (reviewer, whole rail 16.2 mm: 5.4) | 3.69 | 3.7×10⁻⁶ |
+| 4 IC walls | 1×10⁻⁵ | 185 µL working fill unchanged | 1 | 1 | 1.0×10⁻⁵ |
+| 5 tidal coil | 2×10⁻⁶ | coil wall area vs a 60 µL Ø0.508 coil (296 mm) | 2.67 (791 mm) | **1.31** (387 mm) | 2.6×10⁻⁶ |
+| 6 WL branch | 1×10⁻⁶ | bead count | 1 | 1 | 1.0×10⁻⁶ |
+| **same-chamber sum** | 1.4×10⁻⁵ | | 2.00×10⁻⁵ | | **1.73×10⁻⁵** |
+| **worst determination** | **9.6×10⁻⁵** | | **1.09×10⁻⁴ (open)** | | **9.87×10⁻⁵ ≤ 1×10⁻⁴** |
+
+Margin 1.3×10⁻⁶ (docs/13: 4×10⁻⁶). Sensitivity (Derived, same function): docs/13 §8.3 also quotes the coil as
+"FEP ≈ 320 mm²", which is inconsistent with its own 60 µL × Ø0.5 coil (472 mm²); on the 320 mm² basis Rev C gives
+**9.99×10⁻⁵** (closes by 0.1×10⁻⁶); with the 0.102-mm line fallback **1.03×10⁻⁴ (open by 3 %)**; Rev B on the
+reviewer's whole-rail C_k basis 1.11×10⁻⁴ (reviewer: ≈ 1.1×10⁻⁴ — confirmed). The face-seal annulus (S4) adds nothing
+in Rev C. **The paper budget closes, thinly, on placeholder allocations; only E1.10 (SM-FL, 10 ng/mL challenge) and
+M7 (100 ng/mL → B1 → B2 per path class, docs/13 §8.3) can show that 1×10⁻⁴ is met.** No cycle time was spent on it.
 
 ## 10. Open defects and UNVERIFIED items, ranked by consequence
 
@@ -370,19 +454,24 @@ No geometric clash remains in the integrated model (§4). Open items, highest co
 
 | # | Item | Consequence if wrong | Where it is closed |
 |---|---|---|---|
-| O-1 | L1-to-L3 registration ±0.05 (laser position, post-bond shrink UNVERIFIED); G1–G4 lateral TPE margin 0.01 at worst case | gate/valve leaks at J and the cell | first cards, inspection (a) docs/19 §4; M4 |
-| O-2 | foil deflection 19 µm under G1/G2 at 1.5 N (slot widened, DEV-L4) vs M4 limit 20 µm; COC modulus UNVERIFIED | slot-valve leak or magnet-gap change at J | M4 slot variant at a 4.44-mm span; fallback: rotate-free round holder with a Ø2 × 4 magnet (changes docs/13 M_d) |
+| O-0 (new, revised after review) | **carry-over paper budget 9.87×10⁻⁵ vs 1×10⁻⁴, margin 1.3×10⁻⁶, all allocations placeholders** (§9.1); 0.0635-mm PEEK line availability | a sample after a high result exceeds the 1×10⁻⁴ criterion | **E1.10, M7**; coupon order of the 0.0025″ tubing before C2 |
+| O-1 | L1-to-L3 registration ±0.05 (laser position, post-bond shrink UNVERIFIED); (revised after review) tip lateral margins under the complete Rev C worst case +0.014 (G3) … +0.085 | gate/valve leaks at J and the cell | L1 shrink/laser coupon test before the card order (docs/19 §11, M11); first cards, inspection (a) docs/19 §4; M4 |
+| O-2 | (revised after review) foil deflection ≤ 15.8 µm at 1.32 N / 17.9 µm at 1.5 N (long-strip model, span 3.4, E 2.6 GPa UNVERIFIED) vs 20 µm | slot-valve leak or magnet-gap change at J | M4 slot variant at a 3.4-mm span |
 | O-3 | WE reed relay in 1.9 mT (M_c1 parked); screened part UNVERIFIED | false switching or leakage on the WE line | incoming test at 5 mT, M5a |
 | O-4 | pin/spring/yoke materials non-magnetic: Nitronic 60 / Co-Cr-Ni permeability and spring G, strength UNVERIFIED | closing-force error or field distortion near the chambers | incoming μr check; M4 rig spring fatigue |
-| O-5 | real closed tip height (nominal z 0.17 lies inside the L1 lands); hook gap procedure | valve closing force taken by the yoke if the gap is set on the nominal | reference-card gauge procedure (I-13); M4 |
+| O-5 | (revised after review) real closed tip height 0.37–0.54 (nominal now 0.50); preload and hook gap set at the measured height (I-13 extended); 44 % TPE land compression over 100 cycles | closing force ±0.2 N; TPE set | reference-card force-gauge procedure; M4 tip-height measurement and endurance |
 | O-6 | M_c fail state hold (DEV-L1) | beads held by whichever magnet is engaged at power loss; recovery sequence needed | C2 fault-recovery cycle, M1 power-loss arm |
-| O-7 | P_in line 7.6 µL vs 3.8 µL (DEV-B1); coils 140/160 µL (DEV-B2); bead line 0.102 mm ID (DEV-B3) | carry-over term, mixing, bead clogging | E1.10, M7; M2; M3 / E2.2 |
+| O-7 | (revised after review) P_in line 0.0635 mm (clogging; ΔP 1.9 MPa on the BSM side), coils 78.5/76.3 µL, bead line 0.102 mm ID (DEV-B3); analyte-transfer fraction ±1 % [assessment] (S7) | carry-over, mixing, bead clogging, transfer | E1.10, M7; M2; M3 / E2.2; C1 gravimetric |
 | O-8 | seal force/modulus of 50 ShA gaskets (Gent form, UNVERIFIED), HQ/Tween compatibility | clamp budget, leaks | M4, C2 docking leak test |
 | O-9 | M_d gap chain worst case 82 µm (RSS 32) vs ±50 µm | drag force at the RC/J | shim at assembly, measure at 5 positions |
 | O-10 | catalogue envelopes (S070, K0045, X-LSM footprint, Centris front zone, Flow EZ outlet), heat-sink/fan performance, cooler capacity at 25 K | local re-layout | first article / datasheets |
 | O-11 | lid air and Flow EZ consumption allowance; lab air availability ≥ 450 kPa | supply sizing | site survey |
 | O-12 | cell volume 1.31 µL (DEV-C4), WE1 5.13 mm² (DEV-C2): escape/collection model not re-run | calibration constants, escape | M5 |
 | O-13 | integrated STEP files are envelopes (head mechanism, most tubes omitted) | none for design; documentation only | module STEPs carry full detail |
+| O-14 (new) | reagent heat sink R_th ≤ 1.6 K/W required, custom 24 × 73 sink UNVERIFIED (catalogue reference ≈ 1.2–1.9 K/W, not a fit) | reagent zone above 8 °C, conjugate stability (docs/13 §5.2) | first-article thermal test before C2 assembly; fallback heat pipe to the front duct (R-2) |
+| O-15 (new) | docking timeline (§5.1) durations [assessment]; 14-run cap needs docking ≤ 20 min and cadence ≤ 31.6 min | 13 runs per card | C2 sequencer log on ≥ 3 dockings |
+| O-16 (new) | Gamry cell cable on the 600+ (IECOR file, connector) (S6) | bulkhead/cable redesign | Gamry confirmation before the bulkhead design |
+| O-17 (new) | latch-open → safe-state switches (M10); S_IC1/S_IC2 operation with the valve facing −Y on the front shelf | spill on lid opening; pump service | C2 commissioning test |
 
 Full UNVERIFIED lists: docs/19 §11, docs/20 §10, docs/21 §11, docs/22 §16, docs/18 §13.
 
@@ -399,19 +488,21 @@ Full UNVERIFIED lists: docs/19 §11, docs/20 §10, docs/21 §11, docs/22 §16, d
 * Integration: put every cross-module number in interface.py from the start (positions of guide pins, line exits,
   hinge/latch supports were the conflicts of this round); run `assembly.build` after every module change.
 
-## 12. Final build status (this round, 2026-11-13, 4-core container, modules built in parallel)
+## 12. Final build status (revised after review, 2026-11-13; 4-core container, modules partly in parallel)
+
+All modules and the assembly were rebuilt from the Revision C code; `cad/out` matches the code (PNGs written by the
+builds themselves, palette-compressed inside each build by `common.shrink_pngs`).
 
 | Module | Command (from `cad/`) | Run time | Result |
 |---|---|---|---|
-| interface plans | `python -m elisa_cad.interface_plan` | 9 s | pass (drawings/claims now Rev B) |
-| card | `python -m elisa_cad.card.build` | 44 s (25 s alone) | pass; checks unchanged (MC 9.996 µL, 21 tips) |
-| dock upper | `python -m elisa_cad.dock_upper.build` | 3 min 41 s | pass; 0 unintended interferences (closed, raised); sweep: no foreign claim; guided travel 1.26/0.25 mm |
-| dock lower | `python -m elisa_cad.dock_lower.build` | 8 min 31 s (in parallel; ≈ 5 min alone) | pass; 0 interferences in 8 states; 0 M_d sweep collisions on 14 paths; anvil lift-off 0 hits; holder clearance ≥ 0.30 |
-| dock base | `python -m elisa_cad.dock_base.build` | 6 min 3 s | pass; 0 route/body, 0 tube/tube, 0 claim/sweep/loading-path intrusions |
-| assembly | `python -m elisa_cad.assembly.build` | 22 min (checks ≈ 2 min, STEP ≈ 3 min, renders ≈ 17 min) | pass; 0 unintended cross-module interferences in every scene (§4) |
+| interface plans | `python -m elisa_cad.interface_plan` | ≈ 10 s | pass (drawings/claims Rev C) |
+| card | `python -m elisa_cad.card.build` | 32 s | pass; all 21 tips pass the Rev C worst case (lateral, TPE cover, bore clearance); MC 9.996 µL, cell 1.31 µL |
+| dock upper | `python -m elisa_cad.dock_upper.build` | 3 min 14 s | pass; 0 unintended interferences (closed 950 pairs, raised 904); guided travel 1.59 / 0.59 mm; forces and margins docs/20 §4.1–4.2 |
+| dock lower | `python -m elisa_cad.dock_lower.build` | 8 min 33 s (in parallel) | pass; 0 interferences in 8 states (with the card only the 11 designed gasket contacts); **0 M_d sweep collisions on 14 paths** (after the post relief, docs/21 §6.2b); anvil lift-off 0 hits; holder clearance ≥ 0.335 (drag), 0.383 (bead-out) |
+| dock base | `python -m elisa_cad.dock_base.build` | 6 min 25 s | pass; 0 route/body, 0 tube/tube, 0 item overlaps, 0 containment failures, 0 claim/sweep/loading-path intrusions; carry-over budget 9.87×10⁻⁵ |
+| assembly | `python -m elisa_cad.assembly.build` | 25 min (in parallel with LOWER/BASE) | pass; **0 unintended cross-module interferences** in every scene (closed 734 pairs, open 480, loading path, 6 magnet states, lid sweep 4796 pairs); 32 designed contacts, each within its expected volume (§4.1) |
 
-No clash remains open. Not done in this round: no automated test suite (user decision); `--all-states` outputs were not
-regenerated after the final changes (they are not committed).
+Not done: no automated test suite (user decision); `--all-states` outputs were not regenerated (not committed).
 
 ## 13. Sources
 No vendor or literature source was opened in the integration step. Inputs: docs/13 Rev B, docs/18–22 and their CAD

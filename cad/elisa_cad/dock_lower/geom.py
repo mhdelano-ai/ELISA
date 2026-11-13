@@ -37,8 +37,15 @@ T_THIN = I.ANVIL_TOP_PLATE_T_THIN   # 5.0 (CHOICE-5)
 Z_THIN_BOTTOM = -T_THIN               # -5.0: underside of the thin plate = hard-stop face of the M_c flanges
 # cold-zone cut-out in the anvil (holds the PEEK break frame + cold plate; CHOICE-7 / CHOICE-L4)
 COLD_CUTOUT = {"x": (0.6, I.X_BREAK[1]), "y": (1.0, I.CARD_W - 1.0)}    # x 0.6-24, y 1-49 [assessment]
-COLD_PLATE = {"x": (1.6, I.X_BREAK[0]), "y": (2.0, I.CARD_W - 2.0)}     # Al top x 1.6-20, y 2-48 (Derived: 1 mm PEEK)
-PEEK_GAP = 1.0                                                          # PEEK wall between cold plate and anvil, W/S/N
+# (revised after review, docs/24 B2) cold plate x 2.6-20, y 3-47 (interface Rev C THERMAL cold_plate_xy): a 2-mm
+# insulation gap on the W/S/N sides and the 4-mm break on E, each bridged only by a 2-mm PEEK LIP at the top (foil
+# support) with closed-cell foam below, plus 4 PEEK locating pads; Rev B had 1-mm full-depth PEEK walls (7.1 W leak).
+_CP = I.THERMAL["reagent_bottom"]["cold_plate_xy"]
+COLD_PLATE = {"x": (_CP[0][0], _CP[1][0]), "y": (_CP[0][1], _CP[1][1])}
+PEEK_GAP = I.THERMAL["reagent_bottom"]["insulation_gap"]                # 2.0 (Rev B 1.0)
+PEEK_LIP_T = I.THERMAL["reagent_bottom"]["peek_lip_t"]                  # 1.5: PEEK lip z -1.5..0 across every gap
+PEEK_PADS = [((2.6 - PEEK_GAP, 12.0), "W"), ((2.6 - PEEK_GAP, 38.0), "W"), ((11.0, 1.0), "S"), ((11.0, 47.0), "N")]
+PEEK_PAD = {"len": 3.0, "z": (-10.0, -7.0)}   # 3 x 3 mm PEEK pads bridging the gap (vertical location of the block)
 # bottom pocket (thin plate region over the magnet bay). Interface: thin plate over x 31-64; thick zones as
 # I.ANVIL_THICK_ZONES. Local changes (DEV-L3): island boss extended to x 40.5 (P_b bore wall was 0.35 mm),
 # P_s boss added at x 60.3-62.5 (P_s bore D3.3 reaches x 61.35 < 62.5), west strip narrowed to x 32.5 at the windows
@@ -60,7 +67,15 @@ def pocket_poly():
     for b in (ISLAND_BOSS, P_A2_BOSS, P_S_BOSS):
         p = p.difference(box(*b))
     # end-mill corner radius on the pocket's convex corners
-    return p.buffer(-POCKET_CORNER_R, join_style=1).buffer(POCKET_CORNER_R, join_style=1)
+    p = p.buffer(-POCKET_CORNER_R, join_style=1).buffer(POCKET_CORNER_R, join_style=1)
+    # (revised after review) post relief: with the Rev C 3.4 slot the through-slot no longer carves the P_a2 boss, and
+    # the M_d post (D4, under the plate) touched it on the WL1 arc (Rev B: 0.003 mm3, i.e. zero clearance). The pocket
+    # now also clears every up-path of M_d by the post radius + 0.3 (D4.6 sweep); wall left to the P_a2 insert bore
+    # 0.63 mm (Derived: centre distance 4.58 - 2.3 - 1.65)
+    r = MD_POST["d"] / 2 + 0.3   # 2.3 (MD_POST defined below; evaluated at call time)
+    paths = [I.DRAG_PATH["IC1"], I.DRAG_PATH["IC2"], I.BEAD_OUT_PATH]
+    relief = unary_union([LineString(q).buffer(r, quad_segs=16) for q in paths])
+    return unary_union([p, relief])
 
 
 def window_poly(c):
@@ -80,6 +95,8 @@ def slot_poly_interface():
 def holder_sweep(path, clear=SLOT_HOLDER_CLEAR, step=0.1):
     h = I.MAGNETS["M_d"]["holder"][0] / 2 + clear
     ls = LineString(path)
+    if I.SLOT_HOLDER_ROUND:   # (revised after review) round holder: swept footprint = buffer
+        return ls.buffer(h, quad_segs=16)
     n = max(2, int(ls.length / step) + 1)
     sq = [box(p[0] - h, p[1] - h, p[0] + h, p[1] + h) for p in
           (ls.interpolate(i * ls.length / (n - 1)).coords[0] for i in range(n))]
@@ -179,17 +196,29 @@ BEAM_DOWELS = [(-8.0, -11.5), (-8.0, 58.0), (86.0, -11.5), (86.0, 58.0)]
 # =====================================================================================================
 # 3. Reagent cold plate and Peltier stack (CHOICE-7, CHOICE-L4)
 # =====================================================================================================
-COLD_BODY_Z = (-22.0, 0.0)                       # Al block: 5-mm top plate region + body (P_cf insert, thermistor)
-COLD_SPREADER = {"x": (-10.0, I.X_REAGENT[1]), "y": (2.0, 32.0), "z": (-22.0, -17.0)}   # flange under the module
-PELTIER = {"x": (-10.0, 20.0), "y": (2.0, 32.0), "t": 3.3,
-           "part": "Custom Thermoelectric 12711-5L31-04CL: 30.0 x 30.0 x 3.3 mm, 127 couples, Imax 4.0 A, "
-                   "Qmax 33.4 W, Vmax 15.4 V, DTmax 67 degC (spec sheet opened 2026-11-13)"}
-HEATSINK = {"x": (-12.0, 20.0), "y": (-4.0, 33.0), "base_t": 6.0, "fin_to": -52.0,   # west tubes pass below at z -56..-60
-            "spec": "Al extrusion, fins along y, R_th <= 1.0 K/W at the duct flow -- part UNVERIFIED"}
-FAN = {"x": (-4.0, 20.0), "y": (-14.0, -4.0), "z": (-52.0, -26.0),
-       "spec": "25 x 25 x 10 mm class axial fan, exhausting -y into a duct to the front panel -- part UNVERIFIED"}
-DUCT = {"x": (-4.0, 20.0), "y": (-55.0, -14.0), "z": (-52.0, -26.0)}   # x >= -4: clear of beam_SW for lift-off
-FOAM_T = 5.0                                     # closed-cell foam (k ~0.035 W/m K UNVERIFIED) round the cold block
+COLD_BODY_Z = (-20.2, 0.0)                       # Al block: 5-mm top plate region + body (P_cf insert, thermistor)
+#   (revised after review) body to the spreader top -17 and spreader 3.2 thick (was 5) so the thicker TEC keeps the
+#   heat-sink top at z -25.3
+COLD_SPREADER = {"x": (-7.0, 23.0), "y": (2.0, 32.0), "z": (-20.2, -17.0)}   # flange under the module
+#   (revised after review) module and spreader x -10..20 -> -7..23 so the module sits centred on the 24-wide sink (x -4..20);
+#   P_a drop at x 28 keeps 4.2 mm
+PELTIER = {"x": (-7.0, 23.0), "y": (2.0, 32.0), "t": 5.1,
+           "part": "Custom Thermoelectric 07111-5L31-03CL: 30.0 x 30.0 x 5.1 mm (lapped), 71 couples, Imax 3.0 A, "
+                   "Qmax 15.8 W, Vmax 8.6 V, DTmax 68 degC at Th 27 degC (spec sheet PDF opened 2026-11-13, "
+                   "customthermoelectric.com). (revised after review, docs/24 B2) replaces 12711-5L31-04CL "
+                   "(Imax 4.0, Qmax 33.4, Vmax 15.4, DTmax 67): at a 3.6 W load the 127-couple module's own "
+                   "back-conduction (K 0.357 W/K, Derived) dominated; K 0.147 W/K here"}
+HEATSINK = {"x": (-4.0, 20.0), "y": (-40.0, 33.0), "base_t": 6.0, "fin_to": -52.0,   # west tubes pass below at z -56..-60
+            "spec": "Al extruded fin profile 24 x 73 base (x >= -4: clear of beam_SW for the anvil lift-off), 9 fins to 26.7 mm, air along y (fan pulls toward -y) -- "
+                    "part UNVERIFIED; required R_th <= 1.6 K/W (docs/21 §5.4 Rev C, Derived); closest catalogue "
+                    "reference Fischer Elektronik LAM 3 75 (30 x 30 x 75 + 30-mm fan, 1.18 K/W, distributor listing "
+                    "via search, not opened -> UNVERIFIED); (revised after review: y -4..33 -> -40..33)"}
+FAN = {"x": (-4.0, 20.0), "y": (-50.0, -40.0), "z": (-52.0, -26.0),
+       "spec": "25 x 25 x 10 mm class axial fan at the -y end of the sink, pulling air along the fins and blowing -y "
+               "into the duct -- part UNVERIFIED"}
+DUCT = {"x": (-4.0, 20.0), "y": (-55.0, -50.0), "z": (-52.0, -26.0)}   # x >= -4: clear of beam_SW for lift-off
+FOAM_T = 7.5                                     # closed-cell foam (k ~0.035 W/m K UNVERIFIED) round the cold block
+#                                                  (revised after review: 5 -> 7.5; outer face stays clear of beam_NW)
 
 # =====================================================================================================
 # 4. M_c collection units (two, mirror about y = 25) -- parallelogram swing (DEV-L1, DEV-L2, CHOICE-L10)
@@ -229,8 +258,9 @@ MC_STATES = {"up": 0.0, "park": MC_THETA_PARK}
 # 5. M_d drag magnet system (CHOICE-6 interface; CHOICE-L11..L13 here)
 # =====================================================================================================
 MD = I.MAGNETS["M_d"]
-MD_MAG = MD["size"]                              # 2 x 2 x 4 along z
-MD_HOLDER = MD["holder"]                         # 2.6 sq
+MD_MAG = MD["size"]                              # bounding box 2 x 2 x 4 along z (Rev C: D2 x 4 cylinder)
+MD_HOLDER = MD["holder"]                         # D2.6 round (interface Rev C; Rev B 2.6 sq)
+MD_MAG_D = MD["d"]                               # D2 x 4 cylinder (interface Rev C)
 MD_TOP_UP = MD["z_top_up"]                       # -0.16
 MD_STROKE = MD["z_stroke"]                       # 8.0
 MD_HOLDER_Z = (-4.6, MD_TOP_UP)                  # holder body (Ti) [assessment]

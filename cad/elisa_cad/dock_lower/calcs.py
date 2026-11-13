@@ -168,11 +168,18 @@ def plate():
             for s in parts:
                 if s.distance(p) < 1e-6:
                     best = min(best, s.length)
-        widths.append((vid, round(best, 2), round(1.5 * (best / 2) ** 2 / (16 * math.pi * D) * 1e3, 1)))
+        # (revised after review, docs/24 S2) the slot is a long strip: clamped long rectangle under a central load,
+        # w = 0.00791 F b^2 / D (Timoshenko coefficient recalled by the reviewer, UNVERIFIED); circle kept for reference.
+        # F = 1.32 N = 1.2 N nominal + 10 % (closing force at the real height, docs/20 §4.1 Rev C); also at the 1.5 N limit
+        w_c = 1.5 * (best / 2) ** 2 / (16 * math.pi * D) * 1e3
+        w_s132 = 0.00791 * 1.32 * best ** 2 / D * 1e3
+        w_s15 = 0.00791 * 1.5 * best ** 2 / D * 1e3
+        widths.append((vid, round(best, 2), round(w_c, 1), round(w_s132, 1), round(w_s15, 1)))
     return {"q_N_per_mm2": round(q, 4), "span_short_mm": b, "span_long_mm": a,
             "w_uniform_um": round(w * 1e3, 2), "w_uniform_with_openings_x5_um": round(5 * w * 1e3, 1),
             "w_local_point_16N_um": round(w_pt * 1e3, 2),
-            "foil_span_at_slot_valves_[id, width mm, deflection um at 1.5 N]": widths,
+            "foil_span_at_slot_valves_[id, min chord mm, circle um 1.5 N, strip um 1.32 N, strip um 1.5 N]": widths,
+            "foil_deflection_limit_um_M4": 20.0,
             "budget": "magnet gap 0.16 +- 0.05 (docs/13 §6.2)"}
 
 
@@ -192,18 +199,29 @@ def seal():
 
 # ------------------------------------------------------------------------------------------------ thermal
 def thermal():
+    # (revised after review, docs/24 B2) every wall counted, no unexplained factor. Rev B: 1-mm full-depth PEEK on
+    # -x/+-y (2.76 + 3.45 W, the y walls had been x0.1 and -x omitted) + break 0.86 W = 7.07 W. Rev C: each gap is a
+    # 2-mm PEEK lip (z -2..0) over foam (z -15..-2); E break 4 mm the same; 4 PEEK pads 3 x 3 across 2 mm.
     k_peek, k_coc, k_foam = 0.25, 0.15, 0.035     # W/m K, UNVERIFIED handbook class values
     Ta, Tc = 25.0, 5.0
+    cp, gap, lip, T = G.COLD_PLATE, G.PEEK_GAP, G.PEEK_LIP_T, G.ANVIL_T
+    Ly = (cp["y"][1] - cp["y"][0]) * 1e-3                 # W wall and E break length (44)
+    Lx = (cp["x"][1] - cp["x"][0]) * 1e-3                 # S and N walls (17.4 each)
+    g_side = (k_peek * lip + k_foam * (T - lip)) / gap    # W/(m K) per metre of gap
+    g_brk = (k_peek * lip + k_foam * (T - lip)) / 4.0
     q = {}
-    q["PEEK_break_strip"] = k_peek * (46e-3 * 15e-3) * (Ta - Tc) / 4e-3 + k_peek * 2 * (20e-3 * 15e-3) * (Ta - Tc) / 1e-3 * 0.1
+    q["gap_W_S_N_lip_plus_foam"] = (Ly + 2 * Lx) * g_side * (Ta - Tc)
+    q["break_E_lip_plus_foam"] = (Ly + 2 * gap * 1e-3) * g_brk * (Ta - Tc)
+    q["PEEK_pads_4x"] = 4 * k_peek * (G.PEEK_PAD["len"] * 3.0 * 1e-6) * (Ta - Tc) / (gap * 1e-3)
     q["card_laminate_and_bridges"] = k_coc * (50e-3 * 0.715e-3 + 2 * 3e-3 * 5.5e-3) * (Ta - Tc) / 4e-3
+    q["card_L3_lateral_from_warm_y_strips"] = k_coc * (2 * Lx * 5.5e-3) * (Ta - Tc) / (gap * 1e-3 + 1e-3)
     q["card_top_via_PEEK_lid_plate"] = k_peek * (20e-3 * 50e-3) * (Ta - Tc) / 10e-3
-    q["foam_shell"] = k_foam * 6.0e-3 * (Ta - Tc) / (G.FOAM_T * 1e-3)
+    q["foam_shell"] = k_foam * 6.0e-3 * (Ta - Tc) / (G.FOAM_T * 1e-3)   # area 6e-3 m2 [assessment, Rev B estimate kept]
     q["P_cf_line_and_fill"] = 0.05
     Q = sum(q.values())
     Qd = 1.5 * Q
-    # TEC model from the datasheet maxima (12711-5L31-04CL, Th = 27 degC curves)
-    Imax, Vmax, DTmax, Thr = 4.0, 15.4, 67.0, 300.15
+    # TEC model from the datasheet maxima (revised after review: 07111-5L31-03CL, Th = 27 degC curves, PDF opened)
+    Imax, Vmax, DTmax, Thr = 3.0, 8.6, 68.0, 300.15
     S = Vmax / Thr
     R = Vmax * (Thr - DTmax) / (Imax * Thr)
     K = Imax * Vmax * (Thr - DTmax) / (2 * Thr * DTmax)
@@ -218,11 +236,59 @@ def thermal():
             best = (round(float(I_), 2), round(float(V), 2), round(float(V * I_), 2), round(float(Qc), 2))
             break
     Qh = Qd + best[2]
+
+    # self-consistent hot side for a given sink resistance (air 25 / 30 degC): Th = Ta + R * (Qd + P_el)
+    def op(R_sink, T_air):
+        Th_ = T_air + 10.0
+        for _ in range(200):
+            dT_ = Th_ - Tcold
+            sol = None
+            for I_ in np.arange(0.02, Imax, 0.005):
+                if S * I_ * Tcold - 0.5 * I_ ** 2 * R - K * dT_ >= Qd:
+                    sol = I_
+                    break
+            if sol is None:
+                return None
+            V_ = S * dT_ + sol * R
+            Th_new = T_air + R_sink * (Qd + V_ * sol)
+            if abs(Th_new - (Th_ - 273.15 if Th_ > 200 else Th_)) < 0.01:
+                break
+            Th_ = Th_new
+        return {"R_sink": R_sink, "T_air": T_air, "Th_C": round(Th_new, 1), "I_A": round(float(sol), 2),
+                "P_el_W": round(float(V_ * sol), 2), "Q_hot_W": round(float(Qd + V_ * sol), 2)}
+
+    def op_k(R_sink, T_air):
+        # same in kelvin bookkeeping
+        Th_ = T_air + 273.15 + 10.0
+        res = None
+        for _ in range(300):
+            dT_ = Th_ - Tcold
+            sol = None
+            for I_ in np.arange(0.02, Imax, 0.005):
+                if S * I_ * Tcold - 0.5 * I_ ** 2 * R - K * dT_ >= Qd:
+                    sol = I_
+                    break
+            if sol is None:
+                return {"R_sink": R_sink, "T_air": T_air, "result": "TEC cannot reach the load (runaway)"}
+            V_ = S * dT_ + sol * R
+            Th_new = T_air + 273.15 + R_sink * (Qd + V_ * sol)
+            res = {"R_sink_K_per_W": R_sink, "T_air_C": T_air, "Th_C": round(float(Th_new) - 273.15, 1), "I_A": round(float(sol), 2),
+                   "P_el_W": round(float(V_ * sol), 2), "Q_hot_W": round(float(Qd + V_ * sol), 2)}
+            if abs(Th_new - Th_) < 0.01:
+                return res
+            Th_ = 0.5 * (Th_ + Th_new)
+        return res
+    sweep = [op_k(Rs, Ta_) for Rs in (1.0, 1.2, 1.4, 1.6, 2.0) for Ta_ in (25.0, 30.0)]
     return {"loads_W": {k: round(v, 3) for k, v in q.items()}, "Q_total_W": round(Q, 2), "Q_design_x1.5_W": round(Qd, 2),
+            "sink_sweep_self_consistent": sweep,
+            "acceptance": "Th <= 50 degC and I <= 0.6 Imax at T_air 30 degC [assessment] -> R_sink <= 1.6 K/W (Q_hot <= 12.3 W)",
             "TEC_S_V_per_K": round(S, 4), "TEC_R_ohm": round(R, 2), "TEC_K_W_per_K": round(K, 3),
             "operating_point_[I A, V, P_el W, Qc W] at Th 35 / Tc 3 degC": best,
             "Q_hot_W": round(Qh, 2), "heatsink_Rth_required_K_per_W (Th - 25 degC air)": round((35.0 - 25.0) / Qh, 2),
-            "anvil_heater_loss_to_cold_zone_W": round(q["PEEK_break_strip"], 2)}
+            "anvil_heater_loss_to_cold_zone_W": round(q["gap_W_S_N_lip_plus_foam"] + q["break_E_lip_plus_foam"] + q["PEEK_pads_4x"], 2),
+            "RevB_recomputed_W": {"y_walls": round(2 * k_peek * (18.4e-3 * 15e-3) * (Ta - Tc) / 1e-3, 2),
+                                  "minus_x_wall": round(k_peek * (46e-3 * 15e-3) * (Ta - Tc) / 1e-3, 2),
+                                  "break": round(k_peek * (46e-3 * 15e-3) * (Ta - Tc) / 4e-3, 2)}}
 
 
 def dewpoint(T, RH):
@@ -259,7 +325,9 @@ def motion():
         ("M_c park (34.1-34.2)", mc_t, 6.0),
         ("M_d park -> gather start, 3 passes, returns (34.2-36.2)", t_gather, 120.0),
         ("drag 23.41 mm at 0.20 mm/s + 2 gate actuations (39.5-41.75)", drag / v_d + 0.4, 135.0),
-        ("bead-out 4.55 mm at 0.20 mm/s (56.75-57.15)", bo / v_d, 24.0),
+        # (revised after review, docs/24 M7) incl. G4 opening (0.06 s, docs/20 §4.3) and the M_d Z-down cam stroke
+        # at the end (0.5 s [assessment]) inside the 24-s window: 23.3 s, 0.7 s left
+        ("bead-out 4.55 mm at 0.20 mm/s + G4 open 0.06 s + M_d Z-down 0.5 s (56.75-57.15)", bo / v_d + 0.06 + t_cam, 24.0),
         ("M_d down + transit to park after bead-out (57.15-57.65 flush, no conflict)",
          t_cam + L(G.TRANSIT_LOWERED["beadout_to_park"]) / v_t, 30.0),
         ("pogo lift (after the head is latched; once per card)", 0.5, None),

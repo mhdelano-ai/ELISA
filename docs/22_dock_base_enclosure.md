@@ -15,6 +15,16 @@ Source tags as docs/18: docs section | `interface.NAME` | **Derived** (arithmeti
 opened this session (§17). Units mm, kg, W, °C. Coordinates: DOCK (interface.py §1): X to the operator's right,
 Y away from the operator, Z up, origin front-left at bench level.
 
+**Revision C (revised after review, docs/24 §8).** (B1) P_in line **PEEK 1/16″ × 0.0635 mm (0.0025″) ID** (2.66 µL incl.
+1 µL sensor; was 0.127 mm, 7.63 µL), P_in sensor range 0–25 bar; **S_IC1/S_IC2 moved beside the bay** (front of the
+left-rear zone, X 54–144, Y 208–299, valves facing −Y): tidal coils **78.5 / 76.3 µL** (387 / 376 mm; were 140 / 160);
+the electronics are re-arranged in three grounded boxes (main, side, rear in the two vacated pump-row slots); new
+routed A1/waste lines for S_IC1/S_IC2; carry-over budget re-computed by `calcs.carryover_budget()` (docs/23 §9.1).
+(S6) the 60-cm cable 985-00071 is listed by Gamry for the Reference 600 only; on a 600+ it needs Gamry's IE correction
+file → conditional (§9.5). (M3/M4) stale numbers harmonised from `calcs.py` (prime 15.0 mL). (M5) pogo-lift 3/2 valve,
+its air line to G_C and an 8-channel aux valve driver allocated; the stepper for the pogo lift dropped. Rebuilt; all
+checks pass (§11).
+
 ## 1. Summary
 
 | Item | Value | Source |
@@ -25,10 +35,11 @@ Y away from the operator, Z up, origin front-left at bench level.
 | Centre of gravity | X 232, Y 208, Z 126 (full); ≥ 178 mm inside the foot rectangle | §11 |
 | Power | DC peak 358 W, average 136 W; mains ≈ 406 W peak / 155 W average (η 0.88 UNVERIFIED); 2 × 24 V 350 W + 12 V low-noise | §9.2 |
 | Air | lab air / N₂ **500–700 kPa (≥ 450 kPa at the inlet)**, ≈ 1.1 L/min free air (dominated by an UNVERIFIED Flow EZ allowance); lid pilots **400 kPa** (revised at integration, was 300) | §8 |
-| Liquids per card (14 runs) | A1 38 mL, waste 44 mL, conjugate 0.40 mL, HQDP 0.84 mL, beads 0.24 mL (prime 14.9 mL after the re-route) | §6 |
+| Liquids per card (14 runs) | A1 38 mL, waste 45 mL, conjugate 0.40 mL, HQDP 0.85 mL, beads 0.24 mL (prime **15.0 mL**, revised after review: one value from `calcs.prime_volume`) | §6 |
 | Card plane | Z 170 → 1070 mm above the floor on a 900 mm bench (UNVERIFIED bench height) | `interface.ANVIL_TOP_Z_DOCK` |
 
-Key decisions: rear pump bank of five Tecan Cavro Centris (envelope verified) facing a rear service door; insulated cold
+Key decisions: five Tecan Cavro Centris (envelope verified): S_b, S_A, S_RC in a rear bank facing a rear service door,
+S_IC1/S_IC2 beside the bay (revised after review); insulated cold
 box front-left with a direct-to-air Peltier assembly (Laird/Tark DA-024-24, verified) and a rocked bead vial; S_b's
 6-port selection valve on top of the cold box so the bead line is 1.9 µL; all liquid waste into one air-gap head on a
 1 L waste bottle; electronics in a grounded sub-enclosure left-rear (noisy zone), cell leads 0.13 m in an isolated duct
@@ -51,13 +62,13 @@ path are keep-outs.
 | BASE_drip_tray (Z 0–15) | 4 levelling pads (Z 0–5), Al base plate 10 mm (Z 5–15); stainless tray sits on the plate (Z 15–28, rim 13) | feet at (30, 30), (440, 30), (30, 390), (440, 390) |
 | BASE_under_bay (Z 15–40) | bay deck Al 10 mm (Z 30–40) on 5 spacers; waste/purge raceway at Z 24–27; tray sump + level switch at X 245–285, Y 150–190 | deck = LOWER_bay footprint X 150–320, Y 20–200 |
 | BASE_cold_compartment | cold box X 24–122, Y 2–150, Z 17–150 (door Y 2–20); cooler warm side X 43–103, Y 150–206; above the box (Z 150–220): P_in sensor, SM-FL PEEK line, SV_b; strip X 122–145: rocker motor, tube verticals to gland G_W | §7 |
-| BASE_electronics | sub-enclosure X 4–144, Y 207–396, Z 35–318 on standoffs | §9 |
+| BASE_electronics | (revised after review) S_IC1/S_IC2 on a front shelf X 52–145, Y 207–300 (valves facing −Y at Y 208); electronics in a main box X 4–144, Y 302–396 and a side box X 4–50, Y 207–300, Z 35–318 | §5, §9 |
 | BASE_rear_low (Z ≤ 180) | Flow EZ ×2 (X 160–306, Y 212–304), 3/2 valve manifold and FS1 on top, cover Z 178–180 | §5, §8 |
-| BASE_pumps | shelf + spine, S_b, S_IC1, S_IC2, S_A, S_RC at X 172/232/292/352/412, bodies Y 325–394, valves face +Y (rear door) | CHOICE-B2 |
+| BASE_pumps | shelf + spine, S_b, S_A, S_RC at X 172/352/412, bodies Y 325–394, valves face +Y (rear door); the slots X 200–325 hold the rear electronics box (drivers, LINK) (revised after review) | CHOICE-B2 |
 | BASE_bottles | front row: A1 500 mL (X 337–423, Y 10–96), HQDP 15 mL in a dark sleeve (X 428–458); rear row: FR1, R2, pressure switch, A1 manifold, purge restrictor, FS2; Gamry duct crosses at Y 99–115, Z 125–145 | CHOICE-B3 |
 | BASE_right_rear | waste 1 L (X 335–436, Y 208–309) with air-gap head and level sensor | CHOICE-B4 |
 | BENCH_gamry | Reference 600+ at X 480–570, Y 90–360, front panel toward the operator | CHOICE-B10 |
-| Well (open top) | X 150–320, Y 0–312 open above the card bay for the lid; partitions X 147–149 / 321–323, rear wall Y 312–314 | §10 |
+| Well (open top) | X 150–320, Y 0–312 open above the card bay for the lid; partitions X 147–149 / 323–325 (revised after review, docs/24 M3: was written 321–323; code `PART_X` 323–325 since integration), rear wall Y 312–314 | §10 |
 
 Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.png`,
 `view_right_elevation_lid_sweep.png`, `view_iso_front_left.png`, `view_iso_front_right.png`, `view_rear.png`,
@@ -87,7 +98,7 @@ Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.
 
 | Item | Choice | Envelope / spec | Source |
 |---|---|---|---|
-| S_b, S_A, S_IC1, S_IC2, S_RC | Tecan Cavro Centris ×5, one RS-485 bus | **44.5 W × 68.8 D × 184.2 H, 1.3 kg, 24 VDC ±10 %, 2.5 A peak**; RS-232/485/CAN, 16 per bus; syringes 50 µL–12.5 mL; 3/4-port and 3/6/9/12-port distribution valves; front zone (valve + syringe) 22 mm deep UNVERIFIED | V:TECAN_CENTRIS_P |
+| S_b, S_A, S_IC1, S_IC2, S_RC | Tecan Cavro Centris ×5, one RS-485 bus (S_IC1/S_IC2 beside the bay, revised after review) | **44.5 W × 68.8 D × 184.2 H, 1.3 kg, 24 VDC ±10 %, 2.5 A peak**; RS-232/485/CAN, 16 per bus; syringes 50 µL–12.5 mL; 3/4-port and 3/6/9/12-port distribution valves; front zone (valve + syringe) 22 mm deep UNVERIFIED | V:TECAN_CENTRIS_P |
 | Syringes | S_b 250 µL, S_A 1 mL, S_IC 1 mL, S_RC 250 µL | — | docs/13 §3.2.2, §5.1, §6.1; S_A [assessment] |
 | Valve use | S_b 3-port (A1, coil, bypass); S_A 4-port (A1, P_a, P_a2, waste); S_IC_k, S_RC 3-port (card, waste, A1) | — | docs/13 §5.1, §6.1 |
 | SV_b | 6-port low-volume selection valve: vial, P_b, waste, air (0.2 µm filter), A1, coil | envelope 40 × 40 × 45 **UNVERIFIED** (no datasheet found) | docs/13 §5.1 |
@@ -95,7 +106,7 @@ Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.
 | LINK (USB) | in the electronics bay | ≈ 79 × 57 × 96, 219 g (store listing via search, not opened) UNVERIFIED | — |
 | FS1 | Sensirion SLF3S-0600F on the S_A → P_a line (rinse flows) | 48 × 15.5 × 8.9, 2 mL/min FS | docs/11 §5.3 |
 | FS2 | flow sensor on P_s → S_RC (fallback sweep 10 µL/min), FS ≥ 20 µL/min | part **UNVERIFIED** (LG16-0150D 7 µL/min marginal, docs/11 §5.3) | — |
-| P_in sensor | flow-through, ≤ 1 µL swept, 0–10 bar, non-metallic wetted path, at the left wall (upstream end) | UNVERIFIED part | docs/13 §6.1, §6.8 |
+| P_in sensor | flow-through, ≤ 1 µL swept, **0–25 bar** (revised after review: 1.2 MPa at the sensor with the 0.0635-mm line at 100 µL/min), non-metallic wetted path, at the left wall (upstream end) | UNVERIFIED part | docs/13 §6.1, §6.8 |
 | Waste air-gap head | GL45 cap, 7 used + 2 spare drip nipples ending 10 mm above a funnel, charcoal vent | custom PEEK | CHOICE-B4 |
 
 ### 5.2 Routing principles
@@ -106,7 +117,11 @@ Plan, elevations and views: `plan_top_labelled.png/.svg`, `view_front_elevation.
   Y 193, Z 122). P_b and P_a share Y 100 (Z 108/110): the deeper line takes the lane further west (x 143 vs 145), so no
   vertical crosses a horizontal; P_d2 runs at Z 104 under the other lines. The LOWER-internal length is now the real
   LOWER route (`dock_lower.geom.tube_route`), no longer a Manhattan estimate.
-* Pump lines leave the valves upward, run forward over the pump bodies at Z 232, drop at Y 316.5 (between the well
+* (revised after review) S_IC1/S_IC2 coils leave the −Y valve faces at Z 209.2 and run straight to the west strip
+  (P_d1 over the S_IC2 lines at Z 216, X 126; P_d2 at the valve height, X 129); their A1 lines come from the manifold
+  through the lane gap at Y 201 / 203 (Z 170 / 167), their waste lines drop to the tray raceway (Y 204 / 205, Z 20 / 22)
+  and run east to the air-gap head.
+* Rear-bank pump lines leave the valves upward, run forward over the pump bodies at Z 232, drop at Y 316.5 (between the well
   rear wall and the pump spine) to lanes at **Z 156–174 ≤ 180** (docs/18 §12: keep Z ≤ 180 behind the bay), run along
   Y 203 (gap between LOWER and rear_low) to the cold-claim strip X 126–143, and down to G_W. East pump lines run along
   X 330/331.5 at Z 100–125 through the bottle bay to G_E.
@@ -120,11 +135,11 @@ wall exit, `dock_lower.geom.tube_route`) + external. Rows 1–11 re-issued at in
 
 | # | Line | From → to | Tube OD × ID | Base | LOWER est. | Ext. | Total mm | µL | docs/13 assumption | Verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | P_in | SM-FL → P_in sensor → P_in | PEEK 1.59 × 0.127 | 204 | 119 | 200 | 523 | **7.63** | PEEK 0.3 m, 3.8 µL; ≥ 0.3 m isolation | **DEV-B1** (isolation met: sensor → port 0.32 m) |
+| 1 | P_in | SM-FL → P_in sensor → P_in | **PEEK 1.59 × 0.0635** (revised after review; Rev B 0.127, 7.63 µL) | 204 | 119 | 200 | 523 | **2.66** | PEEK 0.3 m, 3.8 µL; ≥ 0.3 m isolation | **DEV-B1** (isolation met: sensor → port 0.32 m; volume now below docs/13) |
 | 2 | P_b | SV_b → P_b | PEEK 1.59 × 0.102 | 102 | 129 | 0 | 231 | **1.87** | 0.25 × 50 mm = 2.5 µL | volume met (DEV-B3 geometry) |
 | 3 | P_cf | conjugate tube → P_cf | FEP 1.59 × 0.254 | 265 | 92 | 0 | 357 | 18.1 | dead ≈ 100 µL in the fill | OK |
-| 4 | P_d1 coil | S_IC1 ↔ P_d1 | FEP 1.59 × 0.508 | 573 | 117 | 0 | 689 | **140** | 60 µL coil | ≥ 60 OK, larger (DEV-B2) |
-| 5 | P_d2 coil | S_IC2 ↔ P_d2 | FEP 1.59 × 0.508 | 675 | 117 | 0 | 791 | **160** | 60 µL coil | DEV-B2 |
+| 4 | P_d1 coil | S_IC1 ↔ P_d1 | FEP 1.59 × 0.508 | 270 | 117 | 0 | 387 | **78.5** | 60 µL coil | ≥ 60 OK (revised after review; Rev B 689 mm / 140 µL) |
+| 5 | P_d2 coil | S_IC2 ↔ P_d2 | FEP 1.59 × 0.508 | 259 | 117 | 0 | 376 | **76.3** | 60 µL coil | ≥ 60 OK (Rev B 791 / 160) |
 | 6 | P_a | S_A → FS1 → P_a | PEEK 1.59 × 0.254 | 673 | 117 | 0 | 790 | 41.0 | clean A1 | OK (prime) |
 | 7 | P_byp | P_byp → air-gap head | FEP 1.59 × 0.762 | 939 | 121 | 0 | 1061 | 484 | waste, air gap | OK |
 | 8 | P_s | P_s → FS2 → S_RC | PEEK 1.59 × 0.254 | 555 | 114 | 0 | 669 | 34.9 | pull to waste | OK |
@@ -145,15 +160,17 @@ wall exit, `dock_lower.geom.tube_route`) + external. Rows 1–11 re-issued at in
 | 33 | dry-air purge | restrictor → cold box | FEP 1.59 × 0.762 | 540 | — | — | 540 | — | ≈ 0.1 L/min | — |
 | 34 | cell leads | LOWER bulkhead → junction box | shielded | 132 | (LOWER) | — | 132 | — | ≤ 0.3 m | OK (§9.5) |
 
-Pressure drops (Hagen–Poiseuille, η 0.89 mPa·s, Derived in `fluidics.dp_kPa`): P_in 128 kPa at 100 µL/min (upstream of
-the card, BSM side); P_b 135 kPa at 100 µL/min → dispense beads at ≤ 50 µL/min (67 kPa at the pump; the card sees only
+Pressure drops (Hagen–Poiseuille, η 0.89 mPa·s, Derived in `fluidics.dp_kPa`): P_in **1.94 MPa** at 100 µL/min with the
+0.0635-mm line (revised after review; Rev B 128 kPa with 0.127 mm) — upstream of the card, on the BSM/SM-FL side (UPLC
+class, ≫ 2 MPa), the card sees only the vented-chamber pressure; 19 kPa at the parked 1 µL/min; P_b 135 kPa at 100 µL/min → dispense beads at ≤ 50 µL/min (67 kPa at the pump; the card sees only
 the vented-chamber pressure); P_d coils 10–11 kPa at the 25 µL/s tidal stroke, 3.6 kPa at the 500 µL/min drain;
 P_s 1.1 kPa at 10 µL/min.
 
 ## 6. Liquid budget and bottle sizing (Derived, `calcs.liquid_budget`)
 
 Per card = 14 runs (docs/13 §5.2) + 2 recovery/post-high cycles (docs/13 §4 allowance, 1 mL A1 each [assessment]) +
-docking prime (3 × all routed line volumes 3.86 mL + syringes 3.5 mL = **15.1 mL**). Per day = 3 cards (24-h worst case
+docking prime (3 × all routed line volumes 3.84 mL + syringes 3.5 mL = **15.0 mL**; revised after review: one value
+throughout, Rev B also quoted 14.9). Per day = 3 cards (24-h worst case
 [assessment]).
 
 | Liquid | Per card | Per day | Container | Fills last | Note |
@@ -195,7 +212,8 @@ Drip tray: 464 × 414 × 13 gross ≈ 2.5 L, ≈ 2.0 L after displacement [asses
 (revised at integration) Lab air or N₂, **500–700 kPa (≥ 450 kPa at the inlet, `PLUNGER air_supply_min_kPa`)**, oil-free,
 dry, inlet push-in on the right panel at (470, 380, 45) behind the Gamry → **FR1** filter-regulator 5 µm, **400 kPa** → lid
 pilot manifold via the umbilical (`interface.PLUNGER` 400 kPa, Rev B; SMC S070 0.5 W pilots rated 0.5 MPa, docs/20) and
-the LOWER pogo-lift cylinder → tee to **R2** precision regulator 120 kPa → Flow EZ supplies (LU-FEZ-0345 needs
+the LOWER pogo-lift cylinder (revised after review, docs/24 M5: through a 3/2 solenoid valve in the west strip,
+X 130–140, Y 160–180, driven by the aux valve driver; PU 4 × 2.5 line routed under the deck to gland G_C) → tee to **R2** precision regulator 120 kPa → Flow EZ supplies (LU-FEZ-0345 needs
 1100 mbar, max 1300, V:FLUIGENT_FEZ_P) and the purge restrictor. Low-supply pressure switch **< 450 kPa** → fault (the
 lid switch trips at 350 kPa; plungers are spring-closed and V3 spring-open, so air loss is fail-safe, docs/13 §4).
 
@@ -213,13 +231,18 @@ The lid agent sizes the pilot manifold; this supply offers 400 kPa at ≥ 10 L/m
 
 ## 9. Electronics
 
-### 9.1 Blocks (sub-enclosure X 4–144, Y 207–396, Z 35–318; `view_electronics_bay.png`)
+### 9.1 Blocks (revised after review: main box X 4–144, Y 302–396; side box X 4–50, Y 207–300; rear box X 200–325, Y 325–416, Z 37–228 in the vacated pump slots; `view_electronics_bay.png`)
 
+(revised after review, docs/24 B1/M5) Placement: main box — PSU_M, PSU_T (standing), USB hub, mains filter, LabJack,
+intake grille, 80-mm fan; side box — PSU_L, controller + watchdog, relay/interlock board; rear box — DIN plate,
+Fluigent LINK, 21-ch pilot driver, **8-ch aux valve driver (new: pogo-lift 3/2 valve, 3 × 3/2 fill/P_mv switch valves,
+spare)**, stepper and thermal drivers. Contents as before:
 PSU_M 24 V 350 W (motion, valves, logic) and PSU_T 24 V 350 W (thermal) — Mean Well LRS-350-24 class, 215 × 115 × 30,
 0.76 kg (search listings; datasheet 403 → UNVERIFIED); PSU_L 12 V low-noise 15 W; mains filter + fuses + K1 safety
 contactor; DIN mounting plate at X 74–76; dock controller + **independent hardware watchdog** (heartbeat from Python,
 docs/13 §6.2); relay/interlock board (E-stop loop, lid switch, leak inputs, safe-state relays); 6 stepper drivers
-(M_c ×2, cam Z, pogo lift, rocker, spare; disabled in read windows); 4 Peltier/heater channels PWM ≥ 25 kHz + LC
+(M_c ×2, M_d cam Z, rocker, 2 spare — the pogo lift is a pneumatic cylinder, docs/21 CHOICE-L16; Rev B listed a
+stepper for it; disabled in read windows); 4 Peltier/heater channels PWM ≥ 25 kHz + LC
 (CHOICE-B7); 21-channel pilot-valve driver (cable via the umbilical); LabJack U3 (75 × 115 × 30, listings, UNVERIFIED)
 behind an opto-isolated Inject Start input (SM-FL connector 1 pins 1–2, docs/02 §3.1); isolated USB hub (controller,
 U3, LINK, USB–RS-485 for the pumps); Fluigent LINK. All parts except the Centris, Flow EZ and cooler are to be selected.
@@ -232,13 +255,14 @@ U3, LINK, USB–RS-485 for the pumps); Fluigent LINK. All parts except the Centr
 | 2 Flow EZ (6 W) + LINK | M | 14 | 14 |
 | 21 pilot valves (≤ 10 on, 1 W UNVERIFIED) | M | 10 | 4 |
 | steppers (LOWER parts) / M_d stage | M | 40 / 20 | 8 / 6 |
+| aux valves (pogo-lift 3/2, 3 × 3/2 fill/P_mv; ≤ 2 on, 1 W each UNVERIFIED; revised after review M5) | M | 2 | 0.2 |
 | fans | M | 4 | 4 |
 | logic, DAQ, sensors, scanner | L | 12 | 10 |
 | cold-box Peltier DA-024-24 (2.4 A × 24 V) | T | 57.6 | 35 |
 | reagent-zone Peltier (LOWER), anvil + lid heaters | T | 80 | 40 |
-| **total** | | **358** | **136** |
+| **total** (revised after review) | | **360** | **136** |
 
-Rails: M 208 W / 350, T 138 W / 350, L 12 / 15. Mains (η 0.88 UNVERIFIED): 406 W peak, 155 W average.
+Rails: M 210 W / 350, T 138 W / 350, L 12 / 15. Mains (η 0.88 UNVERIFIED): 409 W peak, 155 W average (revised after review: + aux valves).
 
 ### 9.3 Heat and airflow
 
@@ -266,8 +290,15 @@ read window. Pumps cool by convection through the rear door louvre.
 Reference 600+ on the bench at `BENCH_gamry` (9 × 19 × 27 cm, 3 kg, docs/18), front panel toward the operator. Leads:
 LOWER bulkhead (320, 107, 135) → duct X 320.5–440 → junction box (X 440–468, Y 91–123, Z 115–155) = **132 mm** + ≈ 20 mm
 inside the box; LOWER part (electrode bay card x 54–62.5 → dock X 244–252.5 to X 320) ≈ 70–100 mm → total ≈ 0.25 m
-≤ 0.3 m (docs/13 §6.3). The standard 60 cm cell cable (SKU 985-00071, V:GAMRY_CABLE_60) runs from the Gamry front
-panel to the right-panel gland at (470, 107, 135): ≈ 0.11 m Manhattan, slack coiled.
+≤ 0.3 m (docs/13 §6.3). A 60 cm cell cable runs from the Gamry front panel to the right-panel gland at (470, 107, 135):
+≈ 0.11 m Manhattan, slack coiled. **(revised after review, docs/24 S6) Cable compatibility is conditional:** the Gamry
+order page for SKU 985-00071 (60 cm) lists it "For Reference 600 and Interface 1000/1010" only (V:GAMRY_CABLE_60,
+re-opened) — the reviewer is right that Rev B's "verified for the 600+" was wrong. A Gamry instruction document
+(V:GAMRY_600P_STD_CABLE, PDF text read) describes using the 60 cm Standard Cell Cable PN 985-00071 on a Reference 600+
+**only with the Gamry-supplied IE correction file REF600P_CID14.IECOR and a re-calibration with that cable**. The C2
+plan therefore: order 985-00071 together with that correction file from Gamry (or a Gamry-confirmed 600+ cable),
+confirm the 25-pin connector and lead identities before the bulkhead design (`PASS_THROUGHS['gamry_cell_cable']`);
+performance of the corrected set-up against the 600+ specification UNVERIFIED.
 
 ### 9.6 Connector panel (rear, X 24–140)
 
@@ -283,7 +314,8 @@ IEC inlet + switch + fuse, PE stud, USB-B ×3 (controller, DAQ via isolator, LIN
    extension Y 2–20, revised at integration; card
    plane 170) so the card is reached from the front/top; cold-box door (front-left); bottle door (front-right, X
    327–465, Z 20–255); waste hatch in the top-right panel (Y 200–317) — the waste bottle lifts out vertically; rear pump
-   service door (X 152–463, Z 20–301); left panel removable for the electronics; top-left panel removable for SV_b.
+   service door (X 152–463, Z 20–301); left panel removable for the electronics; top-left panel removable for SV_b and
+   (revised after review) for the valve heads/syringes of S_IC1/S_IC2 (tops at Z 221, 87 mm below the panel).
 3. **Service reach:** pump valve heads and syringes face the rear door, 15.5 mm between bodies, door removal gives free
    access; isolators let the whole shelf slide out after the lines are unplugged. SV_b, P_in sensor reached from the top
    (top-left panel); Flow EZ and FS1 by lifting the rear-low cover (with the lid open).
@@ -310,11 +342,12 @@ IEC inlet + switch + fuse, PE stud, USB-B ×3 (controller, DAQ via isolator, LIN
 | Base-body overlaps | pairwise AABB (assemblies such as tube-in-holder excluded) | **0** |
 | Tube routes vs bodies | each segment sampled every 0.5 mm, swept tube radius vs every body box (its end devices/walls allowed) | **0** |
 | Tube–tube | sampled centre-line distance ≥ sum of radii | **0** clashes |
-| Containment | cold-box contents inside the liner; boards inside the electronics box | pass (fan/grille are wall-mounted) |
+| Containment | cold-box contents inside the liner; boards inside one of the three electronics boxes (revised after review) | pass |
 | Footprint | every base body inside `DOCK_FOOTPRINT` | pass except E-stop (Y −25) and light bar (Y −6) |
 | Pump/valve service reach | §10.3 | rear door; 15.5 mm gaps; shelf removable |
 | Bottle capacities | §6 | A1 11.7 cards; waste 17.9 cards; per-card tubes ≥ 4× need |
-| Tube lengths vs docs/13 | §5.3 | (revised at integration) P_in 7.6 vs 3.8 µL (DEV-B1); P_b 1.87 ≤ 2.5 µL; coils 140/160 ≥ 60 µL (DEV-B2); fill dead volumes 18/18 µL ≪ 100/200 µL |
+| Tube lengths vs docs/13 | §5.3 | (revised after review) P_in 2.66 vs 3.8 µL (DEV-B1); P_b 1.87 ≤ 2.5 µL; coils 78.5/76.3 ≥ 60 µL (DEV-B2); fill dead volumes 18/18 µL ≪ 100/200 µL |
+| Carry-over budget (revised after review, docs/24 B1) | `calcs.carryover_budget()`: docs/13 §8.3 allocations × as-built area/volume ratios | Rev B 1.09×10⁻⁴ (open), **Rev C 9.87×10⁻⁵ ≤ 10⁻⁴** (docs/23 §9.1) |
 | Cell leads | §9.5 | 0.13 m base + ≈ 0.1 m LOWER ≤ 0.3 m |
 | CoG | mass-weighted centroids (+ LOWER 8 kg, UPPER 5 kg allowances) | full (X 232, Y 208, Z 126), margin to the foot rectangle **178 mm**; base only (231, 245, 117), margin 145; lateral force at the top edge to tip forward ≈ 250 N |
 | Footprint vs bench | §11.1 bench plan | 963 mm wide, 712 deep (stack) ≤ 750 bench depth (UNVERIFIED) |
@@ -330,7 +363,7 @@ at X −393…−50, gap 50 (PEEK line), dock 0–470, gap 10, Gamry 480–570.
 | # | Open point | Chosen | Why | Alternatives |
 |---|---|---|---|---|
 | CHOICE-B1 | structure | Al 10 mm base plate on 4 levelling pads, 20 × 20 profile posts/rails, 2 mm panels; bay on its own deck on 5 spacers | short stiff path for stage + anvil; C2 machinable | welded steel chassis; 15 mm plate (series) |
-| CHOICE-B2 | pumps | 5 × Cavro Centris in a rear row, valves to the rear door, isolated shelf; order S_b, S_IC1, S_IC2, S_A, S_RC | only pump with dimensions verified this session; one bus; west-going lines on the left | Hamilton PSD/4 (spec page 403; search: 107 D × 127 H × 44 W, UNVERIFIED) |
+| CHOICE-B2 | pumps | 5 × Cavro Centris: S_b, S_A, S_RC in a rear row (valves to the rear door), **S_IC1/S_IC2 beside the bay on a front shelf, valves facing −Y, service through the removable top-left panel (revised after review, docs/24 B1)** | only pump with dimensions verified this session; one bus; west-going lines on the left | Hamilton PSD/4 (spec page 403; search: 107 D × 127 H × 44 W, UNVERIFIED) |
 | CHOICE-B3 | containers | A1 500 mL GL45; conjugate + beads in 2 mL tubes in the cold box (fresh per card); HQDP 15 mL in a dark sleeve at ambient; waste 1 L | daily replacement (docs/13 §5) needs small volumes; 500 mL lasts ≈ 12 cards | A1 1 L (docs/18 note) needs a deeper bay; HQDP cooled (less hydrolysis, more box) |
 | CHOICE-B4 | waste | one air-gap head, every line ends in air | breaks the liquid path to earth (docs/02 §4.4), no siphon or back-pressure | individual drip funnels |
 | CHOICE-B5 | cold box | PU/Al box, DA-024-24 on the rear wall, warm side out left, dry purge, top at Z 150 | verified part, 2.9× margin; leaves Z 150–220 for SV_b and the SM-FL line | air-to-air AA-024 (needs more height); Peltier under a cold plate holding both tubes |
@@ -342,15 +375,15 @@ at X −393…−50, gap 50 (PEEK line), dock 0–470, gap 10, Gamry 480–570.
 | CHOICE-B11 | bead line | PEEK 0.102 mm ID (0.004″), 0.24 m | keeps ≤ 2.5 µL with a realistic route | 0.127 mm ID (3.0 µL, chase 5 µL) |
 | CHOICE-B12 | air | lab air/N₂ 500–700 kPa; FR1 **400 kPa** (revised at integration), R2 120 kPa; no compressor in the dock | vibration/noise near reads | off-dock compressor + receiver |
 | CHOICE-B13 | pressure channels | 2 × Flow EZ 345 mbar; ch2 shared via 3/2 valves for the bottle fills | fills only at insertion, P_mv idle then (docs/13 §7.1) | third channel |
-| CHOICE-B14 | SM-FL line | P_in flow-through sensor at the upstream (wall) end; PEEK 0.127 mm ID | ≥ 0.3 m PEEK between sensor and card | sensor at the card (breaks isolation if wetted metal) |
+| CHOICE-B14 | SM-FL line | P_in flow-through sensor at the upstream (wall) end; PEEK **0.0635 mm** ID (revised after review; Rev B 0.127) | ≥ 0.3 m PEEK between sensor and card | sensor at the card (breaks isolation if wetted metal) |
 | CHOICE-B15 | flow sensors | FS1 SLF3S-0600F on P_a; FS2 (≥ 20 µL/min FS, TBD) on P_s | docs/13 §6.2 duties | sensors on the waste side |
 
 ## 13. Deviations from docs/13 Rev B / docs/18
 
 | # | What | Change | Effect |
 |---|---|---|---|
-| DEV-B1 | P_in PEEK 0.3 m / 3.8 µL (docs/13 §2.6) is not reachable: stack beside the dock + routing to the bay centre | 0.52 m / **7.6 µL** (revised at integration: 0.2 m outside UNVERIFIED, 0.20 m base, 0.12 m LOWER real route) | D13 flush (200 µL) still = 25 line volumes; the unflushed-line carry-over term of docs/13 §3.1 scales (3.8 + 1.05 → 8.0 + 1.05 µL); transfer fraction 0.90 to be re-checked (C1 gravimetric / M2); option: 0.102 mm ID → 5.1 µL at 2.5× ΔP (320 kPa at 100 µL/min, upstream of the card) |
-| DEV-B2 | 60 µL tidal coils | 140 / 160 µL (revised at integration) (0.5 mm FEP, routed length to the rear pumps) | requirement "stroke stays in the coil" met with more margin; adds dead volume behind the stroke only; ΔP 10–11 kPa at 25 µL/s; option 0.4 mm ID (availability UNVERIFIED) → ≈ 95–100 µL |
+| DEV-B1 | P_in PEEK 0.3 m / 3.8 µL (docs/13 §2.6) is not reachable: stack beside the dock + routing to the bay centre | 0.52 m (0.2 m outside UNVERIFIED, 0.20 m base, 0.12 m LOWER). **(revised after review, docs/24 B1/M4) 0.0635 mm ID → 1.66 µL + 1 µL sensor = 2.66 µL** (Rev B 0.127 mm: 6.63 + 1 = 7.63 µL; the "8.0 + 1.05" and "5.1 / 4.9 µL" of Rev B are superseded; 0.102 mm would give 4.24 + 1 = 5.24 µL) | wetted area of line + M_in ×0.96 of docs/13 (Rev B ×1.72) → carry-over path 2 back to its allocation (docs/23 §9.1); D13 flush (200 µL) = 75 line volumes (Rev B 26); ΔP 1.94 MPa at 100 µL/min upstream of the card; 1/16″ × 0.0025″ PEEK availability and clogging (64 µm bore) UNVERIFIED → E1.10/C2 |
+| DEV-B2 | 60 µL tidal coils | (revised after review, docs/24 B1) **78.5 / 76.3 µL** with S_IC1/S_IC2 beside the bay (Rev B 140 / 160 µL to the rear pumps) | stroke stays in the coil (≥ 60); wall area ×1.31 of a 60 µL coil (Rev B ×2.67); ΔP 5–6 kPa at 25 µL/s |
 | DEV-B3 | S_b outlet line 0.25 mm × 50 mm (docs/13 §5.1) | 0.102 mm × 231 mm, **1.87 µL** (volume met; revised at integration); holding coil 95 µL (≥ 40) | bead clogging/adhesion in 0.1 mm PEEK unknown → add to M3 / E2.2; fallback CHOICE-B11 alternative |
 | DEV-B4 | docs/18 claims: unclaimed space used | cold-box door in the front strip Y 2–20; P_in sensor at X 4–10; tube lanes in the gap Y 200–205; E-stop/light bar outside the footprint (Y −25/−6) | see IR-3 |
 
@@ -378,10 +411,13 @@ No error found in interface.py; the Z ≤ 180 rule is confirmed by the swept sol
 Sheet-metal or cast chassis with a 15 mm ribbed base and 6 feet; one PCB for controller, watchdog, stepper, thermal and
 pilot drivers; OEM pressure module instead of Flow EZ + LINK (Fluigent F-OEM appeared in search, not opened); moulded
 insulated cold drawer with keyed reagent tubes (RFID/2-D code) and a moulded bottle bay; pumps stay Centris-class (OEM
-already); shorter lines by moving S_IC1/S_IC2 beside the bay (coils → 60 µL, DEV-B2 removed); internal diaphragm
+already); (done in Rev C: S_IC1/S_IC2 beside the bay, coils 76–79 µL); internal diaphragm
 compressor + receiver only if users lack lab air, run outside read windows on isolators; target footprint ≈ 420 × 400.
 
 ## 16. Open items / UNVERIFIED
+(revised after review) 1/16″ × 0.0025″ PEEK tubing (availability, clogging) and a 0–25 bar flow-through P_in sensor;
+Centris operation with the valve facing −Y on the front shelf (mounting UNVERIFIED as for the rear bank); latch
+switches and pogo-lift valve parts; Gamry 600+ cable/IECOR file (§9.5).
 
 Pump front-zone depth and mounting holes; SV_b part and envelope; Flow EZ outlet position and air consumption; LINK
 dimensions; FS2 part (≥ 20 µL/min); P_in flow-through sensor part; LRS-350-24 datasheet (403); LabJack U3 enclosure
@@ -400,7 +436,10 @@ allowances; plate first mode not computed with the frame.
   https://tark-solutions.com/sites/default/files/fields/media.file.field_media_file/2023-09/Thermoelectric-Cooler-Assemblies-Catalog.pdf
 * Waters ACQUITY UPLC I-Class (SM-FTN) specification sheet (PDF text):
   https://ucrf.unist.ac.kr/wp-content/uploads/2024/11/ACQ.-I-Class-PLUS-Sys.-CH-A-wSM-FTN-I-Specification.pdf
-* Gamry Reference 600 cell cable 60 cm: https://orders.gamry.com/reference-600-cell-cable-60-cm.html
+* Gamry Reference 600 cell cable 60 cm: https://orders.gamry.com/reference-600-cell-cable-60-cm.html (re-opened after
+  review: "For Reference 600 and Interface 1000/1010")
+* Gamry, Instructions for installing Standard Cable on Reference 600+ (PDF):
+  https://cn.gamry.com/assets/Uploads/Instructions-for-using-a-Standard-Cable-on-a-Reference-600+.pdf (opened after review)
 * Not reachable / not containing the numbers: Hamilton PSD/4 spec page (403), Mean Well LRS-350-24 (403), DWK/Bartelt
   DURAN pages (403/truncated), labjack.com U3 page (no dimensions), Waters I-Class PLUS pages (503), norelem profile page
   (truncated). Search-result summaries for these are marked UNVERIFIED above.

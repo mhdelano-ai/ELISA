@@ -5,57 +5,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "collect_IC1": [],
@@ -63,57 +63,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "collect_IC2": [],
@@ -121,57 +121,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "gather_IC1": [],
@@ -179,57 +179,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "gather_IC1_low": [],
@@ -237,57 +237,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "drag_mid_IC1": [],
@@ -295,57 +295,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "hold_RC": [],
@@ -353,57 +353,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "beadout_end": [],
@@ -411,57 +411,57 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ]
  },
@@ -541,12 +541,12 @@
   },
   "V14": {
    "klass": "anvil",
-   "min_mm": 1.8,
+   "min_mm": 1.808,
    "nearest": "openings"
   },
   "V15": {
    "klass": "anvil",
-   "min_mm": 0.25,
+   "min_mm": 0.253,
    "nearest": "openings"
   },
   "V16": {
@@ -587,7 +587,7 @@
  },
  "plate_clearance_2d": {
   "drag_IC1": {
-   "min_clearance_holder_to_opening_edge": 0.339,
+   "min_clearance_holder_to_opening_edge": 0.335,
    "always_inside": true
   },
   "gather_IC1_pass1": {
@@ -603,7 +603,7 @@
    "always_inside": true
   },
   "drag_IC2": {
-   "min_clearance_holder_to_opening_edge": 0.339,
+   "min_clearance_holder_to_opening_edge": 0.335,
    "always_inside": true
   },
   "gather_IC2_pass1": {
@@ -619,7 +619,7 @@
    "always_inside": true
   },
   "bead_out": {
-   "min_clearance_holder_to_opening_edge": 0.3,
+   "min_clearance_holder_to_opening_edge": 0.383,
    "always_inside": true
   }
  },

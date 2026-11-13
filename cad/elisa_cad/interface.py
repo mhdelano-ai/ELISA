@@ -31,6 +31,23 @@ decision; tag I-n = integration choice, docs/23 §8):
   * PLUNGER tip_z_open 1.015 -> 0.97 (= closed + 0.8 stroke; Rev A inconsistent by 0.045) (I-16)
   * slot_polygon simplified at 0.02 (STEP size); LOWER/BASE tubes as compounds (no Boolean fuse) (I-15)
 
+Revision C (resolution of the review docs/24, 2026-11-13; docs/18 §17, docs/24 §8). Each line: finding -> change:
+  * S1 TOL: complete lateral tolerance list (laser kerf, guide-hole position, pin play, tip diameter, cold-zone
+    contraction, COC/Al CTE) and VALVE_TIP_LATERAL_WC(); slot valves G1-G4, V11, V12: pin and tip D0.8 -> D1.0 in
+    D1.2 -> D1.3 card bores (radial clearance 0.15 as the D1.2/D1.5 class); every tip now overlaps its channel wall by
+    >= 0.25 -> worst case +0.035, RSS +0.16 (DEV-IF-C1)
+  * S2: M_d magnet 2x2x4 square -> D2 x 4 cylinder in a ROUND D2.6 holder; drag-slot arms 4.0 -> 3.4 (as the WLc and
+    bead-out legs); slot = buffers U swept round holder + 0.30; every slot-valve chord 3.40 -> long-strip model 15.6 um at
+    1.32 N (DEV-IF-C2; lateral drag force 0.96x, Derived)
+  * S3: PLUNGER tip_z_closed 0.17 -> 0.50 (real stop height on compressed TPE over the lands, estimate 0.37-0.54);
+    tip_z_open 0.97 -> 1.30; preload shimmed with a force gauge at the measured height on the reference card (I-13
+    extended)
+  * S4: FACE_SEAL gasket installed ID = tube OD (free ID 1.50, stretch fit): no annulus open to the port
+  * B2: THERMAL reagent cold plate x 2.6-20 / y 3-47 behind a 2-mm insulation gap (PEEK lip 1.5 mm + foam);
+    peltier_exhaust heat 10.6 -> 12.3 W max (sink acceptance R <= 1.6 K/W; docs/21 §5.4 Rev C)
+  * B1: (no interface number) P_in line PEEK 0.0635 mm ID; S_IC1/S_IC2 moved beside the bay (docs/22 Rev C)
+  * M3: stale Rev A comments (DATUM_PIN_D, cylinder_pitch_min, P_b dock text)
+
 Coordinate systems (docs/18 §2):
   CARD: origin at the lower-left corner of the card seen from the TOP (docs/13 §2.1); x along 75.5, y along 50;
         z = 0 is the foil (L0) underside = anvil top plane (datum C); +z up into the card.
@@ -108,7 +125,8 @@ BREAK_BRIDGES_Y = [(3.5, 6.5), (43.5, 46.5)]   # CHOICE-17: the two 3 mm L3 brid
 #             windows and slot; the second is what the valves need (docs/13 §2.1), so the whole anvil top is datum C.
 # Secondary A: card front edge y = 0 (L3 side face) against two fixed pins.
 # Tertiary B: card left edge x = 0 (L3 side face) against one fixed pin.
-DATUM_PIN_D = 4.0                         # hardened steel, protrudes 5.0 mm above z = 0 [assessment]
+DATUM_PIN_D = 4.0                         # zirconia (docs/21 CHOICE-L9; Rev A said hardened steel), protrudes 5.0 mm
+#                                           above z = 0 [assessment]
 DATUM_PIN_PROTRUSION = 5.0
 DATUM_A_PINS = [(12.0, -DATUM_PIN_D / 2), (63.0, -DATUM_PIN_D / 2)]   # touch y = 0 at x = 12, 63
 DATUM_B_PIN = (-DATUM_PIN_D / 2, 25.0)                               # touches x = 0 at y = 25
@@ -124,8 +142,48 @@ TOL = {
     "die_in_window": 0.05,           # docs/13 §2.7 (UNVERIFIED)
     "datum_pin_position": 0.01,      # [assessment]
     "head_to_nest": 0.03,            # lid head located on nest by two guide pins [assessment]
-    "pin_in_card_bore_radial_clearance_min": 0.15,  # Derived: (1.5-1.2)/2; (1.2-0.8)/2 = 0.2
+    "pin_in_card_bore_radial_clearance_min": 0.15,  # Derived: (1.5-1.2)/2 = (1.2-0.8)/2 - 0.05 = (1.3-1.0)/2
+    # Rev C (docs/24 S1): terms missing from the Rev B lateral chain
+    "laser_kerf_per_side": 0.02,     # +-0.04 on a laser-cut L1 channel width -> 0.02 per wall [assessment, M11 coupon]
+    "guide_hole_position": 0.01,     # CuSn8 guide-plate hole to the head guide pins (docs/20 §3.1) [assessment]
+    "pin_play": 0.006,               # pin g5 in guide H7 (docs/20 PIN_FIT) [Derived, max]
+    "tip_diameter": 0.005,           # ground tip land +-0.01 on D -> 0.005 on the radius [assessment]
+    "cold_zone_contraction": 0.024,  # 20 mm COC x 60e-6/K x 20 K after clamping (reviewer docs/24 S1) [assessment,
+                                     # alpha_COC UNVERIFIED]; x direction only, taken in full on every valve
+    "coc_vs_al_head_cte": 0.010,     # 55 mm x (60 - 23)e-6/K x 5 K (20 -> 25 degC) [assessment]
 }
+
+
+X_ONLY_TOL = ("cold_zone_contraction", "coc_vs_al_head_cte")   # act along card x only (from datum B / x = 0)
+
+
+def valve_tip_lateral_wc_dir(vid, rss=False):
+    """Rev C: lateral worst case for valve vid, projected on the channel normal: the x-only terms count with |n_x| of
+    the normal of the channel the tip sits on; the y CTE term (datum A, 25 mm x 37e-6 x 5 K = 0.005) with |n_y|."""
+    from shapely.geometry import LineString as _LS, Point as _Pt
+    v = VALVES[vid]
+    k = min(CHANNELS, key=lambda c: _LS(CHANNELS[c]["pts"]).distance(_Pt(v.xy)))
+    pts = CHANNELS[k]["pts"]
+    i = min(range(len(pts) - 1), key=lambda j: _LS([pts[j], pts[j + 1]]).distance(_Pt(v.xy)))
+    dx, dy = pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]
+    L = math.hypot(dx, dy)
+    nx, ny = abs(dy / L), abs(dx / L)
+    iso = [TOL[q] for q in ("head_to_nest", "datum_pin_position", "card_edge_to_feature", "L1_to_L3_registration",
+                            "laser_kerf_per_side", "guide_hole_position", "pin_play", "tip_diameter")]
+    xo = [TOL[q] * nx for q in X_ONLY_TOL] + [0.005 * ny]
+    vals = iso + xo
+    return math.sqrt(sum(q * q for q in vals)) if rss else sum(vals)
+
+
+def valve_tip_lateral_wc(rss=False):
+    """Rev C (docs/24 S1): worst-case (or RSS) lateral error of a valve tip relative to its L1 channel wall.
+    Chain: head->nest, datum pin, L3 edge->feature, L1->L3 registration, kerf, guide hole, pin play, tip D,
+    cold-zone contraction, COC/Al CTE. Returns mm (Derived)."""
+    keys = ("head_to_nest", "datum_pin_position", "card_edge_to_feature", "L1_to_L3_registration",
+            "laser_kerf_per_side", "guide_hole_position", "pin_play", "tip_diameter", "cold_zone_contraction",
+            "coc_vs_al_head_cte")
+    v = [TOL[k] for k in keys]
+    return math.sqrt(sum(x * x for x in v)) if rss else sum(v)
 
 # =====================================================================================================
 # 4. Chambers, tanks, meter, die, cell (card coords)
@@ -356,7 +414,16 @@ class Valve:
     src: str
 
 
-def _v(id_, xy, klass, function, src, tip=1.0, fail="closed"):
+SLOT_VALVE_TIP_D = 1.0   # Rev C (docs/24 S1, DEV-IF-C1): slot valves G1-G4, V11, V12 D0.8 -> D1.0 (pin = tip)
+SLOT_VALVE_BORE_D = 1.3  # card bore for the D1.0 slot pins: radial clearance 0.15 (TOL rule)
+
+
+def _v(id_, xy, klass, function, src, tip=1.0, fail="closed", slot_tip=SLOT_VALVE_TIP_D):
+    if klass == "slot":                       # Rev C: slot class pin = tip, D1.0 in D1.3 bores (G3: D0.9 in D1.2)
+        tip = pin = slot_tip
+        bore = SLOT_VALVE_BORE_D if slot_tip >= 1.0 else 1.2
+        fmax, fnom = 1.5, 1.2
+        return Valve(id_, xy, tip, pin, bore, klass, fail, fnom, fmax, function, src)
     pin = 1.2 if tip >= 1.0 else 0.8
     bore = 1.5 if tip >= 1.0 else 1.2
     fmax = 1.5 if klass == "slot" else 3.0
@@ -404,8 +471,11 @@ VALVES = {v.id: v for v in [
        "docs/13 §4; on WL1 1.2 mm (arc length) before J; stub 0.25 (DEV-3)", tip=0.8),
     _v("G2", _point_at_arclength_from_end(WL2, GATE_J_ARCLEN), "slot", "WL2 <-> J",
        "docs/13 §4; mirror of G1 (DEV-3)", tip=0.8),
-    _v("G3", (54.25, 25.0), "slot", "WLc <-> cell", "docs/13 §4; seal 0.35 from die edge, DEV-2", tip=0.8),
-    _v("G4", (57.85, 22.6), "slot", "cell <-> BW", "docs/13 §4; DEV-2", tip=0.8),
+    _v("G3", (54.2, 25.0), "slot", "WLc <-> cell", "docs/13 §4; DEV-2; Rev C (docs/24 S1): D0.9 at x 54.20 (was D0.8 "
+       "at 54.25): seal edge 0.35 from the die edge, tip + WC tolerance stays 0.035 inside the TPE cut (die - 0.10); a "
+       "D1.0 tip would leave the TPE and D1.0 at 54.15 breaks the V12 collar gap", slot_tip=0.9),
+    _v("G4", (57.85, 22.5), "slot", "cell <-> BW", "docs/13 §4; DEV-2; Rev C: D1.0 at y 22.50 (was D0.8 at 22.60): seal "
+       "edge 0.35 from the die edge"),
 ]}
 assert len(VALVES) == 21  # docs/13 §4: 17 valves + 4 gates
 
@@ -414,8 +484,15 @@ PLUNGER = {
     "principle": "spring-closed pin; opened by a single-acting pneumatic cylinder lifting the pin head via a "
                  "yoke; V3 inverted (spring lifts, cylinder closes through a 2.5 N force-limiting spring)",
     "stroke_pin": 0.8,                 # CHOICE-2: >= 0.5 required (docs/13 §6.2); 0.175 + TPE + 0.3 clearance
-    "tip_z_closed": Z_L1[0] + 0.03,    # Derived: TPE pressed onto the foil top (z 0.14) less ~30 um residual TPE
-    "tip_z_open": Z_L1[0] + 0.03 + 0.8,   # Rev B (I-16): = tip_z_closed + stroke_pin = 0.97 (Rev A wrote Z_L2 top
+    "tip_z_closed": 0.50,              # Rev C (docs/24 S3): REAL stop height. Every tip is wider than its channel, so
+                                       # it stops on the TPE compressed over the L1 lands (land top 0.315 + TPE), not
+                                       # at the foil. Estimate 0.37-0.54 (rigid translation of the TPE column 0.175 ->
+                                       # 0.54; 0.37 at 54 % land compression) [Derived, docs/24 §3]; nominal 0.50.
+                                       # Rev A/B 0.17 (= foil top + 30 um) lay inside the L1 lands (docs/23 §4.2).
+                                       # Preload, hook gap and collar are set on the reference card at the MEASURED
+                                       # height with a force gauge (I-13 extended, docs/20 §2.3 Rev C)
+    "tip_z_closed_range": (0.37, 0.54),
+    "tip_z_open": 0.50 + 0.8,          # Rev C: = tip_z_closed + stroke_pin = 1.30 (Rev B 0.97 = 0.17 + 0.8; Rev A wrote Z_L2 top
                                        # + 0.3 = 1.015, inconsistent with the 0.8 stroke by 0.045); 0.255 above the TPE
     "pin_extension_limit_below_open": 1.0,  # collar stops the pin 0.2 mm below 'closed' when no card is present
     "tip_edge_chamfer": 0.05,          # flat land, edge-broken [assessment]
@@ -429,7 +506,7 @@ PLUNGER = {
     "air_supply_min_kPa": 450.0,       # Rev B: at the dock inlet, upstream of the BASE regulator FR1 (docs/22 §8)
     "cylinder_bore": 6.0,              # Rev B (DEV-U2): 5 -> 6 (pitch 9 kept); pull area Derived pi/4 (6^2 - 1.5^2)
                                        # = 26.5 mm^2 -> 10.6 N at 400 kPa vs need <= 6.6 N (docs/20 §4.2)
-    "cylinder_pitch_min": 9.0,         # CHOICE-2: bore 5 + walls/seals
+    "cylinder_pitch_min": 9.0,         # CHOICE-2: bore 6 (Rev B) + walls/seals (Rev A comment said bore 5)
     "pin_pitch_min": {"0.8-0.8": 1.4, "0.8-1.2": 1.6, "1.2-1.2": 1.8},   # shank/2 + shank/2 + 0.6 web [assessment]
     "position_feedback": "per-yoke sensor, type to be selected (UNVERIFIED); minimum: pilot-line pressure switch",
 }
@@ -496,7 +573,7 @@ class Port:
 PORTS = {p.id: p for p in [
     Port("P_in", (34.2, 27.3), "liquid", "SM-FL outlet -> M_in", "1/16in PEEK >= 0.3 m from SM-FL", "docs/13 §2.5"),
     Port("P_byp", (34.2, 23.3), "liquid", "V3 -> waste", "waste line with air gap", "docs/13 §2.5"),
-    Port("P_b", (37.5, 25.0), "liquid", "bead line -> V4/V5", "S_b outlet line 0.25 ID", "docs/13 §2.5"),
+    Port("P_b", (37.5, 25.0), "liquid", "bead line -> V4/V5", "S_b outlet line 0.102 ID (DEV-B3)", "docs/13 §2.5"),
     Port("P_a", (28.0, 25.0), "liquid", "S_A -> V17/V18", "S_A (dispense only), valve port 1", "docs/13 §2.5"),
     Port("P_a2", (51.3, 36.5), "liquid", "S_A -> V11", "S_A (dispense only), valve port 2", "DEV-6 (new)"),
     Port("P_d1", (29.5, 41.0), "liquid", "V9 <-> IC1 nozzle", "60 uL FEP coil -> S_IC1", "docs/13 §2.5"),
@@ -513,7 +590,11 @@ PORT_HOLE_D = 1.0          # docs/13 §2.5 (0.24 uL Derived pi/4*1^2*0.315)
 # flush with z = 0 under the port hole; flat elastomer annulus around the tube end in a counterbore.
 FACE_SEAL = {
     "tube_od": 1.5875,             # 1/16 in
-    "gasket_id": 1.7, "gasket_od": 3.3, "gasket_t": 0.50,
+    "gasket_id": 1.5875, "gasket_od": 3.3, "gasket_t": 0.50,   # Rev C (docs/24 S4): installed ID = tube OD; the
+    "gasket_id_free": 1.50,        # gasket is cut at ID 1.50 and stretched over the tube (radial interference 0.044,
+                                   # [assessment]) so it seals on the tube OD and on the foil round the D1.0 hole: no
+                                   # annulus is open to the port. Rev B ID 1.7 left a 0.056 x 0.38 annulus = 0.110 uL
+                                   # per port (reviewer, Derived), unswept
     "counterbore_depth": 0.38,     # compression 0.12 mm = 24 % [assessment]
     "material": "FFKM or EPDM sheet, laser-cut (to be selected; HQ/Tween compatibility UNVERIFIED)",
     "force_per_seal_N": (3.0, 10.0),   # [assessment, UNVERIFIED]: 0.5-1.5 MPa x 6.3 mm^2 annulus
@@ -528,7 +609,8 @@ GAS_SEAL_LID = {"id": 5.0, "od": 7.0, "t": 1.0, "compression": 0.25, "force_N": 
 WINDOW_SIZE = 11.4          # DEV-4: square (docs/13: D12) -- 10x10 M_c diagonal 14.1 does not pass a D12 bore
 WINDOW_CORNER_R = 1.0
 WINDOWS = {"W1": IC1.center, "W2": IC2.center}
-SLOT_W = 4.0                # docs/13 §2.2 (drag slot 4 mm)
+SLOT_W = 3.4                # Rev C (DEV-IF-C2, docs/24 S2): arms 4.0 -> 3.4 like the WLc/bead-out legs (round holder
+#                             D2.6 + 2 x 0.4); docs/13 §2.2: 4 mm
 SLOT_W_BEADOUT = 3.4        # DEV-5: bead-out leg (axis-aligned) narrowed to 3.4 (holder 2.6 + 2 x 0.4)
 SLOT_W_WLC = 3.4           # DEV-5: straight, axis-aligned J -> RC part narrowed to 3.4 (holder 2.6 + 2 x 0.4)
 SLOT_CENTERLINES = {        # buffers of these polylines (round caps) form the slot; widths in SLOT_WIDTHS
@@ -544,16 +626,21 @@ SLOT_WIDTHS = {"slot_IC1": SLOT_W, "slot_IC2": SLOT_W, "slot_WLc": SLOT_W_WLC, "
 # (docs/13 §2.1: 15 um at 4.0; M4 acceptance <= 20 um). Kept: square holder (a round holder cannot carry the
 # 2 x 2 magnet, diagonal 2.83).
 SLOT_HOLDER_CLEAR = 0.30       # stage accuracy 0.020 + post/holder run-out 0.05 + 0.2 margin [assessment] (docs/21)
-SLOT_MAX_LOCAL_WIDTH = 4.44    # Derived from slot_polygon() at G1/G2 (docs/21 §5.1)
+SLOT_MAX_LOCAL_WIDTH = 3.40    # Rev C: min chord through every slot-valve tip centre = 3.40 (Derived, slot_polygon();
+#                                Rev B 4.44 at G1/G2 with the square holder)
+SLOT_HOLDER_ROUND = True       # Rev C: round D2.6 holder (D2 x 4 magnet); swept footprint = buffer of the path
 
 
 def slot_polygon(clear=SLOT_HOLDER_CLEAR, step=0.1):
     """Anvil drag slot (shapely polygon, card coords): buffers U swept holder squares + clear (Rev B)."""
     from shapely.geometry import LineString, box as _box
     from shapely.ops import unary_union
-    h = 0.5 * 2.6 + clear      # M_d holder 2.6 sq (MAGNETS['M_d']['holder'])
+    h = 0.5 * 2.6 + clear      # M_d holder D2.6 round (Rev C; Rev B 2.6 sq) (MAGNETS['M_d']['holder'])
     parts = [LineString(v).buffer(SLOT_WIDTHS[k] / 2, quad_segs=16) for k, v in SLOT_CENTERLINES.items()]
     for path in (DRAG_PATH["IC1"], DRAG_PATH["IC2"], BEAD_OUT_PATH):
+        if SLOT_HOLDER_ROUND:
+            parts.append(LineString(path).buffer(h, quad_segs=16))
+            continue
         ls = LineString(path)
         n = max(2, int(ls.length / step) + 1)
         for i in range(n):
@@ -593,8 +680,13 @@ MAGNETS = {
              "motion": "parallelogram swing R 64.5 outward (-y); fail state HOLD", "swing_R": 64.5,
              "z_top_down": -45.6, "parked_xy": (40.0, -6.7), "holder": (10.6, 10.6), "fail": "hold",
              "src": "docs/13 §3.3.1; DEV-4; Rev B DEV-L1/L2"},
-    "M_d": {"size": (2.0, 2.0, 4.0), "mag_axis": "z (along 4 mm)", "z_top_up": -MAGNET_GAP,
-            "z_stroke": 8.0, "holder": (2.6, 2.6), "post_from_below": True,
+    # Rev C (docs/24 S2, DEV-IF-C2): D2 x 4 axially magnetised cylinder in a ROUND D2.6 holder (Rev B: 2 x 2 x 4 in a
+    # 2.6-sq holder, which widened the slot to 4.44 at G1/G2). 'size' keeps the bounding box. Charge-sheet model at the
+    # bead plane 0.30: |B| 0.97x, max lateral grad(B^2) 0.96x, axial grad(B^2) 1.06x of the square magnet, same B_r
+    # (Derived, docs/21 §5.3 Rev C). Part: catalogue D2 x 4 N42-class NdFeB, part number UNVERIFIED
+    "M_d": {"size": (2.0, 2.0, 4.0), "shape": "cyl", "d": 2.0, "holder_shape": "round",
+            "mag_axis": "z (along 4 mm)", "z_top_up": -MAGNET_GAP,
+            "z_stroke": 8.0, "holder": (2.6, 2.6), "post_from_below": True,   # holder D2.6 (Rev C round)
             "travel_x": (35.0, 59.6), "travel_y": (6.0, 44.0),
             "speeds": {"drag": 0.20, "gather": 0.30, "transit_max": 5.0},
             "motion": "X-Y stage below the bay + spring-up Z post (pulled down by cam); holds at RC (DEV-4)",
@@ -643,7 +735,11 @@ WE_RELAY_FIELD = {  # Rev B (I-10): |B| at the relay 1.9 mT with M_c1 parked (do
 # 11. Thermal interface (docs/13 §6.5) -- card coords
 # =====================================================================================================
 THERMAL = {
-    "reagent_bottom": {"x": X_REAGENT, "y": (0.0, CARD_W), "T": (4.0, 8.0), "part": "Peltier cold plate (anvil)"},
+    "reagent_bottom": {"x": X_REAGENT, "y": (0.0, CARD_W), "T": (4.0, 8.0), "part": "Peltier cold plate (anvil)",
+                       # Rev C (docs/24 B2): cold plate x 2.6-20 / y 3-47 (covers RCj 3-13 x 33-43, MC, V8, P_cf),
+                       # inside a 2-mm insulation gap (PEEK lip z -1.5..0 for foil support + closed-cell foam below);
+                       # +x break x 20-24 PEEK lip + foam. Rev B: 1-mm full-depth PEEK walls (7.1 W leak, reviewer)
+                       "cold_plate_xy": ((2.6, 3.0), (20.0, 47.0)), "insulation_gap": 2.0, "peek_lip_t": 1.5},
     "break_bottom": {"x": X_BREAK, "y": (0.0, CARD_W), "part": "4 mm gap filled with PEEK insulator (CHOICE-7)"},
     "assay_bottom": {"x": X_ASSAY, "y": (0.0, CARD_W), "T": 25.0, "part": "heated Al anvil (minus openings)"},
     "reagent_top": {"x": X_REAGENT, "y": (0.0, CARD_W), "part": "PEEK pressure plate (insulating, no heater)"},
@@ -737,7 +833,8 @@ SPACE_CLAIMS = {
                   "note": "M_c units, M_d stage + post, electrode bay, reagent Peltier stack, tube corridors"},
     "BASE_drip_tray": {"box": ((0.0, 0.0, 0.0), (470.0, 420.0, 15.0)), "owner": "DOCK BASE"},
     "BASE_cold_compartment": {"box": ((10.0, 20.0, 15.0), (145.0, 200.0, 220.0)), "owner": "DOCK BASE",
-                              "note": "cooled conjugate bottle, cooled rocking bead vial, S_b; SM-FL line entry"},
+                              "note": "cooled conjugate tube, cooled rocking bead vial, SV_b; SM-FL line entry (Rev C: "
+                                      "S_b is in the rear pump row; Rev B text said S_b here)"},
     "BASE_under_bay": {"box": ((150.0, 20.0, 15.0), (320.0, 200.0, 40.0)), "owner": "DOCK BASE",
                        "note": "waste bottle low, leak electrodes"},
     "BASE_bottles": {"box": ((325.0, 10.0, 15.0), (465.0, 200.0, 260.0)), "owner": "DOCK BASE",
@@ -800,11 +897,12 @@ PASS_THROUGHS = {
     # air); the LOWER bay frame is open there
     "cable_window_W": {"x": 150.0, "y": (150.0, 195.0), "z": (60.0, 140.0)},
     # Rev B (ICR-6): LOWER Peltier exhaust duct outlet (10.6 W); BASE continues it to a louvre in the front-bay panel
-    "peltier_exhaust": {"x": (186.0, 210.0), "y": 20.0, "z": (118.0, 144.0), "heat_W": 10.6},
+    "peltier_exhaust": {"x": (186.0, 210.0), "y": 20.0, "z": (118.0, 144.0), "heat_W": 12.3},   # Rev C: <= 12.3 W at the
+    #   acceptance limit (sink R_th 1.6 K/W, 30 degC air, design load 3.47 W; docs/21 §5.4 Rev C); Rev B said 10.6 W
 }
 # Rev B (ICR-6 / IR-2, I-5): exact exit point of every card liquid line on the LOWER claim boundary (dock coords,
 # tube axis, 1/16 in OD), taken from the LOWER routes (dock_lower.geom.tube_route, vertical drop, R 25 bend, run to
-# the wall). BASE routes start here; glands (grommets) sit in the BASE well partitions X 147-149 / 321-323.
+# the wall). BASE routes start here; glands (grommets) sit in the BASE well partitions X 147-149 / 323-325 (Rev C comment fix, docs/24 M3; Rev B text 321-323).
 LIQUID_LINE_EXITS = {
     "P_in": (150.0, 102.3, 114.0), "P_byp": (150.0, 98.3, 112.0), "P_b": (150.0, 100.0, 108.0),
     "P_a": (150.0, 100.0, 110.0), "P_d1": (150.0, 116.0, 112.0), "P_d2": (150.0, 84.0, 112.0),

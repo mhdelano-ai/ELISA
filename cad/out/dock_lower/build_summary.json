@@ -7,456 +7,456 @@
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "collect_IC1+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "collect_IC2+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "gather_IC1+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "gather_IC1_low+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "drag_mid_IC1+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "hold_RC+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ],
   "beadout_end+card": [
    [
     "gasket_P_in",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_byp",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_b",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_a2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d1",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_d2",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_wo",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_s",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_rf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ],
    [
     "gasket_P_cf",
     "CARD_envelope_ref",
-    0.7478
+    0.7826
    ]
   ]
  },
@@ -476,5 +476,5 @@
   "transit_gather_return_IC1": 0,
   "transit_gather_return_IC2": 0
  },
- "run_time_s": 506.9
+ "run_time_s": 512.9
 }

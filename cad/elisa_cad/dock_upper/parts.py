@@ -492,12 +492,12 @@ def thrust_units(follower_top_card_z):
 
 
 def manifolds():
-    """2 x SMC SS073B01 bar manifold with S070B-5DG valves (envelopes, catalogue L1 = n x 7.2 + 14.8)."""
+    """2 x SMC SS073B01 bar manifold with S070B-5DG valves (envelopes, overall L2 = n x 7.2 + 14.8; revised after review M2)."""
     z0 = P.BRIDGE_Z[0] + 4.0
     w, l, h = P.PILOT["envelope"]
     out = []
     for i, n in enumerate((11, 10)):
-        L1 = P.PILOT["L1"](n)
+        L1 = P.PILOT["L2"](n)   # overall bar length (catalogue L2)
         y0 = IF.CARD_W + 4.0 + i * (l + 1.0)
         out.append((f"ENV_SMC_SS073B01-{n:02d}C_S070B-5DG_x{n}", box(2.0, 2.0 + L1, y0, y0 + l, z0, z0 + h)))
     return out

@@ -181,9 +181,9 @@ def render_all(out):
     st = assy.state_items("collect_IC1")
     sec = _cut(st, ((-50, 20.0, -70), (40, 27.0, 10)))
     p = out / "section_cold_stack.png"
-    _r(sec, p, "front", "Section y = 20 through the reagent cold stack (looking +y): cold block, PEEK break (x 20-24), "
-       "Peltier 30x30x3.3, heat sink, foam, anvil (right), tubes passing below", xlim=(-42, 40), ylim=(-66, 8), tol=0.03,
-       annotate=[((10, 20, -8), "cold block 4-8 C"), ((22, 20, -8), "PEEK"), ((5, 20, -23.6), "Peltier"),
+    _r(sec, p, "front", "Section y = 20 through the reagent cold stack (looking +y; revised after review): cold block, break x 20-24 "
+       "= 1.5-mm PEEK lip over foam,\n2-mm W gap (lip + foam), TEC 07111 30x30x5.1, heat sink, foam, anvil (right), tubes below", xlim=(-42, 40), ylim=(-66, 8), tol=0.03,
+       annotate=[((10, 20, -8), "cold block 4-8 C"), ((22, 20, -8), "foam"), ((22, 20, -0.7), "PEEK lip"), ((5, 20, -22.7), "Peltier"),
                  ((5, 20, -40), "heat sink"), ((-34, 20, -40), "wall W"), ((32, 20, -8), "anvil 25 C"),
                  ((-20, 20, -62), "west tubes")])
     paths.append(p)

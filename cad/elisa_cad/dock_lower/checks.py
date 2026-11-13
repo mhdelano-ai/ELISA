@@ -108,7 +108,7 @@ def md_sweep_check():
 
 
 def plate_clearance_2d():
-    """Min plan clearance of the M_d holder (2.6 sq, axis-aligned) and neck to the plate openings along all up-paths,
+    """Min plan clearance of the M_d holder (D2.6 round, Rev C; was 2.6 sq) and neck to the plate openings along all up-paths,
     and of the post (D4) to the plate underside features while lowered (Derived with shapely)."""
     openings = G.through_openings()
     h = G.MD_HOLDER[0] / 2
@@ -118,7 +118,7 @@ def plate_clearance_2d():
             continue
         mins = []
         for (x, y) in pts:
-            sq = box(x - h, y - h, x + h, y + h)
+            sq = Point(x, y).buffer(h, quad_segs=16)   # (revised after review) round D2.6 holder (interface Rev C)
             inside = openings.contains(sq)
             mins.append((openings.exterior.distance(sq) if hasattr(openings, "exterior") else
                          min(g.exterior.distance(sq) for g in openings.geoms if g.intersects(sq) or g.contains(sq)),

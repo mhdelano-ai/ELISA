@@ -6,72 +6,173 @@
   "w_uniform_um": 0.92,
   "w_uniform_with_openings_x5_um": 4.6,
   "w_local_point_16N_um": 0.25,
-  "foil_span_at_slot_valves_[id, width mm, deflection um at 1.5 N]": [
+  "foil_span_at_slot_valves_[id, min chord mm, circle um 1.5 N, strip um 1.32 N, strip um 1.5 N]": [
    [
     "G1",
-    4.42,
-    19.0
+    3.41,
+    11.3,
+    15.8,
+    17.9
    ],
    [
     "G2",
-    4.42,
-    18.9
+    3.41,
+    11.3,
+    15.8,
+    17.9
    ],
    [
     "G3",
     3.4,
-    11.2
+    11.2,
+    15.7,
+    17.8
    ],
    [
     "G4",
-    3.4,
-    11.2
+    3.39,
+    11.2,
+    15.6,
+    17.8
    ],
    [
     "V11",
-    4.0,
-    15.5
+    3.4,
+    11.2,
+    15.7,
+    17.8
    ],
    [
     "V12",
     3.4,
-    11.2
+    11.2,
+    15.7,
+    17.8
    ]
   ],
+  "foil_deflection_limit_um_M4": 20.0,
   "budget": "magnet gap 0.16 +- 0.05 (docs/13 \u00a76.2)"
  },
  "seal": {
-  "annulus_mm2": 6.28,
+  "annulus_mm2": 6.57,
   "compression": 0.24,
-  "shape_factor": 0.8,
-  "F_per_seal_50ShA_N": 6.7,
-  "F_per_seal_60ShA_N": 12.0,
-  "F_per_seal_70ShA_N": 16.0,
+  "shape_factor": 0.86,
+  "F_per_seal_50ShA_N": 7.4,
+  "F_per_seal_60ShA_N": 13.3,
+  "F_per_seal_70ShA_N": 17.8,
   "n_liquid_seals": 11,
   "recommendation": "50-60 ShA EPDM/FFKM keeps 7-12 N per seal; > 10 N at 60+ ShA exceeds the docs/18 budget"
  },
  "thermal": {
   "loads_W": {
-   "PEEK_break_strip": 1.162,
+   "gap_W_S_N_lip_plus_foam": 0.668,
+   "break_E_lip_plus_foam": 0.203,
+   "PEEK_pads_4x": 0.09,
    "card_laminate_and_bridges": 0.052,
+   "card_L3_lateral_from_warm_y_strips": 0.191,
    "card_top_via_PEEK_lid_plate": 0.5,
-   "foam_shell": 0.84,
+   "foam_shell": 0.56,
    "P_cf_line_and_fill": 0.05
   },
-  "Q_total_W": 2.6,
-  "Q_design_x1.5_W": 3.91,
-  "TEC_S_V_per_K": 0.0513,
-  "TEC_R_ohm": 2.99,
-  "TEC_K_W_per_K": 0.357,
-  "operating_point_[I A, V, P_el W, Qc W] at Th 35 / Tc 3 degC": [
-   1.25,
-   5.38,
-   6.73,
-   3.95
+  "Q_total_W": 2.31,
+  "Q_design_x1.5_W": 3.47,
+  "sink_sweep_self_consistent": [
+   {
+    "R_sink_K_per_W": 1.0,
+    "T_air_C": 25.0,
+    "Th_C": 32.6,
+    "I_A": 1.19,
+    "P_el_W": 4.12,
+    "Q_hot_W": 7.59
+   },
+   {
+    "R_sink_K_per_W": 1.0,
+    "T_air_C": 30.0,
+    "Th_C": 39.1,
+    "I_A": 1.38,
+    "P_el_W": 5.61,
+    "Q_hot_W": 9.09
+   },
+   {
+    "R_sink_K_per_W": 1.2,
+    "T_air_C": 25.0,
+    "Th_C": 34.6,
+    "I_A": 1.25,
+    "P_el_W": 4.57,
+    "Q_hot_W": 8.04
+   },
+   {
+    "R_sink_K_per_W": 1.2,
+    "T_air_C": 30.0,
+    "Th_C": 41.7,
+    "I_A": 1.46,
+    "P_el_W": 6.31,
+    "Q_hot_W": 9.78
+   },
+   {
+    "R_sink_K_per_W": 1.4,
+    "T_air_C": 25.0,
+    "Th_C": 37.0,
+    "I_A": 1.31,
+    "P_el_W": 5.08,
+    "Q_hot_W": 8.55
+   },
+   {
+    "R_sink_K_per_W": 1.4,
+    "T_air_C": 30.0,
+    "Th_C": 45.0,
+    "I_A": 1.56,
+    "P_el_W": 7.27,
+    "Q_hot_W": 10.75
+   },
+   {
+    "R_sink_K_per_W": 1.6,
+    "T_air_C": 25.0,
+    "Th_C": 39.8,
+    "I_A": 1.4,
+    "P_el_W": 5.79,
+    "Q_hot_W": 9.26
+   },
+   {
+    "R_sink_K_per_W": 1.6,
+    "T_air_C": 30.0,
+    "Th_C": 49.7,
+    "I_A": 1.72,
+    "P_el_W": 8.86,
+    "Q_hot_W": 12.33
+   },
+   {
+    "R_sink_K_per_W": 2.0,
+    "T_air_C": 25.0,
+    "Th_C": 49.5,
+    "I_A": 1.71,
+    "P_el_W": 8.76,
+    "Q_hot_W": 12.23
+   },
+   {
+    "R_sink": 2.0,
+    "T_air": 30.0,
+    "result": "TEC cannot reach the load (runaway)"
+   }
   ],
-  "Q_hot_W": 10.64,
-  "heatsink_Rth_required_K_per_W (Th - 25 degC air)": 0.94,
-  "anvil_heater_loss_to_cold_zone_W": 1.16
+  "acceptance": "Th <= 50 degC and I <= 0.6 Imax at T_air 30 degC [assessment] -> R_sink <= 1.6 K/W (Q_hot <= 12.3 W)",
+  "TEC_S_V_per_K": 0.0287,
+  "TEC_R_ohm": 2.22,
+  "TEC_K_W_per_K": 0.147,
+  "operating_point_[I A, V, P_el W, Qc W] at Th 35 / Tc 3 degC": [
+   1.26,
+   3.71,
+   4.68,
+   3.51
+  ],
+  "Q_hot_W": 8.15,
+  "heatsink_Rth_required_K_per_W (Th - 25 degC air)": 1.23,
+  "anvil_heater_loss_to_cold_zone_W": 0.96,
+  "RevB_recomputed_W": {
+   "y_walls": 2.76,
+   "minus_x_wall": 3.45,
+   "break": 0.86
+  }
  },
  "dewpoint_C": {
   "22C_50%": 11.1,
@@ -101,8 +202,8 @@
     135.0
    ],
    [
-    "bead-out 4.55 mm at 0.20 mm/s (56.75-57.15)",
-    22.8,
+    "bead-out 4.55 mm at 0.20 mm/s + G4 open 0.06 s + M_d Z-down 0.5 s (56.75-57.15)",
+    23.3,
     24.0
    ],
    [

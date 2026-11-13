@@ -1,9 +1,9 @@
 name,frm,to,tube,base_mm,lower_mm,ext_mm,total_mm,vol_base_uL,vol_total_uL,assumed,note
-P_in (SM-FL -> card),SM-FL outlet (via the P_in sensor),P_in,PEEK 1.59 OD x 0.127 ID,204,119,200,523,2.58,7.63,docs/13 §2.6: PEEK 3.8 uL (0.3 m x 0.127 mm); >= 0.3 m isolation (docs/13 §2.5),sensor swept volume <= 1 uL UNVERIFIED; external 0.2 m UNVERIFIED
+P_in (SM-FL -> card),SM-FL outlet (via the P_in sensor),P_in,PEEK 1.59 OD x 0.064 ID,204,119,200,523,0.65,2.66,docs/13 §2.6: PEEK 3.8 uL (0.3 m x 0.127 mm); >= 0.3 m isolation (docs/13 §2.5),sensor swept volume <= 1 uL UNVERIFIED; external 0.2 m UNVERIFIED
 P_b (SV_b -> card),SV_b port P_b,P_b,PEEK 1.59 OD x 0.102 ID,102,129,0,231,0.83,1.87,docs/13 §5.1: outlet line 0.25 mm x 50 mm = 2.5 uL,
 P_cf (conjugate tube -> card),conjugate tube (cold box),P_cf,FEP 1.59 OD x 0.254 ID,265,92,0,357,13.43,18.1,docs/13 §5.2: dead volume ~100 uL in the 0.26 mL fill,
-P_d1 coil (S_IC1 <-> card),S_IC1 valve,P_d1,FEP 1.59 OD x 0.508 ID,573,117,0,689,116.06,139.72,docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin),
-P_d2 coil (S_IC2 <-> card),S_IC2 valve,P_d2,FEP 1.59 OD x 0.508 ID,675,117,0,791,136.73,160.39,docs/13 §3.2.2: 60 uL FEP coil,
+P_d1 coil (S_IC1 <-> card),S_IC1 valve,P_d1,FEP 1.59 OD x 0.508 ID,271,117,0,387,54.84,78.5,docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin),
+P_d2 coil (S_IC2 <-> card),S_IC2 valve,P_d2,FEP 1.59 OD x 0.508 ID,259,117,0,376,52.59,76.25,docs/13 §3.2.2: 60 uL FEP coil,
 "P_a (S_A -> card, via FS1)",S_A valve port 1,P_a,PEEK 1.59 OD x 0.254 ID,673,117,0,790,34.08,41.02,clean A1 (prime only),FS1 internal volume UNVERIFIED (1 uL allowance)
 "P_byp (card -> waste, air gap)",P_byp,waste air-gap head,FEP 1.59 OD x 0.762 ID,939,121,0,1061,428.31,483.69,waste (docs/13 §3.7),
 P_s (card -> FS2 -> S_RC),P_s,S_RC valve (pull only),PEEK 1.59 OD x 0.254 ID,555,114,0,669,28.13,34.92,"product side, pulled to waste (no budget)",
@@ -16,12 +16,12 @@ gas -> conjugate tube (fill),switch valve 2,conjugate tube cap,PTFE 3.17 OD x 1.
 gas -> HQDP tube (fill),switch valve 3,HQDP tube cap,PTFE 3.17 OD x 1.587 ID,510,0,0,510,1009.46,1009.46,gas,
 S_b holding coil (S_b -> SV_b),S_b valve,SV_b coil port,FEP 1.59 OD x 0.508 ID,468,0,0,468,94.77,94.77,docs/13 §5.1: holding coil >= 40 uL (beads stay out of the syringe),
 vial line (SV_b <-> bead vial),SV_b vial port,bead vial,FEP 1.59 OD x 0.508 ID,113,0,0,113,22.9,22.9,returned to the vial before each dose (docs/13 §5.1),flexible loop at the vial for the rocking
+A1 -> S_IC1,A1 manifold,S_IC1 valve A1 port,FEP 1.59 OD x 0.762 ID,407,0,0,407,185.58,185.58,supply,
+S_IC1 -> waste,S_IC1 valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,975,0,0,975,444.66,444.66,waste,
+A1 -> S_IC2,A1 manifold,S_IC2 valve A1 port,FEP 1.59 OD x 0.762 ID,359,0,0,359,163.92,163.92,supply,
+S_IC2 -> waste,S_IC2 valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,894,0,0,894,407.67,407.67,waste,
 A1 -> S_b,A1 manifold,S_b valve A1 port,FEP 1.59 OD x 0.762 ID,711,0,0,711,324.24,324.24,supply,
 S_b -> waste,S_b valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,582,0,0,582,265.46,265.46,waste,
-A1 -> S_IC1,A1 manifold,S_IC1 valve A1 port,FEP 1.59 OD x 0.762 ID,659,0,0,659,300.5,300.5,supply,
-S_IC1 -> waste,S_IC1 valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,508,0,0,508,231.71,231.71,waste,
-A1 -> S_IC2,A1 manifold,S_IC2 valve A1 port,FEP 1.59 OD x 0.762 ID,607,0,0,607,276.77,276.77,supply,
-S_IC2 -> waste,S_IC2 valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,434,0,0,434,197.97,197.97,waste,
 A1 -> S_A,A1 manifold,S_A valve A1 port,FEP 1.59 OD x 0.762 ID,555,0,0,555,253.04,253.04,supply,
 S_A -> waste,S_A valve waste port,waste air-gap head,FEP 1.59 OD x 0.762 ID,360,0,0,360,164.22,164.22,waste,
 A1 -> S_RC,A1 manifold,S_RC valve A1 port,FEP 1.59 OD x 0.762 ID,503,0,0,503,229.32,229.32,supply,
@@ -31,5 +31,6 @@ lab air -> FR1,right-panel push-in (behind the Gamry),FR1,PU 6.00 OD x 4.000 ID,
 FR1 400 kPa -> lid pilots (umbilical),FR1,umbilical grommet,PU 4.00 OD x 2.500 ID,144,0,0,144,706.86,706.86,,
 R2 120 kPa -> Flow EZ supplies,R2,Flow EZ supply (tee to both),PU 4.00 OD x 2.500 ID,375,0,0,375,1841.27,1841.27,,
 Flow EZ ch2 -> switch valves,Flow EZ ch2,switch valve manifold,PTFE 3.17 OD x 1.587 ID,2,0,0,2,3.96,3.96,,
+FR1 400 kPa -> pogo-lift valve -> LOWER cable window,FR1,"pogo-lift cylinder (LOWER, via G_C)",PU 4.00 OD x 2.500 ID,363,0,0,363,1781.87,1781.87,,"(revised after review, docs/24 M5) pogo-lift cylinder air, 3/2 solenoid valve in the west strip"
 dry-air purge -> cold box,purge restrictor,cold box,FEP 1.59 OD x 0.762 ID,540,0,0,540,246.26,246.26,,"gas, ~0.1 L/min dry air"
 cell leads (bulkhead -> junction box),LOWER bulkhead,junction box,shielded coax,132,0,0,132,0.0,0.0,docs/13 §6.3: <= 0.3 m,

@@ -185,7 +185,7 @@ def top_plan(path, sweep_region=None):
                 bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.75))
     for pmp in P.PUMP_ORDER:
         x = L.PUMP_X[pmp]
-        ax.text(x, 360, pmp, fontsize=6.5, rotation=90, ha="center", va="center",
+        ax.text(x, 254 if pmp in P.PUMP_FRONT_X else 360, pmp, fontsize=6.5, rotation=90, ha="center", va="center",
                 bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="none", alpha=0.75))
     for pid in I.PORTS:
         p = F.port_dock(pid)
@@ -243,7 +243,7 @@ def side_elevation(path, sweep_region):
     ax.axhline(180, xmin=0, xmax=1, color="0.4", lw=0.5, ls=":")
     ax.text(312, 182, "rear-low cover Z 180 (sweep clears by 1.9 mm)", fontsize=7, ha="right", va="bottom")
     for txt, y, z in (("cold box / bottles (behind)", 70, 60), ("electronics (left) /\nwaste (right)", 300, 100),
-                      ("pump bank", 370, 120), ("drip tray + base plate", 210, 5), ("Flow EZ x2", 258, 60)):
+                      ("rear pump bank", 370, 120), ("drip tray + base plate", 210, 5), ("Flow EZ x2", 258, 60)):
         ax.text(y, z, txt, fontsize=7, ha="center", bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none",
                                                               alpha=0.8))
     ax.annotate("operator (front)", xy=(0, 90), xytext=(-70, 90), fontsize=8, ha="center", va="center",
@@ -408,9 +408,9 @@ def schematic(path):
 
 def electronics_layout(path, power):
     """Electronics bay as four YZ elevations, one per X slab, seen from +X (no overlapping bodies per panel)."""
-    eb = L.get("electronics_box").box
-    slabs = [(4, 40, "X 4-40 (left wall)"), (40, 74, "X 40-74"), (74, 100, "X 74-100 (plate + boards)"),
-             (100, 142, "X 100-142")]
+    eb = ((4.0, 207.0, 35.0), (144.0, 416.0, 318.0))   # (revised after review) frame covering the three boxes
+    slabs = [(4, 40, "X 4-40: side box (Y 207-300) + main box"), (40, 130, "X 40-130: main box (Y 302-396)"),
+             (200, 290, "X 200-290: rear box (pump row)"), (290, 325, "X 290-325: rear box")]
     fig, axs = plt.subplots(1, 4, figsize=(17, 6.5), dpi=140)
     pal = {"PSU": (0.95, 0.75, 0.45), "mains": (0.95, 0.55, 0.45), "LabJack": (0.55, 0.75, 0.95),
            "USB": (0.55, 0.75, 0.95), "Fluigent": (0.95, 0.9, 0.5), "fan": (0.8, 0.8, 0.8), "intake": (0.85, 0.85, 0.85),
@@ -418,7 +418,7 @@ def electronics_layout(path, power):
     for ax, (xa, xb, ttl) in zip(axs, slabs):
         _r(ax, ((eb[0][1], eb[0][2]), (eb[1][1], eb[1][2])), fc="none", ec="k", lw=1.0)
         for it in L.ITEMS:
-            if it.group != "electronics" or it.name in ("electronics_box", "estop", "status_light"):
+            if it.group != "electronics" or it.name in ("estop", "status_light"):
                 continue
             (x0, y0, z0), (x1, y1, z1) = it.box
             xc = (x0 + x1) / 2
@@ -436,7 +436,8 @@ def electronics_layout(path, power):
         ax.set_ylabel("Z (mm)")
         ax.set_title(ttl, fontsize=9)
         ax.axvline(P.FY - 2, color="0.3", lw=1.5)
-    fig.suptitle(f"Electronics bay (X 4-144, Y 207-396, Z 35-318; noisy EMC zone), slabs seen from +X. Peak "
+    fig.suptitle(f"Electronics (revised after review): main box X 4-144 Y 302-396, side box X 4-50 Y 207-300, rear box "
+                 f"X 200-325 Y 325-416 (S_IC1/S_IC2 now at X 54-144 Y 208-299); slabs seen from +X. Peak "
                  f"{power['peak_W']:.0f} W DC, average {power['avg_W']:.0f} W; bay heat {power['q_bay_W']:.0f} W -> "
                  f"{power['airflow_Lmin']:.0f} L/min for a 10 K rise (rear panel at Y 418)", fontsize=9)
     fig.tight_layout()

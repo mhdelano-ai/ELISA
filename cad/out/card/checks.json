@@ -184,6 +184,17 @@
     ]
    ],
    [
+    0.74,
+    [
+     49.3,
+     25.0
+    ],
+    [
+     58.0,
+     29.7
+    ]
+   ],
+   [
     0.759,
     [
      31.0,
@@ -192,17 +203,6 @@
     [
      33.0,
      21.1
-    ]
-   ],
-   [
-    0.84,
-    [
-     49.3,
-     25.0
-    ],
-    [
-     58.0,
-     29.7
     ]
    ],
    [
@@ -256,29 +256,29 @@
    [
     "V11",
     "V12",
-    0.4
+    0.3
    ],
    [
     "V11",
     "G1",
-    0.84
+    0.74
    ],
    [
     "V12",
     "G3",
-    0.451
+    0.36
    ],
    [
     "G1",
     "G2",
-    0.668
+    0.568
    ]
   ],
   "extra_merges": [
    [
     "V12",
     "G3",
-    0.451
+    0.36
    ]
   ],
   "bore_to_cavity_below_1.5": [
@@ -286,6 +286,11 @@
     "V8",
     "RCj",
     0.5
+   ],
+   [
+    "V12",
+    "die_window",
+    1.45
    ]
   ],
   "thin_floors": {
@@ -303,10 +308,10 @@
    "L_over_D": 3.67
   },
   {
-   "feature": "plunger bores D1.2 / merged slots 1.2 wide / notches",
+   "feature": "plunger bores D1.2 / D1.3 (slot valves, revised after review) / merged slots 1.3 wide / notches",
    "tool_d": 1.2,
    "depth": 5.5,
-   "process": "drill D1.2; slots + notches: D1.0 end mill from both faces (2 x 2.75)",
+   "process": "drill D1.2 / D1.3; slots + notches: D1.0 end mill from both faces (2 x 2.75)",
    "L_over_D": 2.75
   },
   {
@@ -366,6 +371,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 7.575,
    "other_cuts_touched": [],
@@ -377,6 +383,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 7.575,
    "other_cuts_touched": [],
@@ -388,6 +395,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 6.982,
    "other_cuts_touched": [],
@@ -399,6 +407,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 3.929,
    "other_cuts_touched": [],
@@ -410,6 +419,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 3.929,
    "other_cuts_touched": [],
@@ -421,6 +431,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 8.652,
    "other_cuts_touched": [],
@@ -432,6 +443,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 11.243,
    "other_cuts_touched": [],
@@ -443,6 +455,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.7,
    "other_cuts_touched": [],
@@ -454,6 +467,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 3.578,
    "other_cuts_touched": [],
@@ -465,6 +479,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 3.578,
    "other_cuts_touched": [],
@@ -474,10 +489,11 @@
    "id": "V11",
    "channel": "V11_line",
    "centre_off_mm": 0.0,
-   "lateral_margin_mm": 0.2,
+   "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
-   "tip_to_nearest_TPE_cut_mm": 3.2,
+   "tip_to_nearest_TPE_cut_mm": 3.1,
    "other_cuts_touched": [],
    "tip_inside_L3_bore_with_clearance": true
   },
@@ -485,10 +501,11 @@
    "id": "V12",
    "channel": "V12_waste",
    "centre_off_mm": 0.0,
-   "lateral_margin_mm": 0.2,
+   "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
-   "tip_to_nearest_TPE_cut_mm": 1.6,
+   "tip_to_nearest_TPE_cut_mm": 1.5,
    "other_cuts_touched": [],
    "tip_inside_L3_bore_with_clearance": true
   },
@@ -498,6 +515,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.25,
    "other_cuts_touched": [],
@@ -509,6 +527,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.25,
    "other_cuts_touched": [],
@@ -520,6 +539,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.95,
    "other_cuts_touched": [],
@@ -531,6 +551,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 9.95,
    "other_cuts_touched": [],
@@ -542,6 +563,7 @@
    "centre_off_mm": 0.0,
    "lateral_margin_mm": 0.3,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 9.95,
    "other_cuts_touched": [],
@@ -551,10 +573,11 @@
    "id": "G1",
    "channel": "WL1",
    "centre_off_mm": 0.0003,
-   "lateral_margin_mm": 0.15,
+   "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.214,
    "TPE_full_cover_with_WC_tol": true,
-   "tip_to_nearest_TPE_cut_mm": 5.24,
+   "tip_to_nearest_TPE_cut_mm": 5.14,
    "other_cuts_touched": [],
    "tip_inside_L3_bore_with_clearance": true
   },
@@ -562,10 +585,11 @@
    "id": "G2",
    "channel": "WL2",
    "centre_off_mm": 0.0003,
-   "lateral_margin_mm": 0.15,
+   "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.214,
    "TPE_full_cover_with_WC_tol": true,
-   "tip_to_nearest_TPE_cut_mm": 5.24,
+   "tip_to_nearest_TPE_cut_mm": 5.14,
    "other_cuts_touched": [],
    "tip_inside_L3_bore_with_clearance": true
   },
@@ -573,8 +597,9 @@
    "id": "G3",
    "channel": "WLc",
    "centre_off_mm": 0.0,
-   "lateral_margin_mm": 0.15,
+   "lateral_margin_mm": 0.2,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.186,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.25,
    "other_cuts_touched": [],
@@ -584,8 +609,9 @@
    "id": "G4",
    "channel": "G4_lane",
    "centre_off_mm": 0.0,
-   "lateral_margin_mm": 0.15,
+   "lateral_margin_mm": 0.25,
    "lateral_ok_WC": true,
+   "lateral_WC_dir_mm": 0.215,
    "TPE_full_cover_with_WC_tol": true,
    "tip_to_nearest_TPE_cut_mm": 0.25,
    "other_cuts_touched": [],
@@ -649,8 +675,8 @@
  },
  "mass": {
   "COC": {
-   "mm3": 18504.7,
-   "g": 18.875
+   "mm3": 18499.4,
+   "g": 18.869
   },
   "TPE": {
    "mm3": 1317.0,
@@ -686,7 +712,7 @@
    [
     "V12",
     "G3",
-    0.451
+    0.36
    ]
   ]
  }

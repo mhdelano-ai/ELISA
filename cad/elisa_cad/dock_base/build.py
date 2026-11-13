@@ -183,21 +183,22 @@ def renders(sol, tubes_vis, sweep):
               title="DOCK BASE - front elevation (card plane Z 170; lid closed)",
               labels=[((235, 0, 240), "card bay / lid (open top)", None), ((73, 0, 80), "cold-box door", None),
                       ((395, 0, 140), "bottle door", None)], note=note)
-    nopanel = set(panels) | {"electronics_box", "rail_front_left", "rail_front_right", "rail_left", "rail_right",
+    nopanel = set(panels) | {"electronics_box", "electronics_box_side", "electronics_box_rear", "rail_front_left", "rail_front_right", "rail_left", "rail_right",
                               "rail_rear", "rail_well_rear", "partition_left", "partition_right", "well_rear_wall",
                               "rear_low_cover", "Gamry_Ref600plus", "cold_box", "estop", "status_light"}
     cb_cut = sol["cold_box"].cut(C.box_from_corners((0, 0, 0), (130, 60, 200)))
     RD.render(items(exclude=nopanel, extra=claims[2:] + [("cb_cut", cb_cut, (0.97, 0.97, 0.97, 1.0))]),
               OUT / "view_fluidics_no_enclosure.png", "iso_fl",
               title="DOCK BASE - enclosure removed: fluidics (tubes drawn 2x OD), pumps, bottles, pneumatics",
-              labels=[((172, 400, 240), "pumps S_b S_IC1 S_IC2 S_A S_RC", (0, 60)),
+              labels=[((352, 400, 240), "rear pumps S_b S_A S_RC", (0, 60)),
+                      ((99, 230, 221), "S_IC1 / S_IC2 beside the bay", (-60, 40)),
                       ((385, 258, 265), "waste air-gap head", (60, 40)), ((235, 110, 160), "LOWER bay (claim)", None),
                       ((120, 77, 190), "SV_b", (-40, 30)), ((20, 110, 160), "P_in sensor / PEEK from SM-FL", (-40, -40)),
                       ((232, 260, 150), "Flow EZ x2", (0, -50))],
               note="Lines inside the LOWER claim (gland -> port) are owned by DOCK LOWER and not drawn.")
     RD.render(items(exclude=nopanel - {"cold_box"} | {"cold_box"}, extra=claims[2:] + [("cb_cut", cb_cut, (0.97, 0.97, 0.97, 1.0))]),
               OUT / "view_fluidics_rear_left.png", "iso_rl",
-              title="DOCK BASE - enclosure removed, from rear-left (pump valves face the rear service door)")
+              title="DOCK BASE - enclosure removed, from rear-left (rear-bank valves face the rear door; S_IC1/S_IC2 face -Y)")
     # cold compartment detail
     cold_names = [it.name for it in L.ITEMS if it.group == "cold"] + ["P_in_pressure_sensor"]
     cold_items = [(n, sol[n], C.color(E[n].material)) for n in cold_names if n != "cold_box"]
@@ -236,6 +237,7 @@ def main(argv=None):
     _, reg = PT.lid_sweep_solid()
     chk["sweep_region_bounds_YZ"] = [round(v, 1) for v in reg.bounds]
     chk["liquid_budget"], chk["prime"] = K.liquid_budget()
+    chk["carryover_budget"] = K.carryover_budget()   # (revised after review, docs/24 B1)
     chk["cold_box_heat"] = K.cold_box_heat()
     chk["power"] = K.power_budget()
     chk["air"] = K.air_supply()

@@ -34,7 +34,8 @@ HEATER_FIN = {"t": 2.0, "x": (24.5, 75.3), "z": (HB_Z1, HB_Z1 + 13.1)}  # CHOICE
 #   the heater-block top at its +/-y edges (y 0-2 and 48-50); one 12.7 x 50.8 foil heater on each outer face
 GUIDE_PLATE_T = 3.0          # CHOICE-U2: bearing-bronze CuSn8 lower guide plate inset in the heater block face
 GUIDE_PLATE_T_UP = 2.0       # upper guide plate (same material) in the heater-block top: 2-point pin guidance
-PIN_FIT = {"0.8": (0.800, 0.806), "1.2": (1.200, 1.206)}   # guide hole H7 (+0..+6 um at <3 mm) ISO 286 [assessment]
+PIN_FIT = {"0.8": (0.800, 0.806), "1.0": (1.000, 1.006), "1.2": (1.200, 1.206)}   # guide hole H7 (+0..+6 um at <3 mm)
+#   ISO 286 [assessment]; "1.0" = Rev C slot pins (G1-G4, V11, V12), which use the 0.8-class collar/neck/button
 PIN_SHANK_TOL = {"0.8": (-0.006, -0.002), "1.2": (-0.006, -0.002)}   # g5-class grinding [assessment]
 
 # Clearance pockets in the head face (card coords)
@@ -55,7 +56,8 @@ STANDOFFS_PEEK = [(10.0, 5.0), (12.0, 46.5)]
 # 2. Valve pins, springs, collars (CHOICE-2/3, PLUNGER) -- detailing CHOICE-U5..U7
 # ---------------------------------------------------------------------------------------------------------------
 STROKE = IF.PLUNGER["stroke_pin"]                        # 0.8
-TIP_Z_CLOSED = IF.PLUNGER["tip_z_closed"]                # 0.17
+TIP_Z_CLOSED = IF.PLUNGER["tip_z_closed"]                # 0.50 (interface Rev C: real stop height; Rev B 0.17)
+TIP_Z_CLOSED_RANGE = IF.PLUNGER["tip_z_closed_range"]    # (0.37, 0.54) estimate, docs/24 S3
 TIP_Z_OPEN = IF.PLUNGER["tip_z_open"]                    # 0.97 (interface Rev B; Rev A 1.015)
 DROP_BELOW_CLOSED = 0.2                                  # interface.PLUNGER pin_extension_limit (collar stop)
 COLLAR_T = 0.5                                           # [assessment]
@@ -83,6 +85,9 @@ PIN_SPRINGS = {  # klass -> d wire, D mean, n active, target preload at closed (
     "cold":  {"d": 0.30, "Dm": 1.55, "n": 18, "F_closed": 2.5},
 }
 SPRING_TOL = 0.10            # +-10 % on force (custom-wound springs; preload trimmed by shim washers) [assessment]
+# (revised after review, docs/24 S3) preload is set per pin with a force gauge at the MEASURED closed height on the
+# reference card (I-13 extended): residual force error = gauge/shim step, +-5 % [assessment]
+SHIM_SET_TOL = 0.05
 V3 = {   # inverted valve (fail-open) -- CHOICE-U7
     "open_spring": {"d": 0.20, "Dm": 1.55, "n": 10, "F_open": 0.5},      # lifts the pin (below the collar)
     "limit_spring_preload": 2.1,      # force-limiting spring inside the V3 piston (N)
@@ -179,7 +184,9 @@ PILOT = {"model": "SMC S070B-5DG (base mounted, 24 VDC, 0.5 W, max 0.5 MPa, Cv 0
          "t_on_ms": 3.0, "t_off_ms": 3.0, "envelope": (7.0, 25.5, 28.5),   # w, l, h incl. base [catalogue drawing,
          #   overall sizes read from the dimension sheet, interpretation UNVERIFIED]
          "manifold": "SS073B01-11C and SS073B01-10C bar bases (2 manifolds: 11 + 10 stations)",
-         "L1": lambda n: n * 7.2 + 14.8}                     # catalogue formula L1 = n x 7.2 + 14.8
+         "L2": lambda n: n * 7.2 + 14.8,                     # (revised after review, docs/24 M2) catalogue SS073B01:
+         "L1": lambda n: n * 7.2 + 8.8}                      # L1 = n x 7.2 + 8.8, L2 (overall) = n x 7.2 + 14.8 (the
+#                                                            envelope uses the overall L2; Rev B labelled it L1)
 
 # ---------------------------------------------------------------------------------------------------------------
 # 8. Thermal (docs/07 §5.1 via docs/13 §6.5: 25.0 +- 0.2 degC)
@@ -209,7 +216,8 @@ def valve_class(v):
 
 
 def pkey(v):
-    return "0.8" if v.pin_d < 1.0 else "1.2"
+    # (revised after review) the D1.0 slot pins (interface Rev C) take the 0.8-class collar 1.4 / neck 0.5 / button 1.3
+    return "0.8" if v.pin_d < 1.1 else "1.2"
 
 
 def to_dock(p):

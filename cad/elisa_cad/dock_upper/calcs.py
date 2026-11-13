@@ -46,7 +46,25 @@ def pin_springs():
 
 
 # ------------------------------------------------------------------------------------------------ cylinders
-def cylinder_forces(p_kpa=P.P_SUPPLY_KPA, mu_rod=0.15, f_oring=0.7, f_pin_guide=0.05, guide_span=8.0):
+def closed_height_forces():
+    """(revised after review, docs/24 S3) closing force at the REAL closed tip height.
+    Case A (Rev B practice): preload set at the nominal 0.17 -> every pin sits dz = real - 0.17 higher.
+    Case B (Rev C): nominal 0.50, preload shimmed at the measured height with a force gauge (I-13 extended):
+    residual only the gauge/shim step SHIM_SET_TOL. Case C: Rev C nominal 0.50 but NOT re-shimmed: the real height
+    anywhere in TIP_Z_CLOSED_RANGE, with the +-10 % spring tolerance."""
+    sp = pin_springs()
+    rows = {}
+    for cls, s in sp.items():
+        lim = 1.5 if cls == "slot" else 3.0
+        a = [(s["F_closed"] + s["k"] * (z - 0.17)) * (1 + P.SPRING_TOL) for z in P.TIP_Z_CLOSED_RANGE]
+        c = [(s["F_closed"] + s["k"] * (z - P.TIP_Z_CLOSED)) * (1 + P.SPRING_TOL) for z in P.TIP_Z_CLOSED_RANGE]
+        b = s["F_closed"] * (1 + P.SHIM_SET_TOL)
+        rows[cls] = dict(limit=lim, k=s["k"], caseA_RevB_max=max(a), caseB_RevC_shimmed_max=b, caseC_RevC_unshimmed_max=max(c),
+                         margin_B=lim - b, margin_C=lim - max(c))
+    return rows
+
+
+def cylinder_forces(p_kpa=P.P_SUPPLY_KPA, mu_rod=0.15, f_oring=0.7, f_pin_guide=0.05, guide_span=8.0, dz=0.0):
     """Pull cylinders (annulus under the piston) lift pin + spring; V3 push cylinder closes through a limit spring.
     Friction: pin guide 0.05 N [assessment]; piston O-ring 0.6 N UNVERIFIED (small O-ring at 0.4 MPa);
     rod side load from the blade couple F*L reacted over guide_span 8 mm, mu 0.15 (bronze/steel) [assessment]."""
@@ -69,7 +87,7 @@ def cylinder_forces(p_kpa=P.P_SUPPLY_KPA, mu_rod=0.15, f_oring=0.7, f_pin_guide=
                                           F_lim_end * 1.1 - F_open_closed + f_pin_guide)))
             continue
         cls = P.valve_class(v)
-        Fs = sp[cls]["F_open_max"]
+        Fs = sp[cls]["F_open_max"] + sp[cls]["k"] * dz * (1 + P.SPRING_TOL)   # dz: closed height above the set height
         f_couple = mu_rod * 2 * Fs * L / guide_span
         need = Fs + f_couple + f_oring + f_pin_guide + P.RETURN_SPRING_F
         F_cyl = p_kpa * 1e-3 * A_pull
@@ -154,8 +172,11 @@ def pilot_heat():
     open_min = {"V1/V2": 6.8, "V4/V5": 1.0, "V6/V7": 0.5, "V8": 0.5, "V9/V10": 46.45, "V11": 0.6, "V12": 0.3,
                 "V15": 0.5, "V16": 0.5, "V17/V18": 7.05 + 13.65, "G1/G2": 2.55, "G3": 2.2, "G4": 0.9}
     s = sum(open_min.values())
-    run_period = 60.0                                        # [assessment] per-run slot length incl. stagger
-    avg_valves = s / run_period + (1 - 6.8 / run_period)     # + V3 (energised = closed)
+    # (revised after review, docs/24 M1) V3 is energised only while CLOSED, -3.45 -> 3.35 of each run = 6.8 min (Rev B
+    # added "all except 6.8 min"); and every run's valve-minutes recur once per cadence (31.0 min, docs/13 §7.1), not
+    # per 60 min (Rev B) -> average energised valves = (sum + 6.8) / 31
+    run_period = 31.0                                        # docs/13 §7.1 cadence
+    avg_valves = (s + 6.8) / run_period
     return dict(valve_min_per_run=s, avg_energised=avg_valves, avg_W=avg_valves * P.PILOT["P_W"],
                 peak_W=6 * P.PILOT["P_W"])
 
@@ -238,6 +259,10 @@ def report():
     sp = pin_springs()
     cyl300 = cylinder_forces(300.0)
     cyl = cylinder_forces()
+    chf = closed_height_forces()
+    dz_res = max(abs(z - P.TIP_Z_CLOSED) for z in P.TIP_Z_CLOSED_RANGE)
+    cyl_res = cylinder_forces(dz=dz_res)
+    cyl_res_trip = cylinder_forces(P.P_MIN_KPA, dz=dz_res)
     act = actuation_times()
     air = air_consumption()
     ph = pilot_heat()
@@ -257,6 +282,14 @@ def report():
             lines.append(f"{r['id']:4s} L={r['L']:5.2f} F_cyl={r['F_cyl']:.2f} need={r['need']:.2f} "
                          f"margin={r['margin']:.2f} F_tpe={r['F_tpe_range'][0]:.2f}-{r['F_tpe_range'][1]:.2f}")
         lines.append(f"worst: {cc['worst']['id']} margin {cc['worst']['margin']:.2f}")
+    lines.append("== closing force at the real closed height (docs/24 S3; revised after review) ==")
+    for c, r in chf.items():
+        lines.append(f"{c:8s} limit {r['limit']:.1f}: Rev B practice (set at 0.17) max {r['caseA_RevB_max']:.2f}; "
+                     f"Rev C shimmed at measured height max {r['caseB_RevC_shimmed_max']:.2f} (margin {r['margin_B']:.2f}); "
+                     f"Rev C not re-shimmed max {r['caseC_RevC_unshimmed_max']:.2f} (margin {r['margin_C']:.2f})")
+    lines.append(f"cylinder margin with residual dz {dz_res:.2f} unshimmed: worst {cyl_res['worst']['id']} "
+                 f"{cyl_res['worst']['margin']:.2f} at {P.P_SUPPLY_KPA:.0f} kPa, {cyl_res_trip['worst']['margin']:.2f} at the "
+                 f"{P.P_MIN_KPA:.0f}-kPa trip")
     lines.append(f"== actuation (orifice {act['orifice_d']} mm) volume {act['volume_mm3']} ==")
     for c, r in act["by_class"].items():
         lines.append(f"{c}: " + ", ".join(f"{k}={v:.1f}" for k, v in r.items()))
@@ -265,7 +298,7 @@ def report():
     lines.append("== clamp == " + ", ".join(f"{k}={v}" for k, v in cl.items()))
     lines.append("== lid reactions (at F_head max) == " + ", ".join(f"{k}={v:.1f}" for k, v in lr.items()))
     lines.append("== thermal == " + ", ".join(f"{k}={v:.4g}" for k, v in th.items()))
-    return dict(springs=sp, cyl300=cyl300, cyl=cyl, act=act, air=air, pilot=ph, clamp=cl, latch=lr,
+    return dict(springs=sp, cyl300=cyl300, cyl=cyl, closed_height=chf, cyl_residual=cyl_res, cyl_residual_trip=cyl_res_trip, act=act, air=air, pilot=ph, clamp=cl, latch=lr,
                 thermal=th), "\n".join(lines)
 
 

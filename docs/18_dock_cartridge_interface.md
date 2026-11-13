@@ -1,6 +1,8 @@
-# 18 — Cartridge A ↔ dock: interface control document — Revision B (after integration)
+# 18 — Cartridge A ↔ dock: interface control document — Revision C (after review)
 
-Status: 2026-11-13, **stage C0 desk work**. **Revision B (after integration)**: the four module designs (docs/19–22)
+Status: 2026-11-13, **stage C0 desk work**. **Revision C (after the review docs/24)**: every interface change made to
+resolve docs/24 is listed in **§17** and written into the sections below (marked "Rev C"); `interface.py` carries the
+Revision C changelog. **Revision B (after integration)**: the four module designs (docs/19–22)
 were integrated in docs/23; every interface change request is resolved in **§15** (request → decision → modules
 changed) and the changed values are written into the sections below (marked "Rev B"). Revision A text that no longer
 holds is struck through only where the old number matters; otherwise it is replaced. Revision A inputs: docs/00, 09, 11 §3/§5, 13 Revision B (all),
@@ -87,7 +89,9 @@ a single-acting pneumatic cylinder (**Rev B: Ø6 bore, 400 kPa pilot** via SMC S
 0.5 MPa — docs/20 DEV-U1/U2; Rev A: Ø5 / 300 kPa) **lifts the pin through a horizontal yoke blade** to open. V3 is inverted: a spring
 holds it open, the cylinder closes it through a 2.5 N force-limiting spring (fail-open, docs/13 §4). Stroke 0.8
 (≥ 0.5 required, docs/13 §6.2); tip z closed ≈ 0.17, open ≈ 0.97 (Rev B: = closed + stroke; Rev A wrote 1.015). Pin Ø1.2 / flat tip Ø1.0 in Ø1.5
-bores (docs/13 §2.6), except the J and cell clusters: pin and tip Ø0.8 in Ø1.2 bores. Bore lead-in 0.3×45°, **except V8 (none, edge break; Rev B,
+bores (docs/13 §2.6), except the J and cell clusters: pin and tip Ø0.8 in Ø1.2 bores (V14, V15); **Rev C (docs/24 S1):
+slot valves G1, G2, G4, V11, V12 pin = tip Ø1.0 in Ø1.3 bores, G3 Ø0.9 in Ø1.2 (x 54.20), G4 at y 22.50; closed tip
+z 0.50 (real stop on compressed TPE; Rev B 0.17), open 1.30; preload set at the measured height (I-13 extended)**. Bore lead-in 0.3×45°, **except V8 (none, edge break; Rev B,
 docs/19 CHOICE-C10)** so the P_mv gas ring OD 7.0 keeps 0.14 mm of flat land.
 
 **Why a fan-out.** The minimum pin pitch the stub rule produces is **1.60 mm** (V11–V12; G1–G2 1.87, V12–G3 1.65).
@@ -115,17 +119,17 @@ incoming check), pin springs Co-Cr-Ni (Elgiloy class), yokes/spring plate/button
 | V8 | 12.00, 31.80 | 1.0/1.2 | cold 2.5/3 | closed | 5.0, 32.5, 0 | RCj → MC |
 | V9 | 32.50, 41.00 | 1.0/1.2 | anvil 2.5/3 | closed | 32.0, 41.5, 0 | IC1 nozzle ↔ P_d1 |
 | V10 | 32.50, 9.00 | 1.0/1.2 | anvil 2.5/3 | closed | 32.0, 5.5, 0 | IC2 nozzle ↔ P_d2 |
-| V11 | 51.30, 25.95 | 0.8/0.8 | slot 1.2/1.5 | closed | 50.0, 23.5, 1 | S_A (P_a2) → WLc tee |
-| V12 | 52.90, 25.95 | 0.8/0.8 | slot 1.2/1.5 | closed | 50.0, 32.5, 0 | WLc tee → P_wo |
+| V11 | 51.30, 25.95 | **1.0/1.0** (Rev C) | slot 1.2/1.5 | closed | 50.0, 23.5, 1 | S_A (P_a2) → WLc tee |
+| V12 | 52.90, 25.95 | **1.0/1.0** (Rev C) | slot 1.2/1.5 | closed | 50.0, 32.5, 0 | WLc tee → P_wo |
 | V14 | 61.75, 25.00 | 0.8/0.8 | anvil 2.5/3 | closed | 68.0, 32.5, 0 | WE2 → P_s |
 | V15 | 55.50, 22.60 | 0.8/0.8 | anvil 2.5/3 | closed | 59.0, 14.5, 0 | RS → CE/RE pocket |
 | V16 | 60.55, 17.20 | 1.0/1.2 | anvil 2.5/3 | closed | 68.0, 14.5, 0 | BW → P_s |
 | V17 | 28.00, 29.95 | 1.0/1.2 | anvil 2.5/3 | closed | 23.0, 32.5, 1 | S_A (P_a) → C1 |
 | V18 | 28.00, 20.05 | 1.0/1.2 | anvil 2.5/3 | closed | 23.0, 23.5, 0 | S_A (P_a) → C2 |
-| G1 | 49.26, 25.93 | 0.8/0.8 | slot 1.2/1.5 | closed | 41.0, 23.5, 0 | WL1 ↔ J |
-| G2 | 49.26, 24.07 | 0.8/0.8 | slot 1.2/1.5 | closed | 50.0, 14.5, 0 | WL2 ↔ J |
-| G3 | 54.25, 25.00 | 0.8/0.8 | slot 1.2/1.5 | closed | 59.0, 23.5, 1 | WLc ↔ cell |
-| G4 | 57.85, 22.60 | 0.8/0.8 | slot 1.2/1.5 | closed | 68.0, 23.5, 0 | cell ↔ BW |
+| G1 | 49.26, 25.93 | **1.0/1.0** (Rev C) | slot 1.2/1.5 | closed | 41.0, 23.5, 0 | WL1 ↔ J |
+| G2 | 49.26, 24.07 | **1.0/1.0** (Rev C) | slot 1.2/1.5 | closed | 50.0, 14.5, 0 | WL2 ↔ J |
+| G3 | **54.20**, 25.00 | **0.9/0.9** (Rev C) | slot 1.2/1.5 | closed | 59.0, 23.5, 1 | WLc ↔ cell |
+| G4 | 57.85, **22.50** | **1.0/1.0** (Rev C) | slot 1.2/1.5 | closed | 68.0, 23.5, 0 | cell ↔ BW |
 
 Force limits and fail states: docs/13 §4. Nominal preloads 1.2 / 2.5 N are CHOICE-3 placeholders until M4.
 Card bores: G1/G2 and V11/V12 merged into 1.2 × ~3 slots; G3, G4, V14, V15 open into notches of the die window
@@ -135,9 +139,9 @@ Card bores: G1/G2 and V11/V12 merged into 1.2 × ~3 slots; G3, G4, V14, V15 open
 
 | Port | (x, y) | Kind | Connects | Dock side |
 |---|---|---|---|---|
-| P_in | 34.2, 27.3 | liquid | SM-FL → M_in | 1/16″ PEEK ≥ 0.3 m |
+| P_in | 34.2, 27.3 | liquid | SM-FL → M_in | 1/16″ PEEK ≥ 0.3 m (Rev C: 0.0635 mm ID, 0.52 m, docs/22) |
 | P_byp | 34.2, 23.3 | liquid | V3 → waste | waste, air gap |
-| P_b | 37.5, 25.0 | liquid | bead rung → V4/V5 | S_b outlet 0.25 ID |
+| P_b | 37.5, 25.0 | liquid | bead rung → V4/V5 | S_b outlet 0.102 ID (built, DEV-B3; Rev A text said 0.25) |
 | P_a | 28.0, 25.0 | liquid | A1 rung → V17/V18 | S_A port 1 |
 | **P_a2** | 51.3, 36.5 | liquid | → V11 | S_A port 2 (DEV-6) |
 | P_d1 / P_d2 | 29.5, 41.0 / 29.5, 9.0 | liquid | V9/V10 ↔ nozzles | FEP coil → S_IC1/2 |
@@ -148,11 +152,15 @@ Card bores: G1/G2 and V11/V12 merged into 1.2 × ~3 slots; G3, G4, V14, V15 open
 | P_c / P_mv | 8.0, 41.5 / 16.0, 30.0 | gas (top) | RCj headspace / MC stop vent | pressure channels 1/2 |
 
 **Liquid face seal (CHOICE-4):** port hole Ø1.0 through L0+L1 (0.24 µL, docs/13 §2.5); in the anvil a 1/16″ PEEK tube
-bonded into a replaceable PEEK port insert, tube end flush with z = 0 under the hole; flat elastomer annulus ID 1.7 /
-OD 3.3 / 0.50 thick in a 0.38-deep counterbore (24 % compression) [assessment; material FFKM or EPDM, HQ/Tween
-compatibility UNVERIFIED]. No anvil bore volume is added. Port pitch ≥ 3.6; valve tips ≥ 0.3 outside a seat
+bonded into a replaceable PEEK port insert, tube end flush with z = 0 under the hole; flat elastomer annulus OD 3.3 /
+0.50 thick in a 0.38-deep counterbore (24 % compression) [assessment; material FFKM or EPDM, HQ/Tween compatibility
+UNVERIFIED]. **Rev C (docs/24 S4):** the gasket is cut at ID 1.50 and stretched over the tube (installed ID = tube OD
+1.5875), so it seals on the tube OD and on the foil round the Ø1.0 hole; no annulus is open to the port and no anvil
+bore volume is added. (Rev B ID 1.7 left a 0.056 × 0.38 annulus = 0.110 µL per port, unswept — the Rev B sentence "no
+anvil bore volume is added" was wrong for that annulus.) Port pitch ≥ 3.6; valve tips ≥ 0.3 outside a seat
 (**Rev B: `VALVE_TIP_SEAT_MARGIN` 0.3 governs gasket seats; `VALVE_TIP_EDGE_MARGIN` 0.5 governs through-openings**).
-Gasket 50 ShA (docs/21 CHOICE-L5): 6.7 N per seal (Gent form, moduli UNVERIFIED) → 74 N for 11 seals.
+Gasket 50 ShA (docs/21 CHOICE-L5): 7.4 N per seal (Rev C annulus 6.57 mm²; Gent form, moduli UNVERIFIED) → 81 N for 11
+seals (Rev B 6.7 / 74).
 **Gas seals (lid):** ring ID 5.0 / OD 7.0 / 1.0 around P_c and P_mv, ≈ 5 N each [assessment].
 
 **Clamp budget (Derived, `interface.clamp_budget()`):**
@@ -175,8 +183,10 @@ plate over the reagent zone — minus pockets for vents (Ø6, vented sideways), 
 **Anvil openings (dock side, card coords).** Windows W1/W2 **11.4 × 11.4 square, R 1.0**, centred on the chambers
 (DEV-4). Drag slot = union of buffers: 4.0 wide around apex → WL1/WL2 → J; 3.4 wide around J → RC centre and the
 bead-out leg (56.8, 25) → (57.85, 25) → (57.85, 21.5) (DEV-5), **Rev B: ∪ the axis-aligned 2.6-sq M_d holder swept
-along every drag/bead-out path + 0.30 (`slot_polygon()`, docs/21 DEV-L4); max local width 4.44 at G1/G2 → foil
-deflection 19 µm under a 1.5 N slot valve (docs/13 15 µm; M4 acceptance ≤ 20 µm)**. M_w recess 3.4 × 3.4 × 3.2 at (57.85, 17.2). Contact
+along every drag/bead-out path + 0.30 (`slot_polygon()`, docs/21 DEV-L4); max local width 4.44 at G1/G2** (Rev B).
+**Rev C (docs/24 S2): round Ø2.6 holder (Ø2 × 4 magnet), arms 3.4: every slot-valve span 3.40 → long-strip model
+15.6 µm at 1.32 N, 17.8 µm at 1.5 N (M4 limit 20 µm); Rev B's 19 µm used the circular-plate formula (strip model
+30 µm).** M_w recess 3.4 × 3.4 × 3.2 at (57.85, 17.2). Contact
 opening = contact window. Anvil: 5-mm Al top plate over the magnet bay (Rev B: bottom pocket x 32.5–62.5, y 0–50);
 15-mm thick zones for port inserts (Rev B, docs/21 DEV-L3): island boss x 24–40.5 / y 19–31, west strip x 24–32.5,
 east block x 62.5–75.5, P_a2 boss x 49–53.5 / y 34.5–39, P_s boss x 60.3–62.5 / y 17.8–23.2 (CHOICE-5). Tip-edge margin to any opening ≥ 0.5 (V15: 0.25, accepted, CHOICE-5).
@@ -184,7 +194,7 @@ east block x 62.5–75.5, P_a2 boss x 49–53.5 / y 34.5–39, P_s boss x 60.3�
 | Magnet | Size (mm), axis | Position / motion | Gap / travel | Source |
 |---|---|---|---|---|
 | M_c,1 / M_c,2 | 10×10×5 NdFeB, through 5; holder 10.6 sq with a flange seating on the plate underside | under W1/W2 centre; **Rev B: parallelogram swing R 64.5 outward (one self-locking worm per unit), parked centre (40, 56.7) / (40, −6.7), top z −45.6; fail state HOLD** (Rev A: Z 25 + retract 18, spring-up) | up: top z −0.16 (gap by geometry) | docs/13 §3.3.1; DEV-4; docs/21 DEV-L1/L2 |
-| M_d | 2×2×4, along 4; holder 2.6 sq | on a vertical post **from below** (X–Y stage, spring-up Z pulled down by a back-drivable cam, 8 mm); tip travel x 35.0–59.6, y 6.0–44.0; drag 0.20, gather 0.30 mm/s; **holds at the RC during accumulation and READ**; parks lowered under J | up: top z −0.16 ± 0.05 | docs/13 §3.3, §6.2; DEV-4 |
+| M_d | **Rev C: Ø2 × 4 cylinder, along 4; holder Ø2.6 round** (Rev B 2×2×4, holder 2.6 sq) | on a vertical post **from below** (X–Y stage, spring-up Z pulled down by a back-drivable cam, 8 mm); tip travel x 35.0–59.6, y 6.0–44.0; drag 0.20, gather 0.30 mm/s; **holds at the RC during accumulation and READ**; parks lowered under J | up: top z −0.16 ± 0.05 | docs/13 §3.3, §6.2; DEV-4 |
 | M_w | 3×3×3 | fixed in the recess under BW | top z −0.16 | docs/13 §3.3.1; DEV-5 |
 | M_h | — | **not built** (function by M_d) | — | DEV-4 |
 
@@ -202,8 +212,9 @@ Die-back press pad (lid): x 55.5–60.5, y 29.6–33.1 on the die back (z 1.04),
 (grounded enclosure): card x 54.0–62.5, y 28.8–36.5, z −70–0; relay inside (**Rev B: |B| ≤ 1.9 mT there with M_c1
 parked → magnetically screened reed relay + 0.3 mm mu-metal can, accepted at 5 mT applied, `WE_RELAY_FIELD`**); shielded leads ≤ 0.3 m via a bulkhead on the +X wall to the Gamry cell cable (docs/13 §6.3).
 
-**Thermal (CHOICE-7).** Bottom: cold plate (Al 5 mm, Peltier, 4–8 °C) x 0–20; PEEK insulator in the 4-mm anvil gap
-x 20–24; heated Al anvil 25.0 °C x 24–75.5 minus openings. Top: PEEK pressure plate x 0–20 (no heater); Al heater
+**Thermal (CHOICE-7).** Bottom: cold plate (Al 5 mm, Peltier, 4–8 °C) x 0–20 (**Rev C: x 2.6–20, y 3–47 behind a
+2-mm gap with a 1.5-mm PEEK lip over foam, docs/21 §5.4**); PEEK insulator in the 4-mm anvil gap x 20–24 (Rev C: lip +
+foam); heated Al anvil 25.0 °C x 24–75.5 minus openings. Top: PEEK pressure plate x 0–20 (no heater); Al heater
 block 10 mm (25.0 °C, also the pin guide) x 24–75.5. Contact = the card top minus pockets.
 
 **Optical/ID (CHOICE-11).** Top-face data matrix (§4) read by a down-looking reader on the nest front frame with the
@@ -217,7 +228,7 @@ lid open; lid-closed switch and contact-loop resistance as docs/13 §6.7.
 | LOWER_nest_anvil | 150–320, 20–185, 155–176 | DOCK LOWER: anvil, cold plate, datum pins, pushers, head guide bushes |
 | LOWER_bay | 150–320, 20–200, 40–155 | DOCK LOWER: M_c units, M_d stage + post, electrode bay, Peltier stack, tube corridors |
 | BASE_drip_tray | 0–470, 0–420, 0–15 | DOCK BASE |
-| BASE_cold_compartment | 10–145, 20–200, 15–220 | conjugate bottle, bead vial rocker, S_b; SM-FL line entry |
+| BASE_cold_compartment | 10–145, 20–200, 15–220 | conjugate tube, bead vial rocker, SV_b; SM-FL line entry (S_b sits in the rear pump row; Rev A text said S_b here) |
 | BASE_under_bay | 150–320, 20–200, 15–40 | leak electrodes, low items |
 | BASE_bottles | 325–465, 10–200, 15–260 | A1, HQDP, waste |
 | BASE_rear_low | 150–320, 205–315, 15–180 | under the opened lid: pressure controller, flow sensors, regulator |
@@ -247,7 +258,7 @@ Pass-throughs (**Rev B**, ICR-6 / IR-2/4/6): every card liquid line leaves the L
 | P_d1 / P_d2 | 150, 116 / 84, 112 | P_cf | 150, 110.0, 112 |
 
 Cable window (motors, heaters, sensors, Peltier, pogo-cylinder air) X 150, Y 150–195, Z 60–140; LOWER Peltier exhaust
-(10.6 W) leaves at Y 20, X 186–210, Z 118–144 into a BASE duct to a louvre in the front-bay panel; lid umbilical at dock
+(Rev C ≤ 12.3 W at the sink acceptance limit; Rev B 10.6 W) leaves at Y 20, X 186–210, Z 118–144 into a BASE duct to a louvre in the front-bay panel; lid umbilical at dock
 (235, 200, 190), BASE hand-over grommet X 236–262, Y 205–211, Z 180 (P_c X 240, P_mv 248, air 258) — UPPER owns the
 loop; Gamry cable bulkhead on the LOWER +X wall at (320, 107, 135), flange ≤ 16 × 20 (Y × Z), connector UNVERIFIED;
 SM-FL PEEK line through the left wall at (0, 110, 160) (Waters stack on the left). LOWER bay base plate (dock Z 40–44)
@@ -361,7 +372,7 @@ integration choice listed in docs/23 §8 (with how to overrule it). Every value 
 | 4 | hinge: UPPER ICR-U3 (rail) vs BASE IR-5 (≥ 3 mm inside X 150–320) | UPPER hinge blocks (Z 160–199) bolt on two **LOWER hinge pedestals** X 150–154 / 316–320, Y 185–200, Z 44–160; claims added; BASE right partition moved to X 323–325 so the moving cam lever (X ≤ 320) keeps 3.0 mm, left side 3.5 mm; fixed hinge blocks 1.0 mm from the left partition (no relative motion) | closes the clamp loop (card → anvil → bay frame → pedestals → hinge; latches → anvil) inside LOWER + UPPER; BASE has no structure above the deck there | interface, LOWER, BASE params/fluidics, UPPER checks |
 | 5 | pass-throughs: BASE IR-2/IR-4/IR-6 vs LOWER ICR-6 | exits = the LOWER routes (`LIQUID_LINE_EXITS`, table §8); BASE re-routed to them (grommet windows in the partitions), cable window, Peltier exhaust duct extension + front-bay louvre, umbilical grommet, Gamry flange 16 × 20; tubing schedule re-issued with the real LOWER lengths (docs/22 §5.3) | LOWER's exits follow from the port positions, R 25 bends and the M_d sweep (no freedom); BASE lanes are free | interface, BASE params/parts/layout/fluidics |
 | 6 | LOWER mount IR-1 | `LOWER_MOUNT`: 6 × M6 at X 165/305 × Y 35/110/185, dowels (165, 50) round, (305, 50) slot | the X 235 holes lie under the M_d stage | interface, LOWER parts (base plate), BASE params |
-| 7 | drag slot ICR-2 / DEV-L4 | widened slot `slot_polygon()` (buffers ∪ swept 2.6-sq holder + 0.30); square holder kept | a round holder cannot hold the 2 × 2 magnet (diagonal 2.83); keeps docs/13 magnet and gap; foil 19 µm at G1/G2 ≤ 20 µm (M4 acceptance) | interface, LOWER geom |
+| 7 | drag slot ICR-2 / DEV-L4 (superseded by Rev C §17 #2) | widened slot `slot_polygon()` (buffers ∪ swept 2.6-sq holder + 0.30); square holder kept | a round holder cannot hold the 2 × 2 magnet (diagonal 2.83); keeps docs/13 magnet and gap; foil 19 µm at G1/G2 ≤ 20 µm (M4 acceptance) | interface, LOWER geom |
 | 8 | pogo ICR-3; pogo 7.25 N vs pad 11–12 N | `POGO` tip_z_retracted **−1.66**, 1.21 N/pin (7.25 N); pad 12 N kept | −1.0 needed 1.66 mm compression > 1.27 travel; pad must exceed pogo (net 4.75 N on the die) | interface, LOWER geom |
 | 9 | M_c motion ICR-4 / DEV-L1/L2; thick zones ICR-5 / DEV-L3 | adopted: swing R 64.5, parks (40, 56.7)/(40, −6.7), top −45.6, fail state **hold**; thick zones as built | spring-up would drive M_c into the M_d post; 10× lower stray force at the own chamber | interface |
 | 10 | magnetics/materials ICR-8; UPPER pins/springs 1.4310; WE relay 1.9 mT | pins Nitronic 60 (fallback 1.4404 annealed, μr ≤ 1.02 checked), pin springs Co-Cr-Ni, yokes/spring plate/buttons 1.4404, guides CuSn8, datum pins zirconia, head guide pins 1.2842 (≥ 45 mm from magnets); relay stays in the bay, screened reed relay + mu-metal can, 5 mT acceptance (`WE_RELAY_FIELD`) | work-hardened 1.4310/1.4301 is partly martensitic; leads ≤ 0.3 m forbid moving the relay out | interface `MATERIALS`, UPPER params/parts (docs) |
@@ -374,6 +385,21 @@ Not requested but found by the integration (docs/23 §4): the nominal closed tip
 top over the channel lands (the real tip stops on compressed TPE) → hook gap set on a reference card (I-13); see docs/23
 §4 for the cross-module check results and §9 for the open defects.
 
+## 17. Revision C — changes after the review docs/24
+
+| # | Finding | Interface change (Rev C value) | Why | Modules changed |
+|---|---|---|---|---|
+| 1 | S1 gate land overlap | `TOL` + laser kerf 0.02/side, guide hole 0.01, pin play 0.006, tip D 0.005, cold-zone contraction 0.024 (x), COC/Al CTE 0.010 (x); `valve_tip_lateral_wc()` 0.215 (RSS 0.085), `valve_tip_lateral_wc_dir()` on the channel normal; slot valves G1, G2, G4, V11, V12 **Ø1.0 pin = tip in Ø1.3 bores**, G3 **Ø0.9 at (54.20, 25)**, G4 at (57.85, **22.50**) | worst-case lateral overlap ≥ +0.014 (G3) / +0.035 (G1, G2, G4) / +0.085 (V11, V12) on every valve (Rev B G1–G4 −0.01…−0.02); G3/G4 seal edges 0.35 from the die edge, tip + worst case 0.035 inside the TPE cut | interface, card, UPPER |
+| 2 | S2 foil deflection | `MAGNETS['M_d']` Ø2 × 4 cylinder in a round Ø2.6 holder; `SLOT_W` 4.0 → 3.4; `slot_polygon()` sweeps the round holder; `SLOT_MAX_LOCAL_WIDTH` 3.40 | long-strip model ≤ 17.8 µm at 1.5 N everywhere (Rev B 30 µm at G1/G2); drag force 0.96× (Derived) | interface, LOWER |
+| 3 | S3 closing force | `PLUNGER tip_z_closed` 0.17 → **0.50** (`tip_z_closed_range` 0.37–0.54), `tip_z_open` 1.30 | the tip stops on compressed TPE over the lands; forces/margins re-computed (docs/20 §4.1–4.2) | interface, UPPER, assembly |
+| 4 | S4 face-seal annulus | `FACE_SEAL gasket_id` 1.7 → 1.5875 installed (`gasket_id_free` 1.50) | 0.110 µL unswept annulus per port removed | interface, LOWER |
+| 5 | B2 cold zone | `THERMAL['reagent_bottom']` cold_plate_xy (2.6, 3)–(20, 47), insulation_gap 2.0, peek_lip_t 1.5; `PASS_THROUGHS['peltier_exhaust'] heat_W` 12.3 | heat leak 7.1 → ≈ 1 W through the break; sink requirement 1.6 K/W | interface, LOWER, BASE text |
+| 6 | M3 stale Rev A remnants | `DATUM_PIN_D` comment zirconia; `cylinder_pitch_min` comment bore 6; P_b dock text 0.102; `BASE_cold_compartment` note (S_b in the rear row) | consistency | interface, docs |
+
+B1 (P_in line 0.0635 mm, S_IC pumps beside the bay) changes no interface number (BASE-internal); S5, S6, S7, M1, M2,
+M4–M13 are documents or module code (docs/24 §8).
+
 ## 16. Revision history
 * Revision A (2026-11-13): interface phase.
 * Revision B (2026-11-13): integration of docs/19–22 (this §15; `interface.py` changelog block).
+* Revision C (2026-11-13): resolution of the review docs/24 (§17; `interface.py` changelog block).

@@ -20,25 +20,52 @@ from . import collect as K
 TOL_VOL = 1e-4      # mm^3
 ORIGIN = np.array(I.CARD_ORIGIN_IN_DOCK)
 
-INTENDED = [  # ((module, name prefix), (module, name prefix), reason)
-    (("UPPER", "pin_"), ("CARD", "L1_channel_sheet"),
-     "valve tip at the nominal closed height z 0.17 (interface PLUNGER) lies below the L1 top over the channel lands: "
-     "nominal geometry, the real tip stops on compressed TPE (docs/23 §4.2)"),
-    (("UPPER", "pin_"), ("CARD", "L2_TPE"), "closed valve presses the TPE membrane (by design)"),
-    (("UPPER", "press_pad_silicone"), ("CARD", "die_glass"), "die-back pad compliance (DIE_PRESS_PAD, by design)"),
-    (("UPPER", "ENV_gas_ring"), ("CARD", "L3_body"), "lid gas ring compression 0.25 (GAS_SEAL_LID, by design)"),
-    (("UPPER", "ENV_gas_ring"), ("CARD", "L4_"), "gas ring over the P_c PTFE disc recess rim (checked §4.6)"),
-    (("LOWER", "gasket_"), ("CARD", "L0_foil"), "face-seal compression 0.12 (FACE_SEAL, by design)"),
-    (("LOWER", "pogo_probes"), ("CARD", "die_"), "pogo tips on the die pads (by design)"),
-    (("LOWER", "tube_"), ("BASE", "tube:"), "tube hand-over at the LOWER claim wall (same tube, two owners)"),
+def _pin_tpe_expected(name):
+    """(revised after review, docs/24 M8) expected pin x TPE volume: tip land (0.1 high, tip D) + shank (pin D) from the
+    closed tip height (interface Rev C 0.50) to the TPE top 0.715 (Derived)."""
+    v = I.VALVES[name.split("pin_")[1]]
+    if v.fail == "open":
+        return 0.0
+    d = I.Z_L2[1] - I.PLUNGER["tip_z_closed"]
+    return math.pi / 4 * (v.tip_d ** 2 * min(0.1, d) + v.pin_d ** 2 * max(0.0, d - 0.1))
+
+
+_GASKET_EXP = math.pi / 4 * (I.FACE_SEAL["gasket_od"] ** 2 - I.FACE_SEAL["gasket_id"] ** 2) * \
+    (I.FACE_SEAL["gasket_t"] - I.FACE_SEAL["counterbore_depth"])      # annulus x 0.12 compression (Derived)
+
+# ((module, name prefix), (module, name prefix), reason, expected volume mm^3 (number or f(name of the first item)),
+#  relative tolerance). (revised after review, docs/24 M8): every designed contact now has an expected volume; a pair of
+# an intended class whose volume departs from it by more than the tolerance (or by > 0.01 mm^3 when ~0) is UNINTENDED.
+# Rev B's pin x L1 rule is gone: at the Rev C closed height 0.50 no pin may touch L1.
+INTENDED = [
+    (("UPPER", "pin_"), ("CARD", "L2_TPE"), "closed valve presses the TPE membrane (by design, tip z 0.50)",
+     _pin_tpe_expected, 0.15),
+    (("UPPER", "press_pad_silicone"), ("CARD", "die_glass"), "die-back pad compliance (DIE_PRESS_PAD, by design)",
+     0.0, None),
+    (("UPPER", "ENV_gas_ring"), ("CARD", "L3_body"), "lid gas ring compression 0.25 (GAS_SEAL_LID, by design)",
+     math.pi / 4 * (I.GAS_SEAL_LID["od"] ** 2 - I.GAS_SEAL_LID["id"] ** 2) * I.GAS_SEAL_LID["compression"], 0.15),
+    (("UPPER", "ENV_gas_ring"), ("CARD", "L4_"), "gas ring over the P_c PTFE disc recess rim (checked §4.6)", 0.0, None),
+    (("LOWER", "gasket_"), ("CARD", "L0_foil"), "face-seal compression 0.12 (FACE_SEAL, by design)", _GASKET_EXP, 0.10),
+    (("LOWER", "pogo_probes"), ("CARD", "die_"), "pogo tips on the die pads (by design)", 0.0, None),
+    (("LOWER", "tube_"), ("BASE", "tube:"), "tube hand-over at the LOWER claim wall (same tube, two owners)", 0.0, None),
 ]
+ZERO_CONTACT_MAX = 0.01     # mm^3: 'contact' classes may only touch (faceting)
 
 
-def _intended(a, b):
-    for (ma, pa), (mb, pb), why in INTENDED:
-        if (a["module"] == ma and a["name"].startswith(pa) and b["module"] == mb and b["name"].startswith(pb)) or \
-           (b["module"] == ma and b["name"].startswith(pa) and a["module"] == mb and a["name"].startswith(pb)):
+def _intended(a, b, vol=None):
+    """Reason string if (a, b) is a designed contact AND its volume matches the expected value; else None."""
+    for (ma, pa), (mb, pb), why, exp, rtol in INTENDED:
+        if a["module"] == ma and a["name"].startswith(pa) and b["module"] == mb and b["name"].startswith(pb):
+            first = a["name"]
+        elif b["module"] == ma and b["name"].startswith(pa) and a["module"] == mb and a["name"].startswith(pb):
+            first = b["name"]
+        else:
+            continue
+        if vol is None:
             return why
+        e = exp(first) if callable(exp) else exp
+        ok = (vol <= ZERO_CONTACT_MAX) if rtol is None else (abs(vol - e) <= rtol * e + 0.005)
+        return (why + f" [expected {e:.3f} mm3]") if ok else None
     return None
 
 
@@ -75,7 +102,7 @@ def cross_interference(items, modules_pairs=None):
         v = common_volume(a["shape"], b["shape"])
         if v != v or v > TOL_VOL:
             rec = (a["module"] + ":" + a["name"], b["module"] + ":" + b["name"], round(v, 4))
-            why = _intended(a, b)
+            why = _intended(a, b, v) if v == v else None
             (good if why else bad).append(rec + ((why,) if why else ()))
     return bad, good, n
 
@@ -102,15 +129,16 @@ def pins_in_bores(items):
         x, y = (bb.xmin + bb.xmax) / 2 - ORIGIN[0], (bb.ymin + bb.ymax) / 2 - ORIGIN[1]
         tipz = bb.zmin - ORIGIN[2]
         vol_l3 = common_volume(pin, l3)
+        vol_l1 = common_volume(pin, l1)   # (revised after review) Rev C closed height 0.50: must be 0
         d_l3 = pin.distance(l3)
         in_channel = not l1.isInside(_cardpt(v.xy[0], v.xy[1], 0.23))
         r = 0.95 * v.tip_d / 2
         tpe_cover = all(l2.isInside(_cardpt(v.xy[0] + r * math.cos(a), v.xy[1] + r * math.sin(a), 0.5))
                         for a in np.linspace(0, 2 * math.pi, 8, endpoint=False))
         res[vid] = {"tip_xy_err": round(math.hypot(x - v.xy[0], y - v.xy[1]), 4), "tip_z": round(tipz, 3),
-                    "vol_in_L3": round(vol_l3, 5), "min_gap_to_L3": round(d_l3, 3), "tip_on_channel": in_channel,
+                    "vol_in_L3": round(vol_l3, 5), "vol_in_L1": round(vol_l1, 5), "min_gap_to_L3": round(d_l3, 3), "tip_on_channel": in_channel,
                     "tip_covered_by_TPE": tpe_cover}
-    ok = all(r["vol_in_L3"] <= TOL_VOL and r["tip_on_channel"] and r["tip_covered_by_TPE"] and r["tip_xy_err"] < 0.01
+    ok = all(r["vol_in_L3"] <= TOL_VOL and r["vol_in_L1"] <= TOL_VOL and r["tip_on_channel"] and r["tip_covered_by_TPE"] and r["tip_xy_err"] < 0.01
              for k, r in res.items() if k != "V3") and res["V3"]["vol_in_L3"] <= TOL_VOL
     return {"ok": ok, "per_valve": res,
             "note": "V3 is drawn OPEN (de-energised, fail-open): tip 0.8 above closed"}

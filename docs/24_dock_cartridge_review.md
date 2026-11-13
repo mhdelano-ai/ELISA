@@ -219,3 +219,48 @@ Scripts are in `/tmp/claude-0/-home-user-ELISA/ae894b80-90ba-5a23-9111-4ab00d596
 3. **Gate geometry (S1/S2):** may docs/13 numbers change locally? The candidates are lanes 0.40 wide under the gates,
    Ø0.9 gate tips, or a round M_d holder with a Ø2 × 4 magnet (the alternative to the widened slot, I-7). docs/13 is
    not edited; each would be a listed deviation.
+
+## 8. Resolution of findings
+
+Added 2026-11-13 by the resolving agent (§1–§7 above are the reviewer's text, unchanged). Every finding was checked
+first; the verdict says whether the reviewer's claim held. Changes are in `cad/elisa_cad/interface.py` **Revision C**
+(changelog at its top; docs/18 §17), the module code, and docs/18–23 (marked "(revised after review)"). The user's
+round rule ("no checkpoint; agents decide and list the choices") applied to the three §7 questions: the decisions and
+their alternatives are in docs/23 §8.7 (R-1 … R-7) for the user to overrule. All modules and the integrated assembly
+were rebuilt (docs/23 §12). Residual status: **closed** = fixed in the design and checked at the desk; **open →** the
+bench experiment or gate that closes it.
+
+| ID | Verdict on the finding | What was changed, where | Residual status |
+|---|---|---|---|
+| **B1** | **Confirmed.** Re-computed with the as-built geometry: Rev B worst determination 1.09×10⁻⁴ (reviewer ≈ 1.1×10⁻⁴; the card's M_in is 19.0 mm, not 15.7, so slightly worse; the reviewer's whole-rail C_k gives 1.11×10⁻⁴, the sample-wetted path 1.09×10⁻⁴) | P_in line PEEK **0.0635 mm** ID (area ratio 1.72 → 0.96; 2.66 µL); **S_IC1/S_IC2 moved beside the bay** (coils 140/160 → 78.5/76.3 µL, area ratio 2.67 → 1.31) with the electronics re-arranged in three boxes; C_k unchanged (card re-layout rejected, docs/23 R-1); no wash/cycle time added. Budget function `dock_base/calcs.carryover_budget()` → `check_results.json`; table docs/23 §9.1; docs/22 Rev C | **Closed on paper: 9.87×10⁻⁵ ≤ 1×10⁻⁴** (margin 1.3×10⁻⁶; 9.99×10⁻⁵ on docs/13's literal "320 mm²" coil basis; 1.03×10⁻⁴ open if only 0.102-mm tubing is available). The allocations stay placeholders → **open → E1.10, M7** (O-0); tubing availability before C2 |
+| **B2** | **Confirmed**: ±y walls 2.76 W + −x wall 3.45 W + break 0.86 W = 7.07 W (the ×0.1 had no source; −x missing). With the 12711 module the reviewer's 0.32–0.50 K/W follows. Not confirmed: that a heat pipe or remote sink is needed | Footprint kept. Cold block x 2.6–20 / y 3–47 behind a 2-mm gap bridged by a 1.5-mm PEEK lip + foam (+4 PEEK pads), foam 7.5 mm; TEC **07111-5L31-03CL** (spec sheet opened; K 0.147 vs 0.357 W/K); spreader 3.2 mm; sink 24 × 73 with the fan at its −y end. Load 2.31 W (design 3.47 W); required **R_sink ≤ 1.6 K/W** (Th 49.7 °C, 1.72 A at 30 °C air), exhaust ≤ 12.3 W (interface Rev C). docs/21 §5.4 (heat budget table, sink sweep); `dock_lower/calcs.thermal()` | Geometry and budget closed; the custom sink's R_th is UNVERIFIED (catalogue reference LAM 3 75 ≈ 1.18 K/W, listing) → **open → first-article thermal test before C2 assembly** (O-14); fallback heat pipe to the front duct (no envelope change) |
+| S1 | **Confirmed**, and wider than reported: with the complete list (0.215 WC) V11/V12 (0.20 overlap) were also negative | `TOL` + 6 terms, `valve_tip_lateral_wc()` / `_dir()`; slot valves G1, G2, G4, V11, V12 **Ø1.0 pin = tip in Ø1.3 bores**, G3 **Ø0.9** at x 54.20 (a Ø1.0 G3 leaves the TPE, or breaks the V12 collar gap), G4 at y 22.50 (stubs stay 0.35); lanes unchanged (no bead-transfer effect). Card and UPPER rebuilt (`pkey` takes Ø1.0 into the 0.8 collar class) | **Closed at the desk**: WC lateral margin ≥ +0.014 (G3, on the channel normal) / +0.035 / +0.085, RSS ≥ +0.115; card `checks.json` all 21 tips pass. Verification M4 + L1 registration coupon (M11) |
+| S2 | **Confirmed**: circle 19 µm vs long strip 30 µm at 4.44 (E 2.6) | Round **Ø2.6 M_d holder + Ø2 × 4 magnet**, slot arms 4.0 → 3.4, `slot_polygon()` sweeps the round holder; min chord at all six slot valves 3.40; strip model **15.6–15.8 µm at 1.32 N**, 17.8–17.9 µm at 1.5 N (limit 20). Magnet: lateral drag force 0.96×, |B| 0.97×, axial 1.06× (Derived, charge-sheet model). M_d post relief added under the plate (with the narrower slot the post touched the P_a2 boss; Rev B had zero clearance there — found in the re-run sweep) | Closed on paper (margin 4.2 µm at the real force); **open → M4 slot variant at 3.4 mm** and M1 drag/hold with the Ø2 magnet |
+| S3 | **Confirmed**: Rev B practice (preload at z 0.17, real 0.37–0.54, +10 %) gives slot 1.50, anvil Ø0.8 3.30, Ø1.2 3.18 N | `PLUNGER tip_z_closed` 0.17 → **0.50** (`tip_z_closed_range` 0.37–0.54), open 1.30; preload set per pin with a force gauge at the measured height (I-13 extended); `dock_upper/calcs.closed_height_forces()` | Closed: shimmed max 1.26 / 2.62 N, not re-shimmed 1.34 / 2.81 N; cylinder margin ≥ 1.54 at 400 kPa, 1.35 at the trip; no spring/bore/pressure change. M4: tip height, 100-cycle TPE set |
+| S4 | **Confirmed** (0.110 µL per port) | `FACE_SEAL gasket_id` 1.7 → installed 1.5875 (free ID 1.50, stretched on the tube); docs/18 §6 sentence corrected; seal force 7.4 N/seal (81 N for 11, ×1.5 = 122 ≤ 198 N) | Closed geometrically; stretched-gasket seal → M4 / C2 docking leak test |
+| S5 | **Confirmed** | Docking timeline with durations and sources, parallel leak test, cap re-stated: docs/23 §5.1 (first Inject Start ≈ 12 min, 471.75 min ≤ 480, cap 14 for docking ≤ 20 min) | **Open → C2 sequencer log** (O-15) |
+| S6 | **Confirmed in part**: the order page lists 985-00071 for the Reference 600 / Interface 1000/1010 only (re-opened). A Gamry instruction PDF (opened) allows the 60 cm standard cable PN 985-00071 on a Reference 600+ with the IE correction file REF600P_CID14.IECOR and a re-calibration | docs/22 §9.5, docs/23 §7, `dock_base/params.SOURCES`: compatibility **conditional** | **Open → Gamry confirmation** of the cable + IECOR file and connector before the bulkhead design (O-16) |
+| S7 | **Confirmed** for Rev B (10.4 µL) | Rev C path volume 5.74 µL by the reviewer's accounting (4.2 µL along the sample path) vs docs/13 4.66 µL; consequence stated in docs/23 §9 (S7 row): transfer fraction ±1 % order [assessment]; no model extension, no LOD claim | **Open → C1 gravimetric transfer test / M2** |
+| M1 | **Partly**: the V3 text was inverted (confirmed), but "1.14 W overstated" is not right — the Rev B average also divided per-run valve-minutes by 60 min instead of the 31-min cadence | `dock_upper/calcs.pilot_heat()`: (83.5 + 6.8)/31 → **1.46 W**; docs/20 §4.5, docs/23 §5 | Closed |
+| M2 | **Confirmed** | `PILOT` L1 = n·7.2 + 8.8 and L2 = n·7.2 + 14.8; the envelope uses L2 (overall) — envelope unchanged; docs/20 §2.5 | Closed |
+| M3 | **Confirmed** | interface comments (DATUM_PIN_D zirconia, cylinder_pitch_min bore 6, P_b dock text 0.102, BASE_cold_compartment note, partitions 323–325); docs/21 §5.7 (400 kPa), docs/18 §6/§8, docs/22 §3 | Closed |
+| M4 | **Confirmed** | numbers harmonised from `calcs.py`: prime 15.0 mL, P_in 2.66 µL (Rev C), flush 75 line volumes, 0.102 option 5.24 µL (docs/22, docs/23) | Closed |
+| M5 | **Confirmed** | stepper for the pogo lift dropped; pogo-lift 3/2 valve placed and its 400 kPa line routed to gland G_C; 8-channel aux valve driver (pogo valve, 3 × 3/2 fill/P_mv valves) in BASE `layout.py`, power budget | Closed (parts UNVERIFIED as before) |
+| M6 | **Confirmed** | docs/23 §9 DEV-4 now states the actual change (Ø2 × 4 M_d hold on a stage, gap chain, pellet footprint) | **Open → M1, M5** |
+| M7 | **Confirmed** | `dock_lower/calcs.motion()` and docs/21 §5.6: 22.8 + 0.06 + 0.5 = 23.3 s of 24 s, 0.7 s left | Closed |
+| M8 | **Confirmed** | `assembly/checks.py INTENDED` with an expected volume and tolerance per class (pin × TPE from the Rev C tip height, gasket × foil annulus × 0.12, contacts ≤ 0.01 mm³); out-of-bound pairs count as unintended; the Rev B pin × L1 allowance removed (pins may not touch L1 any more); feature check `vol_in_L1` | Closed (docs/23 §4, §12) |
+| M9 | **Confirmed** | `cad/requirements.txt` + `ezdxf>=1.1` (tested 1.4.5) | Closed |
+| M10 | **Confirmed** | latch-closed switches → safe-state input on the interlock board + commissioning test (docs/20 §2.1, docs/22 §9.1) | **Open → C2 commissioning** (O-17); solenoid lock = C3 |
+| M11 | **Confirmed** | L1 shrink / laser-position coupon test before the 10–20-card order (docs/19 §11) | **Open → coupon test** (O-1) |
+| M12 | **Confirmed** | pogo probes into the μr incoming check or a non-magnetic spring option from PTR (docs/21 §4) | **Open → incoming inspection** |
+| M13 | **Confirmed** | grade N42 fixed on the order, B_r UNVERIFIED (docs/21 §4) | **Open → order** |
+
+**Found while resolving (not in §1–§7):** (a) V11/V12 lateral overlap was also negative under the complete tolerance
+list (S1 row); (b) the M_d post (Ø4) had zero clearance to the P_a2 boss on the WL1 arc in Rev B (0.003 mm³, below the
+check tolerance) — exposed when the slot narrowed; fixed by a post relief in the bottom pocket (docs/21 §6.2b);
+(c) docs/13 §8.3's coil area "≈ 320 mm²" is inconsistent with its own 60 µL Ø0.5 coil (472 mm²) — both bases are
+reported in docs/23 §9.1; (d) the card's M_in is 19.0 mm (1.66 µL), not the 1.37 µL in docs/18 DEV-1.
+
+**What remains open after this round** (docs/23 §10): O-0 carry-over (E1.10, M7), O-14 heat-sink R_th (first
+article), O-2 foil deflection (M4), O-5 real tip height (M4), O-15 docking timeline (C2), O-16 Gamry cable, O-17
+latch switches, the S7 transfer fraction (C1/M2), and the M6/M11/M12/M13 incoming and bench items above.

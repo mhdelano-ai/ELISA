@@ -203,7 +203,7 @@ def underside():
          "Head face seen from below: 21 pin tips (red slot class 1.2 N, blue 2.5 N, cyan cold), CuSn8 guide plate "
          "(copper), Al heater block (grey), PEEK plate (tan), gas rings, vent pockets + grooves, press pad, guide pins")
     draw(OUT / "head_underside_zoom_J_cell.png", (47, 63.5), (16, 34),
-         "Head face from below, zoom on J and the cell: Ø0.8 tips, 1.60 mm minimum pitch (V11-V12)", fs=9)
+         "Head face from below, zoom on J and the cell: slot valves Ø1.0 (G3 Ø0.9), V14/V15 Ø0.8; 1.60 mm minimum pitch (V11-V12)", fs=9)
 
 
 def _section(parts, p0, ang_deg, keep_depth, path, xlim, ylim, title, ann=None):
@@ -240,7 +240,7 @@ def section_pin():
            ((x0 + L, v.xy[1], 41), "air plate + gallery"), ((x0 + L + 5, v.xy[1], 65), "cap"),
            ((x0 + L, v.xy[1], 72.5), "Hall PCB"), ((x0, v.xy[1], 0.2), "tip on foil")]
     _section(hp, v.xy, ang, 1.5, OUT / "section_pin_G4.png", (x0 - 12, x0 + L + 12), (-1, 82),
-             "Section through G4 (closed, de-energised): pin Ø0.8 - CuSn8 guide plates -\nspring - spring plate - "
+             "Section through G4 (closed, de-energised): pin Ø1.0 - CuSn8 guide plates -\nspring - spring plate - "
              "yoke tier 0 - rod - Ø6 cylinder - Hall PCB", ann)
 
 
@@ -251,7 +251,7 @@ def section_pair():
            ((47.6, y, 20.5), "springs"), ((47.6, y, 25.3), "spring plate"), ((47.6, y, 11.2), "heater blk"),
            ((47.6, y, 3.5), "card L3")]
     _section(hp, (0.0, y - 0.02), 0.0, 1.2, OUT / "section_tightest_pair_V11_V12.png", (46.5, 55.0), (-0.5, 39.5),
-             "Section y = 25.93: G1, V11, V12 (Ø0.8 pins,\nV11-V12 pitch 1.60): collars Ø1.4, springs OD 1.3,\n"
+             "Section y = 25.93: G1, V11, V12 (Ø1.0 pins,\nV11-V12 pitch 1.60): collars Ø1.4, springs OD 1.3,\n"
              "buttons Ø1.3 on two tiers", ann)
 
 

@@ -1,12 +1,13 @@
 # cad/ — parametric CAD of cartridge A (docs/13 Rev B) and its dock, C2 prototype stage
 
-Status 2026-11-13: physical design round complete and integrated (docs/18 **Revision B**, docs/19–22 modules,
-docs/23 integration). Python ≥ 3.10, CadQuery 2.8 (see `requirements.txt`). Run everything from `cad/`.
+Status 2026-11-13: physical design round complete and integrated (docs/18 **Revision C** after the review docs/24,
+docs/19–22 modules, docs/23 integration; resolution table docs/24 §8). Python ≥ 3.10, CadQuery 2.8 (see
+`requirements.txt`). Run everything from `cad/`.
 
 ## Layout and ownership
 | Path | Owner | Content |
 |---|---|---|
-| `elisa_cad/interface.py` | interface / integration | **single source of truth** for every interface number (mm); Revision B changelog at the top; no side effects on import |
+| `elisa_cad/interface.py` | interface / integration | **single source of truth** for every interface number (mm); Revision B and C changelogs at the top; no side effects on import |
 | `elisa_cad/common.py` | interface | STEP/SVG/PNG export, colours per material, output dirs, small solid helpers |
 | `elisa_cad/interface_plan.py` | interface | plans + envelope/claim STEP from interface.py only → `out/interface/` |
 | `elisa_cad/card/` | CARD (docs/19) | layers L0–L4, die, all card features, DXF/SVG cut files, die mask → `out/card/` |
@@ -21,11 +22,11 @@ calcs and one-off checks; numbers come from `interface.py` (never retyped).
 ## How to build (run times measured 2026-11-13 on a 4-core container, see docs/23 §12)
 ```bash
 cd cad
-pip install shapely ezdxf            # once (requirements.txt)
+pip install -r requirements.txt     # once (shapely, ezdxf, networkx; cadquery/matplotlib/numpy/scipy pre-installed)
 python -m elisa_cad.interface_plan               # ~10 s    -> out/interface/
 python -m elisa_cad.card.build                   # ~25 s    -> out/card/
 python -m elisa_cad.dock_upper.build             # ~3.5 min -> out/dock_upper/   (--fast: no STEP/PNG)
-python -m elisa_cad.dock_lower.build             # ~5 min   -> out/dock_lower/   (--fast: no M_d sweep)
+python -m elisa_cad.dock_lower.build             # ~9 min   -> out/dock_lower/   (--fast: no M_d sweep)
 python -m elisa_cad.dock_base.build              # ~5.5 min -> out/dock_base/    (--fast: no renders)
 python -m elisa_cad.assembly.build               # ~22 min -> out/assembly/ (--fast, --no-step, --no-renders)
 ```
@@ -38,6 +39,15 @@ check results. Large redundant state assemblies are regenerated on demand and ar
 * `python -m elisa_cad.dock_lower.build --all-states` → `assy_lower_bay_{load,collect_IC1,gather_IC1,drag_mid_IC1,beadout_end}.step` and `sub_*.step` (default: `assy_lower_bay_hold_RC.step` only)
 * `python -m elisa_cad.dock_upper.build --all-states` → `lid_assembly_{raised,open}.step`, `subassy_head_closed.step` (default: `lid_assembly_closed.step`)
 * `python -m elisa_cad.dock_base.build --all-states` → `base_assembly_with_claims.step` (default: the group STEPs)
+
+## Review-resolution entry points (Revision C, docs/24 §8)
+* `interface.valve_tip_lateral_wc()` / `valve_tip_lateral_wc_dir(vid)` — complete lateral tolerance chain (S1).
+* `dock_upper/calcs.closed_height_forces()` — closing forces at the real closed tip height (S3).
+* `dock_lower/calcs.thermal()` — corrected cold-zone heat budget and self-consistent TEC/sink sweep (B2);
+  `plate()` — foil span under the slot valves, long-strip model (S2).
+* `dock_base/calcs.carryover_budget()` — docs/13 §8.3 carry-over budget re-scaled with the as-built geometry (B1),
+  written to `out/dock_base/check_results.json`.
+* `assembly/checks.py INTENDED` — every designed contact has an expected volume and tolerance (M8).
 
 ## Rules for module authors
 * Import numbers from `interface.py`; never retype them. A number another module depends on goes into interface.py

@@ -14,6 +14,9 @@ from . import params as P
 IN = 25.4
 TUBES = {  # name: (material, ID mm, OD mm, source)
     "PEEK_0.127": ("PEEK", 0.005 * IN, 1 / 16 * IN, "docs/13 §2.5; params/hardware.yaml (0.005 in PEEK)"),
+    "PEEK_0.064": ("PEEK", 0.0025 * IN, 1 / 16 * IN, "(revised after review, docs/24 B1) P_in line 0.0025 in ID: wetted "
+                   "area x0.5 of the 0.005 in line; catalogue availability of 1/16 x 0.0025 in PEEK UNVERIFIED (fallback "
+                   "0.102 mm leaves the carry-over budget open, docs/23 §9)"),
     "PEEK_0.102": ("PEEK", 0.004 * IN, 1 / 16 * IN, "CHOICE-B11 (bead line, keeps <= 2.5 uL)"),
     "PEEK_0.25": ("PEEK", 0.010 * IN, 1 / 16 * IN, "[assessment] clean A1 lines"),
     "FEP_0.25": ("FEP", 0.010 * IN, 1 / 16 * IN, "[assessment] reagent fill lines (low hold-up)"),
@@ -56,7 +59,12 @@ def ge(pid):
 
 
 def pump_port(pump, k=0):
-    """Valve ports on the pump front face: k = 0 card line, +1 A1 in, -1 waste, +2 second card line (S_A)."""
+    """Valve ports on the pump front face: k = 0 card line, +1 A1 in, -1 waste, +2 second card line (S_A).
+    (revised after review) front pumps S_IC1/S_IC2 face -Y; their card port is the +X one (k = 0 -> x + 6), A1 x,
+    waste x - 6, so the coil leaves toward the west strip without crossing the other lines."""
+    if pump in P.PUMP_FRONT_X:
+        x = L.PUMP_X[pump] + {0: 6.0, 1: 0.0, -1: -6.0}[k]
+        return (x, P.PUMP_FRONT_Y["zone"][0], P.PUMP_FRONT_SHELF[1][2] + P.CENTRIS["H"] - 12.0)
     x = L.PUMP_X[pump] + 6.0 * k
     return (x, P.PUMP_BODY_Y[1] + P.PUMP_FRONT_ZONE, P.PUMP_SHELF_Z[1] + P.CENTRIS["H"] - 12.0)
 
@@ -133,7 +141,7 @@ def to_head(key, xa, ya):
 
 
 # ----------------------------------------------------------------------------------------------- card liquid lines
-R("P_in (SM-FL -> card)", "PEEK_0.127",
+R("P_in (SM-FL -> card)", "PEEK_0.064",
   [(0.0, 110.0, 160.0), (4.0, 110.0, 160.0), (34.0, 110.0, 160.0), (133.0, 110.0, 160.0),
    (133.0, GW["P_in"][0], 160.0), (133.0, GW["P_in"][0], GW["P_in"][1]), gw("P_in")],
   "SM-FL outlet (via the P_in sensor)", "P_in", port="P_in", external=P.SMFL_OUTLET_TO_DOCK, inline_uL=1.0,
@@ -149,15 +157,17 @@ R("P_cf (conjugate tube -> card)", "FEP_0.25",
    (136.0, GW["P_cf"][0], 182.0), (136.0, GW["P_cf"][0], GW["P_cf"][1]), gw("P_cf")],
   "conjugate tube (cold box)", "P_cf", port="P_cf", assumed="docs/13 §5.2: dead volume ~100 uL in the 0.26 mL fill",
   allowed=WALLS + ("conj_tube_2mL", "conj_holder_block"))
+# (revised after review, docs/24 B1) S_IC1/S_IC2 beside the bay: the coils run from the -Y valve faces (Y 208, Z 209.2)
+# straight to the west strip; P_d1 over the S_IC2 lines at Z 216, P_d2 at the valve height
+_p1, _p2 = pump_port("S_IC1", 0), pump_port("S_IC2", 0)
 R("P_d1 coil (S_IC1 <-> card)", "FEP_0.5",
-  pump_head("S_IC1", 0, Z_LANE["P_d1"]) + [(232.0, 203.0, Z_LANE["P_d1"])] + west_strip("P_d1", 126.0, Z_LANE["P_d1"]),
+  [_p1, (_p1[0], 206.5, _p1[2]), (_p1[0], 206.5, 216.0), (126.0, 206.5, 216.0), (126.0, GW["P_d1"][0], 216.0),
+   (126.0, GW["P_d1"][0], GW["P_d1"][1]), gw("P_d1")],
   "S_IC1 valve", "P_d1", port="P_d1", assumed="docs/13 §3.2.2: 60 uL FEP coil (>= 50 uL stroke + margin)",
   allowed=WALLS + ("S_IC1_valve_syringe",))
 R("P_d2 coil (S_IC2 <-> card)", "FEP_0.5",
-  pump_head("S_IC2", 0, Z_LANE["P_d2"]) + [(292.0, 203.0, Z_LANE["P_d2"]), (129.0, 203.0, Z_LANE["P_d2"]),
-                                           (129.0, 120.0, Z_LANE["P_d2"]), (129.0, 120.0, 104.0),
-                                           (129.0, GW["P_d2"][0], 104.0), (129.0, GW["P_d2"][0], GW["P_d2"][1]),
-                                           gw("P_d2")],   # (revised at integration) under the other lines, not SV_b
+  [_p2, (_p2[0], 205.0, _p2[2]), (129.0, 205.0, _p2[2]), (129.0, 120.0, _p2[2]), (129.0, 120.0, 104.0),
+   (129.0, GW["P_d2"][0], 104.0), (129.0, GW["P_d2"][0], GW["P_d2"][1]), gw("P_d2")],
   "S_IC2 valve", "P_d2", port="P_d2", assumed="docs/13 §3.2.2: 60 uL FEP coil", allowed=WALLS + ("S_IC2_valve_syringe",))
 R("P_a (S_A -> card, via FS1)", "PEEK_0.25",
   pump_head("S_A", 0, Z_LANE["P_a"]) + [(304.45, LANE_Y, Z_LANE["P_a"]), (304.45, 203.0, Z_LANE["P_a"])]
@@ -219,7 +229,28 @@ R("vial line (SV_b <-> bead vial)", "FEP_0.5",
   [(120.0, 70.0, 152.0), (120.0, 70.0, 140.0), (70.0, 70.0, 140.0), (70.0, 47.0, 140.0), (70.0, 47.0, iz0 + 75)],
   "SV_b vial port", "bead vial", assumed="returned to the vial before each dose (docs/13 §5.1)",
   allowed=WALLS + ("SV_b_selection_valve", "bead_vial_2mL"), note="flexible loop at the vial for the rocking")
+# (revised after review) A1 and waste lines of the front pumps S_IC1/S_IC2: A1 from the manifold through the lane gap
+# (Y 201 / 203, Z 170 / 167), waste down to the tray raceway (Y 204 / 205, Z 20 / 22) and east to the air-gap head
+_FRONT_A1 = {"S_IC1": (372.0, 201.0, 170.0), "S_IC2": (364.0, 203.0, 167.0)}
+_FRONT_W = {"S_IC1": (110.5, 204.0, 20.0, 439.0, 224.0), "S_IC2": (115.75, 205.0, 22.0, 444.0, None)}
+for pmp in ("S_IC1", "S_IC2"):
+    pa, pw_ = pump_port(pmp, 1), pump_port(pmp, -1)
+    xa, ya, za = _FRONT_A1[pmp]
+    R(f"A1 -> {pmp}", "FEP_0.75",
+      [(xa, 146.0, 180.0), (xa, 150.0, 180.0), (xa, 150.0, za), (xa, ya, za), (pa[0], ya, za), (pa[0], ya, pa[2]), pa],
+      "A1 manifold", f"{pmp} valve A1 port", assumed="supply", allowed=WALLS + ("A1_manifold", f"{pmp}_valve_syringe"))
+    xv, yv, zr, xe, zup = _FRONT_W[pmp]
+    if zup:   # S_IC1: up over the S_IC1 A1 line, east to x 110.5, then down
+        head = [pw_, (pw_[0], 206.5, pw_[2]), (pw_[0], 206.5, zup), (xv, 206.5, zup), (xv, yv, zup)]
+    else:
+        head = [pw_, (pw_[0], yv, pw_[2])]
+    R(f"{pmp} -> waste", "FEP_0.75",
+      head + [(xv, yv, zr), (xe, yv, zr), (xe, 230.0, zr)] + to_head(pmp, xe, 230.0),
+      f"{pmp} valve waste port", "waste air-gap head", assumed="waste",
+      allowed=WALLS + (f"{pmp}_valve_syringe", "waste_airgap_head"))
 for i, pmp in enumerate(P.PUMP_ORDER):
+    if pmp in P.PUMP_FRONT_X:
+        continue
     pa, pw_ = pump_port(pmp, 1), pump_port(pmp, -1)
     za, zw = 240.0 + 2 * i, 252.0 + 2 * i
     R(f"A1 -> {pmp}", "FEP_0.75",
@@ -251,6 +282,11 @@ R("R2 120 kPa -> Flow EZ supplies", "PU_4x2.5",
   allowed=WALLS + ("R2_precision_reg", "FEZ_ch1_P_c"))
 R("Flow EZ ch2 -> switch valves", "PTFE_gas", [(270.0, 262.0, 148.0), (270.0, 262.0, 150.0)], "Flow EZ ch2",
   "switch valve manifold", allowed=WALLS + ("FEZ_ch2_P_mv_bottles", "switch_valves_3x3-2"))
+R("FR1 400 kPa -> pogo-lift valve -> LOWER cable window", "PU_4x2.5",
+  [(340.0, 170.0, 60.0), (331.0, 170.0, 60.0), (331.0, 144.0, 60.0), (331.0, 144.0, 21.0), (135.0, 144.0, 21.0),
+   (135.0, 144.0, 74.0), (135.0, 170.0, 74.0), (149.0, 170.0, 74.0)], "FR1", "pogo-lift cylinder (LOWER, via G_C)",
+  allowed=WALLS + ("FR1_filter_regulator", "pogo_lift_valve"),
+  note="(revised after review, docs/24 M5) pogo-lift cylinder air, 3/2 solenoid valve in the west strip")
 R("dry-air purge -> cold box", "FEP_0.75",
   [(412.0, 134.0, 150.0), (412.0, 134.0, 27.0), (412.0, 148.0, 27.0), (126.0, 148.0, 27.0), (126.0, 148.0, 100.0),
    (126.0, 120.0, 100.0), (110.0, 120.0, 100.0)], "purge restrictor", "cold box", allowed=WALLS + ("purge_restrictor",),

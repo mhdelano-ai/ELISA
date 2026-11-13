@@ -137,7 +137,7 @@ def custom(it):
         s = s.cut(_box(((x0 - 1, P.COLD_BOX["door_y"][1] - 0.5, z0 - 1), (x1 + 1, P.COLD_BOX["door_y"][1] + 0.5,
                                                                           z0 + 2))))   # door seam mark
         return s
-    if n == "electronics_box":
+    if n.startswith("electronics_box"):
         return _hollow(b, 1.0)
     return _box(b)
 

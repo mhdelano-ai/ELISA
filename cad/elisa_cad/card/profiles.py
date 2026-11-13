@@ -52,7 +52,9 @@ LEAD_IN = I.PLUNGER["card_bore_lead_in"]          # 0.3 x 45 deg (CHOICE-2)
 LEAD_IN_LOCAL = dict(I.PLUNGER["card_bore_lead_in_except"])   # {"V8": 0.0} CHOICE-C10 (interface Rev B): no lead-in at V8 (edge break only) so the P_mv lid gas ring (OD 7)
 #                               keeps 0.14 mm of flat land to the bore
 
-TIP_TOL_WC = 0.14           # Derived worst case tip-to-channel: head-to-nest 0.03 + datum pin 0.01 + L3 edge-to-
+TIP_TOL_WC = I.valve_tip_lateral_wc()   # (revised after review, docs/24 S1) 0.215 = full list in interface.TOL (Rev B 0.14:
+#   head-to-nest + datum pin + L3 edge + L1-L3 only). Rev B comment follows:
+_TIP_TOL_WC_REV_B = 0.14             # Derived worst case tip-to-channel: head-to-nest 0.03 + datum pin 0.01 + L3 edge-to-
 #                             feature 0.05 + L1-to-L3 registration 0.05 (interface TOL); RSS 0.078 (docs/19 §5)
 
 # ------------------------------------------------------------------------------------------------ helpers

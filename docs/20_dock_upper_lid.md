@@ -15,6 +15,13 @@ Source tags as in docs/18: docs section | `interface.NAME` | **Derived** (arithm
 Units mm, N, kPa, °C. Coordinates: CARD (z = 0 foil underside) for the head, DOCK for the lid frame;
 P_dock = P_card + (190, 75, 170) (`interface.CARD_ORIGIN_IN_DOCK`).
 
+**Revision C (revised after review, docs/24 §8; interface Rev C).** (S1) slot pins G1, G2, G4, V11, V12 Ø1.0 and G3
+Ø0.9 (pin = tip; 0.8-class collar/neck/button, guide holes Ø1.0/Ø0.9 H7); (S3) `PLUNGER tip_z_closed` 0.17 → **0.50**
+(real stop height on compressed TPE, estimate 0.37–0.54), preload set per pin with a force gauge at the measured
+height on the reference card (§2.3, §4.1); (M1) pilot heat corrected to 1.46 W (§4.5); (M2) SS073B01 length formula
+relabelled (§2.5); (M10) latch-open → safe-state input and commissioning test (§2.1). Cylinder bore, pressure and
+springs are unchanged (§4.2). Rebuilt: 0 unintended interferences, closed and raised.
+
 ## 1. Summary
 
 * **Head** (moves 8 mm vertically inside the lid frame): Al heater block 10 mm (assay zone, 25.0 °C) with two
@@ -33,13 +40,13 @@ P_dock = P_card + (190, 75, 170) (`interface.CARD_ORIGIN_IN_DOCK`).
   (others, limit 3.0) with ±10 % springs and guide friction; V3 closes with 1.94–2.66 N through a force-limiting
   spring; cylinder margin (force / need incl. friction) **≥ 1.60 at 400 kPa** (1.20 at 300 kPa → DEV-U1/U2);
   open ≈ 22–24 ms, close ≈ 59 ms incl. 3 ms valve response (≤ 0.2 s required); air 0.36 NmL per actuation,
-  ≈ 0.1 NL/day; pilot heat 1.1 W average, 3 W peak, on the head bridge 30 mm above the heater block (0.05 W reaches
+  ≈ 0.1 NL/day; pilot heat 1.46 W average (revised after review; was 1.1), 3 W peak, on the head bridge 30 mm above the heater block (0.05 W reaches
   it); head force 280 N (265–295), card-face clamp 213 N (≥ 198) vs ≥ 165 N required; heater 7.3 W max vs 0.56 W
   worst-case loss, in-plane gradient 0.04 K, warm-up ≈ 70 s (block), card ≈ 10 min (docs/13 §6.5).
 * **Checks**: closed and head-raised assemblies (251 solids incl. the card envelope) have **0 unintended
   interferences**; lid sweep 0–85° stays inside the docs/18 sweep box and touches no other claim except the
   intended ICR items (§8); loading-path box clear at 85°; pin tips ≥ 1.75 mm above the card while the lid closes;
-  guide pins engage 1.26 mm (air on) / 0.25 mm (air off) before any pin reaches a bore lead-in.
+  guide pins engage 1.59 mm (air on) / 0.59 mm (air off) (revised after review: tip z 0.50; Rev B 1.26 / 0.25) before any pin reaches a bore lead-in.
 * **Deviations**: pilot pressure 400 kPa and Ø6 bores instead of 300 kPa / Ø5 (DEV-U1, DEV-U2); head force
   280 N > 250 N design value (DEV-U3); "hardened" guides replaced by bearing bronze (DEV-U4). **Interface change
   requests** ICR-U1…U5 (§8): nest bushes for the guide pins, latch catch plates, hinge rail, clamp design force,
@@ -58,11 +65,15 @@ P_dock = P_card + (190, 75, 170) (`interface.CARD_ORIGIN_IN_DOCK`).
 Operating sequence: (1) lid open, card lowered into the nest (docs/18 §2). (2) Controller energises the 20 pull
 valves (pins lifted, "docking state") while the latched switch reads open. (3) Operator closes the lid (head raised,
 pin tips ≥ 1.75 above the card on the whole arc), closes the two draw latches, turns the lever 180° forward: the head
-descends 8 mm on the four posts; the guide pins enter the nest bushes 1.26 mm before the first pin reaches a bore
+descends 8 mm on the four posts; the guide pins enter the nest bushes 1.59 mm (revised after review; Rev B 1.26) before the first pin reaches a bore
 lead-in; the head lands on the card and the clamp springs take the last 1.0 mm. (4) Latched switch closes → the
 controller releases the pull valves in sequence (springs close every valve), runs the docking checks (docs/13 §8.1).
 Opening is the reverse; the lever cannot be turned back while the controller holds a run (software interlock;
-mechanical lock = series item).
+mechanical lock = series item). **(revised after review, docs/24 M10)** The draw latches themselves can be opened by
+hand mid-run; for C2 each latch gets a latch-closed switch (catalogue micro switch class, UNVERIFIED part) wired to the
+relay/interlock board (docs/22 §9.1): latch open → safe state (docs/13 §4: valves closed, V3 open, pumps hold) and
+fault latch, before the head can lift off the 11 seals. Commissioning test: open one latch during a dry run → safe
+state within one controller cycle, no pump step after it. A solenoid latch lock is the C3 item.
 
 ### 2.2 Head stack (card z, head down)
 
@@ -94,10 +105,14 @@ Plan of cylinders and yokes: `plan_cylinders_yokes.png`; air galleries: `plan_ai
   × 0.5; neck Ø0.5 / Ø0.8; button = hypotube sleeve Ø1.3/Ø1.8 × 0.8, **bonded (Loctite-class anaerobic) or
   laser-welded after assembly with a 0.20 mm feeler gauge** between eye and button (sets the hook gap) (CHOICE-U6).
   (revised at integration, I-13) The gauge setting is done with the head down on a **reference card** (real closed tip
-  height): the nominal tip z 0.17 of `PLUNGER` lies 0.145 below the L1 top over the channel lands (the integration
-  check finds the tip volume inside L1 and L2), so the real tip stops higher, on compressed TPE; setting the gap on the
-  nominal would leave the button resting on the eye and steal closing force.
-* **Retention with the lid open**: the collar cannot pass the Ø0.8/1.2 guide hole (pin cannot fall out); the spring
+  height). **(revised after review, docs/24 S3)** Every tip is wider than its channel, so it stops on the TPE compressed
+  over the L1 lands, not at the foil: real closed tip z ≈ 0.37–0.54 (Derived, volume-conserving estimate; Rev B nominal
+  0.17 lay inside the L1 lands). Interface Rev C sets the nominal **0.50** (pins drawn there, 0 volume in L1 in the
+  assembly check). On the reference card the hook gap AND the preload are set per pin: the shim washers under the spring
+  plate are chosen so that a force gauge on the button reads F_nom ± 5 % with the tip resting on the TPE (I-13
+  extended); the measured closed height of each pin is recorded (M4: tip-height measurement, 44 % land compression of
+  the 0.40 TPE over 100 cycles = endurance question).
+* **Retention with the lid open**: the collar cannot pass the Ø0.8/0.9/1.0/1.2 guide hole (pin cannot fall out); the spring
   pushes the collar onto the block top 0.2 below "closed" (`PLUNGER` pin_extension_limit, collar stop); the button
   then rests on the eye (gap 0) — so with no card the yoke is also at its stop. Pins are removable only after the
   yoke is slid off (fork open away from the rod) and the button removed.
@@ -141,7 +156,8 @@ the spring-plate top 0.2 below "closed". Air or power lost → piston vents → 
 
 * Pilot valves: **SMC S070B-5DG** (3-port N.C. poppet, base mounted, 24 VDC, **0.5 W coil, max 0.5 MPa**, C 0.042
   dm³/(s·bar), Cv 0.011, response ON/OFF ≤ 3 ms at 0.5 MPa, proof 1 MPa, 7 mm width, 5 g) on two **SS073B01** bar
-  bases (11 + 10 stations; pitch 7.2, L1 = n × 7.2 + 14.8 = 94.0 / 86.8 mm; max 20 stations per base), all from the
+  bases (11 + 10 stations; pitch 7.2; **(revised after review, docs/24 M2)** catalogue L1 = n × 7.2 + 8.8 = 88.0 / 80.8,
+  overall L2 = n × 7.2 + 14.8 = 94.0 / 86.8 mm — the envelope uses the overall L2 (Rev B labelled it L1); max 20 stations per base), all from the
   SMC S070 catalogue (opened, §12). Envelope modelled 7 × 25.5 × 28.5 per station (overall sizes read from the
   catalogue drawing; interpretation UNVERIFIED). The 0.35 W coil is rated 0.3 MPa only → the 0.5 W "D" option is
   required at 400 kPa. Exhaust R port to the lid interior (vented cover).
@@ -241,7 +257,19 @@ on a low-level bus — allowed during read windows (docs/13 §7.2); marker field
 ### 4.1 Closing forces (calcs.pin_springs, cylinder_forces)
 
 TPE force = spring force at closed ± guide friction 0.05 [assessment]: slot 1.03–1.37 N (limit 1.5, docs/13 §4),
-anvil/cold 2.20–2.80 N (limit 3.0), V3 1.94–2.66 N. Nominal 1.2 / 2.5 = `Valve.f_close_nom` (CHOICE-3). Spring
+anvil/cold 2.20–2.80 N (limit 3.0), V3 1.94–2.66 N — **valid only at the height where the preload is set**.
+
+**(revised after review, docs/24 S3) Force at the real closed height** (`calcs.closed_height_forces`, max incl. +10 %
+spring tolerance where the preload is not re-set):
+
+| Class (k N/mm) | Rev B practice: preload at z 0.17, real 0.37–0.54 | Rev C, shimmed at the measured height (±5 %) | Rev C nominal 0.50, not re-shimmed (real 0.37–0.54, +10 %) | limit |
+|---|---|---|---|---|
+| slot (0.438) | 1.50 | 1.26 (margin 0.24) | 1.34 (0.16) | 1.5 |
+| anvil Ø0.8 (1.342) | **3.30 — exceeds** | 2.62 (0.38) | 2.81 (0.19) | 3.0 |
+| anvil/cold Ø1.2 (1.057) | **3.18 — exceeds** | 2.62 (0.38) | 2.80 (0.20) | 3.0 |
+
+The reviewer's finding is confirmed for Rev B. Rev C keeps the springs, bore and pressure: the procedure (preload set at
+the measured height) is the fix, and even without it the Rev C nominal keeps every class below its limit. Nominal 1.2 / 2.5 = `Valve.f_close_nom` (CHOICE-3). Spring
 force with no card 1.11 / 2.23–2.29 N (collar on the block). Sum of closing forces on the head (nominal, closed):
 20 springs 42.2 N (6 × 1.2 + 14 × 2.5) + V3 limit spring 3.1 N = 45.3 N (Derived).
 
@@ -257,6 +285,10 @@ guide 0.05 + return spring 0.5. Pull area Derived π/4 (6² − 1.5²) = 26.5 mm
 
 Worst channels are the long-offset 2.5 N valves (V14 L 9.8, V6 L 10.9, V15 L 8.8). Target ≥ 1.5 [assessment] →
 Ø6 at 400 kPa (DEV-U1, DEV-U2). At 350 kPa (pressure-switch trip) the worst margin is 1.40 (Derived 1.60 × 350/400).
+**(revised after review, docs/24 S3)** With the preload set at the measured height the open force is F_nom + k × 0.8 as
+tabled (margins unchanged). If a pin is not re-shimmed and sits 0.13 above/below the Rev C nominal (residual of the
+0.37–0.54 range) with +10 % spring force: worst V14 **1.54 at 400 kPa, 1.35 at the 350 kPa trip** (`calcs.txt`;
+reviewer's Rev B case: 1.45 / 1.27). No change of springs, cylinder or pressure is needed.
 
 ### 4.3 Actuation time (calcs.actuation_times)
 
@@ -274,7 +306,11 @@ The supply can be a small cylinder or the lab line through a regulator.
 ### 4.5 Pilot heat and EMI
 
 Energised valve-minutes per run from docs/13 §4: 83.5 (V9/V10 46.5, V17/V18 20.7 dominate) + V3 energised while
-**closed** (all of the run except 6.8 min) → 2.3 valves on average × 0.5 W = **1.14 W**, peak ≈ 3 W (6 valves).
+**closed**, i.e. only −3.45 → 3.35 = **6.8 min per run** (revised after review, docs/24 M1: Rev B wrote "all of the run
+except 6.8 min"). Every run's valve-minutes recur once per 31.0-min cadence (Rev B divided by 60 min) → (83.5 + 6.8) /
+31.0 = 2.9 valves on average × 0.5 W = **1.46 W** (Rev B 1.14 W; the reviewer's "overstated" holds for the V3 term
+only — the cadence correction raises the total), peak ≈ 3 W (6 valves). Cylinder-block rise and heater coupling below
+scale by 1.46/1.14 (≈ 8 K, 0.06 W into the heater block; still inside the heater control range).
 Mounted on the bridge shelf 30 mm above the heater block, coupled to it only by the PEEK standoffs and the pin necks
 (G = 0.0075 W/K): cylinder block rise ≈ 6 K at 10 W/m²K (Derived), 0.05 W into the heater block — inside the heater
 control range. Read windows (docs/13 §7.2): **no valve switches**; valves that stay energised (V3, V9/V10) carry DC
@@ -311,7 +347,7 @@ driver, 0.01 K resolution front end (part to be selected). PEEK plate (reagent z
   monotonically with the angle); guide-pin tips 0.5 above the nest claim top at 0°.
 * Head descent: guide pins fully engaged (nose 1.0 passed, bush top at the real nest/bush top z 5.0 = dock Z 175.0,
   revised at integration; pin tip z 5.5 raised, −2.5 down) after 1.5 mm; pin tips reach the bore lead-in after 2.76 mm with air on (pins lifted; docking state) and after 1.76 mm with
-  air off → **guided travel before the bores 1.26 mm (0.25 mm worst case)**; bore capture radius ≥ 0.45 (clearance +
+  air off → **guided travel before the bores 1.59 mm (0.59 mm worst case; revised after review, Rev B 1.26 / 0.25)**; bore capture radius ≥ 0.45 (clearance +
   lead-in, `PLUNGER card_bore_lead_in`) vs head-to-nest tolerance ±0.03 (`TOL`). Pins move only along −Z.
 * Sweep 0–85° (5° steps, raised head, all lid solids except the guide pins, which are below the claim only when the
   head is down): CAD sweep box X 152.5–320, Y 33.6–299.7, Z 178.0–378.0, inside `lid_sweep_bbox()` (X 150–320,
@@ -353,7 +389,7 @@ standoffs are all part of the 3D check. Section views: `section_pin_G4.png`, `se
 | CHOICE-U13 | lid latch | two Kipp K0045 draw latches at the front, catch plates on the nest | 186 N reaction ≪ 2000 N; standard part | hinge-side lock (cantilever 27 N·m) |
 | CHOICE-U14 | counterbalance | none (CoM passes the hinge at ≈ 60°, 12 N lift), optional rotary damper | weight 23 N | gas strut (enters the rear claims) |
 | CHOICE-U15 | guide pins | Ø6 on ears at card **(−8, 46) and (84, 4)** (revised at integration, interface `HEAD_GUIDE_PINS`; the bush at (−5, 44) cut into the nest opening), protrusion 8.7 below the face; tips 0.5 above the bush top (z 5.0) when raised | diagonal, clear of datums and pushers; engage before the pins | pins in the nest (docs/18 wording "located in the nest" kept: bushes are in the nest) |
-| CHOICE-U16 | docking state | pull valves energised (pins lifted) during descent | 1.26 mm guided travel before the bores instead of 0.25 | descend de-energised |
+| CHOICE-U16 | docking state | pull valves energised (pins lifted) during descent | 1.59 mm (Rev C) guided travel before the bores instead of 0.25 | descend de-energised |
 | CHOICE-U17 | press pad | spring 11 N at a stop 0.5 below the die back, rate 2 N/mm, 1 mm silicone | 12.0 N at DIE_T 0.7; 10.6–13.8 over 0.5–1.1 | pneumatic pad |
 
 ## 7. Deviations
@@ -402,7 +438,7 @@ Y 200 exactly (claim edge).
 
 ## 10. Open items / UNVERIFIED
 
-O-ring friction (0.7 N assumed), spring material constants and fatigue, catalogue envelopes (S070, K0045, D2F),
+(revised after review) Real closed tip height per pin (reference card, M4); latch switches (part); O-ring friction (0.7 N assumed), spring material constants and fatigue, catalogue envelopes (S070, K0045, D2F),
 M222 order number, orifice part, gas-ring force (5 N, docs/18 [assessment]), TPE force–leak relation (M4), closing
 transient vs approach speed (M4), card stack tolerance ±0.06 [assessment], convection coefficient, cover grounding
 and shielding effectiveness (M5a/C2), nest bush position (ICR-U1), lid mass ±20 % (envelope densities). Not

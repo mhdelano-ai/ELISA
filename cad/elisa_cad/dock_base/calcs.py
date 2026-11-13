@@ -98,7 +98,8 @@ POWER = [  # (load, rail, peak W, average W, source)
     ("5 x Centris pumps (2 moving at once)", "M", 2 * 24 * 2.5, 5 * 3.0, "V:TECAN_CENTRIS_P peak 2.5 A at 24 V; idle 3 W each UNVERIFIED"),
     ("2 x Flow EZ + LINK", "M", 2 * 6 + 2, 2 * 6 + 2, "V:FLUIGENT_FEZ_P 6 W; LINK 2 W UNVERIFIED"),
     ("21 pilot valves (lid) <= 10 on at once", "M", 10 * 1.0, 4.0, "1 W per valve UNVERIFIED"),
-    ("stepper drivers: M_c x2, cam Z, pogo lift, rocker (LOWER parts)", "M", 40.0, 8.0, "UNVERIFIED allowance"),
+    ("stepper drivers: M_c x2, M_d cam Z, rocker (LOWER parts; pogo lift is pneumatic, revised after review)", "M", 40.0, 8.0, "UNVERIFIED allowance"),
+    ("aux valves: pogo-lift 3/2 + 3 x 3/2 fill/P_mv (<= 2 on, 1 W each UNVERIFIED; revised after review M5)", "M", 2.0, 0.2, "UNVERIFIED allowance"),
     ("M_d X-Y stage (Zaber class, own controller)", "M", 20.0, 6.0, "UNVERIFIED allowance"),
     ("controller, watchdog, DAQ, sensors, scanner, hub", "L", 12.0, 10.0, "UNVERIFIED allowance"),
     ("fans (1 x 80 mm + cooler fan)", "M", 4.0, 4.0, "UNVERIFIED"),
@@ -196,7 +197,7 @@ def item_overlaps():
     """Pairwise AABB overlaps between DOCK BASE items (intended assemblies excluded)."""
     intended = {("conj_holder_block", "conj_tube_2mL"), ("partition_right", "gamry_lead_duct"),
                 ("A1_bottle_500mL", "A1_cap"), ("bead_rocker_cradle", "bead_vial_2mL")}
-    skip = {"base_plate", "drip_tray", "cold_box", "electronics_box"}
+    skip = {"base_plate", "drip_tray", "cold_box", "electronics_box", "electronics_box_side", "electronics_box_rear"}
     out = []
     for a, b in itertools.combinations(L.ITEMS, 2):
         if a.name in skip or b.name in skip or (a.name, b.name) in intended or (b.name, a.name) in intended:
@@ -215,11 +216,13 @@ def cold_and_elec_containment():
     res = []
     for n in ("bead_rocker_cradle", "bead_vial_2mL", "conj_holder_block", "conj_tube_2mL", "cooler_DA024_cold"):
         res.append((n, "cold inner", contained(L.get(n).box, L.COLD_INNER)))
-    eb = L.get("electronics_box").box
-    inner = ((eb[0][0] + 1, eb[0][1] + 1, eb[0][2] + 1), (eb[1][0] - 1, eb[1][1] - 1, eb[1][2] - 1))
+    inners = {n: ((b[0][0] + 1, b[0][1] + 1, b[0][2] + 1), (b[1][0] - 1, b[1][1] - 1, b[1][2] - 1))
+              for n, b in L.ELEC_BOXES.items()}   # (revised after review) three boxes
     for it in L.ITEMS:
-        if it.group == "electronics" and it.name not in ("electronics_box", "connector_panel", "estop", "status_light"):
-            res.append((it.name, "electronics inner", contained(it.box, inner)))
+        if it.group == "electronics" and not it.name.startswith("electronics_box") and \
+                it.name not in ("connector_panel", "estop", "status_light"):
+            ok = [n for n, inner in inners.items() if contained(it.box, inner)]
+            res.append((it.name, "electronics inner " + (ok[0] if ok else "none"), bool(ok)))
     return res
 
 
@@ -251,3 +254,71 @@ def bench_layout():
 def I_card_z():
     from .. import interface as I
     return I.ANVIL_TOP_Z_DOCK
+
+
+# ============================================================================================== carry-over budget
+def carryover_budget():
+    """(revised after review, docs/24 B1) docs/13 §8.3 worst-determination budget re-scaled with the as-built geometry.
+    Allocations are docs/13's (all UNVERIFIED placeholders). Scaling ASSUMPTIONS (not measured):
+      path 2 (P_in line + M_in) and path 3 (C_k + its valve stubs): wetted channel/tube area ratio (adsorption-type
+        term, the reviewer's basis, docs/24 B1); path 5 (tidal coil): coil wall-area ratio vs a 60 uL D0.508 coil
+        (docs/13 §3.2.2; docs/13 §8.3 also quotes 'FEP ~320 mm2', which is inconsistent with 60 uL -> sensitivity);
+      path 9 (cell stubs): stub-volume ratio (docs/13's own liquid arithmetic); all other paths unchanged (bead-count,
+        valve-leak or SM-FL terms that the physical design does not change).
+    Returns rows (path, docs13, RevB, RevC, basis) and totals (Derived)."""
+    import math as m
+    from .. import interface as I
+    per = lambda w, h=I.CHANNEL_H: 2 * (w + h)
+    ln = lambda pts: I.polyline_length(pts)
+    route = {r.port: r for r in F.ROUTES if r.port}
+    # path 2
+    old2 = m.pi * 0.127 * 300.0 + per(0.5) * 12.0                    # docs/13: 0.3 m x 0.127 + M_in 12 mm
+    m_in = per(0.5) * ln(I.M_IN)                                     # as built 19.0 mm (card CAD)
+    revB2 = m.pi * 0.127 * route["P_in"].total + m_in
+    revC2 = m.pi * F.TUBES[route["P_in"].tube][1] * route["P_in"].total + m_in
+    # path 3: sample-wetted C_k (V1 bridge junction -> chamber) + bridge, vs docs/13 C_k 3.0 mm + 2 x 0.3 stubs
+    x_br = I.CHANNELS["V1_bridge"]["pts"][0][0]
+    ck = ln([(x_br, I.H1[0][1])] + I.H1[1:])
+    old3 = per(0.5) * 3.0 + 2 * per(0.4) * 0.3
+    new3 = per(0.5) * ck + per(0.4) * ln(I.CHANNELS["V1_bridge"]["pts"])
+    revB3_reviewer = per(0.5) * ln(I.H1) / (per(0.5) * 3.0)          # whole rail, reviewer's ratio (5.4)
+    # path 5
+    coil60 = 60.0 / (m.pi / 4 * 0.508 ** 2) * m.pi * 0.508
+    revB5 = max(791.0, 689.0) * m.pi * 0.508 / coil60                # Rev B routed coils (tubing_schedule Rev B)
+    revC5 = max(route["P_d1"].total, route["P_d2"].total) * m.pi * 0.508 / coil60
+    revC5_320 = max(route["P_d1"].total, route["P_d2"].total) * m.pi * 0.508 / 320.0
+    # path 9: stubs G3, G4 (lane 0.5), V14, V15 (0.3)
+    h = I.CHANNEL_H
+    g3 = (I.DIE_X[0] - (I.VALVES["G3"].xy[0] + I.VALVES["G3"].tip_d / 2)) * 0.5 * h
+    g4 = (I.DIE_Y[0] - (I.VALVES["G4"].xy[1] + I.VALVES["G4"].tip_d / 2)) * 0.5 * h
+    st_new = g3 + g4 + 0.018 + 0.024                                 # V14, V15 unchanged (docs/18 DEV-2)
+    st_old, st_revB = 0.044 + 0.044 + 0.026 + 0.016, 0.031 + 0.031 + 0.018 + 0.024
+    rows = [  # (path, class, docs13, ratio Rev B, ratio Rev C, basis)
+        ("1 SM-FL needle/loop/injector", "consec", 3e-5, 1.0, 1.0, "unchanged (E1.10)"),
+        ("2 P_in line + M_in", "consec", 1e-5, revB2 / old2, revC2 / old2,
+         "wetted area: line pi d L + M_in 1.35 mm2/mm x 19.0 mm [assumption]"),
+        ("7 J, WLc, G_k'/V11/V12 stubs", "consec", 2e-5, 1.0, 1.0, "bead count (M1), unchanged"),
+        ("8 cell beads/enzyme", "consec", 2e-5, 1.0, 1.0, "bead count (M1), unchanged"),
+        ("9 cell stubs", "consec", 1e-6, st_revB / st_old, st_new / st_old, "stub volume (docs/13 liquid arithmetic)"),
+        ("10 BW", "consec", 1e-6, 1.0, 1.0, "gate leak, unchanged"),
+        ("3 C_k + valve stubs (sample-wetted)", "same", 1e-6, new3 / old3, new3 / old3,
+         "wetted area of the sample path V1 bridge -> chamber [assumption]"),
+        ("4 IC walls", "same", 1e-5, 1.0, 1.0, "185 uL working fill unchanged"),
+        ("5 tidal coil", "same", 2e-6, revB5, revC5, "coil wall area vs 60 uL D0.508 [assumption]"),
+        ("6 WL branch", "same", 1e-6, 1.0, 1.0, "bead count, unchanged"),
+    ]
+    tot = {}
+    for col, idx in (("docs13", None), ("RevB", 3), ("RevC", 4)):
+        c = sum(r[2] * (1.0 if idx is None else r[idx]) for r in rows if r[1] == "consec")
+        s = sum(r[2] * (1.0 if idx is None else r[idx]) for r in rows if r[1] == "same")
+        tot[col] = {"consecutive": c, "same_chamber": s, "worst": c + s}
+    sens = {
+        "RevC_with_docs13_literal_coil_320mm2": tot["RevC"]["worst"] + 2e-6 * (revC5_320 - revC5),
+        "RevC_if_P_in_0.102_fallback": tot["RevC"]["worst"] + 1e-5 * ((m.pi * 0.1016 * route["P_in"].total + m_in) / old2
+                                                                       - revC2 / old2),
+        "RevB_reviewer_basis_whole_rail_Ck": tot["RevB"]["worst"] + 1e-6 * (revB3_reviewer - new3 / old3),
+        "face_seal_annulus_RevB": "0.110 uL per port unswept (reviewer); Rev C: 0 (gasket on the tube OD)"}
+    return {"rows": [dict(path=r[0], cls=r[1], docs13=r[2], ratio_RevB=round(r[3], 3), ratio_RevC=round(r[4], 3),
+                          RevC=r[2] * r[4], basis=r[5]) for r in rows],
+            "totals": tot, "sensitivity": sens, "criterion": 1e-4,
+            "coil_mm": {"P_d1": round(route["P_d1"].total), "P_d2": round(route["P_d2"].total)}}

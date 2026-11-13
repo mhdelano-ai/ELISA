@@ -287,10 +287,36 @@ def card_presence_sensor():
 
 # ------------------------------------------------------------------------------------------------ cold zone
 def peek_break_frame():
+    """(revised after review, docs/24 B2) PEEK lip frame: z -2..0 only across the W/S/N gaps (2 mm) and the E break
+    (4 mm) + 4 locating pads; the gaps below the lip are foam (gap_foam)."""
     cc = G.COLD_CUTOUT
     cp = G.COLD_PLATE
-    f = boxc(cc["x"][0] + 0.01, cc["y"][0] + 0.01, -G.ANVIL_T, cc["x"][1] - 0.01, cc["y"][1] - 0.01, 0.0)
+    f = boxc(cc["x"][0] + 0.01, cc["y"][0] + 0.01, -G.PEEK_LIP_T, cc["x"][1] - 0.01, cc["y"][1] - 0.01, 0.0)
     f = f.cut(boxc(cp["x"][0], cp["y"][0], -G.ANVIL_T - 1, cp["x"][1], cp["y"][1], 1))
+    L, (z0, z1) = G.PEEK_PAD["len"], G.PEEK_PAD["z"]
+    for (x, y), side in G.PEEK_PADS:
+        if side == "W":
+            f = f.union(boxc(x + 0.01, y - L / 2, z0, x + G.PEEK_GAP - 0.01, y + L / 2, z1))
+        else:
+            f = f.union(boxc(x - L / 2, y + 0.01, z0, x + L / 2, y + G.PEEK_GAP - 0.01, z1))
+    return f
+
+
+def gap_foam():
+    """(revised after review) closed-cell foam in the insulation gaps below the PEEK lip (k 0.035 UNVERIFIED)."""
+    cc = G.COLD_CUTOUT
+    cp = G.COLD_PLATE
+    f = boxc(cc["x"][0] + 0.01, cc["y"][0] + 0.01, -G.ANVIL_T, cc["x"][1] - 0.01, cc["y"][1] - 0.01, -G.PEEK_LIP_T - 0.01)
+    f = f.cut(boxc(cp["x"][0], cp["y"][0], -G.ANVIL_T - 1, cp["x"][1], cp["y"][1], 1))
+    L, (z0, z1) = G.PEEK_PAD["len"], G.PEEK_PAD["z"]
+    for (x, y), side in G.PEEK_PADS:
+        if side == "W":
+            f = f.cut(boxc(x - 0.5, y - L / 2 - 0.01, z0 - 0.01, x + G.PEEK_GAP + 0.5, y + L / 2 + 0.01, z1 + 0.01))
+        else:
+            f = f.cut(boxc(x - L / 2 - 0.01, y - 0.5, z0 - 0.01, x + L / 2 + 0.01, y + G.PEEK_GAP + 0.5, z1 + 0.01))
+    for k in G.COLD_PORTS:
+        x, y = I.PORTS[k].xy
+        f = f.cut(cyl(x, y, -60, 60, 2.2))
     return f
 
 
@@ -351,7 +377,7 @@ def foam_shell():
     for k in G.COLD_PORTS:
         x, y = I.PORTS[k].xy
         f = f.cut(cyl(x, y, -60, 60, 2.2))
-    return f
+    return f.union(gap_foam())   # (revised after review) + foam in the insulation gaps below the PEEK lip
 
 
 # ------------------------------------------------------------------------------------------------ bay frame
@@ -459,9 +485,10 @@ def md_moving(xy, up=True):
     h = G.MD_HOLDER
     m = G.MD_MAG
     zt = G.MD_TOP_UP + dz
-    holder = boxc(x - h[0] / 2, y - h[1] / 2, G.MD_HOLDER_Z[0] + dz, x + h[0] / 2, y + h[1] / 2, zt)
-    holder = holder.cut(boxc(x - m[0] / 2 - 0.02, y - m[1] / 2 - 0.02, zt - m[2], x + m[0] / 2 + 0.02, y + m[1] / 2 + 0.02, zt + 1))
-    magnet = boxc(x - m[0] / 2, y - m[1] / 2, zt - m[2], x + m[0] / 2, y + m[1] / 2, zt)
+    # (revised after review, docs/24 S2; interface Rev C) ROUND D2.6 holder with a D2 x 4 cylindrical magnet
+    holder = cyl(x, y, G.MD_HOLDER_Z[0] + dz, zt - G.MD_HOLDER_Z[0] - dz, h[0])
+    holder = holder.cut(cyl(x, y, zt - m[2], m[2] + 1, G.MD_MAG_D + 0.04))
+    magnet = cyl(x, y, zt - m[2], m[2], G.MD_MAG_D)
     neck = cyl(x, y, G.MD_NECK["z"][0] + dz, G.MD_NECK["z"][1] - G.MD_NECK["z"][0], G.MD_NECK["d"])
     post = cyl(x, y, G.MD_POST["z"][0] + dz - 10.0, G.MD_POST["z"][1] - G.MD_POST["z"][0] + 10.0, G.MD_POST["d"])
     post = post.union(neck)

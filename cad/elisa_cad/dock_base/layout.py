@@ -103,7 +103,7 @@ add("panel_front_bay", "enclosure", "custom", bx(pl[1], 0, P.BASE_PLATE_Z[1], pr
 add("peltier_exhaust_ext", "enclosure", "custom", bx(P.EXHAUST["x"][0], P.SHEET_T, P.EXHAUST["z"][0], P.EXHAUST["x"][1],
     P.EXHAUST["y"], P.EXHAUST["z"][1]), "PEEK", 0.02, "(revised at integration) interface Rev B peltier_exhaust",
     "duct extension 24 x 26, 1 mm wall, from the LOWER Peltier exhaust (Y 20) to the louvre in the front-bay panel "
-    "(10.6 W warm air leaves at the front, below the card plane)", shape="custom")
+    "(<= 12.3 W warm air leaves at the front, below the card plane; revised after review)", shape="custom")
 add("panel_front_right", "enclosure", "custom", bx(pr[0], 0, P.BASE_PLATE_Z[1], FX, s, FZ), "aluminium",
     149 * 315 * s * AL, "CHOICE-B8", "bottle door (hinged right side) Z 20-255", shape="custom")
 add("panel_rear", "enclosure", "custom", bx(0, FY - s, P.BASE_PLATE_Z[1], FX, FY, FZ), "aluminium",
@@ -172,6 +172,7 @@ add("P_in_pressure_sensor", "sensors", "envelope", bx(4.0, 100.0, cz1 + 0.5, 34.
 # ============================================================================================ pumps
 Cn = P.CENTRIS
 PUMP_X = {n: P.PUMP_X0 + i * P.PUMP_PITCH for i, n in enumerate(P.PUMP_ORDER)}
+PUMP_X.update(P.PUMP_FRONT_X)   # (revised after review, docs/24 B1) S_IC1/S_IC2 beside the bay
 py0, py1 = P.PUMP_BODY_Y
 pz0 = P.PUMP_SHELF_Z[1]
 add("pump_shelf", "bracket", "custom", bx(152.0, 321.0, P.PUMP_SHELF_Z[0], 446.0, 396.0, P.PUMP_SHELF_Z[1]),
@@ -181,7 +182,28 @@ add("pump_back_plate", "bracket", "custom", bx(152.0, 319.0, P.PUMP_SHELF_Z[1], 
 for i, (x, y) in enumerate([(165, 335), (433, 335), (165, 385), (433, 385)]):
     add(f"pump_isolator_{i+1}", "bracket", "catalogue", bx(x - 10, y - 10, P.TRAY["z0"] + 1, x + 10, y + 10,
         P.PUMP_SHELF_Z[0]), "elastomer", 0.02, "UNVERIFIED", "rubber-metal isolator D20 x 15", shape="cyl_z")
-for n in P.PUMP_ORDER:
+# (revised after review, docs/24 B1) front pump shelf (S_IC1, S_IC2) on 4 isolators + spine; valves face -Y
+(fx0, fy0, fz0), (fx1, fy1, fz1) = P.PUMP_FRONT_SHELF
+add("pump_shelf_front", "bracket", "custom", P.PUMP_FRONT_SHELF, "aluminium", (fx1 - fx0) * (fy1 - fy0) * 6 * AL,
+    "[assessment]", "Al 6 mm on 4 elastomer isolators (UNVERIFIED, D20 x 15); S_IC1/S_IC2 beside the bay")
+add("pump_back_plate_front", "bracket", "custom", bx(fx0, 299.5, fz1, fx1, 301.5, 225.0), "aluminium",
+    93 * 2 * 188 * AL, "[assessment]", "Al 2 mm spine behind S_IC1/S_IC2 (Centris mounting holes UNVERIFIED)")
+for i, (x, y) in enumerate([(62, 216), (136, 216), (62, 290), (136, 290)]):
+    add(f"pump_isolator_front_{i+1}", "bracket", "catalogue", bx(x - 10, y - 10, P.TRAY["z0"] + 1, x + 10, y + 10,
+        fz0), "elastomer", 0.02, "UNVERIFIED", "rubber-metal isolator D20 x 15", shape="cyl_z")
+for n in P.PUMP_FRONT_X:
+    x = PUMP_X[n]
+    zb0, zb1 = P.PUMP_FRONT_Y["body"]
+    za0, za1 = P.PUMP_FRONT_Y["zone"]
+    add(f"{n}_body", "pumps", "catalogue", bx(x - Cn["W"] / 2, zb0, fz1, x + Cn["W"] / 2, zb1, fz1 + Cn["H"]),
+        "envelope", Cn["mass"], "V:TECAN_CENTRIS_P", f"Tecan Cavro Centris, {P.PUMP_SYRINGE_uL[n]} uL syringe; "
+        f"valve {P.PUMP_VALVE[n]}; beside the bay, valve facing -Y (revised after review)",
+        ports=[("RS485/24V", (x, zb1, fz1 + 30))])
+    add(f"{n}_valve_syringe", "pumps", "envelope", bx(x - Cn["W"] / 2 + 4, za0, fz1, x + Cn["W"] / 2 - 4, za1,
+        fz1 + Cn["H"]), "PTFE", 0.0, "UNVERIFIED (front zone depth)",
+        "valve head (top) + syringe (below), facing the lane gap; service through the removable top-left panel",
+        ports=[("valve", (x, za0, fz1 + Cn["H"] - 12))])
+for n in P.PUMP_REAR:
     x = PUMP_X[n]
     add(f"{n}_body", "pumps", "catalogue", bx(x - Cn["W"] / 2, py0, pz0, x + Cn["W"] / 2, py1, pz0 + Cn["H"]),
         "envelope", Cn["mass"], "V:TECAN_CENTRIS_P", f"Tecan Cavro Centris, {P.PUMP_SYRINGE_uL[n]} uL syringe; "
@@ -219,6 +241,9 @@ add("R2_precision_reg", "pneumatics", "envelope", bx(385.0, 150.0, 17.0, 425.0, 
 add("air_pressure_switch", "pneumatics", "envelope", bx(385.0, 118.0, 17.0, 405.0, 136.0, 60.0), "envelope", 0.05,
     "UNVERIFIED", "low-supply alarm (< 450 kPa at the inlet) -> fault; the lid switch trips at 350 kPa "
     "(revised at integration: was 250 kPa)")
+add("pogo_lift_valve", "pneumatics", "envelope", bx(130.0, 160.0, 64.0, 140.0, 180.0, 84.0), "envelope", 0.05,
+    "UNVERIFIED (3/2 solenoid valve, 24 V, to be selected)", "(revised after review, docs/24 M5) pilot for the LOWER "
+    "pogo-lift cylinder (docs/21 CHOICE-L16), FR1 400 kPa in, out through G_C; driven by aux_valve_driver_8")
 add("switch_valves_3x3-2", "pneumatics", "envelope", bx(250.0, 250.0, 150.0, 286.0, 274.0, 175.0), "envelope", 0.2,
     "UNVERIFIED", "3 x 3/2 solenoid valves on a manifold: ch2 -> P_mv | conjugate bottle | HQDP bottle; bottle vent")
 add("A1_manifold", "bottles", "custom", bx(340.0, 122.0, 170.0, 400.0, 146.0, 190.0), "PEEK", 0.05, "[assessment]",
@@ -237,43 +262,54 @@ add("FS2_P_s", "sensors", "catalogue", bx(325.5, 140.0, 103.0, 334.4, 188.0, 118
     "flow sensor on P_s -> S_RC (fallback sweep 10 uL/min); envelope as SLF3S")
 
 # ============================================================================================ electronics bay
-add("electronics_box", "electronics", "custom", bx(4.0, 207.0, 35.0, 144.0, 396.0, 318.0), "aluminium",
-    1.6, "CHOICE-B7", "1 mm Al sub-enclosure (EMC zone 'noisy'), on 4 standoffs Z 16-35 above the tray; cable "
-    "glands to G_C and to the umbilical route", shape="custom")
+# (revised after review, docs/24 B1/M5) the front of the left-rear zone now holds S_IC1/S_IC2; the electronics are in
+# three grounded 1-mm Al boxes: main (PSUs, mains, DAQ), side-car (low-noise supply, controller, interlocks) and rear
+# (drivers, LINK; in the two pump-row slots vacated by S_IC1/S_IC2). All bonded to the PE stud.
+ELEC_BOXES = {"electronics_box": bx(4.0, 302.0, 35.0, 144.0, 396.0, 318.0),
+              "electronics_box_side": bx(4.0, 207.0, 35.0, 50.0, 300.0, 318.0),
+              "electronics_box_rear": bx(200.0, 325.0, 37.0, 325.0, 416.0, 228.0)}
+for _n, _b in ELEC_BOXES.items():
+    add(_n, "electronics", "custom", _b, "aluminium", 0.6 if _n != "electronics_box" else 1.0, "CHOICE-B7",
+        "1 mm Al sub-enclosure (EMC zone 'noisy'), bonded to PE; cable glands to G_C / umbilical / pumps "
+        "(revised after review: split into three boxes)", shape="custom")
 E = []
-E.append(("PSU_M_24V_350W", bx(9.0, 212.0, 40.0, 39.0, 327.0, 255.0), 0.76,
+E.append(("PSU_M_24V_350W", bx(12.0, 304.0, 37.0, 127.0, 334.0, 252.0), 0.76,
           "Mean Well LRS-350-24 class (215 x 115 x 30, 0.76 kg; search-result listings, datasheet not opened -> "
-          "UNVERIFIED)", "motion + valves + logic rail"))
-E.append(("PSU_T_24V_350W", bx(42.0, 212.0, 40.0, 72.0, 327.0, 255.0), 0.76, "as PSU_M (UNVERIFIED)",
+          "UNVERIFIED)", "motion + valves + logic rail (standing, 115 along X)"))
+E.append(("PSU_T_24V_350W", bx(12.0, 338.0, 37.0, 127.0, 368.0, 252.0), 0.76, "as PSU_M (UNVERIFIED)",
           "thermal rail (Peltiers, heaters) - separate supply, docs/13 §6.3"))
-E.append(("PSU_L_12V_lownoise", bx(42.0, 335.0, 40.0, 72.0, 390.0, 130.0), 0.2, "UNVERIFIED",
-          "low-noise 12 V/15 W for sensors, RH/T, scanner"))
-E.append(("mains_filter_fuse", bx(9.0, 335.0, 40.0, 39.0, 390.0, 130.0), 0.2, "UNVERIFIED",
-          "EMI filter + fuses + K1 safety contactor (E-stop)"))
-E.append(("mount_plate", bx(74.0, 210.0, 38.0, 76.0, 370.0, 315.0), 0.25, "[assessment]",
-          "2 mm Al plate with DIN rails"))
-E.append(("controller_watchdog", bx(78.0, 212.0, 230.0, 98.0, 312.0, 315.0), 0.15, "UNVERIFIED (MCU board to be "
-          "selected)", "dock controller + independent hardware watchdog (heartbeat from Python)"))
-E.append(("relay_interlock", bx(78.0, 318.0, 230.0, 98.0, 368.0, 315.0), 0.15, "UNVERIFIED",
-          "relay/interlock board: E-stop loop, lid switch, safe-state relays, leak inputs"))
-E.append(("stepper_drivers_x6", bx(78.0, 212.0, 140.0, 98.0, 312.0, 225.0), 0.2, "UNVERIFIED",
-          "6 drivers (M_c x2, cam Z, pogo lift, rocker, spare); disabled in read windows"))
-E.append(("thermal_drivers_x4", bx(78.0, 318.0, 140.0, 98.0, 368.0, 225.0), 0.2, "UNVERIFIED",
-          "4 Peltier/heater channels, PWM >= 25 kHz + LC filter (CHOICE-B7), constant through reads"))
-E.append(("valve_pilot_driver_21", bx(78.0, 212.0, 40.0, 98.0, 286.0, 136.0), 0.15, "UNVERIFIED",
-          "21 low-side channels for the lid pilot valves (24 V), cable via the umbilical"))
-E.append(("LabJack_U3_iso", bx(105.0, 212.0, 230.0, 135.0, 327.0, 305.0), 0.15,
+E.append(("USB_isolator_hub", bx(12.0, 304.0, 254.0, 62.0, 354.0, 284.0), 0.1, "UNVERIFIED",
+          "isolated USB hub (controller, U3, LINK, RS-485 adapter for 5 pumps)"))
+E.append(("mains_filter_fuse", bx(64.0, 304.0, 254.0, 119.0, 394.0, 284.0), 0.2, "UNVERIFIED",
+          "EMI filter + fuses + K1 safety contactor (E-stop); 30 x 55 x 90 lying"))
+E.append(("LabJack_U3_iso", bx(24.0, 304.0, 286.0, 139.0, 379.0, 316.0), 0.15,
           "LabJack U3 75 x 115 x 30 (search-result listings; labjack.com page did not state it -> UNVERIFIED)",
           "Inject Start via opto-isolator; USB via a USB isolator (U3 itself not isolated, UNVERIFIED)"))
-E.append(("USB_isolator_hub", bx(105.0, 212.0, 145.0, 135.0, 262.0, 195.0), 0.1, "UNVERIFIED",
-          "isolated USB hub (controller, U3, LINK, RS-485 adapter for 5 pumps)"))
-E.append(("Fluigent_LINK", bx(78.0, 290.0, 40.0, 135.0, 369.0, 136.0), 0.219,
+E.append(("intake_filter_grille", bx(5.0, 331.0, 140.0, 10.0, 394.0, 250.0), 0.05, "UNVERIFIED",
+          "passive intake grille + filter mat on the left wall"))
+E.append(("fan_exhaust_80", bx(20.0, 370.0, 140.0, 100.0, 395.0, 220.0), 0.05, "UNVERIFIED",
+          "80 mm fan on the box rear wall -> rear-panel louvre; constant speed (never switched in reads)"))
+E.append(("PSU_L_12V_lownoise", bx(8.0, 210.0, 40.0, 38.0, 265.0, 130.0), 0.2, "UNVERIFIED",
+          "low-noise 12 V/15 W for sensors, RH/T, scanner (side box)"))
+E.append(("controller_watchdog", bx(8.0, 210.0, 135.0, 28.0, 295.0, 230.0), 0.15, "UNVERIFIED (MCU board to be "
+          "selected)", "dock controller + independent hardware watchdog (heartbeat from Python); 20 x 85 x 95 allocation"))
+E.append(("relay_interlock", bx(28.0, 212.0, 232.0, 48.0, 262.0, 316.0), 0.15, "UNVERIFIED",
+          "relay/interlock board: E-stop loop, lid switch, latch-open input (docs/24 M10), safe-state relays, leak inputs"))
+E.append(("mount_plate", bx(202.0, 327.0, 39.0, 204.0, 414.0, 226.0), 0.25, "[assessment]",
+          "2 mm Al plate with DIN rails (rear box)"))
+E.append(("Fluigent_LINK", bx(205.0, 328.0, 40.0, 284.0, 385.0, 136.0), 0.219,
           "Fluigent LINK ~79 x 57 x 96 mm, 219 g (store listing via search; not opened -> UNVERIFIED)",
           "USB to the Flow EZ chain"))
-E.append(("intake_filter_grille", bx(4.0, 331.0, 140.0, 10.0, 394.0, 300.0), 0.05, "UNVERIFIED",
-          "passive intake grille + filter mat on the left wall"))
-E.append(("fan_exhaust_80", bx(20.0, 371.0, 140.0, 100.0, 396.0, 220.0), 0.05, "UNVERIFIED",
-          "80 mm fan on the box rear wall -> rear-panel louvre; constant speed (never switched in reads)"))
+E.append(("valve_pilot_driver_21", bx(288.0, 328.0, 40.0, 308.0, 402.0, 136.0), 0.15, "UNVERIFIED",
+          "21 low-side channels for the lid pilot valves (24 V), cable via the umbilical"))
+E.append(("aux_valve_driver_8", bx(205.0, 390.0, 40.0, 245.0, 410.0, 100.0), 0.1, "UNVERIFIED",
+          "(revised after review, docs/24 M5) 8 low-side channels: pogo-lift 3/2 valve, 3 x 3/2 fill / P_mv switch "
+          "valves, SV_b if 24 V-switched, 3 spare"))
+E.append(("stepper_drivers_x6", bx(205.0, 328.0, 140.0, 305.0, 348.0, 225.0), 0.2, "UNVERIFIED",
+          "6 drivers (M_c x2, M_d cam Z, rocker, 2 spare; the pogo lift is pneumatic, docs/21 CHOICE-L16 -- revised "
+          "after review M5); disabled in read windows"))
+E.append(("thermal_drivers_x4", bx(205.0, 350.0, 140.0, 255.0, 370.0, 225.0), 0.2, "UNVERIFIED",
+          "4 Peltier/heater channels, PWM >= 25 kHz + LC filter (CHOICE-B7), constant through reads"))
 for n, b, m, src, spec in E:
     add(n, "electronics", "envelope", b, "pcb" if "PSU" not in n else "envelope", m, src, spec)
 add("connector_panel", "electronics", "custom", bx(24.0, FY - s - 3.0, 40.0, 140.0, FY - s, 200.0), "aluminium",

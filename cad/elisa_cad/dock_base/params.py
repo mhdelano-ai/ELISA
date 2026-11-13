@@ -23,7 +23,13 @@ SOURCES = {
     "WATERS_ICLASS_SPEC": "https://ucrf.unist.ac.kr/wp-content/uploads/2024/11/ACQ.-I-Class-PLUS-Sys.-CH-A-wSM-FTN-I-"
                           "Specification.pdf (Waters spec sheet, PDF text: I-Class BSM + SM-FTN + CH-A W 34.3 cm, "
                           "H 71.1 cm, D 71.2 cm)",
-    "GAMRY_CABLE_60": "https://orders.gamry.com/reference-600-cell-cable-60-cm.html (opened: 60 cm, SKU 985-00071)",
+    "GAMRY_CABLE_60": "https://orders.gamry.com/reference-600-cell-cable-60-cm.html (opened 2026-11-13: 60 cm, SKU "
+                      "985-00071, listed 'For Reference 600 and Interface 1000/1010' only -- NOT for the Reference 600+; "
+                      "revised after review, docs/24 S6)",
+    "GAMRY_600P_STD_CABLE": "https://cn.gamry.com/assets/Uploads/Instructions-for-using-a-Standard-Cable-on-a-Reference-"
+                            "600+.pdf (opened 2026-11-13, PDF text: the 60 cm Standard Cell Cable PN 985-00071 is used on a "
+                            "Reference 600+ only with the Gamry-supplied IE correction file REF600P_CID14.IECOR and a "
+                            "re-calibration with that cable in the calibration shield)",
     "GAMRY_LEGACY": "docs/18 §14 (gamry.com legacy page: 9 x 19 x 27 cm W x H x D, 3 kg) via interface.SPACE_CLAIMS",
 }
 
@@ -74,7 +80,8 @@ GLAND_E2 = {"x": LOWER_BAY[1][0], "y": (190.0, 196.0), "z": (119.0, 125.0)}  # +
 GLAND_C = {"x": LOWER_BAY[0][0], "y": I.PASS_THROUGHS["cable_window_W"]["y"],
            "z": I.PASS_THROUGHS["cable_window_W"]["z"]}                     # -X wall, power/motor cables (Rev B)
 EXHAUST = I.PASS_THROUGHS["peltier_exhaust"]   # (revised at integration) LOWER Peltier duct outlet at Y 20 -> BASE
-#   duct extension Y 2-20 + louvre in the front-bay panel (X 186-210, Z 118-144), 10.6 W
+#   duct extension Y 2-20 + louvre in the front-bay panel (X 186-210, Z 118-144), <= 12.3 W (revised after review,
+#   interface Rev C; Rev B 10.6 W)
 
 # ------------------------------------------------------------------------------------------------ cold compartment
 CC = CL["BASE_cold_compartment"]["box"]        # ((10,20,15),(145,200,220))
@@ -96,8 +103,14 @@ T_LAB = 22.0              # docs/13 §6.6 example
 CENTRIS = {"W": 44.5, "D": 68.8, "H": 184.2, "mass": 1.3, "V": 24.0, "I_peak": 2.5}   # V:TECAN_CENTRIS_P
 PUMP_FRONT_ZONE = 22.0    # UNVERIFIED: valve head + syringe projecting from the front face (not on the page)
 PUMP_PITCH = 60.0         # [assessment] 15.5 mm between bodies for tubes and fingers
-PUMP_ORDER = ["S_b", "S_IC1", "S_IC2", "S_A", "S_RC"]   # CHOICE-B2 (west-going lines on the left)
+PUMP_ORDER = ["S_b", "S_IC1", "S_IC2", "S_A", "S_RC"]   # CHOICE-B2 (index kept for lane offsets)
 PUMP_X0 = 172.0           # centre of the first pump [assessment]
+# (revised after review, docs/24 B1) S_IC1/S_IC2 moved from the rear row (X 232/292) to the FRONT of the left rear
+# zone, beside the bay (X 54-144, Y 208-299, valves facing -Y toward the lane gap): tidal coils 140/160 -> ~77 uL
+PUMP_REAR = ["S_b", "S_A", "S_RC"]
+PUMP_FRONT_X = {"S_IC1": 76.25, "S_IC2": 121.75}        # bodies X 54.0-98.5 and 99.5-144.0 [assessment]
+PUMP_FRONT_Y = {"zone": (208.0, 230.0), "body": (230.0, 230.0 + 68.8)}   # front zone (valve + syringe) toward -Y
+PUMP_FRONT_SHELF = ((52.0, 207.0, 31.0), (145.0, 300.0, 37.0))
 PUMP_BODY_Y = (325.0, 325.0 + CENTRIS["D"])             # front (valve) face toward +Y = rear service door
 PUMP_SHELF_Z = (31.0, 37.0)   # 6 mm Al shelf on 4 elastomer isolators (Z 16-31), isolators UNVERIFIED
 PUMP_SYRINGE_uL = {"S_b": 250, "S_A": 1000, "S_IC1": 1000, "S_IC2": 1000, "S_RC": 250}   # docs/13 §3.2.2, §5.1,
@@ -131,6 +144,8 @@ STACK_GAP = 50.0          # [assessment] gap stack -> dock (PEEK line, air flow)
 BENCH_DEPTH = 750.0       # UNVERIFIED typical lab bench
 BENCH_HEIGHT = 900.0      # UNVERIFIED typical lab bench
 SMFL_OUTLET_TO_DOCK = 200.0   # UNVERIFIED: SM-FL outlet fitting to the dock left wall entry (stack beside the dock)
+P_IN_SENSOR_RANGE_BAR = (0.0, 25.0)   # (revised after review) 0.0635-mm line: 1.9 MPa over 0.52 m at 100 uL/min
+#   (Derived, fluidics.dp_kPa); the sensor at the upstream end sees ~1.2 MPa -> 0-25 bar class, part UNVERIFIED
 
 # ------------------------------------------------------------------------------------------------ tubing
 FLUID = {"eta": 0.89e-3}      # Pa s, docs/13 §3.1
