@@ -87,6 +87,10 @@ visually unchanged). Note: (iv) was added after the final module builds and appl
 same function; a rebuild produces the same result.
 
 ### 3.5 Known render limits
+(revised 2026-11-13, after the user reported render artefacts) The module renders (interface, card, dock_upper,
+dock_lower, dock_base) are now drawn with the same z-buffer renderer: `common.render_png` and `dock_base/render.render`
+delegate to `assembly/zrender.py`, and long titles are wrapped. The earlier depth-sorted renders drew far faces over
+near ones on large parts (stray triangles on the card views). Geometry, STEP files and check results are unchanged.
 Orthographic, flat-shaded; translucent parts are blended order-independently (approximate colour where several
 overlap); section faces are tinted only where a cut face is exactly on the plane; labels are placed at 3-D points
 (a leader may cross a part in front of the point when the point itself is hidden).
