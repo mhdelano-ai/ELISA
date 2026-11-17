@@ -1,0 +1,2 @@
+# tier_params.yaml — new parameters of the tier round (docs/26). SKELETON: being written.
+# Schema as in params/*.yaml: value, low, high, unit, source, confidence, note.
