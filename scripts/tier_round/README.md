@@ -4,10 +4,11 @@
 |---|---|
 | `tierkit.py` | the kit: capture on the electrode of a wall-jet or channel cell, product transport in the stopped thin layer, bed formats, blank statistics, Monte Carlo |
 | `tier_params.yaml` | parameters added by this round (namespace `tr.`), schema of `params/*.yaml`; all UNVERIFIED unless a source is named |
-| `designs.py` | geometry of the two MicruX cells (docs/28) and the design builders `tier1()` and `tier2()` |
+| `designs.py` | geometry of the two MicruX cells (docs/28) and the design builders `tier1()`, `tier2()` and `tier3()` |
 | `run_tiers.py` | the three implementations of docs/30 with scenarios, alternatives, hardware cases and sensitivities → `results/tier_round/tiers.md`, `tiers.json` |
 | `check_tierkit.py` | 36 checks of the kit against analytic limits, an independent derivation and the audited model → `results/tier_round/check_tierkit.md` |
 | `crosscheck_model.py` | the kit's bed format run on the model's `B-bed-TL/alp_hqdp` inputs |
+| `review_numbers.py`, `review_chemistry_calc.py`, `review_feasibility_calc.py` | the three reviewers' own calculations behind `results/tier_round/review_*.md` (record; they were written against the first version of the designs, docs/31) |
 
 ```bash
 pip install -e .                                   # the model package (elisa_sim)
@@ -17,6 +18,10 @@ python scripts/tier_round/run_tiers.py             # Monte Carlo n = 2000, seed 
 
 The kit imports `elisa_sim` and changes nothing in `src/` or `params/`. Design choices (geometry, flows, times,
 concentrations) are in the design dictionaries and are never sampled; uncertain quantities are parameters.
+`run_tiers.py` gives one model parameter other bounds for this round without editing `params/`: the half-life of
+hydroquinone at pH 9.5, 600 s [120–7200] instead of 7200 s (docs/31 C5).
+
+The kit was revised after the independent review (docs/31). The terms added then are marked "(review)" below.
 
 ## What the kit computes
 
@@ -51,8 +56,8 @@ Validity: gap much smaller than the electrode radius; laminar; radial diffusion 
 
 ### C. Capture in a stopped slab
 `slab_capture_fraction`: Crank, *The Mathematics of Diffusion*, eq. 4.53 (plane sheet with surface evaporation),
-roots of β·tanβ = Bi = k_r·h/D. Used for stop-and-go loading, which turns out no better than slow continuous flow
-in these cells (docs/30 §3.7).
+roots of β·tanβ = Bi = k_r·h/D. Used for stop-and-go loading (`sample.mode = 'stop_go'`), which is not used in
+the designs: slow continuous flow passes the whole sample over the electrode in the time available.
 
 ### D. Bed
 Film coefficient by Wilson–Geankoplis as in the model, in series with k_r; captured fraction 1 − exp(−k·A/Q);
@@ -62,7 +67,17 @@ pressure drop by Kozeny–Carman (`kozeny_carman_dp`).
 Exposure integral of the conjugate plug = C·V/Q (exact for any dispersion) + C·dilution·t_stop. Labelled fraction
 by pseudo-first-order binding at the mean concentration over the exposure time, then dissociation of label and of
 analyte until the middle of the read. Non-specific label on each surface = k_nsb × label factor × surface factor ×
-area × exposure. Surfaces: electrode, floor around it, lid (planar); bed, retainer, inlet-bore wall (bed).
+area × exposure. Surfaces: electrode, floor around it, lid (planar); bed, retainer, inlet-bore wall below the bed
+(bed). (review) Walls upstream of the electrode or bed that saw the conjugate are counted as well: the inlet bore
+and the transfer line in the planar format (`design["upstream"]`), the capillary above the bed and the transfer
+line in the bed format (`bed["upstream_area"]`).
+
+### F. Immune-complex transfer (tier 3) (review)
+`design["transfer"]`: specific label × released fraction (`tr.transfer.elution_efficiency`, UNVERIFIED) ×
+re-captured fraction on the second bed (the bed equation of D at the push flow, with the diffusion coefficient of
+the conjugate); non-specific label of the first bed, its retainer and its loop × the lever of docs/05
+(`ma.design_levers.immune_complex_transfer_nsb_factor`, UNVERIFIED). The capacity of the second bed for the released
+capture antibody is not modelled (docs/30 §5.1).
 
 ### G. Product transport and the electrode
 `ThinLayer`: backward-Euler finite volumes for diffusion in the stopped liquid disc (radius R, height h) over an
@@ -75,10 +90,12 @@ Cottrell flux (4 % high at 2 s: backward Euler and edge diffusion), grid converg
 Read modes of the planar format:
 * `steady_flow` — electrode held at potential while substrate flows: enzyme on the electrode is collected in full
   (the product forms at the sink); the floor ring is downstream and contributes nothing; product formed on the lid
-  above the electrode is counted at half the inlet-stream conversion (approximation); the impurity arrives with the
-  stream (nF·η·Q·c).
+  above the electrode is counted at half the inlet-stream conversion (an upper estimate, docs/31 N10); the impurity
+  arrives with the stream (nF·η·Q·c). (review) Product of the conjugate on the inlet bore and the transfer line
+  arrives mixed into the stream and is collected at the stream conversion η.
 * `steady` — the same in the stopped cell: the impurity above the electrode is electrolysed away, product from the
-  floor ring and the lid diffuses in (kernels of `ThinLayer`).
+  floor ring and the lid diffuses in (kernels of `ThinLayer`). (review) Product formed on the wall of the inlet bore
+  diffuses out of the bore onto the electrode (`ThinLayer.source_bore_wall`); the transfer line does not count.
 * `accumulate_step` — electrode off, then stepped on; carries a step background charge (`tr.detection.step_*`).
 * `cycling` — a reductant regenerates the product in solution; total product is conserved and the current is
   nF·A·c_surface·√(D·k)·tanh(h/μ), μ = √(D/k) (checked against a 1-D reaction–diffusion solution, G12). Unverified on
@@ -86,7 +103,10 @@ Read modes of the planar format:
 * `ida` — interdigitated array, Aoki steady-state current of the model, optional one-channel efficiency.
 
 Read modes of the bed format: `swept` (plug swept over the electrode: charge = nF × product × cell conversion ×
-eluted fraction; the cell's own non-specific enzyme gives a steady baseline that the baseline windows remove),
+eluted fraction; the cell's own non-specific enzyme gives a steady baseline that the baseline windows remove;
+(review) product of the upstream walls that stood in substrate during the stop follows the plug and is counted in
+full; with `read.baseline_step` the impurity current is absent before the peak and present after it, and the part
+of that step left after subtracting the pre-run trace is `tr.noise.swept_step_residual_cv` × the impurity charge),
 `parked` (plug stopped over the electrode; the cell's own non-specific enzyme counts), `continuous` (no stop:
 steady current of the bed's turnover; enzyme on the electrode and the lid counts).
 
@@ -95,7 +115,11 @@ As docs/03 §3.6 (`elisa_sim.model.evaluate`), with two additions for single-use
 the non-specific label (`tr.nsb.unit_to_unit_cv_planar`, `_bed`) added in quadrature to the model's blank CV, and
 the sensor-to-sensor CV of printed or thin-film electrodes, replaced by `tr.noise.preread_residual_cv` when the
 design reads the substrate background on the same electrode before the sample. Baseline drift is scaled with
-electrode area (`tr.noise.drift_area_exponent`; 0 reproduces the model).
+electrode area (`tr.noise.drift_area_exponent`, 0.5 [0–1]; 0 reproduces the model). (review) The unremoved drift is
+f_res × drift × T_span / 2 integrated over the read window, where T_span is the time between the centres of the two
+reference windows that bracket the read (`read.t_span_s`; the read window itself if not given, as in the model).
+With `read.reference_far` the substrate background comes from a pre-run read before the sample, and
+`tr.noise.preread_residual_cv` × (impurity + hydrolysis charge) is added to the substrate-background term.
 
 ## Cross-check with the audited model
 `crosscheck_model.py` gives the kit the geometry, flows and times of `B-bed-TL/alp_hqdp` and switches off what the
@@ -103,9 +127,22 @@ model does not have (unit-to-unit term, area-scaled drift, fresh bed). Captured 
 signal at 1 pg/mL agree to 10⁻⁹; LOD 19.9 against 19.4 pg/mL (the kit counts the carry-over uptake on the bed only).
 
 ## Limits
-* Geometry of the MicruX cells is from brochures; the gap height is not published (docs/28). `run_tiers.py` runs the
-  gap at its bounds.
-* The diffusion coefficient of the product is held at its best estimate inside the thin-layer kernels.
+* Geometry of the MicruX cells is from brochures; the gap height and the bore length are not published (docs/28).
+  `run_tiers.py` runs the gap at its bounds; the bore is taken as 5 mm long.
+* The wall-jet mapping (B) is exact for lubrication flow with radial diffusion neglected. Check R1 compares two
+  forms of that same assumption and does not test it. The assumption is fair for the strip cell (annulus 1.1 mm
+  against a 0.2 mm gap) and marginal for the thin-film cell (0.25 mm against 0.16 mm). The stagnation disc under the
+  bore is left out, which understates capture and collection by 0–30 % in the thin-film cell (docs/31 N9).
+* The diffusion coefficient of the product is held at its best estimate inside the thin-layer kernels and in the
+  cell conversion; the age of the substrate reservoir is fixed at 4 h; the analyte diffusion coefficient is fixed
+  (docs/31 N12).
+* In the swept read the steady current of the conjugate on the electrode (about 24 pA on a printed carbon strip)
+  and, in tier 3, on the walls upstream of the closed bed (about 30 pA at 5 µL/min) is taken as removed by the
+  baseline without residual. Counted like the 100 pA of free hydroquinone, the wall part would raise the tier-3
+  nominal LOD by about 7 % (Derived).
 * Wash efficiency, bed channelling, protein fouling of the electrode and temperature are not modelled.
-* The immune-complex transfer of tier 3 enters as the lever of docs/05 (`ma.design_levers`, UNVERIFIED magnitude),
-  not as physics.
+* The release step of the immune-complex transfer and the non-specific label that comes along are bounded
+  parameters (UNVERIFIED), not physics; only the re-capture is computed.
+* Every turnover of the enzyme is counted as one hydroquinone (two electrons). docs/31 C1 questions this for
+  hydroquinone diphosphate; `run_tiers.py` carries the scenario "1 % of the turnovers give an electroactive
+  product".

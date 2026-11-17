@@ -33,7 +33,7 @@ nsb:
     note: "NSB of the conjugate on a blocked printed carbon or gold electrode and on the printed dielectric around it, relative to blocked streptavidin beads."
   surface_factor_gold_oeg:
     value: 3.0
-    low: 0.5
+    low: 1.0
     high: 30.0
     unit: fold
     source: "UNVERIFIED (oligo-ethylene-glycol thiol monolayers on gold resist protein adsorption: Nishimura2011, abstract, via lit_B; no conjugate density measured)"
@@ -96,13 +96,21 @@ noise:
     unit: fraction
     source: UNVERIFIED
     confidence: low
-    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection."
+    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection. Also applied to the substrate background itself when that pre-read is the only reference for it (review findings N1, N11)."
+  swept_step_residual_cv:
+    value: 0.04
+    low: 0.01
+    high: 0.10
+    unit: fraction
+    source: "UNVERIFIED (review finding N4: 3-5 % until the baseline shape is measured)"
+    confidence: low
+    note: "Swept read after a stop with the electrode on: residual of the impurity-current step after subtracting the trace of an identical pre-run on the same bed and strip, as a fraction of the impurity charge in the read window."
   drift_area_exponent:
-    value: 1.0
+    value: 0.5
     low: 0.0
     high: 1.0
     unit: dimensionless
-    source: "UNVERIFIED (background current, hence its drift, scales with electrode area; 0 reproduces the existing model, which does not scale)"
+    source: "UNVERIFIED (the part of the drift that is background current scales with electrode area, the part from the reference, temperature and the instrument does not; review finding N7; 0 reproduces the existing model)"
     confidence: low
     note: "hw.gamry.baseline_drift is taken at ma.noise.reference_electrode_area and scaled by (A / A_ref)^exponent."
 
@@ -147,3 +155,21 @@ detection:
     source: "UNVERIFIED (double-layer and surface charge of a potential step of about 0.35 V at 10-50 uF/cm^2; lit_A A.4 prefers held-potential amperometry for this reason)"
     confidence: low
     note: "Background charge of the potential step in read mode accumulate_step; its noise is ma.noise.background_current_relative_noise of this charge."
+
+transfer:
+  elution_efficiency:
+    value: 0.7
+    low: 0.2
+    high: 0.95
+    unit: fraction
+    source: "UNVERIFIED (release of the captured complex from the first bed in a 5 min hold by cleaving a disulfide linker; no rate checked; review findings C8, F4, N6)"
+    confidence: low
+    note: "Tier 3. The specific transfer is this fraction times the re-capture computed from the bed equation at the push flow."
+  elution_efficiency_desthiobiotin:
+    value: 0.1
+    low: 0.003
+    high: 0.26
+    unit: fraction
+    source: "Derived by the chemistry reviewer (results/tier_round/review_chemistry.md C8) from Kd about 1e-11 M (UNVERIFIED) and kon 1e6-1e8 /M/s: 0.3-26 % of singly tagged antibody released in 5 min"
+    confidence: low
+    note: "Tier 3 alternative of docs/06 section 4.12: desthiobiotin displaced by biotin, 5 min contact."

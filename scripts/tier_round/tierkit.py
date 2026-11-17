@@ -252,6 +252,16 @@ class ThinLayer:
         s[self.map[:, j]] = w
         return s
 
+    def source_bore_wall(self):
+        """Uniform source of total strength 1 mol/s on the wall of the inlet bore (over its modelled length)."""
+        if self.rb <= 0:
+            raise ValueError("no bore")
+        i_b = int(np.max(np.nonzero(self.rf[1:] <= self.rb * (1 + 1e-9))[0]))
+        s = np.zeros(self.n)
+        w = self.dz[self.nz_layer:] / self.dz[self.nz_layer:].sum()
+        s[self.map[i_b, self.nz_layer:]] = w
+        return s
+
     def source_volume(self):
         """Uniform volumetric source of 1 mol/(m^3 s) everywhere in the liquid (layer and bore)."""
         return self.vol.copy()
@@ -309,6 +319,8 @@ def thin_layer_kernels(a, h, R, D, phases, regions, bore_radius=0.0, bore_length
     runs = {}
     for name, where, r1, r2 in regions:
         runs[name] = tl.run(list(phases), source=tl.source_surface(where, r1, r2))
+    if bore_radius > 0 and bore_length > 0:
+        runs["bore"] = tl.run(list(phases), source=tl.source_bore_wall())
     runs["volume"] = tl.run(list(phases), source=tl.source_volume())
     runs["initial"] = tl.run(list(phases), c0=1.0)
     return tl, runs
@@ -434,7 +446,11 @@ def _chem(p, chem):
     return out
 
 
-def _noise(design, p, area, stopped, T_read, noise_factor=1.0):
+def _noise(design, p, area, stopped, T_read, noise_factor=1.0, T_span=None):
+    """Current noise and drift.  T_span: time between the centres of the two reference windows that bracket the
+    read (default: the read window itself, as in the model).  The unremoved drift current is taken as
+    f_res * drift * T_span / 2 and is integrated over the read window."""
+    T_span = T_read if T_span is None else T_span
     i_ref = p("hw.gamry.noise_rms_stopped_flow" if stopped else "hw.gamry.noise_rms_flow", "A")
     A_ref = p("ma.noise.reference_electrode_area", "m^2")
     alpha = p("ma.noise.area_exponent", "dimensionless")
@@ -444,7 +460,7 @@ def _noise(design, p, area, stopped, T_read, noise_factor=1.0):
     var_ec = (i_n * np.sqrt(T_read / (2.0 * B))) ** 2 * 2.0                   # signal window + reference window
     drift = p("hw.gamry.baseline_drift", "A/min") / 60.0 * (area / A_ref) ** p("tr.noise.drift_area_exponent",
                                                                                 "dimensionless")
-    var_drift = (p("ma.noise.drift_residual_fraction", "fraction") * 0.5 * drift * T_read ** 2) ** 2
+    var_drift = (p("ma.noise.drift_residual_fraction", "fraction") * 0.5 * drift * T_span * T_read) ** 2
     return i_n, var_ec, var_drift
 
 
@@ -470,7 +486,8 @@ def _finish(design, p, conc, Q, enz, N_blank_enz, T_read, area, stopped, cv_unit
     rel_bg = p("ma.noise.background_current_relative_noise", "fraction")
     cv_carry = p("ma.noise.carryover_cv", "fraction")
     cv_sens = _sensor_cv(design, p)
-    i_n, var_ec, var_drift = _noise(design, p, area, stopped, T_read, noise_factor)
+    rd = design["read"]
+    i_n, var_ec, var_drift = _noise(design, p, area, stopped, T_read, noise_factor, rd.get("t_span_s"))
     bg = Q["imp"] + Q["other_bg"]
     terms = {}
     terms["nsb_variability"] = (cv_nsb ** 2 + cv_unit ** 2 + inj_rsd ** 2) * Q["nsb"] ** 2
@@ -482,6 +499,16 @@ def _finish(design, p, conc, Q, enz, N_blank_enz, T_read, area, stopped, cv_unit
     else:
         terms["substrate_background"] = (cv_sub * (bg + Q["hyd"])) ** 2 + (rel_bg * (bg + Q["hyd"])) ** 2
         terms["electrode_sensitivity"] = (cv_sens * (Q["nsb"] + Q["carry"] + Q["hyd"] + bg)) ** 2
+    if referenced and rd.get("reference_far", False):
+        # the substrate background is taken from a pre-read on the same electrode, made before the sample: its
+        # transfer over that time (protein now on the electrode, flow, reference) is not exact
+        terms["substrate_background"] = terms["substrate_background"] + (
+            p("tr.noise.preread_residual_cv", "fraction") * (bg + Q["hyd"])) ** 2
+    if rd.get("baseline_step", False):
+        # swept read after a stop in a cell whose electrode was on: the impurity current is absent before the
+        # peak and present after it; the step is removed with the trace of the pre-run, not exactly
+        terms["substrate_background"] = terms["substrate_background"] + (
+            p("tr.noise.swept_step_residual_cv", "fraction") * Q["imp"]) ** 2
     terms["electrochemical_noise"] = var_ec + 0.0 * Q["nsb"]
     terms["baseline_drift"] = var_drift + 0.0 * Q["nsb"]
     terms["contamination"] = Q["cont"] ** 2
@@ -552,6 +579,12 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
                   t_acc_s (accumulate_step), t_read_s, Q_read_uL_min (steady_flow), k_reg (cycling, 1/s),
                   ida (dict m, b, w, g; mode 'ida'), two_electrode (bool)
       preread   : bool - a substrate background read on the same electrode before the sample injection
+      upstream  : optional dict(bore_factor_key, line_area, line_factor_key) - walls between injector and
+                  electrode that saw the conjugate: the inlet bore (area from the cell geometry) and the transfer
+                  line.  Their product reaches the electrode with the stream (collected at the stream conversion)
+                  or, in a stopped cell, by diffusion out of the bore.
+      read also : t_span_s (time between the centres of the two reference windows that bracket the read),
+                  reference_far (True if the substrate background comes from a pre-read before the sample)
     """
     p = Ctx(ps)
     chem = CHEMISTRIES[design["chemistry"]]
@@ -616,6 +649,9 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     N_nsb_we = per_area * sf_we * A_we
     N_nsb_floor = per_area * p(el["floor_factor_key"], "fold") * A_floor
     N_nsb_lid = per_area * p(cell["lid_factor_key"], "fold") * A_lid
+    up = design.get("upstream") or {}
+    N_up_bore = per_area * p(up["bore_factor_key"], "fold") * 2.0 * np.pi * rb * Lb if (up and rb > 0) else 0.0
+    N_up_line = per_area * p(up["line_factor_key"], "fold") * up.get("line_area", 0.0) if up else 0.0
 
     # 6. conjugate carried into the next determination's sample injection (fresh electrode each time)
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
@@ -640,14 +676,15 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
         t1 = rd.get("t_wait_s", 0.0)
         _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("on", t1 + T),), regions, rb, Lb)
         g = {k: _between(r, "cum", t1, t1 + T) for k, r in kr.items()}        # mol collected per unit source
-        col = dict(we=T, floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0))
+        col = dict(we=T, floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0), bore=g.get("bore", 0.0), line=0.0)
         q_vol, q_init = nF * g["volume"], nF * g["initial"]
     elif mode == "steady_flow":
         Qr = rd["Q_read_uL_min"] * ULMIN
         eta = float(cell_conversion(cell, ch["D_prod"], A_we, Qr))
         # product formed on the lid above the electrode crosses the gap while it is carried outward: about half
         # of the inlet-stream conversion (approximation); the floor ring is downstream of the electrode
-        col = dict(we=T, floor=0.0, lid=0.5 * eta * T * max(A_we - np.pi * rb ** 2, 0.0) / A_lid, ring=0.0)
+        col = dict(we=T, floor=0.0, lid=0.5 * eta * T * max(A_we - np.pi * rb ** 2, 0.0) / A_lid, ring=0.0,
+                   bore=eta * T, line=eta * T)        # product of upstream walls arrives mixed into the stream
         q_init = nF * eta * Qr * T                                             # impurity arrives with the stream
         q_vol = q_init * p("ma.timing.substrate_reservoir_age", "s")           # hydrolysis in the reservoir
         stopped = False
@@ -655,7 +692,8 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
         t_acc = rd["t_acc_s"]
         _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("off", t_acc), ("on", T)), regions, rb, Lb)
         g = {k: _between(r, "cum", t_acc, t_acc + T) for k, r in kr.items()}
-        col = dict(we=g["we"], floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0))
+        col = dict(we=g["we"], floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0), bore=g.get("bore", 0.0),
+                   line=0.0)
         q_vol, q_init = nF * g["volume"], nF * g["initial"]
         other_bg = p("tr.detection.step_background_charge_density", "C/m^2") * A_we
     elif mode in ("cycling", "ida"):
@@ -678,25 +716,30 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
                 p("ma.detection.aoki_c3", "dimensionless")) * eff
         col = {k: per_conc * ci[k] / nF for k in ("we", "floor", "lid")}       # "mol collected" equivalents
         col["ring"] = per_conc * ci.get("ring", 0.0) / nF
+        col["bore"], col["line"] = per_conc * ci.get("bore", 0.0) / nF, 0.0
         q_vol, q_init = per_conc * ci["volume"], per_conc * ci["initial"]
     else:
         raise ValueError(mode)
 
     rate = v / NA                                                              # mol/s per enzyme
     Q_spec = nF * rate * (N_spec_we * col["we"] + N_spec_ring * col["ring"])
-    Q_nsb = nF * rate * (N_nsb_we * col["we"] + N_nsb_floor * col["floor"] + N_nsb_lid * col["lid"])
+    Q_nsb = nF * rate * (N_nsb_we * col["we"] + N_nsb_floor * col["floor"] + N_nsb_lid * col["lid"]
+                         + N_up_bore * col["bore"] + N_up_line * col["line"])
     Q_carry = nF * rate * N_carry * col["we"]
     eff_low = N_spec[..., 1:2] / np.maximum(d["N_vial"][..., 1:2], 1e-300)
     Q_cont = nF * rate * d["N_cont_vial"] * eff_low * share_we * col["we"]
     Q_hyd = hyd * q_vol
     Q_imp = c_imp * q_init
-    N_blank_enz = N_nsb_we + N_nsb_floor * col["floor"] / col["we"] + N_nsb_lid * col["lid"] / col["we"] + N_carry
+    N_blank_enz = (N_nsb_we + N_nsb_floor * col["floor"] / col["we"] + N_nsb_lid * col["lid"] / col["we"]
+                   + N_up_bore * col["bore"] / col["we"] + N_up_line * col["line"] / col["we"] + N_carry)
     q_per_enzyme = nF * rate * col["we"]
     diag = dict(capture_fraction=_sq(f_patch * d["chain"]), k_m=_sq(k_m), k_r=_sq(k_r),
                 N_captured_at_1pg=_interp_at(conc, N_cap + 0.0 * conc, 1.0),
                 enzymes_on_we_at_1pg=_interp_at(conc, N_spec_we + 0.0 * conc, 1.0),
                 N_nsb_we=_sq(N_nsb_we), N_nsb_floor=_sq(N_nsb_floor), N_nsb_lid=_sq(N_nsb_lid),
                 collected_floor=col["floor"] / col["we"], collected_lid=col["lid"] / col["we"],
+                N_up_bore=_sq(N_up_bore), N_up_line=_sq(N_up_line), collected_upstream=col["line"] / col["we"],
+                collected_bore=col["bore"] / col["we"],
                 f_label=_sq(lab["f_label"]), ret_label=_sq(lab["ret_label"]), ret_capture=_sq(lab["ret_capture"]),
                 exposure_nM_min=_sq(lab["exposure"]) * 1e6 / 60.0, loop_transfer=_sq(d["f_transfer"]),
                 n_flush=_sq(d["n_flush"]), current_per_enzyme_A=_sq(q_per_enzyme) / T,
@@ -723,7 +766,10 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
       sample, conjugate, exposure_s, chemistry, steps as in evaluate_planar
       read      : mode ('swept' | 'parked' | 'continuous'), t_acc_s, Q_read_uL_min, t_read_s, sigma_uL (dispersion
                   between bed and electrode, standard deviation), n_tanks (bed)
-      transfer  : optional dict(efficiency_key, nsb_factor_key) - immune-complex transfer to a second bed (tier 3)
+      transfer  : optional dict(elution_key, nsb_factor_key, Q_push_uL_min) - immune-complex transfer to a second
+                  bed (tier 3)
+      bed also  : upstream_area, upstream_factor_key - conjugate-exposed walls upstream of the bed that stand in
+                  substrate during the stop;  read also: baseline_step (cell stopped with the electrode on)
     """
     p = Ctx(ps)
     chem = CHEMISTRIES[design["chemistry"]]
@@ -759,12 +805,25 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     N_nsb_extra = per_area * p(bed["extra_factor_key"], "fold") * bed.get("extra_area", 0.0)
     if bed.get("bore_area", 0.0) > 0:                       # wall of the cell's inlet bore between bed and electrode
         N_nsb_extra = N_nsb_extra + per_area * p(bed["bore_factor_key"], "fold") * bed["bore_area"]
+    if bed.get("upstream_area", 0.0) > 0:
+        # walls upstream of the bed that saw conjugate and stand in substrate during the stop (capillary above
+        # the bed, transfer line): their product follows the plug onto the electrode inside the read window
+        N_nsb_extra = N_nsb_extra + per_area * p(bed["upstream_factor_key"], "fold") * bed["upstream_area"]
+    transfer_eff = 1.0
     if design.get("transfer"):
-        # immune-complex transfer to a second, clean bed that is the one read (tier 3): a fraction of the specific
-        # complexes arrives, and a fraction of the first bed's non-specific label comes with them.  Both are the
-        # bounded lever magnitudes of docs/05 (ma.design_levers, UNVERIFIED), sampled within their bounds.
-        N_spec = N_spec * p(design["transfer"]["efficiency_key"], "fraction")
-        f_nsb = p(design["transfer"]["nsb_factor_key"], "fold")
+        # immune-complex transfer to a second, clean bed that is the one read (tier 3).  Specific complexes:
+        # released fraction (parameter, UNVERIFIED) x re-captured fraction on the second bed, the latter from the
+        # same bed equation at the push flow with the diffusion coefficient of the conjugate.  Non-specific label
+        # of the first bed that comes along: bounded lever of docs/05 (ma.design_levers, UNVERIFIED).
+        t_ = design["transfer"]
+        Qp = t_["Q_push_uL_min"] * ULMIN
+        D_c = p("chem.antibodies.diffusion_coefficient_IgG_ALP_conjugate", "m^2/s")
+        k_m2, _ = tr.wilson_geankoplis_k(D_c, bed["d_p"], bed["eps"], Qp / A_col, nu,
+                                         p("ma.correlations.wilson_geankoplis_coefficient", "dimensionless"))
+        recapture = 1.0 - np.exp(-(1.0 / (1.0 / k_m2 + 1.0 / k_r)) * A_bed / Qp)
+        transfer_eff = p(t_["elution_key"], "fraction") * recapture
+        N_spec = N_spec * transfer_eff
+        f_nsb = p(t_["nsb_factor_key"], "fold")
         N_nsb_bed, N_nsb_extra = N_nsb_bed * f_nsb, N_nsb_extra * f_nsb
     N_nsb = N_nsb_bed + N_nsb_extra
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
@@ -860,6 +919,7 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
                 exposure_nM_min=_sq(lab["exposure"]) * 1e6 / 60.0, loop_transfer=_sq(d["f_transfer"]),
                 n_flush=_sq(d["n_flush"]), cell_conversion=_sq(eta), eluted=_sq(eluted),
                 V_acc_uL=V_acc / UL, V_plug_uL=V_plug / UL, cell_blank_C=_sq(cell_blank),
+                transfer_efficiency=_sq(transfer_eff),
                 mean_current_at_1pg_A=_interp_at(conc, Q_spec + 0.0 * conc, 1.0) / T)
     Qs = dict(spec=Q_spec + 0.0 * conc, nsb=Q_nsb, carry=Q_carry, hyd=Q_hyd, imp=Q_imp, cont=Q_cont,
               other_bg=other_bg)
