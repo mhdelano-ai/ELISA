@@ -39,8 +39,8 @@ AU10 = dict(kind="printed", area=np.pi * (1.5e-3) ** 2, we_factor_key="tr.nsb.su
 def t1(electrode="SE1", **kw):
     """Tier 1 primary: capture on a thin-film gold electrode, product read at the electrode while substrate flows
     at the pump's minimum."""
-    base = dict(read_mode="steady_flow", Q_read=1.0, Q_load=3.5, t_load=36.0, C_conj=3.0, V_conj=100.0, Q_conj=20.0,
-                t_conj_stop=3.0, t_wash1=1.5, t_wash2=2.0, t_fill=1.5, t_wait=60.0, t_read=240.0)
+    base = dict(read_mode="steady_flow", Q_read=1.0, Q_load=3.25, t_load=39.0, C_conj=10.0, V_conj=100.0,
+                Q_conj=50.0, t_conj_stop=0.0, t_wash1=1.5, t_wash2=2.0, t_fill=1.5, t_wait=60.0, t_read=240.0)
     base.update(kw)
     d = D.tier1(electrode, **base)
     d["ps_values"] = {S0: 3.0e-4}                       # 0.3 mM HQDP: about 3 Km, a third of the impurity current
@@ -56,19 +56,25 @@ def t1_printed_gold(**kw):
 def t2(**kw):
     """Tier 2 primary: 1e6 streptavidin beads of 2.8 um packed in a fritted capillary whose tip sits in the inlet
     bore just above a printed carbon electrode; stopped accumulation, then the plug is swept over the electrode."""
-    base = dict(d_p=2.8e-6, V_bed_uL=0.019, column_id=150e-6, bed_factor_key=MB, retainer_area=1e-6, bore_wall=False,
+    base = dict(d_p=2.8e-6, V_bed_uL=0.019, column_id=200e-6, bed_factor_key=MB, retainer_area=5e-6, bore_wall=False,
                 V_dead_uL=0.1, Q_load=3.5, t_load=36.0, t_acc=420.0, Q_read=5.0, t_read=90.0)
     base.update(kw)
     return D.tier2(**base)
 
 
-def t3(**kw):
-    """Tier 3 primary: the tier 2 bed behind valves plus an immune-complex transfer to a second, clean bed
-    (ps modifier L4), which is the bed that is read."""
+TRANSFER = dict(efficiency_key="ma.design_levers.immune_complex_transfer_efficiency",
+                nsb_factor_key="ma.design_levers.immune_complex_transfer_nsb_factor")
+
+
+def t3(transfer=True, **kw):
+    """Tier 3 primary: the tier 2 bed behind valves plus an immune-complex transfer to a second, clean bed, which
+    is the bed that is read.  The transfer enters with the bounded magnitudes of docs/05 (lever L4)."""
     base = dict(Q_load=4.5, t_load=29.0, t_extra=8.0, t_acc=420.0, t_wash2=2.0)
     base.update(kw)
     d = t2(**base)
     d["tier"] = 3
+    if transfer:
+        d["transfer"] = dict(TRANSFER)
     return d
 
 
@@ -92,10 +98,6 @@ def L7(ps):   # substrate lot purified or selected: free hydroquinone 1e-6
 
 def L3(ps):   # F(ab')2 or Fab' conjugate
     return scale(ps, LF, lv(ps, "fab_conjugate_nsb_factor"))
-
-
-def L4(ps):   # immune-complex transfer (tier 3 only)
-    return scale(ps, LF, lv(ps, "immune_complex_transfer_nsb_factor") / lv(ps, "immune_complex_transfer_efficiency"))
 
 
 def L5(ps):   # reference channel (tier 3 only)
@@ -204,18 +206,18 @@ def main(argv=None):
 
     prim = [("Tier 1: thin-film gold electrode, capture on the electrode, read under 1 uL/min substrate flow", t1()),
             ("Tier 2: capillary micro-bed above a printed carbon electrode, stopped accumulation, swept read", t2()),
-            ("Tier 3: tier 2 bed behind valves + immune-complex transfer to a second bed (L4)", t3())]
+            ("Tier 3: tier 2 bed behind valves + immune-complex transfer to a second bed", t3())]
+    ident = lambda ps: ps
     table("1. The three implementations, as specified",
-          [(lab, d, (L4 if d["tier"] == 3 else (lambda ps: ps))) for lab, d in prim],
-          f"Monte Carlo n = {n}, seed 20261111. Tier 3 carries the transfer lever L4 (UNVERIFIED magnitude, "
-          "ma.design_levers) in every row.")
+          [(lab, d, ident) for lab, d in prim],
+          f"Monte Carlo n = {n}, seed 20261111. Tier 3 carries the immune-complex transfer at the bounded, UNVERIFIED "
+          "magnitudes of ma.design_levers (non-specific label x0.1 [0.01-0.5], specific x0.7 [0.4-0.9]), sampled.")
 
     for lab, d in prim:
-        base_mod = L4 if d["tier"] == 3 else (lambda ps: ps)
-        cases = [(name, d, chain(base_mod, fn)) for name, fn in SCENARIOS]
+        cases = [(name, d, fn) for name, fn in SCENARIOS]
         if d["tier"] == 3:
-            cases.insert(1, ("with a reference channel as well (L5)", d, chain(L4, L5)))
-            cases.append(("transfer does not work (no L4)", d, lambda ps: ps))
+            cases.insert(1, ("with a reference channel as well (L5)", d, L5))
+            cases.append(("transfer does not work (same timing, no transfer)", t3(transfer=False), ident))
         table(f"2. Scenarios - {lab}", cases)
 
     if not args.quick:
@@ -229,8 +231,8 @@ def main(argv=None):
              lambda ps: ps),
             ("1 mM substrate instead of 0.3 mM", {**t1(), "ps_values": {S0: 1.0e-3}}, lambda ps: ps),
             ("no pre-read on the electrode", t1(preread=False), lambda ps: ps),
-            ("conjugate 10 nM for 2 min, no stop", t1(C_conj=10.0, Q_conj=50.0, t_conj_stop=0.0, t_load=39.0,
-                                                    Q_load=3.25), lambda ps: ps),
+            ("conjugate 3 nM for 5 min + 3 min stop, load 36 min", t1(C_conj=3.0, Q_conj=20.0, t_conj_stop=3.0,
+                                                                    t_load=36.0, Q_load=3.5), lambda ps: ps),
             ("printed gold strip (AU10) in the SPE cell, same chemistry", t1_printed_gold(), lambda ps: ps),
             ("printed carbon strip (C21), adsorbed streptavidin", t1("C21"), lambda ps: ps),
             ("printed carbon strip, SPE cell gap 0.10 mm", t1("C21", h=0.10e-3), lambda ps: ps),
@@ -250,21 +252,32 @@ def main(argv=None):
             ("half the beads (5e5)", t2(V_bed_uL=0.0095), lambda ps: ps),
             ("twice the beads (2e6)", t2(V_bed_uL=0.038), lambda ps: ps),
             ("bed in a fitting on the inlet port (bore wall in the path)",
-             t2(column_id=0.5e-3, bore_wall=True, V_dead_uL=None), lambda ps: ps),
+             t2(column_id=0.5e-3, bore_wall=True, V_dead_uL=None, retainer_area=1e-6), lambda ps: ps),
             ("20 um polystyrene streptavidin beads, 0.15 uL, on the port, 5 mm2 retainer",
              D.tier2(Q_load=3.5, t_load=36.0, t_acc=420.0), lambda ps: ps),
-            ("retainer (frit) area 10 mm2 instead of 1 mm2", t2(retainer_area=10e-6), lambda ps: ps),
+            ("retainer (frit or screen) wetted area 1 mm2 instead of 5 mm2", t2(retainer_area=1e-6), lambda ps: ps),
+            ("retainer wetted area 20 mm2 (0.5 mm silicate frit)", t2(retainer_area=20e-6), lambda ps: ps),
+            ("conjugate 10 nM for 2 min", t2(C_conj=10.0, Q_conj=50.0), lambda ps: ps),
+            ("short accumulation of 30 s (range read)", t2(t_acc=30.0), lambda ps: ps),
             ("parked read instead of swept", t2(read_mode="parked", t_read=120.0), lambda ps: ps),
             ("thin-film gold cell as detector", t2(electrode="SE1"), lambda ps: ps),
             ("accumulation 15 min, load 28 min", t2(t_acc=900.0, t_load=28.0, Q_load=4.6), lambda ps: ps),
         ])
         # ---- tier 3 alternatives ----
         table("5. Tier 3 - alternatives", [
-            ("primary (transfer, L4)", t3(), L4),
-            ("transfer + F(ab')2 conjugate + screened reagents (L3 + L4 + L6 + L7)", t3(), chain(L3, L4, L6, L7)),
-            ("the same with a reference channel (L5)", t3(), chain(L3, L4, L5, L6, L7)),
-            ("valves only: tier 2 chemistry with an isolated bed (no transfer)", t3(t_extra=0.0, t_load=36.0, Q_load=3.5),
-             lambda ps: ps),
+            ("primary (with transfer)", t3(), ident),
+            ("transfer + F(ab')2 conjugate + screened reagents (L3 + L6 + L7)", t3(), chain(L3, L6, L7)),
+            ("the same with a reference channel (L5)", t3(), chain(L3, L5, L6, L7)),
+            ("valves only: tier 2 chemistry with an isolated bed (no transfer)",
+             t3(transfer=False, t_extra=0.0, t_load=36.0, Q_load=3.5), ident),
+            ("transfer at its pessimistic bounds (non-specific x0.5, specific x0.4)", t3(),
+             lambda ps: L.pin(ps, **{"ma.design_levers.immune_complex_transfer_nsb_factor": 0.5,
+                                     "ma.design_levers.immune_complex_transfer_efficiency": 0.4})),
+            ("transfer at its optimistic bounds (non-specific x0.01, specific x0.9)", t3(),
+             lambda ps: L.pin(ps, **{"ma.design_levers.immune_complex_transfer_nsb_factor": 0.01,
+                                     "ma.design_levers.immune_complex_transfer_efficiency": 0.9})),
+            ("accumulation 12 min instead of 7 (bed isolated by the valve), load 24 min",
+             t3(t_acc=720.0, t_load=24.0, Q_load=5.4), ident),
         ])
 
     # ---- sensitivities of the primaries ----
@@ -272,7 +285,7 @@ def main(argv=None):
     md.append("LOD (pg/mL) with one parameter at its low and at its high bound, all others at their best estimate; "
               "the eight largest swings.\n")
     for lab, d in prim:
-        psx = L4(ps0) if d["tier"] == 3 else ps0
+        psx = ps0
         base, rows = sensitivity(d, psx)
         md.append(f"\n**{lab}** (nominal {fmt(base)} pg/mL)\n\n| Parameter | value [low-high] | LOD at low | LOD at high |"
                   "\n|---|---|---|---|")

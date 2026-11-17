@@ -721,8 +721,9 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
                   V_dead (liquid volume between bed and electrode that moves with the plug)
       cell      : h, w_channel, R;  electrode: kind, area
       sample, conjugate, exposure_s, chemistry, steps as in evaluate_planar
-      read      : mode ('swept' | 'parked'), t_acc_s, Q_read_uL_min (swept), t_read_s, sigma_uL (dispersion between
-                  bed and electrode, standard deviation), n_tanks (bed)
+      read      : mode ('swept' | 'parked' | 'continuous'), t_acc_s, Q_read_uL_min, t_read_s, sigma_uL (dispersion
+                  between bed and electrode, standard deviation), n_tanks (bed)
+      transfer  : optional dict(efficiency_key, nsb_factor_key) - immune-complex transfer to a second bed (tier 3)
     """
     p = Ctx(ps)
     chem = CHEMISTRIES[design["chemistry"]]
@@ -758,6 +759,13 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     N_nsb_extra = per_area * p(bed["extra_factor_key"], "fold") * bed.get("extra_area", 0.0)
     if bed.get("bore_area", 0.0) > 0:                       # wall of the cell's inlet bore between bed and electrode
         N_nsb_extra = N_nsb_extra + per_area * p(bed["bore_factor_key"], "fold") * bed["bore_area"]
+    if design.get("transfer"):
+        # immune-complex transfer to a second, clean bed that is the one read (tier 3): a fraction of the specific
+        # complexes arrives, and a fraction of the first bed's non-specific label comes with them.  Both are the
+        # bounded lever magnitudes of docs/05 (ma.design_levers, UNVERIFIED), sampled within their bounds.
+        N_spec = N_spec * p(design["transfer"]["efficiency_key"], "fraction")
+        f_nsb = p(design["transfer"]["nsb_factor_key"], "fold")
+        N_nsb_bed, N_nsb_extra = N_nsb_bed * f_nsb, N_nsb_extra * f_nsb
     N_nsb = N_nsb_bed + N_nsb_extra
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
     uptake = 1.0 - np.exp(-k_nsb * (p(bed["surface_factor_key"], "fold") * A_bed) / d["Q"])

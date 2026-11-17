@@ -1,7 +1,7 @@
 # 26 — Round brief: best-LOD assays on the equipment in hand, in three tiers
 
 Written by the orchestrator on 2026-11-17. This file is the shared source of truth for every task of this round
-(docs/26–36, `scripts/tier_round/`, `results/tier_round/`). docs/00 and the fixed decisions in CLAUDE.md still
+(docs/26–32, `scripts/tier_round/`, `results/tier_round/`). docs/00 and the fixed decisions in CLAUDE.md still
 apply except where section 3 says otherwise.
 
 ## 1. The request
@@ -101,11 +101,9 @@ recorded.
 | docs/27 | capability map of the equipment in hand without added hardware; modelling map |
 | docs/28 | Micrux cells and electrodes; passive in-line parts; additions for tier 3 |
 | docs/29 | literature: detection and amplification, capture formats, benchmarks |
-| docs/30 | candidates per tier and their selection |
-| docs/31, 32, 33 | detailed design of tier 1, tier 2, tier 3 |
-| docs/34 | independent review and resolution of findings |
-| docs/35 | decision: comparison of the three implementations, bench order, open items |
-| docs/36 | session record |
+| docs/30 | the three implementations: design, step tables, model LOD, alternatives, bench experiments, comparison |
+| docs/31 | independent review and resolution of findings |
+| docs/32 | session record |
 | `scripts/tier_round/`, `results/tier_round/` | calculation kit, design scripts and their outputs |
 
 ## 7. Rules for every task of this round
