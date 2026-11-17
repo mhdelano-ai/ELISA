@@ -139,3 +139,11 @@ detection:
     source: UNVERIFIED
     confidence: low
     note: "Redox-cycling current of an interdigitated array driven by ONE channel (second comb as counter and reference) relative to bipotentiostat operation."
+  step_background_charge_density:
+    value: 0.1
+    low: 0.02
+    high: 0.5
+    unit: C/m^2
+    source: "UNVERIFIED (double-layer and surface charge of a potential step of about 0.35 V at 10-50 uF/cm^2; lit_A A.4 prefers held-potential amperometry for this reason)"
+    confidence: low
+    note: "Background charge of the potential step in read mode accumulate_step; its noise is ma.noise.background_current_relative_noise of this charge."

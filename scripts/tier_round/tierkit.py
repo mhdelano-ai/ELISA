@@ -515,22 +515,42 @@ def _grid(p, conc):
 # ----------------------------------------------------------------------------------------------------
 # tier 1: capture on the working electrode, read in the stopped cell
 # ----------------------------------------------------------------------------------------------------
+def cell_conversion(cell, D, area, Q):
+    """Fraction of a solute stream that reacts at a transport-limited electrode of the given area.
+
+    'radial' (wall-jet cell with a thin gap, the Micrux flow add-ons): the whole stream enters through the bore
+    above the electrode centre and leaves radially through the gap of height h.  For creeping parabolic flow the
+    convection-diffusion problem in the swept area s = pi (r^2 - r_bore^2) is identical to the slit problem in
+    w x (README B), so the exact slit solution is used with xi = D s / (Q h); the stagnation zone under the bore
+    is not counted.  'channel': cross-flow thin-layer cell, elisa_sim.transport.thin_layer_conversion.
+    """
+    h = cell["h"]
+    if cell.get("flow_geometry", "radial") == "radial":
+        s_eff = max(area - np.pi * cell.get("bore_radius", 0.0) ** 2, 0.0)
+        return tr.conversion("slit", D * s_eff / (Q * h), np.inf)
+    side = np.sqrt(area)
+    return tr.thin_layer_conversion(D, side, side, h, cell["w_channel"], Q)
+
+
 def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
-    """Capture antibody on the working electrode (and optionally on the floor around it) of a thin-layer cell.
+    """Capture antibody on the working electrode (and optionally on the floor around it); the enzyme product is
+    read at that electrode (tier 1).
 
     design keys (all SI unless the name carries a unit):
       name, steps, exposure_s{capture_to_read, label_to_read}, chemistry
-      cell      : h, w_channel, R (radius of the stopped liquid layer around the electrode),
-                  lid_factor_key (NSB surface-factor parameter of the ceiling material)
-      electrode : kind ('printed' | 'thinfilm'), area, floor_factor_key (NSB factor of the floor around it),
-                  we_factor_key (NSB factor of the electrode itself)
+      cell      : flow_geometry ('radial' wall-jet thin gap, default | 'channel'), h (gap height),
+                  R (radius of the liquid layer = O-ring inner radius), bore_radius, bore_length (inlet bore above
+                  the electrode; radial only), w_channel (channel only), lid_factor_key (NSB factor of the lid)
+      electrode : kind ('printed' | 'thinfilm'), area, we_factor_key (NSB factor of the electrode surface),
+                  floor_factor_key (NSB factor of the floor around it)
       capture   : site_factor_key (parameter: active capture sites relative to an oriented monolayer),
                   ring_width (m; capture coating also on the floor ring a < r < a + ring_width; 0 = electrode only)
       sample    : Q_uL_min, t_load_min, V_transit_uL, mode ('flow' | 'stop_go'), dwell_s (stop_go)
       conjugate : C_nM, V_uL, Q_uL_min, t_stop_min
-      read      : mode ('steady' | 'accumulate_step' | 'cycling' | 'ida'), t_wait_s (electrode on, before the read
-                  window; steady and cycling), t_acc_s (accumulate_step), t_read_s, k_reg (cycling, 1/s),
-                  ida (dict of finger pairs m, length b, width w, gap g; mode 'ida'), two_electrode (bool)
+      read      : mode ('steady' stopped, electrode on | 'steady_flow' electrode on, substrate flowing |
+                  'accumulate_step' | 'cycling' | 'ida'), t_wait_s (electrode on before the read window),
+                  t_acc_s (accumulate_step), t_read_s, Q_read_uL_min (steady_flow), k_reg (cycling, 1/s),
+                  ida (dict m, b, w, g; mode 'ida'), two_electrode (bool)
       preread   : bool - a substrate background read on the same electrode before the sample injection
     """
     p = Ctx(ps)
@@ -539,8 +559,10 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     cell, el, cap, rd = design["cell"], design["electrode"], design["capture"], design["read"]
     A_we = el["area"]
     a = np.sqrt(A_we / np.pi)
-    h, w_c, R = cell["h"], cell["w_channel"], cell["R"]
-    side = np.sqrt(A_we)
+    h, R = cell["h"], cell["R"]
+    radial = cell.get("flow_geometry", "radial") == "radial"
+    rb = cell.get("bore_radius", 0.0) if radial else 0.0
+    Lb = cell.get("bore_length", 0.0) if radial else 0.0
 
     # 1-2. delivery and capture
     d = _delivery(design, p, conc)
@@ -548,22 +570,35 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
              * p("chem.surfaces.active_fraction_oriented", "fraction") / NA) * p(cap["site_factor_key"], "fraction")
     k_r = p("chem.antibodies.kon_capture", "m^3/(mol*s)") * gamma
     ring_w = cap.get("ring_width", 0.0)
-    L_patch = side + 2.0 * ring_w
-    w_patch = min(w_c, side + 2.0 * ring_w)
-    if design["sample"].get("mode", "flow") == "flow":
-        f_patch = planar_flow_capture(d["D_igg"], k_r, h, w_c, L_patch, w_patch, d["Q"])
-    else:
+    A_patch = np.pi * (a + ring_w) ** 2
+    Da = k_r * h / d["D_igg"]
+    stop_go = design["sample"].get("mode", "flow") == "stop_go"
+    if stop_go:
         dwell = design["sample"]["dwell_s"]
         D0 = p.nominal("chem.analyte.diffusion_coefficient", "m^2/s")
         k0 = float(np.mean(np.asarray(k_r, float)))
-        f_patch = slab_capture_fraction(D0, k0, h, dwell) * min(1.0, w_patch / w_c) + 0.0 * k_r
-        V_seg = L_patch * w_c * h
-        n_steps = d["n_flush"] * d["V_loop"] / V_seg
-        need = np.max(np.asarray(n_steps, float)) * (dwell + V_seg / d["Q"]) / 60.0
+        V_seg = np.pi * R ** 2 * h if radial else (np.sqrt(A_patch) * cell["w_channel"] * h)
+        foot = np.pi * R ** 2 if radial else np.sqrt(A_patch) * cell["w_channel"]
+        f_patch = slab_capture_fraction(D0, k0, h, dwell) * min(1.0, A_patch / foot) + 0.0 * k_r
+        share_we = A_we / A_patch
+        need = np.max(np.asarray(d["n_flush"], float)) * float(np.mean(np.asarray(d["V_loop"], float))) / V_seg \
+            * (dwell + V_seg / d["Q"]) / 60.0
         if need > design["sample"]["t_load_min"] * 1.02:
             warnings.warn(f"{design['name']}: stop-and-go needs {need:.0f} min for the plug, more than t_load")
-    A_patch = L_patch * w_patch
-    share_we = A_we / A_patch                                  # uniform capture density over the patch (approx.)
+        k_m = np.nan
+    elif radial:
+        s_we = max(A_we - np.pi * rb ** 2, 0.0)
+        s_patch = A_patch - np.pi * rb ** 2
+        f_we = tr.conversion("slit", d["D_igg"] * s_we / (d["Q"] * h), Da)
+        f_patch = tr.conversion("slit", d["D_igg"] * s_patch / (d["Q"] * h), Da) if ring_w > 0 else f_we
+        share_we = f_we / f_patch
+        k_m = tr.conversion("slit", d["D_igg"] * s_we / (d["Q"] * h), np.inf) * d["Q"] / A_we
+    else:
+        side = np.sqrt(A_patch)
+        w_c = cell["w_channel"]
+        f_patch = planar_flow_capture(d["D_igg"], k_r, h, w_c, side, min(w_c, side), d["Q"])
+        share_we = A_we / A_patch
+        k_m = leveque_mass_transfer_coefficient(d["D_igg"], h, w_c, side, d["Q"])
     N_cap = f_patch * d["N_in"]
 
     # 3-4. labelling and retention
@@ -571,18 +606,18 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     N_spec = N_cap * lab["ret_capture"] * lab["f_label"] * lab["ret_label"] * lab["enz"]
     N_spec_we, N_spec_ring = N_spec * share_we, N_spec * (1.0 - share_we)
 
-    # 5. non-specific label on the electrode, the floor around it and the ceiling
+    # 5. non-specific label on the electrode, the floor around it and the lid
     k_nsb = p("chem.nsb.nsb_effective_rate_constant", "m/s") * p(chem["label_nsb_factor"], "fold") \
         * p("ma.labelling.detection_on_capture_residual_factor", "fold")
     per_area = k_nsb * lab["exposure"] * NA * lab["enz"]                       # enzymes per m^2 at surface factor 1
     sf_we = p(el["we_factor_key"], "fold")
-    sf_floor = p(el["floor_factor_key"], "fold")
-    sf_lid = p(cell["lid_factor_key"], "fold")
+    A_floor = np.pi * R ** 2 - A_we
+    A_lid = np.pi * (R ** 2 - rb ** 2)
     N_nsb_we = per_area * sf_we * A_we
-    N_nsb_floor = per_area * sf_floor * (np.pi * R ** 2 - A_we)
-    N_nsb_lid = per_area * sf_lid * np.pi * R ** 2
+    N_nsb_floor = per_area * p(el["floor_factor_key"], "fold") * A_floor
+    N_nsb_lid = per_area * p(cell["lid_factor_key"], "fold") * A_lid
 
-    # 6. carry-over of conjugate into the next determination's sample injection (fresh electrode each time)
+    # 6. conjugate carried into the next determination's sample injection (fresh electrode each time)
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
     uptake = 1.0 - np.exp(-k_nsb * sf_we * A_we / d["Q"])
     N_carry = c_inj ** 2 * lab["N_conj_injected"] * uptake
@@ -597,30 +632,36 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     # 8. read
     mode = rd["mode"]
     T = rd["t_read_s"]
-    regions = (("we", "floor", 0.0, a), ("floor", "floor", a, R), ("lid", "ceiling", 0.0, R))
+    regions = (("we", "floor", 0.0, a), ("floor", "floor", a, R), ("lid", "ceiling", rb, R))
     if ring_w > 0:
-        regions = regions + (("ring", "floor", a, min(R, a + ring_w * np.sqrt(np.pi) / 2.0 + ring_w)),)
-    other_bg = 0.0
-    noise_factor = 1.0
+        regions = regions + (("ring", "floor", a, min(R, a + ring_w)),)
+    other_bg, noise_factor, stopped = 0.0, 1.0, True
     if mode == "steady":
         t1 = rd.get("t_wait_s", 0.0)
-        phases = (("on", t1 + T),)
-        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], phases, regions)
+        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("on", t1 + T),), regions, rb, Lb)
         g = {k: _between(r, "cum", t1, t1 + T) for k, r in kr.items()}        # mol collected per unit source
         col = dict(we=T, floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0))
         q_vol, q_init = nF * g["volume"], nF * g["initial"]
+    elif mode == "steady_flow":
+        Qr = rd["Q_read_uL_min"] * ULMIN
+        eta = float(cell_conversion(cell, ch["D_prod"], A_we, Qr))
+        # product formed on the lid above the electrode crosses the gap while it is carried outward: about half
+        # of the inlet-stream conversion (approximation); the floor ring is downstream of the electrode
+        col = dict(we=T, floor=0.0, lid=0.5 * eta * T * max(A_we - np.pi * rb ** 2, 0.0) / A_lid, ring=0.0)
+        q_init = nF * eta * Qr * T                                             # impurity arrives with the stream
+        q_vol = q_init * p("ma.timing.substrate_reservoir_age", "s")           # hydrolysis in the reservoir
+        stopped = False
     elif mode == "accumulate_step":
         t_acc = rd["t_acc_s"]
-        phases = (("off", t_acc), ("on", T))
-        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], phases, regions)
+        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("off", t_acc), ("on", T)), regions, rb, Lb)
         g = {k: _between(r, "cum", t_acc, t_acc + T) for k, r in kr.items()}
         col = dict(we=g["we"], floor=g["floor"], lid=g["lid"], ring=g.get("ring", 0.0))
         q_vol, q_init = nF * g["volume"], nF * g["initial"]
+        other_bg = p("tr.detection.step_background_charge_density", "C/m^2") * A_we
     elif mode in ("cycling", "ida"):
         t1 = rd.get("t_wait_s", 0.0)
-        phases = (("off", t1 + T),)
-        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], phases, regions)
-        ci = {k: _between(r, "cint", t1, t1 + T) for k, r in kr.items()}      # integral of surface conc, per unit source
+        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("off", t1 + T),), regions, rb, Lb)
+        ci = {k: _between(r, "cint", t1, t1 + T) for k, r in kr.items()}      # integral of surface conc per unit source
         if mode == "cycling":
             k_reg = p("tr.detection.chemical_cycling_rate_constant", "1/s") if rd.get("k_reg") is None else rd["k_reg"]
             per_conc = nF * cycling_surface_velocity(ch["D_prod"], k_reg, h) * A_we        # A per (mol/m^3)
@@ -645,14 +686,13 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     Q_spec = nF * rate * (N_spec_we * col["we"] + N_spec_ring * col["ring"])
     Q_nsb = nF * rate * (N_nsb_we * col["we"] + N_nsb_floor * col["floor"] + N_nsb_lid * col["lid"])
     Q_carry = nF * rate * N_carry * col["we"]
-    eff_low = (N_spec[..., 1:2] / np.maximum(d["N_vial"][..., 1:2], 1e-300)) if np.ndim(N_spec) else 0.0
+    eff_low = N_spec[..., 1:2] / np.maximum(d["N_vial"][..., 1:2], 1e-300)
     Q_cont = nF * rate * d["N_cont_vial"] * eff_low * share_we * col["we"]
     Q_hyd = hyd * q_vol
     Q_imp = c_imp * q_init
     N_blank_enz = N_nsb_we + N_nsb_floor * col["floor"] / col["we"] + N_nsb_lid * col["lid"] / col["we"] + N_carry
     q_per_enzyme = nF * rate * col["we"]
-    k_m = leveque_mass_transfer_coefficient(d["D_igg"], h, w_c, L_patch, d["Q"])
-    diag = dict(capture_fraction=_sq(f_patch * d["chain"]), k_m_leveque=_sq(k_m), k_r=_sq(k_r),
+    diag = dict(capture_fraction=_sq(f_patch * d["chain"]), k_m=_sq(k_m), k_r=_sq(k_r),
                 N_captured_at_1pg=_interp_at(conc, N_cap + 0.0 * conc, 1.0),
                 enzymes_on_we_at_1pg=_interp_at(conc, N_spec_we + 0.0 * conc, 1.0),
                 N_nsb_we=_sq(N_nsb_we), N_nsb_floor=_sq(N_nsb_floor), N_nsb_lid=_sq(N_nsb_lid),
@@ -660,10 +700,11 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
                 f_label=_sq(lab["f_label"]), ret_label=_sq(lab["ret_label"]), ret_capture=_sq(lab["ret_capture"]),
                 exposure_nM_min=_sq(lab["exposure"]) * 1e6 / 60.0, loop_transfer=_sq(d["f_transfer"]),
                 n_flush=_sq(d["n_flush"]), current_per_enzyme_A=_sq(q_per_enzyme) / T,
-                mean_current_at_1pg_A=_interp_at(conc, Q_spec + 0.0 * conc, 1.0) / T)
+                mean_current_at_1pg_A=_interp_at(conc, Q_spec + 0.0 * conc, 1.0) / T,
+                mean_blank_current_A=_sq(Q_nsb + Q_imp + Q_hyd + other_bg) / T)
     Qs = dict(spec=Q_spec + 0.0 * conc, nsb=Q_nsb, carry=Q_carry, hyd=Q_hyd, imp=Q_imp, cont=Q_cont,
               other_bg=other_bg)
-    return _finish(design, p, conc, Qs, q_per_enzyme, N_blank_enz, T, A_we, True,
+    return _finish(design, p, conc, Qs, q_per_enzyme, N_blank_enz, T, A_we, stopped,
                    p("tr.nsb.unit_to_unit_cv_planar", "fraction"), design.get("preread", False), diag, noise_factor)
 
 
@@ -675,8 +716,9 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
 
     design keys:
       bed       : d_p, eps, V_bed, column_id (packed bed);  surface_factor_key;
-                  extra_area (m^2 of frit / wall wetted by conjugate inside the accumulation volume) and
-                  extra_factor_key;  V_dead (liquid volume between bed and electrode that moves with the plug)
+                  extra_area (m^2 of retainer wetted by conjugate inside the accumulation volume) and
+                  extra_factor_key;  bore_area and bore_factor_key (wall of the cell inlet bore);
+                  V_dead (liquid volume between bed and electrode that moves with the plug)
       cell      : h, w_channel, R;  electrode: kind, area
       sample, conjugate, exposure_s, chemistry, steps as in evaluate_planar
       read      : mode ('swept' | 'parked'), t_acc_s, Q_read_uL_min (swept), t_read_s, sigma_uL (dispersion between
@@ -688,7 +730,7 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     bed, cell, el, rd = design["bed"], design["cell"], design["electrode"], design["read"]
     A_we = el["area"]
     a = np.sqrt(A_we / np.pi)
-    h, w_c, R = cell["h"], cell["w_channel"], cell["R"]
+    h, R = cell["h"], cell["R"]
 
     d = _delivery(design, p, conc)
     gamma = (p("chem.surfaces.igg_surface_density_monolayer", "molecules/m^2")
@@ -714,6 +756,8 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     per_area = k_nsb * lab["exposure"] * NA * lab["enz"]
     N_nsb_bed = per_area * p(bed["surface_factor_key"], "fold") * A_bed
     N_nsb_extra = per_area * p(bed["extra_factor_key"], "fold") * bed.get("extra_area", 0.0)
+    if bed.get("bore_area", 0.0) > 0:                       # wall of the cell's inlet bore between bed and electrode
+        N_nsb_extra = N_nsb_extra + per_area * p(bed["bore_factor_key"], "fold") * bed["bore_area"]
     N_nsb = N_nsb_bed + N_nsb_extra
     c_inj = p("hw.smfl.carryover_protein_conjugate", "fraction")
     uptake = 1.0 - np.exp(-k_nsb * (p(bed["surface_factor_key"], "fold") * A_bed) / d["Q"])
@@ -745,7 +789,7 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     other_bg = 0.0
     if rd["mode"] == "swept":
         Qr = rd["Q_read_uL_min"] * ULMIN
-        eta = tr.thin_layer_conversion(ch["D_prod"], np.sqrt(A_we), np.sqrt(A_we), h, w_c, Qr)
+        eta = cell_conversion(cell, ch["D_prod"], A_we, Qr)
         eluted = tr.tanks_in_series_eluted(Qr * T / V_acc, n_eff)
         q_per_mol = nF * eta * eluted
         stopped = False
@@ -754,8 +798,9 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
         cell_blank = 0.0
     elif rd["mode"] == "parked":
         phases = (("on", T),)
-        regions = (("we", "floor", 0.0, a), ("floor", "floor", a, R), ("lid", "ceiling", 0.0, R))
-        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], phases, regions)
+        rb, Lb = cell.get("bore_radius", 0.0), cell.get("bore_length", 0.0)
+        regions = (("we", "floor", 0.0, a), ("floor", "floor", a, R), ("lid", "ceiling", rb, R))
+        _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], phases, regions, rb, Lb)
         V_coll = kr["initial"]["cum"][-1]                                       # m^3 swept clean by the electrode in T
         V_layer = np.pi * R ** 2 * h
         frac = min(1.0, V_coll / max(V_plug, 1e-30)) if V_plug <= V_layer else min(1.0, V_coll / V_plug)
@@ -771,6 +816,25 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
         v = ch["kcat"] * ch["S0"] / (ch["Km"] + ch["S0"]) / NA
         cell_blank = nF * v * per_area * (sf_we * A_we * T + sf_floor * (np.pi * R ** 2 - A_we) * g["floor"]
                                            + sf_lid * np.pi * R ** 2 * g["lid"])
+    elif rd["mode"] == "continuous":
+        # no stop: substrate flows through the bed and the cell; the steady current is the enzyme turnover
+        Qr = rd["Q_read_uL_min"] * ULMIN
+        eta = cell_conversion(cell, ch["D_prod"], A_we, Qr)
+        v = ch["kcat"] * ch["S0"] / (ch["Km"] + ch["S0"]) / NA                # mol/s per enzyme (fresh substrate)
+        eluted, stopped = 1.0, False
+        q_enz = nF * eta * v * T                                              # C per upstream enzyme
+        n_tot, n_blank = (N_spec + N_blank_enz) * q_enz / (nF * eta), N_blank_enz * q_enz / (nF * eta)
+        n_cont = d["N_cont_vial"] * eff_low * q_enz / (nF * eta)
+        n_hyd = Qr * T * ch["k_hyd"] * ch["S0"] * p("ma.timing.substrate_reservoir_age", "s")
+        q_per_mol = nF * eta
+        Q_imp = nF * eta * Qr * ch["imp"] * ch["S0"] * T
+        referenced = design.get("preread", False)
+        rb = cell.get("bore_radius", 0.0)
+        A_lid = np.pi * (R ** 2 - rb ** 2)
+        # conjugate left on the electrode and on the lid above it works in the same stream
+        cell_blank = nF * v * T * per_area * (p(el["we_factor_key"], "fold") * A_we
+                                               + p(cell["lid_factor_key"], "fold") * 0.5 * eta
+                                               * max(A_we - np.pi * rb ** 2, 0.0))
     else:
         raise ValueError(rd["mode"])
     Q_spec = q_per_mol * (n_tot - n_blank)

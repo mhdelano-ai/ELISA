@@ -48,7 +48,7 @@ def bed_against_model():
                  column_id=g("ma.geometry.packed_bed_column_inner_diameter", "m"),
                  surface_factor_key="ma.nsb.surface_factor_packed_bed",
                  extra_area=np.pi * tube_d * conn_L, extra_factor_key="ma.nsb.surface_factor_tubing", V_dead=0.0),
-        cell=dict(h=g("hw.flow_cells.thin_layer_basi.channel_height", "m"),
+        cell=dict(flow_geometry="channel", h=g("hw.flow_cells.thin_layer_basi.channel_height", "m"),
                   w_channel=g("ma.geometry.thin_layer_channel_width", "m"), R=3e-3,
                   lid_factor_key="tr.nsb.surface_factor_lid"),
         electrode=dict(kind="thinfilm", area=g("hw.flow_cells.thin_layer_basi.we_area", "m^2"),

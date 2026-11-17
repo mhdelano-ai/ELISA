@@ -134,6 +134,21 @@ check("H3 hydrolysis source: collected + stored = produced", kr_["volume"]["cum"
       600.0 * np.pi * R ** 2 * hh, 1e-9)
 check("H4 lid source collected fraction lies between 0 and 1", float(0 < kr_["lid"]["cum"][-1] / 600.0 < 1), 1.0, 0.0)
 
+# ---- radial (wall-jet thin gap) capture and inlet bore ------------------------------------------------------------
+cellr = dict(flow_geometry="radial", h=100e-6, bore_radius=0.4e-3)
+Qf = 200 * tk.ULMIN
+s_eff = np.pi * (1.5e-3) ** 2 - np.pi * (0.4e-3) ** 2
+got = float(tk.cell_conversion(cellr, D_IGG, np.pi * (1.5e-3) ** 2, Qf))
+# Lighthill / Leveque solution for radial outflow in a gap: 3.147 D^(2/3) Q^(1/3) h^(-2/3) (a^2 - r0^2)^(2/3) / Q
+want = 3.147 * D_IGG ** (2 / 3) * Qf ** (1 / 3) * (100e-6) ** (-2 / 3) * (s_eff / np.pi) ** (2 / 3) / Qf
+check("R1 radial thin-gap capture equals the Lighthill-Leveque result for radial outflow", got, want, 0.03,
+      "independent derivation, README B")
+tb = tk.ThinLayer(0.5e-3, 0.16e-3, 1.0e-3, D_HQ, bore_radius=0.25e-3, bore_length=3e-3)
+check("R2 liquid volume of layer + bore on the grid", tb.volume,
+      np.pi * (1.0e-3) ** 2 * 0.16e-3 + np.pi * (0.25e-3) ** 2 * 3e-3, 1e-9)
+rb_ = tb.run([("off", 300.0), ("on", 300.0)], source=tb.source_surface("ceiling", 0.25e-3, 1.0e-3))
+check("R3 mass balance with a bore", rb_["mass"][-1] + rb_["cum"][-1], 600.0, 1e-9)
+
 # ---- D. packed bed -------------------------------------------------------------------------------------------
 check("D1 Kozeny-Carman, 2.8 um beads, eps 0.4, 24 um cake, 0.21 mm/s",
       float(tk.kozeny_carman_dp(0.89e-3, 2.1e-4, 2.8e-6, 0.4, 24e-6)),

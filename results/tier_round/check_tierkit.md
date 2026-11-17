@@ -30,10 +30,13 @@
 | H2 impurity collected in 600 s is below the whole layer | 1 | 1 | 0.00e+00 | 0e+00 | PASS |  |
 | H3 hydrolysis source: collected + stored = produced | 4.2412e-06 | 4.2412e-06 | 2.72e-14 | 1e-09 | PASS |  |
 | H4 lid source collected fraction lies between 0 and 1 | 1 | 1 | 0.00e+00 | 0e+00 | PASS |  |
+| R1 radial thin-gap capture equals the Lighthill-Leveque result for radial outflow | 0.012135 | 0.012285 | 1.22e-02 | 3e-02 | PASS | independent derivation, README B |
+| R2 liquid volume of layer + bore on the grid | 1.0917e-09 | 1.0917e-09 | 0.00e+00 | 1e-09 | PASS |  |
+| R3 mass balance with a bore | 600 | 600 | 8.39e-14 | 1e-09 | PASS |  |
 | D1 Kozeny-Carman, 2.8 um beads, eps 0.4, 24 um cake, 0.21 mm/s | 482.75 | 482.75 | 2.36e-16 | 1e-09 | PASS |  |
 | X1 bed format: captured fraction equals the model's B-bed-TL/alp_hqdp | 0.78569 | 0.78569 | 1.18e-11 | 2e-02 | PASS |  |
 | X2 bed format: specific enzymes at 1 pg/mL equal the model's | 7825.9 | 7825.9 | 1.22e-09 | 5e-02 | PASS |  |
 | X3 bed format: signal at 1 pg/mL equals the model's | 4.7229e-10 | 4.7229e-10 | 1.54e-09 | 5e-02 | PASS |  |
 | X4 bed format: LOD within 25 % of the model's (unit-to-unit terms and regeneration differ) | 19.875 | 19.38 | 2.56e-02 | 2e-01 | PASS | kit 19.9 vs model 19.4 pg/mL |
 
-33 of 33 checks passed.
+36 of 36 checks passed.
