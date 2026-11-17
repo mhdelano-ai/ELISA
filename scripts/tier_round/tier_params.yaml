@@ -1,2 +1,141 @@
-# tier_params.yaml — new parameters of the tier round (docs/26). SKELETON: being written.
-# Schema as in params/*.yaml: value, low, high, unit, source, confidence, note.
+# Parameters added by the three-tier round (docs/26).  Namespace tr.<section>.<name>.
+# Schema as params/*.yaml: value (best estimate), low, high (plausible bounds), unit, source, confidence, note.
+# Everything here is an engineering estimate unless a source is named; the bench experiment that replaces each
+# value is named in docs/30.  Geometry, flows, times and reagent concentrations are design choices and live in the
+# design dictionaries of scripts/tier_round/run_tiers.py, not here.
+
+capture:
+  site_factor_adsorbed:
+    value: 0.3
+    low: 0.1
+    high: 0.6
+    unit: fraction
+    source: "UNVERIFIED (randomly oriented, passively adsorbed capture antibody; literature values of 10-30 % active are common textbook figures, not checked here)"
+    confidence: low
+    note: "Active capture sites of an adsorbed antibody layer relative to the oriented monolayer of chem.surfaces (1e16 /m^2 x 0.85)."
+  site_factor_streptavidin_biotin:
+    value: 1.0
+    low: 0.4
+    high: 1.0
+    unit: fraction
+    source: "derived: chem.surfaces.active_fraction_oriented already describes biotin-streptavidin oriented capture (Chang2012)"
+    confidence: medium
+    note: "Biotinylated capture antibody on a streptavidin layer (electrode SAM or beads); lower bound for an incomplete streptavidin layer on a hand-made surface."
+
+nsb:
+  surface_factor_printed_electrode:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: "ma.nsb.surface_factor_chip (UNVERIFIED there: Jenkins1988, Qu1998)"
+    confidence: low
+    note: "NSB of the conjugate on a blocked printed carbon or gold electrode and on the printed dielectric around it, relative to blocked streptavidin beads."
+  surface_factor_gold_oeg:
+    value: 3.0
+    low: 0.5
+    high: 30.0
+    unit: fold
+    source: "UNVERIFIED (oligo-ethylene-glycol thiol monolayers on gold resist protein adsorption: Nishimura2011, abstract, via lit_B; no conjugate density measured)"
+    confidence: low
+    note: "Thin-film gold carrying a mixed biotin-OEG / OEG thiol monolayer with streptavidin and biotinylated capture antibody."
+  surface_factor_glass_blocked:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: "ma.nsb.surface_factor_chip"
+    confidence: low
+    note: "Glass, SU-8 and unused metal of a thin-film chip around the working electrode after blocking."
+  surface_factor_lid:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: "ma.nsb.surface_factor_tubing (UNVERIFIED there)"
+    confidence: low
+    note: "Polymer lid (PMMA or PEEK flow add-on) of the cell after a blocking rinse."
+  surface_factor_frit:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "Per unit of the frit or membrane area that is counted in bed.extra_area (internal pore area)."
+  unit_to_unit_cv_planar:
+    value: 0.15
+    low: 0.05
+    high: 0.4
+    unit: fraction
+    source: "UNVERIFIED (hand-coated single-use electrodes; printed-sensor immunoassay CVs of 5-13 % in lit_B section B.1 are for signals, not blanks)"
+    confidence: low
+    note: "Extra relative SD of the non-specific label count between hand-prepared electrodes, added in quadrature to chem.nsb.blank_CV_analog_electrochemical."
+  unit_to_unit_cv_bed:
+    value: 0.10
+    low: 0.03
+    high: 0.3
+    unit: fraction
+    source: "UNVERIFIED (hand-packed bed: bed mass variation; ma.capture.bead_dose_cv is 0.05 for a dispensed bead dose)"
+    confidence: low
+    note: "Extra relative SD of the non-specific label count between hand-packed single-use beds."
+
+noise:
+  thinfilm_sensor_to_sensor_cv:
+    value: 0.05
+    low: 0.02
+    high: 0.1
+    unit: fraction
+    source: "UNVERIFIED (lithographic thin-film electrodes have better-defined area than printed ones; Wilson2005 interassay CV 1.9-8.2 % on 1 mm thin-film electrodes, abstract, via lit_B)"
+    confidence: low
+    note: "Unit-to-unit CV of the response of single-use thin-film electrodes; printed electrodes use ma.noise.spe_sensor_to_sensor_cv."
+  preread_residual_cv:
+    value: 0.03
+    low: 0.01
+    high: 0.06
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection."
+  drift_area_exponent:
+    value: 1.0
+    low: 0.0
+    high: 1.0
+    unit: dimensionless
+    source: "UNVERIFIED (background current, hence its drift, scales with electrode area; 0 reproduces the existing model, which does not scale)"
+    confidence: low
+    note: "hw.gamry.baseline_drift is taken at ma.noise.reference_electrode_area and scaled by (A / A_ref)^exponent."
+
+detection:
+  chemical_cycling_rate_constant:
+    value: 1.0
+    low: 0.1
+    high: 10.0
+    unit: 1/s
+    source: "UNVERIFIED (pseudo-first-order regeneration of the oxidised product by a millimolar reductant; no rate constant checked)"
+    confidence: low
+    note: "k_reg of cycling_surface_velocity: quinone or quinone-imine reduced back by TCEP, hydrazine or NADH."
+  reductant_background_current_density:
+    value: 1.0e-3
+    low: 1.0e-4
+    high: 1.0e-1
+    unit: A/m^2
+    source: "UNVERIFIED (direct oxidation of the reductant at the electrode; the literature uses ITO or long SAMs to keep it low: Das2007, Kwon2008, Akanda2011 via docs/01)"
+    confidence: low
+    note: "0.1 uA/cm^2 best estimate; printed carbon and gold are more electrocatalytic than ITO."
+  cycling_noise_factor:
+    value: 2.0
+    low: 1.0
+    high: 5.0
+    unit: fold
+    source: "ma.chemistries.alp_aap.tcep_noise_factor (same idea, UNVERIFIED there)"
+    confidence: low
+    note: "Current noise multiplier when a reductant is present."
+  ida_two_electrode_efficiency:
+    value: 0.5
+    low: 0.1
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Redox-cycling current of an interdigitated array driven by ONE channel (second comb as counter and reference) relative to bipotentiostat operation."
