@@ -4105,7 +4105,7 @@
    "value": ""
   },
   {
-   "check": "the reference bed of the paired Monte Carlo is M-280's for every bead (load and rel 1)",
+   "check": "in the paired Monte Carlo each bead's sampled packed-bed factor is M-280's draw times (\u03c6\u00b7load + (1 \u2212 \u03c6)\u00b7rel), applied once",
    "ok": true,
    "value": ""
   }

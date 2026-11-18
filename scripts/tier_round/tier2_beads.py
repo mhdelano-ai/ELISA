@@ -142,7 +142,8 @@ def paired_mc(c, mult, ps, n):
     lod = np.where(np.isfinite(np.asarray(res.lod_pgml, float)), np.asarray(res.lod_pgml, float), 1e30)
     q = lambda x: float(np.percentile(lod, x))
     return dict(lod_nominal=float(np.asarray(nom.lod_pgml).reshape(-1)[0]), lod_median=q(50), lod_p05=q(5),
-                lod_p95=q(95), p_lod_le_target=float(np.mean(lod <= 1.0)), keys=keys, _lod=lod)
+                lod_p95=q(95), p_lod_le_target=float(np.mean(lod <= 1.0)), keys=keys, _lod=lod,
+                _pb=np.asarray(sampled.values[PB]), _mult=phi * c.get("load", 1.0) + (1.0 - phi) * rel)
 
 
 def limits(c, mult, mech):
@@ -267,10 +268,10 @@ def main(argv=None):
          all(r[t]["same_keys"] for r in res.values() for t in ("at_ref", "at_best")), ""),
         ("no chosen best amount (candidates and variants) sits at the low edge of the scan",
          all(r["best_mult"] != MULTS[0] for r in res.values()) and all(v["best_mult"] != MULTS[0] for v in variants), ""),
-        ("the reference bed of the paired Monte Carlo is M-280's for every bead (load and rel 1)",
-         all(abs(float(pset(ps, dict(c, rel=(1.0, 1.0, 1.0), load=1.0)).params[PB].value)
-                 - float(ps.params[PB].value)) < 1e-12 for c in CANDIDATES)
-         and all(v["same_keys"] for v in variants), ""),
+        ("in the paired Monte Carlo each bead's sampled packed-bed factor is M-280's draw times "
+         "(φ·load + (1 − φ)·rel), applied once",
+         all(np.allclose(r[t]["_pb"], ref["_pb"] * r[t]["_mult"], rtol=1e-12) for r in res.values()
+             for t in ("at_ref", "at_best")) and all(v["same_keys"] for v in variants), ""),
     ]
 
     # ---- report -----------------------------------------------------------------------------------------------
@@ -287,7 +288,7 @@ def main(argv=None):
     for k, v in share.items():
         L.append(f"| {k} | {v['area_mm2']:.3g} | {v['factor']:g} (`{v['key']}`) | {100 * v['share']:.0f} % |")
     L += ["", "## 2. Candidates (LOD in pg/mL)", "",
-          f"Bed factor = M-280's `{PB}` (3, 1–30) × (φ + (1 − φ) × rel), φ = share of M-280's bead NSB on the "
+          f"Bed factor = M-280's `{PB}` (3, 1–30) × (φ·load + (1 − φ)·rel), φ = share of M-280's bead NSB on the "
           f"capture-antibody layer, {PHI[0]} ({PHI[1]}–{PHI[2]}); rel = the bead surface relative to M-280. "
           "'Same area' = 24.4 mm² of beads (1×10⁶ M-280). 'Best amount' = lowest nominal LOD over 0.25–8 × that "
           "area, within the washer-lift check at 80 µL/min and the bed bore (0.5 mm × 2.5 mm). P(< M-280) = share "
@@ -337,7 +338,8 @@ def main(argv=None):
     if not a.quick:
         for r in res.values():
             for t in ("at_ref", "at_best"):
-                r[t].pop("_lod", None)
+                for x in ("_lod", "_pb", "_mult"):
+                    r[t].pop(x, None)
         (OUT / "tier2_beads.md").write_text(text + "\n")
         (OUT / "tier2_beads.json").write_text(json.dumps(
             dict(n=n, phi=PHI, candidates=res, ceiling=dict(scan=ceil, best=cbest, surface_clean=dict(scan=surf0, best=sbest)), blank_share=share, variants=variants,
