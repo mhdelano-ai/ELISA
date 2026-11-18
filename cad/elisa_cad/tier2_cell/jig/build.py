@@ -33,7 +33,7 @@ def common_volume(a, b):
 
 def foot_area():
     """Area of the foot annulus on the sheet and its shape factor (inner edge taken at the liner bore)."""
-    r_in, r_out = J.LINER_ID / 2.0, J.FOOT_D / 2.0
+    r_in, r_out = J.LINER_ID / 2.0, J.FOOT_D / 2.0      # bushing face + printed foot
     area = math.pi * (r_out ** 2 - r_in ** 2)
     s = area / (2 * math.pi * (r_in + r_out) * J.SHEET_T)
     return area, s
@@ -63,25 +63,55 @@ def checks(solids):
         hits = [k for k, v in others.items() if common_volume(pu, v) > 1e-4]
         add(f"{p['name']} at the end of its stroke (nose on the bushing head) clears every part", not hits,
             "none" if not hits else ", ".join(hits))
-    # finger: retains the bushing when locked, frees it when swung
-    lift = PT._cyl(J.SLIP_HEAD_D, 30.0, 0, 0, J.Z_LINER_TOP + 0.01)
-    add("swing finger locked: lies over the bushing head (retains it)", common_volume(PT.finger(-90.0), lift) > 1e-3,
-        f"overlap {J.SLIP_HEAD_D / 2 - J.FINGER_TIP_R:.2f} mm radial, {J.FINGER_GAP} above the head")
-    clear_vol = max(common_volume(PT.finger(a), lift) for a in (0.0, 180.0))
-    add("swing finger turned 90 degrees either way: the bushing lifts out freely", clear_vol <= 1e-6,
-        f"{clear_vol:.2e} mm3")
-    add("nose of the handle clears the finger's tip (radial)", J.FINGER_TIP_R - J.NOSE_D / 2.0 >= 0.3,
-        f"{J.FINGER_TIP_R - J.NOSE_D / 2.0:.2f} mm")
+    # finger: retains the bushing when locked, frees it when swung, at the head's largest diameter and with the
+    # finger shifted toward the axis by its play [R2-4]
+    head_max = J.SLIP_HEAD_D + 2 * J.HEAD_TOL
+    head_min = J.SLIP_HEAD_D - 2 * J.HEAD_TOL
+    lift = PT._cyl(head_max, 40.0, 0, 0, J.Z_LINER_TOP + 0.01)
+    add("ring finger locked: bears on the whole head rim, also at the smallest head (r_in < head r min - 0.3)",
+        J.RING_R_IN <= head_min / 2 - 0.3 and J.RING_R_OUT >= head_max / 2 + 0.3,
+        f"ring r {J.RING_R_IN}-{J.RING_R_OUT}, head r {head_min / 2:.2f}-{head_max / 2:.2f}; recesses anywhere")
+    clear_vol = max(common_volume(PT.finger(a, J.FINGER_PLAY_DESIGN), lift) for a in (0.0, 180.0))
+    d_boss = J.LOCK_R - J.FINGER_PLAY_DESIGN - J.BOSS_D / 2 - head_max / 2
+    add("finger swung 90 deg either way (shifted 0.1 toward the axis): a head of the largest diameter lifts out "
+        "freely; boss >= 0.6 from it", clear_vol <= 1e-6 and d_boss >= 0.6, f"{clear_vol:.1e} mm3, boss {d_boss:.2f} mm")
+    add("nose of the handle passes inside the ring (radial >= 0.3, finger shifted by its play)",
+        J.RING_R_IN - J.FINGER_PLAY_DESIGN - J.NOSE_D / 2.0 >= 0.3,
+        f"{J.RING_R_IN - J.FINGER_PLAY_DESIGN - J.NOSE_D / 2.0:.2f} mm")
+    lo_h, hi_h = J.head_top_range()
+    add("finger height is set at assembly: spacer printed high enough to be faced for the highest head, and the "
+        "shoulder leaves room for the shims at the lowest", J.SPACER_H + J.FINGER_SET_ALLOW >= hi_h + J.FINGER_GAP
+        and J.SHOULDER_L - (hi_h + J.FINGER_GAP) - J.FINGER_T - J.FINGER_PLAY >= 0.0 and lo_h + J.FINGER_GAP > 1.0,
+        f"head top {lo_h:.2f}-{hi_h:.2f} above the plate; spacer printed {J.SPACER_H + J.FINGER_SET_ALLOW:.2f}, faced "
+        f"to {lo_h + J.FINGER_GAP:.2f}-{hi_h + J.FINGER_GAP:.2f}; shims above {J.SHIMS_ABOVE:.2f} nominal")
+    proud = (J.Z_LINER_TOP - J.Z_PLATE_TOP - J.BODY_L_TOL - J.PRINT_TOL,
+             J.Z_LINER_TOP - J.Z_PLATE_TOP + J.BODY_L_TOL + J.PRINT_TOL)
+    add("bushing head seats on the liner end, not on the plate (liner top above the plate top >= 0.1 over the "
+        "tolerances)", proud[0] >= 0.1, f"{proud[0]:.2f}-{proud[1]:.2f} mm")
+    liner_bot_lo = J.BODY_L - J.BODY_L_TOL - (J.LINER_L + J.LINER_L_TOL)
+    add("liner floats above its ledge at bonding over the length tolerances (gap >= 0.1); ledge ring >= 1.5 thick",
+        liner_bot_lo - (J.Z_LEDGE - J.Z_FOOT) >= 0.1 and J.Z_LEDGE - J.Z_FOOT >= 1.5,
+        f"gap {liner_bot_lo - (J.Z_LEDGE - J.Z_FOOT):.2f} at the worst stack, ring {J.Z_LEDGE - J.Z_FOOT:.2f}")
+    add("bushing face flush with the foot (bonding procedure with the longer bushing; faces matched)",
+        J.FACE_MATCH <= 0.03, f"0 to -{J.FACE_MATCH} mm (matched order or lapped, docs/36 section 4)")
     # stroke depth
     lo, hi = J.tip_depth_range()
     add("tip depth into the backing at the stop stays in 0.1 to backing - 0.3 (sheet tolerance and the setting)",
         lo >= 0.1 and hi <= J.BACKING_T - 0.3, f"{lo:.2f}-{hi:.2f} mm of {J.BACKING_T}")
+    f_lo, f_hi = J.facing_range()
+    add("the nose is always faced, never too short (facing >= 0), and keeps >= 5 mm of its length",
+        f_lo >= 0.0 and J.NOSE_L - (f_hi - J.NOSE_ALLOW) >= 5.0,
+        f"facing {f_lo:.2f}-{f_hi:.2f} mm of {J.NOSE_ALLOW} printed extra")
+    gap_head = J.NOSE_L - (J.Z_SHOULDER_TOP + J.SHOULDER_HEAD_H - J.Z_HEAD_TOP) - (hi_h - lo_h) / 2
+    add("grip clears the shoulder-screw head at the stop over the head-top tolerance (>= 0.5)", gap_head >= 0.5,
+        f"{gap_head:.2f} mm")
     for key, p in (("A", J.PUNCH_A), ("B", J.PUNCH_B)):
         d = J.pocket_depth(p)
         add(f"{p['name']}: tube {J.protrusion():.2f} below the nose, {d:.2f} in the handle (pocket ends in the grip, "
             f">= 3 below its top)", J.NOSE_L <= d <= J.NOSE_L + J.GRIP_L - 3.0, f"pocket {d:.2f} mm")
         hole = p["bore"] + J.PUSH_HOLE_EXTRA
-        add(f"{p['name']}: shoulder carries the tube wall (push hole {hole:.3f} <= bore + 0.02 < tube)",
+        add(f"{p['name']}: shoulder locates the tube (push hole {hole:.3f} <= bore + 0.02 < tube); the bond carries "
+            f"the load",
             hole <= p["bore"] + 0.02 + 1e-9 and hole < p["tube_od"], f"shoulder {(p['tube_od'] - hole) / 2:.3f} mm")
         add(f"{p['name']}: push wire {J.PUSH_WIRE[key]} passes the bore {p['bore']:.3f} with >= 0.05",
             p["bore"] - J.PUSH_WIRE[key] >= 0.05, f"{p['bore'] - J.PUSH_WIRE[key]:.3f} mm")
@@ -94,7 +124,7 @@ def checks(solids):
     add("liner bond gap (8.00 H7 hole on the L-20 OD 7.970-7.978) is a clearance of 0.02-0.06 diametral",
         0.02 <= gap[0] and gap[1] <= 0.06, f"{gap[0]:.3f}-{gap[1]:.3f} mm")
     lw = J.LOCK_R - J.LINER_HOLE_D / 2.0 - J.INSERT_HOLE_D / 2.0
-    add(f"wall between the liner hole and the lock insert >= {J.INSERT_WALL} (ruthex minimum)", lw >= J.INSERT_WALL,
+    add(f"wall between the liner hole and the shoulder-screw insert >= {J.INSERT_WALL} (ruthex minimum)", lw >= J.INSERT_WALL,
         f"{lw:.2f} mm")
     walls = []
     for x, y in J.SCREW_XY:
@@ -102,9 +132,12 @@ def checks(solids):
         walls += [math.hypot(x - dx, y - dy) - J.INSERT_HOLE_D / 2 - J.DOWEL_D / 2 for dx, dy in J.DOWEL_XY]
     add(f"base: inserts >= {J.INSERT_WALL} from the edge and from the pin holes", min(walls) >= J.INSERT_WALL,
         f"smallest {min(walls):.2f} mm")
-    lk = J.LOCK_SCREW_L - (J.Z_SLEEVE_TOP + J.LOCK_WASHER_T - J.Z_PLATE_TOP)
-    add("lock screw engages the plate insert 4 mm to the hole depth - 0.3", 4.0 <= lk <= J.INSERT_HOLE_DEPTH - 0.3,
-        f"{lk:.2f} mm")
+    add("shoulder screw: M3 thread (6, UNVERIFIED) fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
+        4.0 <= 6.0 <= J.INSERT_HOLE_DEPTH - 0.3, "6.0 mm")
+    add("parking holes for the idle bushing clear the plate, the screws and the rails",
+        all(abs(x) - J.PARK_D / 2 >= J.PLATE_X / 2 + 2 and abs(y) - J.PARK_D / 2 >= J.STRIP_W / 2 + J.RAIL_GAP / 2
+            + J.RAIL_W + 1 and all(math.hypot(x - sx, y - sy) >= J.SLIP_HEAD_D / 2 + J.THUMB_HEAD_D / 2 + 1
+                                   for sx, sy in J.SCREW_XY) for x, y in J.PARK_XY), "ok")
     for nm, t in (("thinnest", -1), ("thickest", 1)):
         z_foot = J.Z_FOOT + t * (J.BACKING_T_TOL + J.SHEET_T_TOL)
         th = J.SCREW_L - J.PLATE_T - z_foot
@@ -145,14 +178,15 @@ def checks(solids):
         f"{z_min + J.RECESS_DEPTH - J.RAIL_H:.2f} mm; rail outer edge {J.STRIP_W / 2 + J.RAIL_GAP / 2 + J.RAIL_W}")
     add("strip slides under the relief (the plate rides on the strip: clearance = relief depth >= 0.5)",
         J.RECESS_DEPTH >= 0.5, f"{J.RECESS_DEPTH} mm")
-    add("the foot lies wholly on the strip, inside the rails", J.FOOT_D / 2 <= J.STRIP_W / 2,
-        f"foot r {J.FOOT_D / 2:.2f}, strip half-width {J.STRIP_W / 2}")
-    add("bushing head seats on the liner end (liner proud of the plate top by >= 0.2)", J.LINER_PROUD >= 0.2,
-        f"{J.LINER_PROUD} mm")
+    add("the foot lies wholly on the strip, inside the rails, and presses the sheet from the bushing body outwards",
+        J.FOOT_D / 2 <= J.STRIP_W / 2 and J.BODY_HOLE_D / 2 - J.LINER_ID / 2 <= 0.3,
+        f"foot r {J.BODY_HOLE_D / 2:.2f}-{J.FOOT_D / 2:.2f}, strip half-width {J.STRIP_W / 2}")
     web = J.PITCH - J.WASHER_OD - 0.2
     add("web between washers >= 1.0 at the pitch (outside + 0.2 for the punch bevel)", web >= 1.0, f"{web:.2f} mm")
     eng = J.DOWEL_L - J.DOWEL_IN_BASE - (J.Z_FOOT + J.BACKING_T_TOL + J.SHEET_T_TOL)
-    add("dowel engages the plate >= 3 mm at the thickest stack", eng >= 3.0, f"{eng:.2f} mm")
+    add("dowel engages the plate >= 3 mm at the thickest stack; plate holes a slide fit, base holes a press fit",
+        eng >= 3.0 and J.DOWEL_PLATE_FIT[0] > J.DOWEL_D + 0.008 and J.DOWEL_BASE_REAM < J.DOWEL_D + 0.002,
+        f"{eng:.2f} mm; plate {J.DOWEL_PLATE_FIT[0]}-{J.DOWEL_PLATE_FIT[1]}, base reamed {J.DOWEL_BASE_REAM}")
     ticks_ok = abs(J.SCALE_X0 % J.PITCH) < 1e-9 and J.SCALE_X0 >= J.PLATE_X / 2
     add("pitch scale ticks on the hole positions, downstream of the plate", ticks_ok,
         f"first tick x = {J.SCALE_X0}, plate edge {J.PLATE_X / 2}")
@@ -163,14 +197,15 @@ def main(argv=None):
     fast = "--fast" in (argv or sys.argv[1:])
     base, plate = PT.base(), PT.plate()
     printed = [("J-001_base", base), ("J-002_head_plate", plate),
-               ("J-003_handle_A", PT.handle(J.PUNCH_A)), ("J-003_handle_B", PT.handle(J.PUNCH_B)),
-               ("J-004_sleeve", PT.sleeve()), ("J-005_finger", PT.finger(-90.0))]
+               ("J-003_handle_A", PT.handle(J.PUNCH_A, printed=True)),
+               ("J-003_handle_B", PT.handle(J.PUNCH_B, printed=True)),
+               ("J-004_spacer", PT.spacer(printed=True)), ("J-005_finger", PT.finger(-90.0))]
     for nm, o in printed:
         C.export_step(o, OUT / f"{nm}.step")
         cq.exporters.export(o, str(OUT / f"{nm}.stl"), exportType="STL", tolerance=0.01, angularTolerance=0.1)
     solids = {"base": base, "plate": plate, "liner": PT.liner(), "slip_bushing": PT.slip_bushing(J.PUNCH_B),
-              "backing": PT.backing(), "sheet": PT.sheet(), "sleeve": PT.sleeve(), "finger": PT.finger(-90.0)}
-    solids["lock_washer"], solids["lock_screw"] = PT.lock_screw()
+              "backing": PT.backing(), "sheet": PT.sheet(), "spacer": PT.spacer(), "finger": PT.finger(-90.0)}
+    solids["shims"], solids["shoulder_screw"] = PT.lock_screw()
     for i, s in enumerate(PT.dowels()):
         solids[f"dowel_{i}"] = s
     for i, s in enumerate(PT.screws()):
@@ -178,20 +213,22 @@ def main(argv=None):
     for i, s in enumerate(PT.inserts()):
         solids[f"insert_{i}"] = s
     rows = checks(solids)
-    mats = {"base": "PEEK", "plate": "PEEK", "sleeve": "PEEK", "finger": "PEEK", "backing": "default",
+    mats = {"base": "PEEK", "plate": "PEEK", "spacer": "PEEK", "finger": "PEEK", "backing": "default",
             "sheet": "elastomer"}
     items = [(nm, o, "copper" if nm.startswith("insert") else mats.get(nm, "steel")) for nm, o in solids.items()]
     items.append(("outside_punch", PT.punch(J.PUNCH_B), "default"))
     C.export_step(C.assembly(items, "punch_jig"), OUT / "J-000_assembly.step")
     C.export_step(PT.slip_bushing(J.PUNCH_A), OUT / "slip_bushing_A_hole.step")
     C.export_step(PT.slip_bushing(J.PUNCH_B), OUT / "slip_bushing_B_outside.step")
-    for stale in ("slip_bushing_C_membrane.step", "J-004_lock_spacer.step", "J-004_lock_spacer.stl"):
+    for stale in ("slip_bushing_C_membrane.step", "J-004_lock_spacer.step", "J-004_lock_spacer.stl",
+                  "J-004_sleeve.step", "J-004_sleeve.stl"):
         (OUT / stale).unlink(missing_ok=True)
     worst_c, rss_c = J.concentricity_budget()
     lo, hi = J.tip_depth_range()
     res = dict(checks=rows, n_checks=len(rows), all_pass=all(r["ok"] for r in rows),
                numbers=dict(z_foot=J.Z_FOOT, plate_t=J.PLATE_T, foot_d=J.FOOT_D, z_head_top=J.Z_HEAD_TOP,
-                            protrusion=J.protrusion(), pocket_A=J.pocket_depth(J.PUNCH_A),
+                            protrusion=J.protrusion(), spacer_h=J.SPACER_H, shims_above=J.SHIMS_ABOVE,
+                            head_top_range=list(J.head_top_range()), facing_range=list(J.facing_range()), pocket_A=J.pocket_depth(J.PUNCH_A),
                             pocket_B=J.pocket_depth(J.PUNCH_B), tip_depth=[lo, hi],
                             slip_bore_A_in=J.slip_bore(J.PUNCH_A) / J.IN, slip_bore_B_in=J.slip_bore(J.PUNCH_B) / J.IN,
                             concentricity_rss=rss_c, concentricity_worst=worst_c))
@@ -202,8 +239,8 @@ def main(argv=None):
     if not fast:
         vis = [(o, m) for _nm, o, m in items]
         C.render_png(vis, OUT / "assembly_iso.png", view="iso", title="Washer punching jig (docs/36), stroke 2")
-        lift = {"base": 0, "backing": 3, "sheet": 5, "plate": 14, "liner": 26, "slip_bushing": 40, "sleeve": 30,
-                "finger": 46, "lock_washer": 52, "lock_screw": 58, "outside_punch": 75}
+        lift = {"base": 0, "backing": 3, "sheet": 5, "plate": 14, "liner": 26, "slip_bushing": 40, "spacer": 30,
+                "finger": 46, "shims": 52, "shoulder_screw": 58, "outside_punch": 75}
         ex = []
         for nm, o, m in items:
             dz = lift.get(nm, 70 if nm.startswith("screw") else (14 if nm == "insert_4" else 0))

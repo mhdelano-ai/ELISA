@@ -1,6 +1,6 @@
 """Solids of the washer punching jig (docs/36).  Every number comes from params.py.
 
-Printed parts: base() J-001, plate() J-002, handle() J-003, sleeve() J-004, finger() J-005.  Bought parts (liner,
+Printed parts: base() J-001, plate() J-002, handle() J-003, spacer() J-004, finger() J-005.  Bought parts (liner,
 slip bushings, punch tubes, pins, screws, inserts) and the workpiece are modelled for the assembly, the renders and
 the checks only.
 """
@@ -50,6 +50,7 @@ def base():
         b = b.union(_box(-hx + 3.0, hx - 3.0, y0, y1, 0.0, J.RAIL_H))
     tools = [_cyl(J.DOWEL_D, J.DOWEL_IN_BASE, x, y, -J.DOWEL_IN_BASE) for x, y in J.DOWEL_XY]
     tools += [_cyl(J.INSERT_HOLE_D, J.INSERT_HOLE_DEPTH, x, y, -J.INSERT_HOLE_DEPTH) for x, y in J.SCREW_XY]
+    tools += [_cyl(J.PARK_D, J.PARK_DEPTH, x, y, -J.PARK_DEPTH) for x, y in J.PARK_XY]        # idle bushing
     w, l, d = J.SCALE_TICK
     y_tick = y_in + J.RAIL_W + 0.4
     n = int(round((J.SCALE_X1 - J.SCALE_X0) / J.PITCH)) + 1
@@ -61,13 +62,15 @@ def base():
 
 
 def plate():
-    """J-002: carries the liner on the punch axis (liner flush at the foot, 0.3 proud at the top); rests only on the
-    strip with the foot around the liner; relief over the strip; dowel hole + slot; four screw holes; the lock insert."""
+    """J-002: reamed hole for the liner (bonded with the bushing face flush with the foot, liner top 0.8 above the
+    plate top); below it the bushing body passes through the foot; relief over the strip; dowel hole + slot; four
+    screw holes; the insert for the finger's shoulder screw."""
     hx, hy = J.PLATE_X / 2.0, J.PLATE_Y / 2.0
     p = _box(-hx, hx, -hy, hy, J.Z_FOOT, J.Z_PLATE_TOP).edges("|Z").fillet(2.0)
     relief = _box(-hx - 1, hx + 1, -J.RECESS_HALF_W, J.RECESS_HALF_W, J.Z_FOOT, J.Z_FOOT + J.RECESS_DEPTH) \
         .cut(_cyl(J.FOOT_D, J.RECESS_DEPTH, 0, 0, J.Z_FOOT))
-    tools = [relief, _cyl(J.LINER_HOLE_D, J.PLATE_T, 0, 0, J.Z_FOOT)]
+    tools = [relief, _cyl(J.LINER_HOLE_D, J.Z_PLATE_TOP - J.Z_LEDGE, 0, 0, J.Z_LEDGE),
+             _cyl(J.BODY_HOLE_D, J.Z_LEDGE - J.Z_FOOT, 0, 0, J.Z_FOOT)]
     tools += _dowel_tools(J.Z_FOOT, J.PLATE_T)
     tools += [_cyl(J.SCREW_CLEAR, J.PLATE_T, x, y, J.Z_FOOT) for x, y in J.SCREW_XY]
     lx, ly = J.LOCK_XY
@@ -75,44 +78,50 @@ def plate():
     return _cut_all(p, tools)
 
 
-def handle(p):
-    """J-003 for one SYNEO tube, nose face at z = 0 (the stop on the bushing head): nose, mushroom grip, drilled
-    pocket in which the tube bears on a shoulder, push-wire hole (tube bore + 0.02) through to the top."""
-    nose = _cyl(J.NOSE_D, J.NOSE_L)
+def handle(p, printed=False):
+    """J-003 for one SYNEO tube, nose face at z = 0 (the stop on the bushing head) as faced; printed=True gives the
+    part as printed, with NOSE_ALLOW more nose below z = 0.  Nose, mushroom grip, drilled pocket in which the tube is
+    located by a shoulder, push-wire hole (tube bore + 0.02) through to the top."""
+    extra = J.NOSE_ALLOW if printed else 0.0
+    nose = _cyl(J.NOSE_D, J.NOSE_L + extra, 0, 0, -extra)
     grip = _cyl(J.GRIP_D, J.GRIP_L, 0, 0, J.NOSE_L).edges(">Z").fillet(3.0).faces("<Z").edges().chamfer(1.0)
     h = nose.union(grip)
     depth = J.pocket_depth(p)
-    return _cut_all(h, [_cyl(p["tube_od"] + J.POCKET_CLEAR, depth),
-                        _cyl(p["bore"] + J.PUSH_HOLE_EXTRA, J.NOSE_L + J.GRIP_L)])
+    return _cut_all(h, [_cyl(p["tube_od"] + J.POCKET_CLEAR, depth + extra, 0, 0, -extra),
+                        _cyl(p["bore"] + J.PUSH_HOLE_EXTRA, J.NOSE_L + J.GRIP_L + extra, 0, 0, -extra)])
 
 
-def sleeve():
-    """J-004: stepped sleeve on the lock screw: the shoulder carries the finger 0.1 above the bushing head."""
+def spacer(printed=False):
+    """J-004: ring under the finger on the shoulder screw; printed FINGER_SET_ALLOW high, faced at assembly so that
+    the finger lies FINGER_GAP above the thicker bushing head."""
     lx, ly = J.LOCK_XY
-    low = _tube(J.SLEEVE_ID, J.SLEEVE_D + 2.0, J.Z_FINGER0 - J.Z_PLATE_TOP, lx, ly, J.Z_PLATE_TOP)
-    up = _tube(J.SLEEVE_ID, J.SLEEVE_D, J.Z_SLEEVE_TOP - J.Z_FINGER0, lx, ly, J.Z_FINGER0)
-    return low.union(up)
+    h = J.SPACER_H + (J.FINGER_SET_ALLOW if printed else 0.0)
+    return _tube(J.SHOULDER_D + 0.1, J.SPACER_D, h, lx, ly, J.Z_PLATE_TOP)
 
 
-def finger(angle_deg=-90.0):
-    """J-005: swing finger on the sleeve.  angle -90 = pointing at the punch axis (locked); 0 = swung clear."""
+def finger(angle_deg=-90.0, toward_axis=0.0):
+    """J-005: ring finger on the shoulder screw.  angle -90 = ring over the bushing head (locked); 0 or 180 = swung
+    clear.  toward_axis shifts it (hole play, printed tolerance) for the clearance checks."""
     lx, ly = J.LOCK_XY
-    length = J.LOCK_R - J.FINGER_TIP_R                     # pivot to tip, along the arm
-    arm = _box(0, length, -J.FINGER_W / 2, J.FINGER_W / 2, 0, J.FINGER_T)
-    boss = _cyl(J.SLEEVE_D + 3.0, J.FINGER_T)
-    f = arm.union(boss).cut(_cyl(J.SLEEVE_D + 0.2, J.FINGER_T))
-    return f.rotate((0, 0, 0), (0, 0, 1), angle_deg).translate((lx, ly, J.Z_FINGER0))
+    arm = _box(0, J.LOCK_R, -J.FINGER_W / 2, J.FINGER_W / 2, 0, J.FINGER_T)
+    ring = _cyl(2 * J.RING_R_OUT, J.FINGER_T, J.LOCK_R, 0, 0)
+    boss = _cyl(J.BOSS_D, J.FINGER_T)
+    f = arm.union(ring).union(boss)
+    f = f.cut(_cyl(2 * J.RING_R_IN, J.FINGER_T, J.LOCK_R, 0, 0)).cut(_cyl(J.FINGER_HOLE_D, J.FINGER_T))
+    f = f.rotate((0, 0, 0), (0, 0, 1), angle_deg)
+    return f.translate((lx, ly - toward_axis, J.Z_FINGER0))
 
 
 # ---- bought parts --------------------------------------------------------------------------------------------------
 def liner():
-    """Carr Lane L-20-8, at its largest OD; flush with the foot, 0.3 proud of the plate top."""
-    return _tube(J.LINER_ID, J.LINER_OD, J.LINER_L, 0, 0, J.Z_FOOT)
+    """Carr Lane L-20-6, at its largest OD; its top (the bushing's seat) is where the bushing face is flush with the
+    foot."""
+    return _tube(J.LINER_ID, J.LINER_OD, J.LINER_L, 0, 0, J.Z_LINER_BOT)
 
 
 def slip_bushing(punch):
     """Carr Lane SF-12-8-<bore>-NCB, seated on the liner end (recesses in the head not modelled)."""
-    shank = _tube(J.slip_bore(punch), J.LINER_ID, J.LINER_L, 0, 0, J.Z_FOOT)
+    shank = _tube(J.slip_bore(punch), J.LINER_ID, J.BODY_L, 0, 0, J.Z_FOOT)
     head = _tube(J.slip_bore(punch), J.SLIP_HEAD_D, J.SLIP_HEAD_H, 0, 0, J.Z_LINER_TOP)
     return shank.union(head)
 
@@ -124,14 +133,14 @@ def punch(p):
 
 
 def lock_screw():
-    """M3 x 14 socket head with a DIN 125 washer on top of the sleeve, into the plate's insert."""
+    """ISO 7379 shoulder screw (shoulder 4 x 10, M3) and the shim rings above the finger."""
     lx, ly = J.LOCK_XY
-    z = J.Z_SLEEVE_TOP
-    w = _tube(3.2, J.LOCK_WASHER_D, J.LOCK_WASHER_T, lx, ly, z)
-    zh = z + J.LOCK_WASHER_T
-    sc = _cyl(J.SCREW_D, J.LOCK_SCREW_L, lx, ly, zh - J.LOCK_SCREW_L) \
-        .union(_cyl(J.LOCK_HEAD_D, J.LOCK_HEAD_H, lx, ly, zh))
-    return w, sc
+    sc = _cyl(J.SHOULDER_D, J.SHOULDER_L, lx, ly, J.Z_PLATE_TOP) \
+        .union(_cyl(J.SHOULDER_HEAD_D, J.SHOULDER_HEAD_H, lx, ly, J.Z_SHOULDER_TOP)) \
+        .union(_cyl(J.SCREW_D, 6.0, lx, ly, J.Z_PLATE_TOP - 6.0))
+    z_sh = J.Z_FINGER0 + J.FINGER_T + J.FINGER_PLAY
+    shims = _tube(J.SHOULDER_D + 0.1, 8.0, J.Z_SHOULDER_TOP - z_sh, lx, ly, z_sh)
+    return shims, sc
 
 
 def dowels():
