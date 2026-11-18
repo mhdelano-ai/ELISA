@@ -1,0 +1,191 @@
+"""Build the tier-2 flow cell (docs/34): STEP files of the three custom parts and of the assembly, renders,
+the labelled section, the notes for the machining drawing and the check results -> cad/out/tier2_cell/.
+
+Run from cad/:   python -m elisa_cad.tier2_cell.build   [--fast: no renders]     (about 1 min)
+"""
+from __future__ import annotations
+
+import json
+import math
+import sys
+
+import cadquery as cq
+
+from .. import common as C
+from . import params as P
+from . import parts as PT
+from . import section as S
+
+OUT = C.out_dir("tier2_cell")
+
+
+def vol(o):
+    return C._shape(o).Volume()
+
+
+def common_volume(a, b):
+    try:
+        return C._shape(a.intersect(b)).Volume()
+    except Exception:                                   # no common solid
+        return 0.0
+
+
+def n_solids(o):
+    return len(C._shape(o).Solids())
+
+
+def checks(parts, liquid):
+    rows = []
+
+    def add(name, ok, value):
+        rows.append(dict(check=name, ok=bool(ok), value=value))
+
+    names = list(parts)
+    worst = 0.0
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            v = common_volume(parts[a], parts[b])
+            worst = max(worst, v)
+            if v > 1e-4:
+                add(f"no interference {a} / {b}", False, f"{v:.4f} mm3")
+    add("no interference between any two solid parts (10 parts; O-rings drawn at their compressed height)", worst <= 1e-4,
+        f"largest common volume {worst:.2e} mm3")
+    add("the liquid is one connected solid from the inlet port floor to the outlet port floor",
+        n_solids(liquid) == 1, f"{n_solids(liquid)} solid(s), {vol(liquid):.2f} mm3")
+    for nm in ("base", "plate", "body", "strip"):
+        v = common_volume(liquid, parts[nm])
+        add(f"the liquid does not cut into the {nm}", v <= 1e-4, f"{v:.2e} mm3")
+    # the liquid reaches both port floors
+    bb = C._shape(liquid).BoundingBox()
+    add("liquid reaches the floor of the inlet port", abs(bb.zmax - (PT.Z_TOP - P.PORT_DEPTH)) < 1e-6 or
+        bb.zmax >= PT.Z_TOP - P.PORT_DEPTH - 1e-6, f"z max {bb.zmax:.3f}")
+    add("liquid reaches the floor of the outlet port", abs(bb.xmin - (P.X0 + P.PORT_DEPTH)) < 1e-6,
+        f"x min {bb.xmin:.3f}")
+    # walls (mm), from the dimensions
+    r_port = P.PORT_MAJOR_D / 2.0
+    walls = {
+        "inlet thread to body riser": abs(P.RISER_BODY_X) - P.RISER_BODY_D / 2.0 - r_port,
+        "inlet thread to the end of the outlet through-hole": abs(P.RISER_BODY_X) - r_port,
+        "outlet thread to the M2.5 threads": abs(P.M25_XY[0][1]) - 1.25 - r_port,
+        "outlet thread to the body underside": P.OUTLET_Z - r_port,
+        "outlet thread to the body top": P.BODY_T - P.OUTLET_Z - r_port,
+        "collecting groove to the O-ring groove (plate underside)": P.GROOVE_STRIP_ID / 2.0 - P.RING_R1,
+        "thin-layer land beyond the working electrode": P.RING_R0 - P.WE_D / 2.0,
+        "plate under the cross channel, above the collecting groove": P.PLATE_T - P.CHANNEL_DEPTH - P.RING_DEPTH,
+        "plate above the O-ring groove": P.PLATE_T - P.GROOVE_STRIP_DEPTH,
+        "face seal between retainer seat and cross channel": abs(P.RISER_PLATE_X) - P.CHANNEL_W / 2.0
+        - P.RETAINER_POCKET_D / 2.0,
+        "cross channel and riser to the body-plate O-ring groove": P.GROOVE_IFACE_ID / 2.0 - abs(P.CHANNEL_X_END)
+        - max(P.CHANNEL_W, P.RISER_BODY_D) / 2.0,
+        "strip beyond the O-ring groove, each side": (P.STRIP_W - P.GROOVE_STRIP_OD) / 2.0,
+        "O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius)": P.GROOVE_STRIP_ID / 2.0
+        - P.PRINT_R_MAX,
+        "strip beyond the stack, for the connector": P.STRIP_L - P.WE_FROM_FREE_END - P.X1,
+    }
+    limits = {"strip beyond the O-ring groove, each side": 0.3, "strip beyond the stack, for the connector": 7.0,
+              "O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius)": 0.1,
+              "collecting groove to the O-ring groove (plate underside)": 0.5}
+    for k, v in walls.items():
+        lim = limits.get(k, 0.8)
+        add(f"wall or margin: {k} >= {lim} mm", v >= lim - 1e-9, f"{v:.2f} mm")
+    add("every drilled hole is at least 0.5 mm in diameter",
+        min(P.EXIT_D, P.BED_D, P.RISER_PLATE_D, P.RISER_BODY_D, P.OUTLET_THROUGH_D) >= 0.5,
+        f"smallest {min(P.EXIT_D, P.BED_D, P.RISER_PLATE_D, P.RISER_BODY_D, P.OUTLET_THROUGH_D)} mm")
+    deepest = max(P.INLET_FLOOR / P.BED_D, P.PLATE_T / P.EXIT_D,
+                  (P.OUTLET_Z + 0.4) / P.RISER_BODY_D, (P.PLATE_T) / P.RISER_PLATE_D)
+    add("no hole deeper than 10 diameters", deepest <= 10.0, f"deepest {deepest:.1f} diameters")
+    return rows
+
+
+def drawing_notes(masses):
+    L = ["# Tier-2 flow cell — notes for the machining drawings (generated; text of docs/34 section 5.2)", "",
+         "STEP files carry the nominal geometry. Threads are modelled as tap-drill holes. Everything not listed: "
+         "ISO 2768-m, edges broken 0.1–0.2 mm, no burrs in the liquid path.", "",
+         "| Part | File | Material | Features that need a call-out |", "|---|---|---|---|",
+         f"| Base | `base.step` | 316L stainless | 4 × M4×0.7-6H through. 2 × ⌀{P.DOWEL_D} P7 × 6 deep (press fit "
+         f"for ⌀3 m6 × 16 pins). Strip pocket {P.POCKET_W:.1f} +0.05/0 wide, depth {P.POCKET_DEPTH:.2f} ±0.02, floor "
+         "flat within 0.02 and Ra ≤ 0.8 µm. Top face flat within 0.02. |",
+         f"| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | Underside (cell face): flat within 0.02, "
+         f"Ra ≤ 0.4 µm inside ⌀{P.GROOVE_STRIP_OD}; no tool marks across the O-ring groove floor. O-ring groove "
+         f"⌀{P.GROOVE_STRIP_ID}/⌀{P.GROOVE_STRIP_OD}, depth {P.GROOVE_STRIP_DEPTH:.2f} ±0.03. Exit bore ⌀{P.EXIT_D} "
+         f"+0.03/0, both ends sharp and free of burr, within 0.05 of the dowel datum. 2 × ⌀{P.DOWEL_D} H7. "
+         f"4 × ⌀{P.M25_CLEAR} with 90° countersink ⌀{P.M25_CSK_D} from the underside (heads below the face). "
+         "Top face flat within 0.02, Ra ≤ 0.8 µm. |",
+         f"| Body | `body.step` | PEEK, natural, unfilled | 2 × {P.PORT_THREAD}, flat-bottom ports to the fitting "
+         f"maker's port drawing (depth {P.PORT_DEPTH} here; bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore "
+         f"⌀{P.BED_D} +0.03/0 through the port floor, concentric with the retainer seat within 0.05, no burr. "
+         f"Retainer seat ⌀{P.RETAINER_POCKET_D} +0.03/0, depth {P.RETAINER_POCKET_DEPTH:.2f} +0/−0.01. Underside flat "
+         f"within 0.02, Ra ≤ 0.8 µm. O-ring groove ⌀{P.GROOVE_IFACE_ID}/⌀{P.GROOVE_IFACE_OD}, depth "
+         f"{P.GROOVE_IFACE_DEPTH:.2f} ±0.03. 4 × M2.5×0.45-6H, {P.M25_THREAD_DEPTH:.0f} deep. 2 × ⌀{P.DOWEL_D} H7. |",
+         "", "| Part | Envelope (mm) | Mass (g) |", "|---|---|---|"]
+    for nm, (env, m) in masses.items():
+        L.append(f"| {nm} | {env} | {m:.0f} |")
+    return "\n".join(L) + "\n"
+
+
+def main(argv=None):
+    fast = "--fast" in (argv or sys.argv[1:])
+    custom = {"base": (PT.base(), "steel"), "nozzle_plate": (PT.plate(), "PEEK"), "body": (PT.body(), "PEEK")}
+    bought = {"strip": (PT.strip(), "PTFE"), "shim": (PT.shim(), "steel"),
+              "oring_strip": (PT.oring_strip(), "elastomer"), "oring_interface": (PT.oring_iface(), "elastomer"),
+              "screen": (PT.screen(), "steel"), "membrane": (PT.membrane(), "PTFE")}
+    liquid = PT.liquid()
+    for nm, (o, _m) in custom.items():
+        C.export_step(o, OUT / f"{nm}.step")
+    everything = [(nm, o, m) for nm, (o, m) in {**custom, **bought}.items()]
+    everything += [(f"screw_M4_{i}", s, "steel") for i, s in enumerate(PT.screws())]
+    everything += [(f"dowel_{i}", s, "steel") for i, s in enumerate(PT.dowels())]
+    everything += [("working_electrode", PT.working_electrode(), "default"), ("bed", PT.bed(), "copper"),
+                   ("liquid", liquid, "liquid")]
+    C.export_step(C.assembly(everything, "tier2_cell"), OUT / "assembly.step")
+    C.export_step(liquid, OUT / "liquid_path.step")
+
+    solid = {"base": custom["base"][0], "plate": custom["nozzle_plate"][0], "body": custom["body"][0],
+             "strip": bought["strip"][0], "shim": bought["shim"][0], "screen": bought["screen"][0],
+             "membrane": bought["membrane"][0], "oring_strip": bought["oring_strip"][0],
+             "oring_interface": bought["oring_interface"][0], "dowel_0": PT.dowels()[0]}
+    rows = checks(solid, liquid)
+    dens = {"base": 8.0e-3, "nozzle_plate": 1.31e-3, "body": 1.31e-3}                # g/mm3
+    masses = {}
+    for nm, (o, _m) in custom.items():
+        bb = C._shape(o).BoundingBox()
+        masses[nm] = (f"{bb.xlen:.0f} × {bb.ylen:.0f} × {bb.zlen:.1f}", vol(o) * dens[nm])
+    (OUT / "drawing_notes.md").write_text(drawing_notes(masses))
+    res = dict(checks=rows, all_pass=all(r["ok"] for r in rows),
+               liquid_volume_uL=vol(liquid),
+               volumes_uL=dict(bed_bore=P.BORE_AREA * P.INLET_FLOOR, exit_bore=P.EXIT_VOLUME_UL,
+                               thin_layer_over_electrode=math.pi * (P.WE_D / 2) ** 2 * P.GAP,
+                               chamber_disc=math.pi * P.CHAMBER_R ** 2 * P.GAP,
+                               collecting_groove=math.pi * (P.RING_R1 ** 2 - P.RING_R0 ** 2) * P.RING_DEPTH),
+               masses_g={k: v[1] for k, v in masses.items()})
+    (OUT / "check_results.json").write_text(json.dumps(res, indent=1))
+    for r in rows:
+        print(("pass  " if r["ok"] else "FAIL  ") + r["check"] + "  [" + str(r["value"]) + "]")
+    S.draw(OUT / "section.png")
+    if not fast:
+        items = [(o, m) for _n, o, m in everything if _n != "liquid"]
+        C.render_png(items, OUT / "assembly_iso.png", view="iso", title="Tier-2 flow cell (docs/34)")
+        # exploded
+        lift = {"base": 0, "shim": 4, "strip": 8, "working_electrode": 8, "oring_strip": 14, "nozzle_plate": 18,
+                "screen": 25, "membrane": 27, "bed": 27, "oring_interface": 29, "body": 34}
+        ex = []
+        for nm, o, m in everything:
+            if nm == "liquid":
+                continue
+            dz = lift.get(nm, 46 if nm.startswith("screw") else 0)
+            ex.append((o.translate((0, 0, dz)), m))
+        C.render_png(ex, OUT / "assembly_exploded.png", view="iso", size=(8, 10), title="Exploded")
+        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / "nozzle_plate_underside.png", view="bottom",
+                     title="Nozzle plate, underside (cell face)")
+        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / "nozzle_plate_top.png", view="top",
+                     title="Nozzle plate, top face")
+        C.render_png([(custom["body"][0], "PEEK")], OUT / "body_underside.png", view="bottom",
+                     title="Body, underside")
+        C.render_png([(custom["base"][0], "steel")], OUT / "base_top.png", view="top", title="Base, top face")
+        C.shrink_pngs(OUT)
+    print("all checks pass" if res["all_pass"] else "CHECKS FAILED")
+    return 0 if res["all_pass"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,138 @@
+{
+ "checks": [
+  {
+   "check": "no interference between any two solid parts (10 parts; O-rings drawn at their compressed height)",
+   "ok": true,
+   "value": "largest common volume 0.00e+00 mm3"
+  },
+  {
+   "check": "the liquid is one connected solid from the inlet port floor to the outlet port floor",
+   "ok": true,
+   "value": "1 solid(s), 18.25 mm3"
+  },
+  {
+   "check": "the liquid does not cut into the base",
+   "ok": true,
+   "value": "0.00e+00 mm3"
+  },
+  {
+   "check": "the liquid does not cut into the plate",
+   "ok": true,
+   "value": "0.00e+00 mm3"
+  },
+  {
+   "check": "the liquid does not cut into the body",
+   "ok": true,
+   "value": "0.00e+00 mm3"
+  },
+  {
+   "check": "the liquid does not cut into the strip",
+   "ok": true,
+   "value": "0.00e+00 mm3"
+  },
+  {
+   "check": "liquid reaches the floor of the inlet port",
+   "ok": true,
+   "value": "z max 9.900"
+  },
+  {
+   "check": "liquid reaches the floor of the outlet port",
+   "ok": true,
+   "value": "x min -7.500"
+  },
+  {
+   "check": "wall or margin: inlet thread to body riser >= 0.8 mm",
+   "ok": true,
+   "value": "0.92 mm"
+  },
+  {
+   "check": "wall or margin: inlet thread to the end of the outlet through-hole >= 0.8 mm",
+   "ok": true,
+   "value": "1.42 mm"
+  },
+  {
+   "check": "wall or margin: outlet thread to the M2.5 threads >= 0.8 mm",
+   "ok": true,
+   "value": "2.58 mm"
+  },
+  {
+   "check": "wall or margin: outlet thread to the body underside >= 0.8 mm",
+   "ok": true,
+   "value": "3.83 mm"
+  },
+  {
+   "check": "wall or margin: outlet thread to the body top >= 0.8 mm",
+   "ok": true,
+   "value": "1.83 mm"
+  },
+  {
+   "check": "wall or margin: collecting groove to the O-ring groove (plate underside) >= 0.5 mm",
+   "ok": true,
+   "value": "0.55 mm"
+  },
+  {
+   "check": "wall or margin: thin-layer land beyond the working electrode >= 0.8 mm",
+   "ok": true,
+   "value": "0.80 mm"
+  },
+  {
+   "check": "wall or margin: plate under the cross channel, above the collecting groove >= 0.8 mm",
+   "ok": true,
+   "value": "1.50 mm"
+  },
+  {
+   "check": "wall or margin: plate above the O-ring groove >= 0.8 mm",
+   "ok": true,
+   "value": "1.85 mm"
+  },
+  {
+   "check": "wall or margin: face seal between retainer seat and cross channel >= 0.8 mm",
+   "ok": true,
+   "value": "1.38 mm"
+  },
+  {
+   "check": "wall or margin: cross channel and riser to the body-plate O-ring groove >= 0.8 mm",
+   "ok": true,
+   "value": "0.85 mm"
+  },
+  {
+   "check": "wall or margin: strip beyond the O-ring groove, each side >= 0.3 mm",
+   "ok": true,
+   "value": "0.40 mm"
+  },
+  {
+   "check": "wall or margin: O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius) >= 0.1 mm",
+   "ok": true,
+   "value": "0.15 mm"
+  },
+  {
+   "check": "wall or margin: strip beyond the stack, for the connector >= 7.0 mm",
+   "ok": true,
+   "value": "8.50 mm"
+  },
+  {
+   "check": "every drilled hole is at least 0.5 mm in diameter",
+   "ok": true,
+   "value": "smallest 0.5 mm"
+  },
+  {
+   "check": "no hole deeper than 10 diameters",
+   "ok": true,
+   "value": "deepest 7.4 diameters"
+  }
+ ],
+ "all_pass": true,
+ "liquid_volume_uL": 18.254341817102258,
+ "volumes_uL": {
+  "bed_bore": 0.4908738521234052,
+  "exit_bore": 0.4908738521234052,
+  "thin_layer_over_electrode": 0.7068583470577033,
+  "chamber_disc": 3.739280655935251,
+  "collecting_groove": 4.900884539600079
+ },
+ "masses_g": {
+  "base": 80.864787425978,
+  "nozzle_plate": 3.937086238920378,
+  "body": 18.823772056191363
+ }
+}

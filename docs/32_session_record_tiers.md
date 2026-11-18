@@ -173,3 +173,20 @@ No agent was used and the result was not independently reviewed. `tierkit.py`, t
 deck are unchanged; `check_tierkit.py` (36 of 36) and `doc_tables.py --check` were re-run and pass. What went wrong
 on the way is in docs/33 §10.
 
+## 9. Follow-up: a custom flow cell for tier 2 (2026-11-18)
+
+Request, in a new session: "Let's design a custom flow cell for tier 2. What type of beads? I'd like the bead bed
+to be part of the flow cell not the inlet tubing. It should handle 500 psi. Ideally all custom parts can be
+ordered from a place like xometry." No question was put to the user; the choices made for them are listed in
+docs/34 §8.3.
+
+| Step | Done by | Output |
+|---|---|---|
+| Vendor facts: retention of catalogue screens and frits, machining limits of Xometry, fittings, beads, membranes | orchestrator (web search and pages) | docs/34 §9 |
+| Model cases for the bed inside the cell, pressure drop, forces at 500 psi, side paths; 7 checks | orchestrator | `scripts/tier_round/tier2_cell.py`; `results/tier_round/tier2_cell.md`, `tier2_cell.json` |
+| Parametric CAD of base, nozzle plate and body; assembly; labelled section; drawing notes; 24 checks | orchestrator | `cad/elisa_cad/tier2_cell/`; `cad/out/tier2_cell/` |
+| Design document | orchestrator | docs/34 |
+| Entries in the two READMEs and the project guide | orchestrator | `scripts/tier_round/README.md`, `cad/README.md`, CLAUDE.md |
+
+No agent was used and the result was not independently reviewed. `tierkit.py`, the designs, docs/26–31, docs/33
+and the deck are unchanged. What went wrong on the way is in docs/34 §10.

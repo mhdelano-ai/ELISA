@@ -11,6 +11,7 @@
 | `check_tierkit.py` | 36 checks of the kit against analytic limits, an independent derivation and the audited model → `results/tier_round/check_tierkit.md` |
 | `crosscheck_model.py` | the kit's bed format run on the model's `B-bed-TL/alp_hqdp` inputs |
 | `cell_geometries.py` | follow-up (docs/33): other flow-cell geometries put into the unchanged designs of `run_tiers.py` — gap of the radial cell, cross-flow channel with and without walls upstream of the electrode, adjustable confined wall jet, free wall jet, porous flow-through electrode, ideal bound; own solver for product released from a channel wall upstream of the electrode, with checks → `results/tier_round/cell_geometries.md`, `cell_geometries.json` |
+| `tier2_cell.py` | follow-up (docs/34): the tier-2 flow cell with the bead bed inside the cell — dimensions read from `cad/elisa_cad/tier2_cell/params.py`; model cases (retainer area, bead size, bore, gap), pressure drop along the cell, forces and margins at 500 psi, secondary flow paths, 7 checks → `results/tier_round/tier2_cell.md`, `tier2_cell.json` |
 | `review_numbers.py`, `review_chemistry_calc.py`, `review_feasibility_calc.py`, `review2_numbers.py`, `review2_consistency.py` | the reviewers' own calculations behind `results/tier_round/review_*.md` and `review2_*.md` (record; written against the first version and against Revision B of the designs, docs/31) |
 
 ```bash
@@ -19,6 +20,7 @@ python scripts/tier_round/check_tierkit.py         # 36 of 36 checks pass; exits
 python scripts/tier_round/run_tiers.py             # Monte Carlo n = 2000, seed 20261111 (about 2 min)
 python scripts/tier_round/doc_tables.py --check    # the tables of docs/30 against tiers.json
 python scripts/tier_round/cell_geometries.py       # docs/33: flow-cell geometries (about 4 min; --doc prints its tables)
+python scripts/tier_round/tier2_cell.py            # docs/34: tier-2 cell with the bed inside (about 1 min)
 ```
 
 The kit imports `elisa_sim` and changes nothing in `src/` or `params/`. Design choices (geometry, flows, times,
