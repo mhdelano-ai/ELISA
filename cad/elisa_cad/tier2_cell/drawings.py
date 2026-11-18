@@ -575,10 +575,10 @@ def dowel_callouts(S, top, flag):
     rp = P.DOWEL_D / 2 * K
     # datum feature symbols of features of size sit on the leader of their size callout (ASME Y14.5)
     tb = (pb[0] + 40, pb[1] - 16)
-    S.leader(pb + rp * np.array([0.71, -0.71]), tb, "⌀3.00 +0.05/+0.01 THRU", flag=flag)
+    S.leader(pb + rp * np.array([0.71, -0.71]), tb, f"⌀{P.DOWEL_HOLE_D:.2f} ±0.03 THRU", flag=flag)
     S.datum((tb[0] - 2.0, tb[1]), "B", direction=(0, -1), length=2.5)
     tc = (pc[0] + 40, pc[1] + 18)
-    S.leader(pc + np.array([rp * 0.71, P.DOWEL_SLOT_L / 2 * K * 0.6]), tc, "SLOT WIDTH 3.00 +0.05/+0.01 THRU",
+    S.leader(pc + np.array([rp * 0.71, P.DOWEL_SLOT_L / 2 * K * 0.6]), tc, f"SLOT WIDTH {P.DOWEL_HOLE_D:.2f} ±0.03 THRU",
              flag=flag)
     S.datum((tc[0] - 2.0, tc[1]), "C", direction=(0, 1), length=2.5)
 
@@ -606,11 +606,11 @@ def sheet_base():
     m4 = top.p(8, 16, 0)
     S.leader(m4 + 2.15 * K * np.array([0.71, 0.71]), (m4[0] + 30, m4[1] + 22), "4× M4×0.7-6H THRU")
     dw = top.p(*P.DOWEL_XY[1], 0)
-    S.leader(dw + 1.5 * K * np.array([-0.71, 0.71]), (dw[0] - 14, dw[1] + 22), "2× ⌀3.00 +0.05/+0.01",
+    S.leader(dw + 1.5 * K * np.array([-0.71, 0.71]), (dw[0] - 14, dw[1] + 22), f"2× ⌀{P.DOWEL_HOLE_D:.2f} ±0.03",
              ha="right", flag=3)
     xr = top.p(P.X1, 0, 0)[0]
-    flat_datum(S, top.p(-14.0, 9.0, 0), (xr + 26, TV[1] + 28), "TOP FACE", 1, "0.02", "A")
-    S.callout(top.p(4.0, -3.5, 0), (xr + 26, TV[1] - 20), "STRIP POCKET FLOOR", flag=2, frame=("par", ["0.02", "A"]))
+    flat_datum(S, top.p(-14.0, 9.0, 0), (xr + 26, TV[1] + 28), "TOP FACE", 1, "0.03", "A")
+    S.callout(top.p(4.0, -3.5, 0), (xr + 26, TV[1] - 20), "STRIP POCKET FLOOR", flag=2, frame=("par", ["0.03", "A"]))
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     return S.save("T2C-001_base")
 
@@ -632,7 +632,7 @@ def sheet_plate():
     dowel_callouts(S, top, 5)
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
     S.callout(top.p(5.0, -4.0, 0), (top.p(P.X1, 0, 0)[0] + 14, top.p(0, 0, 0)[1] - 22), "TOP FACE INSIDE ⌀16",
-              flag=6, flat="0.02")
+              flag=6, flat="0.03")
     m25 = top.p(8, 7, 0)
     tm = (top.p(P.X1, 0, 0)[0] + 14, m25[1] + 10)
     x0, _ = S.leader(m25 + P.M25_CLEAR / 2 * K * np.array([0.71, 0.71]), tm, f"4× ⌀{P.M25_CLEAR} THRU", flag=7)
@@ -652,7 +652,7 @@ def sheet_plate():
     S.text(det.o[0], det.o[1] - 47, "DETAIL D (SECTION A–A, 10:1)", size=FS_T, ha="center", weight="bold")
     # pocket: size, depth, position (frame attached under the dimension)
     q0, q1 = det.p(-rp / 2, 0, P.PLATE_T), det.p(rp / 2, 0, P.PLATE_T)
-    lab = f"⌀{rp} +0.05/−0  ↧ {P.RET_POCKET_DEPTH:.2f} ±0.025"
+    lab = f"⌀{rp:.2f} ±0.03  ↧ {P.RET_POCKET_DEPTH:.2f} ±0.03"
     S.dim(q0, q1, q0[1] + 7, lab, outside_text="after")
     tx = q1[0] + 6.5
     S.frame(tx, q0[1] + 2.0, "pos", ["⌀0.10", "A", "B", "C"])
@@ -715,7 +715,7 @@ def sheet_body():
     x0, _ = S.leader(m25 + 1.35 * K * np.array([0.71, -0.71]), tm,
                      f"4× M2.5×0.45-6H ↧ {P.M25_FULL_THREAD:.1f} FULL THREAD", flag=7)
     S.frame(x0, tm[1] - 6.0, "pos", ["⌀0.3", "A", "B", "C"])
-    flat_datum(S, bot.p(-5, -3, zb), (BV[0] + 10, BV[1] + 61), "UNDERSIDE INSIDE ⌀16", 2, "0.02", "A")
+    flat_datum(S, bot.p(-5, -3, zb), (BV[0] + 10, BV[1] + 61), "UNDERSIDE INSIDE ⌀16", 2, "0.03", "A")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 8, "BOTTOM VIEW", size=FS_T, ha="center", weight="bold")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 13, "part turned over about the horizontal axis", size=FS_S,
            ha="center")

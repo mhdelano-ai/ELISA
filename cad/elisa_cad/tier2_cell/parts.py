@@ -35,8 +35,8 @@ def _xcyl(d, x_from, x_to, y, z):
 def _dowel_holes(z0, t):
     """Round hole for the first pin (datum B), slot along y for the second (datum C)."""
     (xb, yb), (xc, yc) = P.DOWEL_XY
-    slot = cq.Workplane("XY").slot2D(P.DOWEL_SLOT_L, P.DOWEL_D, angle=90).extrude(t).translate((xc, yc, z0))
-    return [_cyl(P.DOWEL_D, t, xb, yb, z0), slot]
+    slot = cq.Workplane("XY").slot2D(P.DOWEL_SLOT_L, P.DOWEL_HOLE_D, angle=90).extrude(t).translate((xc, yc, z0))
+    return [_cyl(P.DOWEL_HOLE_D, t, xb, yb, z0), slot]
 
 
 def _cut_all(body, tools):

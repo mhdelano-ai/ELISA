@@ -16,7 +16,7 @@ natural stays the fallback (docs/34 §5.4): quoting both is a quick way to see t
 
 For each part in the quote:
 * **Tolerance**: standard, *with drawing*. The drawings carry only the features with tighter-than-standard
-  tolerances (all flagged, none tighter than ±0.025 mm / ±0.001 in, finer finishes and edge breaks included) and
+  tolerances (all flagged, none tighter than ±0.03 mm (±0.0012 in), finer finishes and edge breaks included) and
   the threads. Everything else comes from the STEP file at Xometry's standard tolerance (title block of each
   drawing); how to make the parts is left to the supplier. Say in the notes field: "Undimensioned geometry per
   STEP at standard tolerance; flagged features per attached drawing, to be inspected."

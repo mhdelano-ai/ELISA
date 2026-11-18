@@ -49,7 +49,9 @@ M4_XY = [(-12.0, -16.0), (-12.0, 16.0), (8.0, -16.0), (8.0, 16.0)]   # CHOICE: m
 M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 5.5, 3.3, 7.0   # clearance 5.5 (was 4.8): positions at standard tolerance
 #                                       (fixed fastener: 5.5 - 4.0 = 1.5 >= 0.37 steel + 0.71 plastic, Derived)
 DOWEL_XY = [(-2.0, -16.0), (-2.0, 16.0)]                              # CHOICE: 3 mm pins, pressed into the base
-DOWEL_D = 3.0                          # pin 3 m6; holes 3.00 +0.04/0 in all three parts (pins bonded into the base)
+DOWEL_D = 3.0                          # pin 3 m6 (pins bonded into the base)
+DOWEL_HOLE_D = 3.04                    # CHOICE: holes and slot 3.04 +-0.03 (3.01-3.07) in all three parts; no
+#                                        tolerance on the drawings tighter than +-0.03 (user, 2026-11-18)
 DOWEL_SLOT_L = 3.6                     # CHOICE: plate and body take the second pin in a slot along y, so that the pin
 #                                        spacing needs only the standard tolerance (one round hole + one slot)
 M25_XY = [(-12.0, -7.0), (-12.0, 7.0), (8.0, -7.0), (8.0, 7.0)]      # CHOICE: plate to body, heads in the plate
@@ -70,8 +72,8 @@ CHANNEL_X_END, CHANNEL_W, CHANNEL_DEPTH = -4.6, 0.8, 0.5   # CHOICE: slot in the
 # washer (the spring), the screen, the membrane.  The washer pushes screen and membrane up against the flat
 # underside of the body around the bed bore; nothing stands proud of the plate, so body and plate meet face to
 # face and the plate stays flat.
-RET_POCKET_D = 1.65                    # CHOICE: guides the 1/16 in screen
-RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.025 (drawing T2C-002): washer compressed + screen + membrane
+RET_POCKET_D = 1.68                    # CHOICE: guides the 1/16 in screen; +-0.03 (1.65-1.71), was 1.65 +0.05/-0
+RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.03 (drawing T2C-002): washer compressed + screen + membrane
 WASHER_OD, WASHER_ID, WASHER_T = 1.4, 0.75, 0.25   # CHOICE: cut from 0.25 mm FKM sheet (+-0.02, UNVERIFIED);
 #                                        OD 1.4 (was 1.2): ring wall >= 0.175 mm at the tolerance limits
 #                                        a cut gasket, drawing T2C-004 (or punched with 1.4 / 0.75 mm biopsy punches)
