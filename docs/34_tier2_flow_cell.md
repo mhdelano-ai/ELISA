@@ -48,12 +48,18 @@ top face is flat within 0.02 inside ⌀16; the base pocket floor is parallel to 
 user's port drawing); the M2.5 tapped holes have 6.0 mm of full thread; the washer drawing gives its thickness as
 0.25 ±0.05 and a process note. The tolerance table (section 5.2) is the current list.
 
+**Screw torques for acetal (same day).** The 0.5 N·m of the M4 screws had been set for PEEK; on acetal it puts
+24 MPa under the 8 mm washers, enough for the plastic to creep and the clamp to relax. Now M4 0.25 N·m and M2.5
+0.05 N·m (none had been given), each keeping the stress on the acetal near 10 MPa. The mechanics of section 6.3
+were re-run for acetal; the load path was traced (the M4 screws carry 595 N at 500 psi, not the 854 N of every
+load added) and the M4 margin is 2.1 (1.5 after relaxation; 19 in operation). Sections 0, 4.2, 6.3 and 7.
+
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
 * CAD: `cad/elisa_cad/tier2_cell/` → `cad/out/tier2_cell/` (STEP files of the three custom parts and of the
   assembly, renders, the section below, notes for the drawings, 28 checks, all pass).
 * Model, pressure drop, mechanics: `scripts/tier_round/tier2_cell.py` → `results/tier_round/tier2_cell.md`,
-  `.json` (8 checks, all pass; about 1 min). The assay is the unchanged tier 2 of docs/30; only the bed holder, the retainer,
+  `.json` (10 checks, all pass; about 1 min). The assay is the unchanged tier 2 of docs/30; only the bed holder, the retainer,
   the walls around the bed and the cell are replaced. `tierkit.py`, `designs.py`, `src/` and `params/` are not
   edited.
 
@@ -90,7 +96,7 @@ MicruX strips, their connector cable and the 1/4-28 fittings in hand are used as
 the cell, so the concern of docs/30 §4.2 (step 4) about the magnets of the MicruX add-on does not arise.
 
 **500 psi.** The whole liquid path, including the seal on the strip, is laid out for 500 psi (34.5 bar): the four
-M4 screws hold 2.9 times the force that pressure produces, and the thinnest wall beside a bore is 0.9 mm. In use the
+M4 screws at 0.25 N·m hold 2.1 times the force that pressure puts on them (1.5 after the acetal relaxes), and the thinnest wall beside a bore is 0.9 mm. In use the
 cell needs far less. With the bed in a 0.5 mm bore the pressure drop of the whole cell is 1.0 bar at 80 µL/min
 and 2.5 bar at 200 µL/min (docs/30: 25 bar across the bed at 80 µL/min, because its capillary is 0.2 mm). **Not
 shown by calculation: that an O-ring seals on a printed strip at 500 psi.** That needs a proof test (section 8).
@@ -218,7 +224,7 @@ Numbers (`tier2_cell.md` §4; rubber modulus 6 MPa and the shape-factor correcti
 * Squeeze of the washer 26 % nominal; 11–39 % for a pocket within ±0.01 of the washer chosen for it, a sheet
   at ±0.02, membranes of 6–15 µm and the screen at ±0.005. The low end is below the usual 15 % for a gasket:
   pick washers from the thick end of the sheet for a deep pocket.
-* Washer force 3.2 N (1.4–4.7 N). It bows the plate by at most 3.3 µm (the first version: up to 15 µm).
+* Washer force 3.2 N (1.4–4.7 N). It bows the plate by at most 4.4 µm in acetal (the first version: up to 15 µm).
 * The flow pushes the stack away from the body face with the pressure drop through bed, membrane and screen. Taken
   over the whole pocket this is 0.21 N at 80 µL/min, a sixth of the lowest washer force, and 0.53 N at
   200 µL/min, still under half of it. Every step of docs/30 through the bed stays at ≤ 80 µL/min, packing included.
@@ -259,8 +265,16 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 
 | Joint | Seal | Hard stop | Held by |
 |---|---|---|---|
-| Plate on strip | O-ring 7 × 1 in a groove ⌀6.9/⌀9.3 × 0.65 deep; 25 % squeeze at the nominal gap, 20–30 % over the gap tolerance | the plate rests on the base on both sides of the strip pocket | 4 × M4 × 20 through body and plate into the base, 0.5 N·m; 2 × ⌀3 dowel pins |
-| Body on plate | O-ring 12 × 1 in a groove ⌀11.9/⌀14.3 × 0.75 deep in the body | face to face | 4 × M2.5 × 6 low-head socket screws in counterbores, from the plate underside into the body, so that the retainer and the bed are not disturbed when the strip is changed |
+| Plate on strip | O-ring 7 × 1 in a groove ⌀6.9/⌀9.3 × 0.65 deep; 25 % squeeze at the nominal gap, 20–30 % over the gap tolerance | the plate rests on the base on both sides of the strip pocket | 4 × M4 × 20 through body and plate into the base, **0.25 N·m**; 2 × ⌀3 dowel pins |
+| Body on plate | O-ring 12 × 1 in a groove ⌀11.9/⌀14.3 × 0.75 deep in the body | face to face | 4 × M2.5 × 6 low-head socket screws in counterbores, from the plate underside into the body, **0.05 N·m**, so that the retainer and the bed are not disturbed when the strip is changed |
+
+Torques (section 6.3; dry threads, nut factor 0.2). They are set by the acetal, not by the screws: the stress under
+the M4 washers and the M2.5 heads is kept near 10 MPa, a long-term guide for acetal (UNVERIFIED), so that the
+plastic does not creep and let the clamp go. The 0.5 N·m of the PEEK version would put 24 MPa under the 8 mm
+washers. No larger washer fits: the screws at x = +8 are 4 mm from the edge of the body, and a washer under the
+M2.5 heads would stand 0.2 mm proud of the plate underside. A trace of anti-seize on the M4 threads (stainless
+into 316L can gall) gives about a third more preload at the same torque, so the margins are minima. 0.05 N·m is
+below most adjustable torque screwdrivers (commonly from 0.1 N·m, UNVERIFIED); a micro-torque driver is needed.
 | Retainer | membrane pressed against the body face by the washer | membrane top in the plane of the plate face | the washer (3.2 N); body and plate held by the same four M2.5 screws |
 
 ### 4.3 The gap
@@ -296,9 +310,9 @@ dominates the price), it machines cleanly to burr-free 0.5 mm bores, fine thread
 homopolymer: thick homopolymer stock can be porous along its centreline, where the bed bore runs. Open points:
 the conjugate uptake of the walls between bed and electrode was taken for PEEK and may differ for acetal (test
 C-3 and the bench conjugate-sticking test show it); acetal can release traces of formaldehyde (effect on the read
-UNVERIFIED, not expected at the read potential). The bending and pressure numbers of section 6.3 were computed
-for PEEK and were not re-run (user's decision): with a modulus about 20 % lower the plate bows about 4 µm
-instead of 3.3, and the working pressure is about 1 bar. PEEK, unfilled, natural, stays the fallback if the
+UNVERIFIED, not expected at the read potential). The numbers of section 6.3 were first left at PEEK (user's
+decision) and were re-run for acetal when the screw torques were set (same day, at the user's request): the plate
+bows 4.4 µm instead of 3.3, and the torques are now set by the bearing stress on the acetal (section 4.2). PEEK, unfilled, natural, stays the fallback if the
 bench shows conjugate uptake or leachables. The reasons first given for PEEK: PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
 craze in the 10 % methanol used for storage; PMMA does (docs/28 §4). Unfilled, because glass or carbon fill
 would put fibres at the bore edges and carbon-filled PEEK conducts. The base is not wetted in normal use; 316L
@@ -487,18 +501,24 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 |---|---|
 | Force lifting the plate off the strip (pressure taken out to the outer groove wall) | 234 N |
 | Force parting body and plate (the same, 14.3 mm) | 554 N |
-| Clamp force of the four M4 screws at 0.5 N·m; needed; margin | 2500 N; 854 N; 2.9 |
-| Each M2.5 if the plate screws alone held the body–plate joint; thread strip-out in PEEK; margin | 149 N; 1145 N; 7.7 |
-| Bearing stress under the M4 washers (8 mm, on a ⌀5.5 clearance hole); margin to yield | 24 MPa; 5 |
-| Sag of body and plate across the strip pocket | 0.4 µm |
-| Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
+| Plate: pushed down by the body–plate pressure and its O-ring, up by the strip pressure and its O-ring; net | 335 N down, so it stays on the base and the M4 screws do not carry the strip load |
+| Clamp force of the four M4 screws at 0.25 N·m; carried (body–plate pressure + 12 × 1 O-ring); margin; after 30 % relaxation of the acetal (UNVERIFIED) | 1250 N; 595 N; 2.1; 1.5 |
+| The same against every load added (the conservative sum used before); margin | 854 N; 1.5 |
+| Margin of the M4 clamp in operation (about 1 bar: the two O-rings only) | 19 |
+| Stress under the M4 washers (8 mm, DIN 433, on a ⌀5.5 clearance hole); long-term guide for acetal (UNVERIFIED) | 11.8 MPa; 10 MPa (0.5 N·m would give 24 MPa) |
+| Four M2.5 at 0.05 N·m: preload each; stress under the head (⌀4.5, UNVERIFIED, on ⌀3.2) | 100 N; 12.7 MPa |
+| What the M2.5 hold with the bed unit off the base (12 × 1 O-ring + retainer washer); margin | 44 N; 9.1 |
+| Each M2.5 if the plate screws alone held the body–plate joint at 500 psi; thread strip-out in acetal; margin | 149 N; 848 N; 5.7 |
+| Sag of body and plate across the strip pocket | 0.55 µm |
+| Deflection of the port floor when the inlet fitting is tightened | 4 µm (4 % of the gap) |
 | Thinnest drilled wall (inlet thread to riser) | 1.0 mm |
 | Retainer washer: squeeze; force; pressure on the membrane's sealing band (low / nominal / high tolerance) | 11 / 26 / 39 %; 1.4 / 3.2 / 4.7 N; 0.9 / 2.0 / 3.0 MPa |
-| Bow of the plate under the washer | ≤ 3.3 µm |
+| Bow of the plate under the washer | ≤ 4.4 µm |
 | Force of the flow pushing the stack off the body face, 80 / 200 µL/min (upper bound) | 0.21 / 0.53 N |
 
-These numbers were computed for PEEK and not re-run for acetal (section 5.4). PEEK properties are typical values for unfilled PEEK (modulus 3.6 GPa, shear strength 53 MPa, compressive yield
-118 MPa), UNVERIFIED; the O-ring load is taken as 1 N per mm of ring.
+Computed for acetal copolymer (re-run 2026-11-18 with the torques of section 4.2): typical values, modulus
+2.8 GPa, shear strength 40 MPa, Poisson 0.35, long-term bearing guide 10 MPa, all UNVERIFIED (take them from the
+data sheet of the stock); preload from T = 0.2 · d · F (dry threads); the O-ring load is taken as 1 N per mm of ring.
 
 Not covered by these numbers, and to be shown by the proof test: the seal of a 70 Shore A O-ring over the printed
 tracks of the strip, and extrusion of that O-ring into a gap of up to 0.15 mm at 34.5 bar (within common design
@@ -532,7 +552,7 @@ hole is below the feature size Xometry recommends and belongs to its micro-machi
 
 1. **Assemble the bed unit once per bed.** Nozzle plate top face up: washer, then screen, then membrane into the
    retainer pocket (tweezers; wet with assay buffer so they lie flat); O-ring 12 × 1 into the body's groove; body
-   on, located by two loose pins; four M2.5 screws from below, evenly. Check that the membrane top is level with
+   on, located by two loose pins; four M2.5 screws from below, crosswise, to 0.05 N·m. Check that the membrane top is level with
    the plate face before the body goes on (it may stand up to 0.07 mm above it; the body pushes it down).
 2. **Pack.** Connect a packing line (1/16 in tube holding at least 25 µL) to the inlet port and push the bead
    suspension of docs/30 §4.2 (1.5 µL of coated M-280 in 20 µL of assay buffer) through at 20–50 µL/min, then
@@ -540,7 +560,8 @@ hole is below the feature size Xometry recommends and belongs to its micro-machi
    looking down the port bore with a stereo microscope; the body is opaque, so the bed cannot be seen from the side.
 3. **Mount.** Once per base: measure the pocket depth with a depth micrometer and cut the shim stack to
    depth − 0.38 − 0.10. Shim and a fresh strip into the base pocket against its stop, O-ring 7 × 1 into the plate, the bed
-   unit onto the pins, four M4 screws to 0.5 N·m. Connect the transfer line and the cable.
+   unit onto the pins, four M4 screws crosswise, first to 0.1 N·m, then to 0.25 N·m. Connect the transfer line and
+   the cable. Before a run at high pressure (test C-1) check the M4 torque again after an hour: acetal relaxes.
 4. **Run** the unchanged step table of docs/30 §4.3, with its pre-run on the fresh bed and strip.
 5. **After the run.** Take the bed unit off and flush the beads out of the inlet port from the exit bore, or open
    the four M2.5 screws and rinse. Fit a new washer, screen and membrane. Body and plate are used again, so their walls
