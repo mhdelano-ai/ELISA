@@ -864,11 +864,11 @@
   "main_needed_N": 853.8209772821058,
   "main_margin": 2.9280142635497586,
   "m25_load_each_N": 148.62771489662,
-  "m25_strip_out_N": 1144.717823151781,
-  "m25_margin": 7.701913629957944,
-  "bearing_MPa": 17.485711172478062,
-  "bearing_margin": 6.7483672145819344,
-  "sag_um": 0.41360098685929353,
+  "m25_strip_out_N": 1123.9047718217487,
+  "m25_margin": 7.561878836685982,
+  "bearing_MPa": 19.428093639147377,
+  "bearing_margin": 6.073678776296991,
+  "sag_um": 0.42576495362747746,
   "fitting_force_N": 236.22047244094486,
   "floor_deflection_um": 3.119416474740507,
   "washer_squeeze": [
@@ -1114,7 +1114,7 @@
   {
    "check": "plate screws alone hold the body-plate joint at the rated pressure, margin at least 3",
    "ok": true,
-   "value": "7.7"
+   "value": "7.6"
   },
   {
    "check": "the lowest washer force holds the retainer against the body face at 80 uL/min with a margin of 2",
@@ -1162,10 +1162,12 @@
   "GROOVE_STRIP_ID": 6.9,
   "GROOVE_STRIP_OD": 9.3,
   "INLET_FLOOR": 2.51,
-  "M25_CLEAR": 2.7,
-  "M25_CSK_D": 5.0,
+  "M25_CBORE_D": 5.5,
+  "M25_CBORE_DEPTH": 1.9,
+  "M25_CLEAR": 3.2,
+  "M25_FULL_THREAD": 6.0,
   "M25_TAP_DRILL": 2.05,
-  "M25_THREAD_DEPTH": 7.0,
+  "M25_THREAD_DEPTH": 7.5,
   "M25_XY": [
    [
     -12.0,
@@ -1184,7 +1186,7 @@
     7.0
    ]
   ],
-  "M4_CLEAR": 4.3,
+  "M4_CLEAR": 4.8,
   "M4_HEAD_D": 7.0,
   "M4_TAP_DRILL": 3.3,
   "M4_XY": [
@@ -1223,7 +1225,7 @@
   "PLATE_T": 2.5,
   "POCKET_DEPTH": 0.65,
   "POCKET_RELIEF_D": 1.6,
-  "POCKET_W": 10.299999999999999,
+  "POCKET_W": 10.4,
   "POCKET_X_END": -8.36,
   "PORT_BOTTOM_FLAT": 0.05,
   "PORT_BOTTOM_RA": 0.8,
@@ -1261,7 +1263,7 @@
   "WASHER_PITCH": 3.0,
   "WASHER_SQUEEZE": 0.26,
   "WASHER_T": 0.25,
-  "WASHER_T_TOL": 0.025,
+  "WASHER_T_TOL": 0.05,
   "WASHER_WALL": 0.4358959806855838,
   "WE_D": 3.0,
   "WE_FROM_FREE_END": 8.26,

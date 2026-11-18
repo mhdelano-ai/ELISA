@@ -226,3 +226,14 @@ T2C-004 (STEP, DXF cut files, drawing); its outer diameter went from 1.2 to 1.4 
 fall below 0.175 mm at the tolerance limits (washer force 3.2 N nominal, plate bow ≤ 3.3 µm, lift-off margin 2.6
 at 200 µL/min; `tier2_cell.py` re-run, all checks pass).
 
+An independent agent (not shown the design work) then reviewed the four drawings against the STEP files and
+Xometry's drawing requirements: 19 findings. Applied: M2.5 countersinks replaced by counterbores for low-head
+screws (the countersinks would have centred the plate against the dowels); dowel holes +0.05/+0.01; screw-hole
+positions ⌀0.3; M4 clearance ⌀4.8; body underside flat 0.02 and Ra 1.6 inside ⌀16, Ra 0.4 inside ⌀3; plate top
+face flat 0.02 inside ⌀16; base pocket floor parallel to A; both ends of both 0.5 mm bores sharp; inlet-port
+position and port-bottom perpendicularity (added beyond the user's port drawing); 6.0 mm full thread on M2.5;
+washer thickness ±0.05 and a process note (die or waterjet, not laser); clip box of the sections; title-block and
+note wording; flags per dimension; larger fonts. Not applied: an ASTM D2000 line call-out for the washer (could not
+be checked) and a cosmetic M4 thread display. docs/34 §5.2 table, §5.4, ORDERING.md and the project guide updated;
+build (28 checks), drawings (no overlaps), `tier2_cell.py`, `check_tierkit.py` (36/36) and `doc_tables.py --check`
+re-run.

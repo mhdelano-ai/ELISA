@@ -33,7 +33,7 @@ BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 11.4   # CHOICE; the body = port depth 8.89 
 EDGE_CHAMFER = 0.5
 
 # ---- base (316L) ------------------------------------------------------------------------------------------
-POCKET_W = STRIP_W + 0.2               # CHOICE: strip pocket, open at +x
+POCKET_W = STRIP_W + 0.3               # CHOICE: strip pocket, open at +x; >= 10.27 at the standard -0.13 (review)
 POCKET_DEPTH = 0.65                    # CHOICE, standard tolerance (+-0.13): measured at assembly, the shim sets
 #                                        the gap (drawing T2C-001, docs/34 section 5.2)
 POCKET_X_END = -(WE_FROM_FREE_END + 0.1)   # Derived: closed end of the pocket is the stop for the strip
@@ -46,13 +46,17 @@ GAP_TOL = 0.03                         # Derived: depth measured to +-0.01, stri
 
 # ---- fasteners and pins -----------------------------------------------------------------------------------
 M4_XY = [(-12.0, -16.0), (-12.0, 16.0), (8.0, -16.0), (8.0, 16.0)]   # CHOICE: main screws, into the base
-M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 4.3, 3.3, 7.0
+M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 4.8, 3.3, 7.0   # clearance 4.8 (was 4.3): the dowels locate, the screws only clamp
 DOWEL_XY = [(-2.0, -16.0), (-2.0, 16.0)]                              # CHOICE: 3 mm pins, pressed into the base
 DOWEL_D = 3.0                          # pin 3 m6; holes 3.00 +0.04/0 in all three parts (pins bonded into the base)
 DOWEL_SLOT_L = 3.6                     # CHOICE: plate and body take the second pin in a slot along y, so that the pin
 #                                        spacing needs only the standard tolerance (one round hole + one slot)
 M25_XY = [(-12.0, -7.0), (-12.0, 7.0), (8.0, -7.0), (8.0, 7.0)]      # CHOICE: plate to body, heads in the plate
-M25_CLEAR, M25_TAP_DRILL, M25_CSK_D, M25_THREAD_DEPTH = 2.7, 2.05, 5.0, 7.0
+M25_CLEAR, M25_TAP_DRILL, M25_THREAD_DEPTH = 3.2, 2.05, 7.5   # plate clearance; body tap drill and its depth
+M25_FULL_THREAD = 6.0                  # full thread in the body (review: M2.5 x 6 reaches 5.4 into the body)
+M25_CBORE_D, M25_CBORE_DEPTH = 5.5, 1.9   # CHOICE: counterbore from the plate underside for low-head socket screws
+#                                        M2.5 x 6, DIN 7984 (head about 4.5 x 1.6, UNVERIFIED); no countersinks, so
+#                                        the heads do not centre the plate against the dowels (review)
 
 # ---- nozzle plate (PEEK), underside = cell face -------------------------------------------------------------
 EXIT_D = 0.5                           # CHOICE: exit bore on the electrode axis, through the plate
@@ -66,12 +70,13 @@ CHANNEL_X_END, CHANNEL_W, CHANNEL_DEPTH = -4.6, 0.8, 0.5   # CHOICE: slot in the
 # underside of the body around the bed bore; nothing stands proud of the plate, so body and plate meet face to
 # face and the plate stays flat.
 RET_POCKET_D = 1.65                    # CHOICE: guides the 1/16 in screen
-RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.01: washer compressed + screen + membrane
+RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.025 (drawing T2C-002): washer compressed + screen + membrane
 WASHER_OD, WASHER_ID, WASHER_T = 1.4, 0.75, 0.25   # CHOICE: cut from 0.25 mm FKM sheet (+-0.02, UNVERIFIED);
 #                                        OD 1.4 (was 1.2): ring wall >= 0.175 mm at the tolerance limits
-#                                        a cut gasket, drawing T2C-004 (or punched with 1.2 / 0.75 mm biopsy punches)
+#                                        a cut gasket, drawing T2C-004 (or punched with 1.4 / 0.75 mm biopsy punches)
 WASHER_D_TOL = 0.10                    # CHOICE: on both diameters (functional limits: ID 0.5-1.4, OD < 1.6)
-WASHER_T_TOL = 0.025                   # sheet tolerance asked for; washers are picked by measured thickness anyway
+WASHER_T_TOL = 0.05                    # sheet tolerance (review: +-0.025 is not a stock grade); washers are sorted
+#                                        by measured thickness at assembly
 WASHER_PITCH, WASHER_ARRAY = 3.0, (10, 10)   # CHOICE: nesting of the cut file (100 washers in 30 x 30 mm)
 
 # ---- body (PEEK) -------------------------------------------------------------------------------------------

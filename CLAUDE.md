@@ -159,7 +159,9 @@ by the user: ceramic S1PE strips, 0.38 mm (shim 0.07 mm); positions from MicruX'
 choices for the user are in docs/34 §8.3. Dimensioned drawings for ordering (Xometry), mostly at standard
 tolerance (none tighter than ±0.025 mm): `cad/out/tier2_cell/drawings/` with `ORDERING.md`; tolerance policy in
 docs/34 §5.2 (strip pocket at standard tolerance, gap set by a measured shim; second pin hole a slot). The
-retainer washer is a cut gasket, T2C-004 (⌀1.4/⌀0.75 × 0.25 FKM; STEP and DXF cut files).
+retainer washer is a cut gasket, T2C-004 (⌀1.4/⌀0.75 × 0.25 FKM; STEP and DXF cut files). The four drawings were
+reviewed by an independent agent (19 findings, 17 applied: counterbored M2.5 screws, screw positions, sealing-face
+flatness and finish; docs/34 Revision notes).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

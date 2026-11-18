@@ -140,7 +140,7 @@ def mechanics():
     torque_m4 = 0.5                               # N m, CHOICE
     preload_m4 = torque_m4 / (0.2 * 0.004)        # N per screw, T = 0.2 d F
     need_main = F_strip + F_or_strip + F_iface + F_or_iface
-    le = 8.0 - P.PLATE_T                          # M2.5 x 8 flat-head screw: engagement in the body
+    le = 6.0 - (P.PLATE_T - P.M25_CBORE_DEPTH)    # M2.5 x 6 low-head screw in a counterbore: engagement in the body
     strip_out = 0.5 * math.pi * 2.5 * le * SHEAR  # N per M2.5 thread in PEEK
     per_m25 = (F_iface + F_or_iface) / 4.0
     bearing = preload_m4 / (math.pi / 4.0 * (8.0 ** 2 - P.M4_CLEAR ** 2))   # under an 8 mm washer (DIN 433)

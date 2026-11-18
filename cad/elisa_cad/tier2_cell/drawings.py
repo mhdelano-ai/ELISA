@@ -42,7 +42,7 @@ DATE = "2026-11-18"
 REV = "A"
 W, H = 420.0, 297.0                      # A3 landscape, mm
 LW_PART, LW_THIN = 0.5, 0.18             # line widths in points
-FS, FS_S, FS_T = 6.5, 5.6, 9.0           # font sizes (pt): dimensions, small text, titles
+FS, FS_S, FS_T = 7.5, 6.8, 10.0          # font sizes (pt): dimensions, small text, titles (cap height ~1.7 mm)
 plt.rcParams["hatch.linewidth"] = 0.35
 plt.rcParams["font.family"] = "DejaVu Sans"
 
@@ -274,8 +274,8 @@ class Sheet:
                  (47.5, "APPROVED", "", 6)]),
             (19, [(190, "UNLESS OTHERWISE SPECIFIED", self.general or (
                    "Dimensions in mm.  Features not dimensioned here are defined by the 3D model (STEP, same\n"
-                   "drawing number and revision) at the general tolerances of the Xometry manufacturing standard\n"
-                   "(ISO 2768): ±0.13 mm (±0.005 in) metals, ±0.25 mm (±0.010 in) plastics; angles ±1°.\n"
+                   "drawing number and revision) at the general tolerances of the Xometry manufacturing standard:\n"
+                   "±0.13 mm (±0.005 in) metals, ±0.25 mm (±0.010 in) plastics; angles ±1°; form per that standard.\n"
                    "Surface finish Ra 3.2 µm (125 µin) as machined.  Break sharp edges 0.1–0.3 mm except where\n"
                    "marked SHARP.  Do not scale the drawing."), 5.4)]),
         ]
@@ -286,7 +286,7 @@ class Sheet:
             x = x0
             for cw, lab, val, vs in cells:
                 self.ax.add_patch(Rectangle((x, y), cw, hgt, fill=False, lw=0.5, zorder=4))
-                self.text(x + 1.0, y + hgt - 1.6, lab, size=4.3, color="0.3")
+                self.text(x + 1.0, y + hgt - 1.6, lab, size=4.8, color="0.3")
                 if lab == "PROJECTION" and val == "":
                     self._proj_symbol(x + cw / 2, y + (hgt - 2.4) / 2)
                 else:
@@ -310,27 +310,27 @@ class Sheet:
             self.text(x, y, f"{i}.", size=FS_S)
             for ln in n.split("\n"):
                 self.text(x + 4.5, y, ln, size=FS_S)
-                y -= 3.0
+                y -= 3.3
             y -= 0.6
+        self.notes_bottom = y
         if flags:
-            y -= 1.5
-            self.text(x, y, "FLAGGED FEATURES — tolerances tighter than the Xometry standard (inspect these)",
-                      size=6.2, weight="bold")
-            y -= 5.0
+            x, y = 158, H - 22
+            self.text(x, y, "FLAGGED FEATURES — tighter than the Xometry standard (inspect these)",
+                      size=7.0, weight="bold")
+            y -= 5.5
             for num, txt in flags:
                 lines = txt.split("\n")
-                self.flag(x + 2.2, y, num)
+                self.flag(x + 2.5, y, num)
                 for ln in lines:
                     self.text(x + 7, y, ln, size=FS_S)
-                    y -= 3.0
-                y -= 1.6
-        self.notes_bottom = y
+                    y -= 3.3
+                y -= 1.8
 
     def flag(self, x, y, num):
         """Triangular flag with the number of a flagged feature; (x, y) = centre."""
-        self.ax.add_patch(Polygon([(x - 2.2, y - 1.7), (x + 2.2, y - 1.7), (x, y + 2.1)], closed=True,
+        self.ax.add_patch(Polygon([(x - 2.5, y - 1.9), (x + 2.5, y - 1.9), (x, y + 2.4)], closed=True,
                                   facecolor="white", edgecolor="k", lw=0.45, zorder=7))
-        self.text(x, y - 0.45, str(num), size=4.8, ha="center", zorder=8)
+        self.text(x, y - 0.5, str(num), size=5.6, ha="center", zorder=8)
 
     def _revisions(self, revs):
         x0 = W - 10 - 150
@@ -405,7 +405,7 @@ class Sheet:
         else:
             self.arrow(tip, land)
         for i, ln in enumerate(text.split("\n")):
-            self.text(t[0], t[1] - i * 3.0, ln, size=size, ha=ha)
+            self.text(t[0], t[1] - i * 3.3, ln, size=size, ha=ha)
         w = self.width(text, size)
         x0, x1 = (t[0], t[0] + w) if ha == "left" else (t[0] - w, t[0])
         if flag is not None:
@@ -415,14 +415,17 @@ class Sheet:
     def frame(self, x, y, sym, cells):
         """Feature control frame, left-middle at (x, y). sym: 'flat' or 'pos'. Returns its right edge."""
         hgt = 4.4
-        widths = [6.0] + [max(5.0, self.width(c, 6.0) + 2.4) for c in cells]
+        widths = [6.0] + [max(5.0, self.width(c, 7.0) + 2.4) for c in cells]
         xx = x
         for wdt in widths:
             self.ax.add_patch(Rectangle((xx, y - hgt / 2), wdt, hgt, facecolor="white", edgecolor="k", lw=0.45,
                                         zorder=6))
             xx += wdt
         cx = x + 3.0
-        if sym == "flat":
+        if sym == "par":
+            for dx in (-0.8, 0.8):
+                self.line((cx + dx - 0.7, y - 1.2), (cx + dx + 0.7, y + 1.2), lw=0.45, zorder=7)
+        elif sym == "flat":
             self.ax.add_patch(Polygon([(cx - 2.0, y - 0.9), (cx + 1.0, y - 0.9), (cx + 2.0, y + 0.9),
                                        (cx - 1.0, y + 0.9)], closed=True, fill=False, lw=0.45, zorder=7))
         else:
@@ -431,7 +434,7 @@ class Sheet:
             self.line((cx, y - 1.9), (cx, y + 1.9), lw=0.45, zorder=7)
         xx = x + widths[0]
         for wdt, c in zip(widths[1:], cells):
-            self.text(xx + wdt / 2, y, c, size=6.0, ha="center", zorder=8)
+            self.text(xx + wdt / 2, y, c, size=7.0, ha="center", zorder=8)
             xx += wdt
         return xx
 
@@ -454,22 +457,24 @@ class Sheet:
         """Surface texture symbol (material removal required), its point at (x, y), with Ra over the long arm;
         leader_to: a surface point the symbol is attached to by a leader with an arrow."""
         label = ra + (f"   {note}" if note else "")
-        arm = max(8.5, 3.6 + self.width(label, 5.4))
+        arm = max(8.5, 3.6 + self.width(label, 6.5))
         pts = np.array([[-1.5, 1.5], [0, 0], [3.2, 3.8], [arm, 3.8]]) + [x, y]
         self.ax.plot(pts[:, 0], pts[:, 1], color="k", lw=0.45, zorder=6)
         self.line(pts[0], (x + 1.5, y + 1.5), lw=0.45)
-        self.text(x + 3.8, y + 5.4, label, size=5.4)
+        self.text(x + 3.8, y + 5.6, label, size=6.5)
         if leader_to is not None:
             self.line((x, y), leader_to)
             self.arrow(leader_to, (x, y))
 
-    def callout(self, tip, at, text, flag=None, flat=None, ra=None, note=None, dot=True):
+    def callout(self, tip, at, text, flag=None, flat=None, ra=None, note=None, dot=True, frame=None):
         """A surface callout: leader to a text, the flag after the text, a flatness frame under the text and
         the surface-texture symbol to the right of that frame."""
         x0, x1 = self.leader(tip, at, text, dot=dot, flag=flag)
         xe = x0
         if flat:
             xe = self.frame(x0, at[1] - 6.5, "flat", [flat])
+        elif frame:
+            xe = self.frame(x0, at[1] - 6.5, frame[0], frame[1])
         if ra:
             self.finish(xe + 4.0, at[1] - 10.0, ra, note=note)
 
@@ -529,7 +534,7 @@ class Sheet:
 PEEK = "PEEK, unfilled, natural (virgin, e.g. Victrex 450G based), annealed / stress-relieved stock"
 PEEK_TB = "PEEK, unfilled, natural (annealed stock)"
 SS = "Stainless steel 316L (ASTM A276 bar or A240 plate)"
-REVS = [["A", DATE, "First issue (docs/34 Revision B, ceramic strip, IDEX-type 1/4-28 ports)", "generated"]]
+REVS = [["A", DATE, "First issue (docs/34)", "generated"]]
 COMMON = [
     "This drawing shows only what the 3D model cannot carry: tolerances tighter than standard, surface\n"
     "finish, threads, datums and edge conditions. All other geometry is defined by the STEP model of the\n"
@@ -538,6 +543,8 @@ COMMON = [
     "Clean (detergent, then water and isopropanol), dry, bag individually. Do not engrave or stamp.",
     "Small bores (⌀0.5–1.0) must be open and free of burrs and chips.",
 ]
+SCREW_NOTE = ("SCREW HOLES (M4 and M2.5, clearance and tapped): locations BASIC per the STEP model; position ⌀0.3\n"
+              "to A|B|C. The dowels locate the parts; the screws only clamp.")
 
 
 def _iso_png(solid, mat, name):
@@ -575,11 +582,11 @@ def dowel_callouts(S, top, flag):
     rp = P.DOWEL_D / 2 * K
     # datum feature symbols of features of size sit on the leader of their size callout (ASME Y14.5)
     tb = (pb[0] + 40, pb[1] - 16)
-    S.leader(pb + rp * np.array([0.71, -0.71]), tb, "⌀3.00 +0.04/−0 THRU", flag=flag)
+    S.leader(pb + rp * np.array([0.71, -0.71]), tb, "⌀3.00 +0.05/+0.01 THRU", flag=flag)
     S.datum((tb[0] - 2.0, tb[1]), "B", direction=(0, -1), length=2.5)
     tc = (pc[0] + 40, pc[1] + 18)
     S.leader(pc + np.array([rp * 0.71, P.DOWEL_SLOT_L / 2 * K * 0.6]), tc,
-             f"SLOT 3.00 +0.04/−0 × {P.DOWEL_SLOT_L} THRU\n(long axis along B–C)", flag=flag)
+             f"SLOT 3.00 +0.05/+0.01 × {P.DOWEL_SLOT_L} THRU\n(long axis along B–C)", flag=flag)
     S.datum((tc[0] - 2.0, tc[1]), "C", direction=(0, 1), length=2.5)
     # basic location of the axis (bores) from datum B
     ax_ = top.p(0, 0, 0)
@@ -594,24 +601,26 @@ def sheet_base():
         "The strip pocket depth is not toleranced tighter than standard: it is measured at assembly and the\n"
         "shim under the electrode strip is cut to suit (docs/34 §4.3).",
         "Dowel holes take ⌀3 m6 × 16 stainless dowel pins, bonded at assembly (pins not supplied).",
+        SCREW_NOTE,
     ]
     flags = [
         (1, "Top face, datum A: flat within 0.02 (the nozzle plate rests on it)."),
-        (2, "Strip pocket floor: flat within 0.02; Ra 1.6 µm (63 µin) (it carries a ceramic strip)."),
-        (3, "2× dowel hole ⌀3.00 +0.04/−0."),
+        (2, "Strip pocket floor: parallel to A within 0.02; Ra 1.6 µm (63 µin) (it carries a ceramic strip)."),
+        (3, "2× dowel hole ⌀3.00 +0.05/+0.01 (clearance for the bonding compound)."),
+        (4, "4× M4 tapped hole: position ⌀0.3 to A|B|C (note 7)."),
     ]
     S = Sheet("T2C-001", "BASE", SS, "As machined, cleaned", "2:1", notes, flags, REVS, _mass(solid, 8.0e-3))
     top = View(S, "top", TV, K)
     top.draw(solid)
     marks(top, P.M4_XY + P.DOWEL_XY)
     m4 = top.p(8, 16, 0)
-    S.leader(m4 + 2.15 * K * np.array([0.71, 0.71]), (m4[0] + 30, m4[1] + 22), "4× M4×0.7-6H THRU")
+    S.leader(m4 + 2.15 * K * np.array([0.71, 0.71]), (m4[0] + 30, m4[1] + 22), "4× M4×0.7-6H THRU", flag=4)
     dw = top.p(*P.DOWEL_XY[1], 0)
-    S.leader(dw + 1.5 * K * np.array([-0.71, 0.71]), (dw[0] - 18, dw[1] + 22), "2× ⌀3.00 +0.04/−0 ↧ 6", ha="right",
-             flag=3)
+    S.leader(dw + 1.5 * K * np.array([-0.71, 0.71]), (dw[0] - 14, dw[1] + 22), "2× ⌀3.00 +0.05/+0.01 ↧ 6",
+             ha="right", flag=3)
     fl = top.p(4.0, -3.5, 0)
     tt = (125.0, 120.0)
-    S.callout(fl, tt, "STRIP POCKET FLOOR", flag=2, flat="0.02", ra="Ra 1.6")
+    S.callout(fl, tt, "STRIP POCKET FLOOR", flag=2, frame=("par", ["0.02", "A"]), ra="Ra 1.6")
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     # section A-A
@@ -625,8 +634,8 @@ def sheet_base():
     S.line((tA[0] + 11, tA[1] + 7.8), tgt)
     S.arrow(tgt, (tA[0] + 11, tA[1] + 7.8))
     S.text(TV[0], front.p(0, 0, -P.BASE_T)[1] - 8, "SECTION A–A", size=FS_T, ha="center", weight="bold")
-    S.image(_iso_png(solid, "steel", "base"), (270, 150, 400, 260))
-    S.text(335, 146, "ISOMETRIC (reference only)", size=FS_S, ha="center")
+    S.image(_iso_png(solid, "steel", "base"), (280, 140, 400, 230))
+    S.text(340, 136, "ISOMETRIC (reference only)", size=FS_S, ha="center")
     return S.save("T2C-001_base")
 
 
@@ -638,19 +647,21 @@ def sheet_plate():
     notes = [f"MATERIAL: {PEEK}.\nThe plate is clamped flat in use; machine both faces with light cuts."] \
         + COMMON + [
         "Datum A: the underside (cell face). Datum B: the round dowel hole. Datum C: the slot.",
-        "M2.5 flat-head screws enter from the underside: countersinks per the model, heads 0–0.2 below\n"
-        "the face.",
+        "M2.5 low-head socket screws (DIN 7984) sit in counterbores from the underside, per the model.",
+        SCREW_NOTE,
     ]
     flags = [
-        (1, f"Exit bore ⌀{P.EXIT_D:.2f} ±0.05 THRU, position ⌀0.10 to A|B|C; both ends SHARP."),
+        (1, f"Exit bore ⌀{P.EXIT_D:.2f} ±0.05 THRU, position ⌀0.10 to A|B|C; both ends SHARP (deburr only)."),
         (2, f"Retainer pocket ⌀{rp} +0.05/−0, depth {P.RET_POCKET_DEPTH:.2f} ±0.025, position ⌀0.10 to\n"
-            "A|B|C; floor Ra 1.6; floor edge SHARP."),
-        (3, f"O-ring groove ⌀{P.GROOVE_STRIP_ID} / ⌀{P.GROOVE_STRIP_OD} ±0.05, depth "
+            "A|B|C; floor Ra 1.6."),
+        (3, f"O-ring groove ⌀{P.GROOVE_STRIP_ID} ±0.05 / ⌀{P.GROOVE_STRIP_OD} ±0.05, depth "
             f"{P.GROOVE_STRIP_DEPTH:.2f} ±0.05; floor Ra 1.6."),
-        (4, f"Collecting groove ⌀{2 * P.RING_R0:.2f} / ⌀{2 * P.RING_R1:.2f} ±0.10, depth {P.RING_DEPTH:.2f} ±0.10;"
-            f" riser ⌀{P.RISER_PLATE_D} at\n{abs(P.RISER_PLATE_X)} ±0.10 from the axis."),
+        (4, f"Collecting groove ⌀{2 * P.RING_R0:.2f} ±0.10 / ⌀{2 * P.RING_R1:.2f} ±0.10, depth {P.RING_DEPTH:.2f}"
+            f" ±0.10; riser ⌀{P.RISER_PLATE_D}\nat {abs(P.RISER_PLATE_X)} ±0.10 from the axis."),
         (5, "Cell face (underside) inside ⌀9.3: Ra 1.6 µm (63 µin)."),
-        (6, "Dowel hole (datum B) and slot (datum C): 3.00 +0.04/−0."),
+        (6, "Dowel hole (datum B) and slot (datum C): 3.00 +0.05/+0.01."),
+        (7, "Top face inside ⌀16 around the axis: flat within 0.02 (the body seals on it)."),
+        (8, "Screw clearance holes and counterbores: position ⌀0.3 to A|B|C (note 7)."),
     ]
     S = Sheet("T2C-002", "NOZZLE PLATE", PEEK_TB, "As machined, cleaned", "2:1 (SECTION 10:1)", notes, flags,
               REVS, _mass(solid, 1.31e-3))
@@ -660,6 +671,10 @@ def sheet_plate():
     top.centre_mark(0, 0, 0, r=1.0)
     dowel_callouts(S, top, 6)
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
+    tf = top.p(-6.0, 4.0, 0)
+    S.callout(tf, (16.0, top.p(0, P.Y_HALF, 0)[1] + 20), "TOP FACE INSIDE ⌀16", flag=7, flat="0.02")
+    m4 = top.p(8, 16, 0)
+    S.leader(m4 + 2.4 * K * np.array([0.71, 0.71]), (m4[0] + 14, m4[1] + 30), "SCREW HOLES, NOTE 7", flag=8)
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     # bottom view: the cell face
     bot = View(S, "bottom", BV, K)
@@ -669,46 +684,51 @@ def sheet_plate():
     S.finish(bot.p(P.X1, 0, 0)[0] + 8, BV[1] + 1, "Ra 1.6", leader_to=bot.p(1.5, 1.5, 0), note="inside ⌀9.3")
     S.flag(bot.p(P.X1, 0, 0)[0] + 37, BV[1] + 6, 5)
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 8, "BOTTOM VIEW (cell face)", size=FS_T, ha="center", weight="bold")
+    S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 13, "part turned over about the horizontal axis", size=FS_S,
+           ha="center")
     # section A-A at the axis, 10:1
     kd = 10.0
     det = View(S, "front", (305, 126), kd)
-    clip = cq.Workplane("XY").box(10.8, 4.0, 3.0, centered=False).translate((-5.4, -2, -0.2))
+    clip = cq.Workplane("XY").box(10.8, 60.0, 3.0, centered=False).translate((-5.4, -30, -0.2))
     det.draw(_shape(solid).intersect(_shape(clip)), cut=("y", 0.0))
     det.centre_line((0, 0, -0.7), (0, 0, P.PLATE_T + 0.7))
     S.text(det.o[0], 79, "SECTION A–A AT THE AXIS, 10:1 (cell face down; plate cut off at ±5.4)", size=FS_T,
            ha="center", weight="bold")
     # pocket: size, depth, position (frame attached under the dimension)
     q0, q1 = det.p(-rp / 2, 0, P.PLATE_T), det.p(rp / 2, 0, P.PLATE_T)
-    S.dim(q0, q1, q0[1] + 7, f"⌀{rp} +0.05/−0  ↧ {P.RET_POCKET_DEPTH:.2f} ±0.025", outside_text="after")
+    lab = f"⌀{rp} +0.05/−0  ↧ {P.RET_POCKET_DEPTH:.2f} ±0.025"
+    S.dim(q0, q1, q0[1] + 7, lab, outside_text="after")
     tx = q1[0] + 6.5
     S.frame(tx, q0[1] + 2.0, "pos", ["⌀0.10", "A", "B", "C"])
-    S.flag(tx + 46, q0[1] + 7, 2)
+    S.flag(tx + S.width(lab, FS_S) + 4.0, q0[1] + 7, 2)
     S.finish(det.p(-0.5, 0, zp)[0] - 22, det.p(0, 0, P.PLATE_T)[1] + 14, "Ra 1.6",
              leader_to=det.p(-0.55, 0, zp) + np.array([0, 0.2]))
     # exit bore
     e1 = det.p(P.EXIT_D / 2, 0, 1.0)
     x0, x1 = S.leader(e1, (det.p(5.4, 0, 0)[0] + 8, e1[1] + 3), f"⌀{P.EXIT_D:.2f} ±0.05 THRU (exit bore)", flag=1)
     S.frame(x0, e1[1] - 3.5, "pos", ["⌀0.10", "A", "B", "C"])
+    ept = det.p(-P.EXIT_D / 2, 0, zp)
+    S.leader(ept + np.array([-0.2, 0.0]), (det.p(-5.4, 0, 0)[0] - 3, det.p(0, 0, P.PLATE_T)[1] + 9),
+             "SHARP, both ends\nof the bore (deburr only)", ha="right")
     # riser position
     S.dim(det.p(P.RISER_PLATE_X, 0, 0), det.p(0, 0, 0), det.p(0, 0, 0)[1] - 8, f"{abs(P.RISER_PLATE_X)} ±0.10",
           side=1)
     # grooves
     yb = det.p(0, 0, 0)[1]
-    S.dim(det.p(-P.RING_R0, 0, 0), det.p(P.RING_R0, 0, 0), yb - 15, f"⌀{2 * P.RING_R0:.2f} ±0.10")
-    S.dim(det.p(-P.RING_R1, 0, 0), det.p(P.RING_R1, 0, 0), yb - 22,
-          f"⌀{2 * P.RING_R1:.2f} ±0.10  ↧ {P.RING_DEPTH:.2f} ±0.10")
-    S.dim(det.p(-P.GROOVE_STRIP_ID / 2, 0, 0), det.p(P.GROOVE_STRIP_ID / 2, 0, 0), yb - 29,
-          f"⌀{P.GROOVE_STRIP_ID} ±0.05")
-    S.dim(det.p(-P.GROOVE_STRIP_OD / 2, 0, 0), det.p(P.GROOVE_STRIP_OD / 2, 0, 0), yb - 36,
-          f"⌀{P.GROOVE_STRIP_OD} ±0.05  ↧ {P.GROOVE_STRIP_DEPTH:.2f} ±0.05")
-    S.flag(det.p(P.GROOVE_STRIP_OD / 2, 0, 0)[0] + 5, yb - 18.5, 4)
-    S.flag(det.p(P.GROOVE_STRIP_OD / 2, 0, 0)[0] + 5, yb - 32.5, 3)
+    xf = det.p(P.GROOVE_STRIP_OD / 2, 0, 0)[0] + 6
+    for r_, yy, lab_, fl_ in ((P.RING_R0, yb - 15, f"⌀{2 * P.RING_R0:.2f} ±0.10", 4),
+                              (P.RING_R1, yb - 22, f"⌀{2 * P.RING_R1:.2f} ±0.10  ↧ {P.RING_DEPTH:.2f} ±0.10", 4),
+                              (P.GROOVE_STRIP_ID / 2, yb - 29, f"⌀{P.GROOVE_STRIP_ID} ±0.05", 3),
+                              (P.GROOVE_STRIP_OD / 2, yb - 36,
+                               f"⌀{P.GROOVE_STRIP_OD} ±0.05  ↧ {P.GROOVE_STRIP_DEPTH:.2f} ±0.05", 3)):
+        S.dim(det.p(-r_, 0, 0), det.p(r_, 0, 0), yy, lab_)
+        S.flag(xf, yy, fl_)
     S.finish(det.p(5.4, 0, 0)[0] + 16, yb - 10, "Ra 1.6", leader_to=det.p(4.05, 0, P.GROOVE_STRIP_DEPTH)
              + np.array([0, -0.2]), note="groove floors")
-    S.datum(det.p(-4.95, 0, 0), "A", direction=(0, -1), length=3.0)
-    S.image(_iso_png(solid, "PEEK", "plate"), (232, 200, 315, 268))
-    S.image(_iso_png(solid.rotate((0, 0, 0), (1, 0, 0), 180), "PEEK", "plate_under"), (322, 200, 405, 268))
-    S.text(318, 196, "ISOMETRIC, top face and underside (reference only)", size=FS_S, ha="center")
+    S.datum(det.p(-5.15, 0, 0), "A", direction=(0, -1), length=3.0)
+    S.image(_iso_png(solid, "PEEK", "plate"), (300, 222, 350, 268))
+    S.image(_iso_png(solid.rotate((0, 0, 0), (1, 0, 0), 180), "PEEK", "plate_under"), (355, 222, 405, 268))
+    S.text(352, 217, "ISOMETRIC, top face and underside (reference)", size=FS_S, ha="center")
     return S.save("T2C-002_nozzle_plate")
 
 
@@ -718,22 +738,23 @@ def sheet_body():
     zb = P.PLATE_T              # the body is modelled in assembly coordinates: its underside is at z = 2.5
     notes = [f"MATERIAL: {PEEK}."] + COMMON + [
         "Datum A: the underside. Datum B: the round dowel hole. Datum C: the slot.",
-        "PORTS (2×: inlet in the top face, outlet in the end face; positions per the model): 1/4-28 UNF-2B,\n"
-        "full thread ≥ 7.11 (0.28 in) from the face; flat bottom at 8.89 (0.350 in); chamfer ⌀6.86 (0.27 in)\n"
-        "× 90°; per the 1/4-28 flat-bottom port drawing supplied with the order. The port bottom is the\n"
-        "sealing face of the fitting.",
+        "PORTS (2×: inlet in the top face, outlet in the end face; outlet position per the model): 1/4-28\n"
+        "UNF-2B, full thread ≥ 7.11 (0.28 in) from the face; flat bottom at 8.89 (0.350 in); chamfer\n"
+        "⌀6.86 (0.27 in) × 90°. The port bottom is the sealing face of the fitting.",
         "Drill the bed bore from the inlet port bottom in the same set-up as the inlet port.",
+        SCREW_NOTE,
     ]
     flags = [
-        (1, f"Bed bore ⌀{P.BED_D:.2f} ±0.05 THRU the port floor, position ⌀0.10 to A|B|C; SHARP at the\n"
-            "underside."),
-        (2, "Underside, datum A: flat within 0.05; Ra 1.6 µm (63 µin) inside ⌀16 (a membrane and an\n"
-            "O-ring seal on it)."),
-        (3, f"O-ring groove ⌀{P.GROOVE_IFACE_ID} / ⌀{P.GROOVE_IFACE_OD} ±0.10, depth {P.GROOVE_IFACE_DEPTH:.2f} ±0.05;"
-            " floor Ra 1.6."),
-        (4, "Both port bottoms: flat within 0.05 (0.002 in), Ra 0.8 µm (32 µin), corner radius ≤ 0.18\n"
-            "(0.007 in)."),
-        (5, "Dowel hole (datum B) and slot (datum C): 3.00 +0.04/−0."),
+        (1, f"Bed bore ⌀{P.BED_D:.2f} ±0.05 THRU the port floor, position ⌀0.10 to A|B|C; both ends SHARP\n"
+            "(deburr only)."),
+        (2, "Underside, datum A: flat within 0.05; inside ⌀16 flat within 0.02 and Ra 1.6 µm (63 µin);\n"
+            "inside ⌀3 around the bed bore Ra 0.4 µm (16 µin) (a membrane and an O-ring seal on it)."),
+        (3, f"O-ring groove ⌀{P.GROOVE_IFACE_ID} ±0.10 / ⌀{P.GROOVE_IFACE_OD} ±0.10, depth "
+            f"{P.GROOVE_IFACE_DEPTH:.2f} ±0.05; floor Ra 1.6."),
+        (4, "Both port bottoms: flat within 0.05 (0.002 in), perpendicular to the thread axis within 0.05,\n"
+            "Ra 0.8 µm (32 µin), corner radius ≤ 0.18 (0.007 in). Inlet port thread: position ⌀0.10 to A|B|C."),
+        (5, "Dowel hole (datum B) and slot (datum C): 3.00 +0.05/+0.01."),
+        (6, "Screw clearance and tapped holes: position ⌀0.3 to A|B|C (note 8)."),
     ]
     S = Sheet("T2C-003", "BODY", PEEK_TB, "As machined, cleaned", "2:1 (DETAIL 10:1)", notes, flags, REVS,
               _mass(solid, 1.31e-3))
@@ -743,8 +764,12 @@ def sheet_body():
     top.centre_mark(0, 0, 0, r=3.6)
     dowel_callouts(S, top, 5)
     pt = top.p(0, 0, 0)
-    S.leader(pt + P.PORT_CHAMFER_D / 2 * K * np.array([0.71, 0.71]), (pt[0] + 32, pt[1] + 18),
-             "1/4-28 UNF-2B PORT,\nNOTE 6 (inlet)", flag=4)
+    tp = (pt[0] + 30, pt[1] + 22)
+    x0, x1 = S.leader(pt + P.PORT_CHAMFER_D / 2 * K * np.array([0.71, 0.71]), tp, "1/4-28 UNF-2B PORT,\nNOTE 6 (inlet)",
+                      flag=4)
+    S.frame(x0, tp[1] - 9.5, "pos", ["⌀0.10", "A", "B", "C"])
+    m4 = top.p(8, 16, 0)
+    S.leader(m4 + 2.4 * K * np.array([0.71, 0.71]), (m4[0] + 14, m4[1] + 30), "SCREW HOLES, NOTE 8", flag=6)
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     # bottom view
@@ -754,17 +779,21 @@ def sheet_body():
     bot.centre_mark(0, 0, 0, r=7.3)
     g = bot.p(P.GROOVE_IFACE_OD / 2 * 0.71, -P.GROOVE_IFACE_OD / 2 * 0.71, zb)
     S.leader(g, (bot.p(P.X1, 0, 0)[0] + 8, g[1] + 6),
-             f"O-RING GROOVE ⌀{P.GROOVE_IFACE_ID} / ⌀{P.GROOVE_IFACE_OD} ±0.10\n↧ {P.GROOVE_IFACE_DEPTH:.2f} ±0.05",
+             f"O-RING GROOVE ⌀{P.GROOVE_IFACE_ID} ±0.10 /\n⌀{P.GROOVE_IFACE_OD} ±0.10  ↧ {P.GROOVE_IFACE_DEPTH:.2f} ±0.05",
              flag=3)
     S.finish(bot.p(P.X1, 0, 0)[0] + 8, g[1] - 12, "Ra 1.6", leader_to=g + np.array([-0.4, -0.4]),
              note="groove floor")
     m25 = bot.p(8, 7, zb)
     S.leader(m25 + 1.35 * K * np.array([0.71, -0.71]), (bot.p(P.X1, 0, 0)[0] + 8, m25[1] - 30),
-             f"4× M2.5×0.45-6H ↧ 5.5 FULL THREAD\n(drill ⌀{P.M25_TAP_DRILL} ↧ {P.M25_THREAD_DEPTH:g})")
+             f"4× M2.5×0.45-6H ↧ {P.M25_FULL_THREAD:.1f} FULL THREAD\n(drill ⌀{P.M25_TAP_DRILL} ↧ {P.M25_THREAD_DEPTH:g})")
     uf = bot.p(-4, -9, zb)
     tt = (190.0, 201.0)
-    S.callout(uf, tt, "UNDERSIDE (datum A)", flag=2, flat="0.05", ra="Ra 1.6", note="inside ⌀16")
+    S.callout(uf, tt, "UNDERSIDE (datum A)", flag=2, flat="0.05")
+    u2 = bot.p(-5, -3, zb)
+    S.callout(u2, (tt[0] + 54, tt[1]), "INSIDE ⌀16", flag=2, flat="0.02", ra="Ra 1.6")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 8, "BOTTOM VIEW", size=FS_T, ha="center", weight="bold")
+    S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 13, "part turned over about the horizontal axis", size=FS_S,
+           ha="center")
     # section A-A at 2:1
     front = View(S, "front", (TV[0], 34 - zb * K), K)
     front.draw(solid, cut=("y", 0.0))
@@ -781,7 +810,7 @@ def sheet_body():
     # detail E, 10:1
     kd = 10.0
     det = View(S, "front", (300, 104 - zb * kd), kd)
-    clip = cq.Workplane("XY").box(7.0, 4.0, 4.2, centered=False).translate((-3.5, -2, zb - 0.3))
+    clip = cq.Workplane("XY").box(7.0, 60.0, 4.2, centered=False).translate((-3.5, -30, zb - 0.3))
     det.draw(_shape(solid).intersect(_shape(clip)), cut=("y", 0.0))
     det.centre_line((0, 0, zb - 0.7), (0, 0, zb + 4.4))
     S.text(det.o[0], 80, "DETAIL E (SECTION A–A, 10:1): PORT BOTTOM AND BED BORE", size=FS_T, ha="center",
@@ -796,23 +825,29 @@ def sheet_body():
     S.leader(cr + np.array([-0.3, 0.3]), (cr[0] + 14, cr[1] + 20), f"R{P.PORT_CORNER_R} MAX")
     ed = det.p(P.BED_D / 2, 0, zb)
     S.leader(ed + np.array([0.3, -0.1]), (ed[0] + 22, ed[1] - 8), "SHARP (deburr only)")
-    S.image(_iso_png(solid, "PEEK", "body"), (318, 190, 405, 268))
-    S.text(362, 186, "ISOMETRIC (reference only)", size=FS_S, ha="center")
+    eu = det.p(P.BED_D / 2, 0, zb + P.INLET_FLOOR)
+    S.leader(eu + np.array([0.3, 0.1]), (det.p(3.5, 0, 0)[0] + 8, eu[1] + 6), "SHARP (deburr only)")
+    S.finish(det.p(-1.2, 0, zb)[0] - 34, det.p(0, 0, zb)[1] - 12, "Ra 0.4", note="inside ⌀3",
+             leader_to=det.p(-1.0, 0, zb) + np.array([0, -0.2]))
+    S.image(_iso_png(solid, "PEEK", "body"), (318, 215, 405, 268))
+    S.text(362, 211, "ISOMETRIC (reference only)", size=FS_S, ha="center")
     return S.save("T2C-003_body")
 
 
 # ---- T2C-004 washer (cut gasket) ------------------------------------------------------------------------------------
-FKM = "FKM (fluoroelastomer) sheet, 0.25 mm, 70–75 Shore A, unfilled or carbon-black filled, no surface coating"
+FKM = "FKM (fluoroelastomer) sheet, 0.25 mm, 70–75 Shore A,\nunfilled or carbon-black filled, no surface coating"
 
 
 def sheet_washer():
     solid = PT.washer_free()
     tD, tT = P.WASHER_D_TOL, P.WASHER_T_TOL
-    notes = [f"MATERIAL: {FKM}.\nEPDM of the same hardness is an acceptable alternative if stated on the order."] \
-        + [COMMON[0], COMMON[1]] + [
-        "Cut by laser, waterjet or steel-rule / punch die from the sheet. Cut files: T2C-004_washer.dxf (one part)\n"
-        f"and T2C-004_washer_sheet.dxf ({P.WASHER_ARRAY[0] * P.WASHER_ARRAY[1]} parts nested at {P.WASHER_PITCH:g} mm "
-        "pitch; layer CUT = cut contours, layer SHEET =\nreference outline). Cut the inner contour first.",
+    notes = [f"MATERIAL: {FKM}.\nEPDM, 70–75 Shore A, only where the buyer's order says so.",
+             "This drawing gives the tolerances and the process requirements; the outline is defined by the\n"
+             "STEP model and the DXF cut files of the same drawing number and revision.", COMMON[1]] + [
+        "Cut with a compound (pierce-and-blank) punch die, or by fine pure-water waterjet. Not by laser (FKM\n"
+        "releases HF) and not with a steel-rule die (the ⌀0.75 hole is too small). Cut files: T2C-004_washer.dxf\n"
+        f"(one part), T2C-004_washer_sheet.dxf ({P.WASHER_ARRAY[0] * P.WASHER_ARRAY[1]} parts at {P.WASHER_PITCH:g} mm "
+        "pitch; layer CUT = cut contours, layer SHEET =\nreference outline).",
         "Cut edges clean and square to the faces: no flash, no tear-out, no charring or melt bead. Both faces as\n"
         "supplied on the sheet: no release agent, talc, powder or adhesive liner residue.",
         "Supply loose, counted, in a clean bag; state on the label the measured thickness of the sheet lot\n"
@@ -821,7 +856,7 @@ def sheet_washer():
     flags = [
         (1, f"Outer ⌀{P.WASHER_OD:.2f} ±{tD:.2f} and hole ⌀{P.WASHER_ID:.2f} ±{tD:.2f}, hole concentric with the outer edge "
             f"within ⌀0.10."),
-        (2, f"Thickness {P.WASHER_T:.2f} ±{tT:.3f} (sheet tolerance); report the measured thickness of the lot."),
+        (2, f"Thickness {P.WASHER_T:.2f} ±{tT:.2f} (sheet tolerance); report the measured thickness of the lot."),
     ]
     general = ("Dimensions in mm.  Dimensions shown are toleranced as shown; the outline is also defined by the\n"
                "STEP model and the DXF cut files of the same drawing number and revision.\n"
@@ -847,9 +882,9 @@ def sheet_washer():
     front = View(S, "front", (95, 72), k)
     front.draw(solid, cut=("y", 0.0))
     S.dim(front.p(P.WASHER_OD / 2, 0, 0), front.p(P.WASHER_OD / 2, 0, P.WASHER_T),
-          front.p(P.WASHER_OD / 2, 0, 0)[0] + 9, f"{P.WASHER_T:.2f} ±{tT:.3f}", axis="y", side=-1, size=FS,
-          outside_text=None)
-    S.flag(front.p(P.WASHER_OD / 2, 0, 0)[0] + 18, front.p(0, 0, P.WASHER_T / 2)[1], 2)
+          front.p(P.WASHER_OD / 2, 0, 0)[0] + 9, f"{P.WASHER_T:.2f} ±{tT:.2f}", axis="y", side=-1, size=FS,
+          outside_text="after")
+    S.flag(front.p(P.WASHER_OD / 2, 0, 0)[0] + 16, front.p(0, 0, P.WASHER_T / 2)[1], 2)
     S.text(front.o[0], front.p(0, 0, 0)[1] - 12, "SECTION A–A (20:1)", size=FS_T, ha="center", weight="bold")
     S.image(_iso_png(solid, "elastomer", "washer"), (205, 120, 290, 185))
     S.text(247, 116, "ISOMETRIC (reference only)", size=FS_S, ha="center")

@@ -77,11 +77,9 @@ def plate():
     tools.append(slot)
     tools += [_cyl(P.M4_CLEAR, P.PLATE_T, x, y) for x, y in P.M4_XY]
     tools += _dowel_holes(0.0, P.PLATE_T)
-    for x, y in P.M25_XY:                                                                     # M2.5 flat heads
+    for x, y in P.M25_XY:                                                     # M2.5 low-head socket screws
         tools.append(_cyl(P.M25_CLEAR, P.PLATE_T, x, y))
-        h = (P.M25_CSK_D - P.M25_CLEAR) / 2.0                                                 # 90 degree countersink
-        cone = cq.Solid.makeCone(P.M25_CSK_D / 2.0, P.M25_CLEAR / 2.0, h, cq.Vector(x, y, 0), cq.Vector(0, 0, 1))
-        tools.append(cq.Workplane("XY").add(cone))
+        tools.append(_cyl(P.M25_CBORE_D, P.M25_CBORE_DEPTH, x, y, 0.0))       # counterbore from the underside
     return _cut_all(b, tools)
 
 
