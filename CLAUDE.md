@@ -53,6 +53,9 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 - `docs/34_tier2_flow_cell.md` — follow-up: a custom flow cell for tier 2 with the bead bed inside the cell (three
   machined parts, 500 psi, MicruX strip as the electrode). Dimensions in `cad/elisa_cad/tier2_cell/params.py`, CAD
   output in `cad/out/tier2_cell/`, numbers from `scripts/tier_round/tier2_cell.py`; not independently reviewed.
+- `docs/35_tier2_beads.md` — follow-up: alternative capture beads for the docs/34 cell (lowest LOD, mainly lowest
+  NSB), five rounds with an independent reviewer until converged. Numbers from `scripts/tier_round/tier2_beads.py`,
+  research notes and reviews in `results/tier_round/` (`beads_*.md`, `review_beads_r1–r5.md`).
 - `scripts/tier_round/` — calculation kit and designs behind docs/30 (`README.md` there; `tierkit.py`,
   `designs.py`, `run_tiers.py`, `tier_params.yaml` with the `tr.*` parameters of the round); outputs and the five
   reviewer reports in `results/tier_round/`. The kit imports `elisa_sim` and edits nothing in `src/` or `params/`.
@@ -88,6 +91,7 @@ python scripts/tier_round/run_tiers.py              # tier round: all designs, s
 python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
 python scripts/tier_round/cell_geometries.py        # docs/33: flow-cell geometries (~4 min; `--doc` prints its tables)
 python scripts/tier_round/tier2_cell.py             # docs/34: tier-2 cell with the bed inside: model, pressure, 500 psi (~1 min)
+python scripts/tier_round/tier2_beads.py            # docs/35: alternative beads in the docs/34 cell, paired MC (~2 min)
 (cd cad && python -m elisa_cad.tier2_cell.build)    # docs/34: STEP files, section, drawing notes, 28 checks (~1 min)
 (cd cad && python -m elisa_cad.tier2_cell.drawings) # docs/34: dimensioned A3 drawings T2C-001..004 (PDF + PNG, ~15 s)
 python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
@@ -163,6 +167,15 @@ retainer washer is a cut gasket, T2C-004 (⌀1.4/⌀0.75 × 0.25 FKM; STEP and D
 reviewed by an independent agent (19 findings, 17 applied: counterbored M2.5 screws, screw positions, sealing-face
 flatness and finish; docs/34 Revision notes). Since then simplified at the user's request: only tolerances tighter
 than standard and threads on the views, Ra 1.6 all over, M4 clearance ⌀5.5 (docs/34 §5.2).
+
+**Tier-2 capture beads (2026-11-18, docs/35; desk work, reviewed in five rounds, converged; nothing ordered):** the
+bead is a small lever in the docs/34 cell — the beads carry a third of the blank's non-specific enzyme (line and bore
+above the bed 38 %, retainer 24 %), and part of their share sits on the capture-antibody layer that every bead carries.
+Keep M-280 Streptavidin. Four challengers cluster at a nominal 1.8 pg/mL against 1.9 (M-270 Streptavidin and Vector
+MagnaLINK 2.8 µm as drop-ins, micromod PEG-COOH 10 µm with covalent F(ab')₂, an in-house brush); MagnaLINK coated
+with 3 × the antibody has the widest range (1.4–2.5). No bead reaches 1 pg/mL (ceiling 1.0 with no bead NSB at all).
+Correction: the project's NSB rate comes from Rissin 2010's carboxyl beads, not from M-280 (docs/34 §0/§3 not edited).
+A bench test (after C1/C5) is specified in docs/35 §5; whether it enters the bench plan is the user's decision.
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in
