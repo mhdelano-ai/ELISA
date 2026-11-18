@@ -315,7 +315,7 @@ parameters as the STEP files, so the two cannot drift apart):
 | Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A |
 | Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom, section A–A (2:1, under the top view), detail D of it (10:1) |
 | Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (10:1) |
-| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top and section at 20:1 |
+| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top view at 20:1 (thickness as a note) |
 
 At the user's request the drawings carry **only the features toleranced tighter than standard and the threaded
 holes**: each such feature is flagged (finer finishes and the 0.05 mm edge break at the ends of the 0.5 mm bores

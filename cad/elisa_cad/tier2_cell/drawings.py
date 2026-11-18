@@ -622,8 +622,8 @@ def sheet_plate():
     top.centre_mark(0, 0, 0, r=1.0)
     dowel_callouts(S, top, 5)
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
-    S.callout(top.p(-6.0, 4.0, 0), (16.0, top.p(0, P.Y_HALF, 0)[1] + 20), "TOP FACE INSIDE ⌀16", flag=6,
-              flat="0.02")
+    S.callout(top.p(5.0, -4.0, 0), (top.p(P.X1, 0, 0)[0] + 14, top.p(0, 0, 0)[1] - 22), "TOP FACE INSIDE ⌀16",
+              flag=6, flat="0.02")
     m25 = top.p(8, 7, 0)
     tm = (top.p(P.X1, 0, 0)[0] + 14, m25[1] + 10)
     x0, _ = S.leader(m25 + P.M25_CLEAR / 2 * K * np.array([0.71, 0.71]), tm, f"4× ⌀{P.M25_CLEAR} THRU", flag=7)
@@ -684,10 +684,10 @@ def sheet_body():
     top.centre_mark(0, 0, 0, r=3.6)
     dowel_callouts(S, top, 6)
     pt = top.p(0, 0, 0)
-    tp = (pt[0] + 30, pt[1] + 22)
-    x0, x1 = S.leader(pt + P.PORT_CHAMFER_D / 2 * K * np.array([0.71, 0.71]), tp, "1/4-28 UNF-2B PORT,\nNOTE 3",
+    tp = (16.0, top.p(0, P.Y_HALF, 0)[1] + 20)
+    x0, x1 = S.leader(pt + P.PORT_CHAMFER_D / 2 * K * np.array([-0.71, 0.71]), tp, "1/4-28 UNF-2B PORT, NOTE 3",
                       flag=5)
-    S.frame(x0, tp[1] - 9.5, "pos", ["⌀0.10", "A", "B", "C"])
+    S.frame(x0, tp[1] - 6.0, "pos", ["⌀0.10", "A", "B", "C"])
     S.cut_marks(top.p(P.X0 - 4, 0, 0), top.p(P.X1 + 4, 0, 0), "A", (0, 1))
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     # bottom view
@@ -765,16 +765,11 @@ def sheet_washer():
     ti = (c[0] + 34, c[1] - 26)
     x0, x1 = S.leader(c + ri * np.array([0.71, -0.71]), ti, f"⌀{P.WASHER_ID:.2f} ±{tD:.2f} THRU", size=FS, flag=1)
     S.frame(x0, ti[1] - 6.0, "pos", ["⌀0.10", "B"])
-    S.cut_marks(top.p(-P.WASHER_OD / 2 - 0.25, 0, 0), top.p(P.WASHER_OD / 2 + 0.25, 0, 0), "A", (0, 1))
     S.text(top.o[0], top.p(0, -P.WASHER_OD / 2, 0)[1] - 18, "TOP VIEW (20:1)", size=FS_T, ha="center",
            weight="bold")
-    front = View(S, "front", (95, 72), k)
-    front.draw(solid, cut=("y", 0.0))
-    S.dim(front.p(P.WASHER_OD / 2, 0, 0), front.p(P.WASHER_OD / 2, 0, P.WASHER_T),
-          front.p(P.WASHER_OD / 2, 0, 0)[0] + 9, f"{P.WASHER_T:.2f} ±{tT:.2f}", axis="y", side=-1, size=FS,
-          outside_text="after")
-    S.flag(front.p(P.WASHER_OD / 2, 0, 0)[0] + 16, front.p(0, 0, P.WASHER_T / 2)[1], 2)
-    S.text(front.o[0], front.p(0, 0, 0)[1] - 12, "SECTION A–A (20:1)", size=FS_T, ha="center", weight="bold")
+    tt = (c[0] + 34, c[1])
+    S.text(tt[0], tt[1], f"THICKNESS {P.WASHER_T:.2f} ±{tT:.2f}", size=FS)
+    S.flag(tt[0] + S.width(f"THICKNESS {P.WASHER_T:.2f} ±{tT:.2f}", FS) + 3.5, tt[1], 2)
     return S.save("T2C-004_washer")
 
 

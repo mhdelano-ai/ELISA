@@ -256,3 +256,7 @@ base's section, the plate's bottom view, separate Ra 1.6 symbols (Ra 1.6 all ove
 position tolerance, the port-bottom perpendicularity and the body's overall flatness 0.05. M4 clearance in plate and
 body ⌀4.8 → ⌀5.5 so that the M4 positions are at standard tolerance (build: all checks pass; `tier2_cell.py` re-run:
 bearing stress under the M4 washers 24 MPa, margin 5). The collecting groove keeps ±0.10 (flow uniformity).
+The user then asked to keep simplifying until the iterations converged. Pass 1: the washer's section replaced by a
+thickness note; the body's inlet-port callout moved off the bottom view (its frame touched the view); the plate's
+top-face leader shortened. Pass 2: that leader moved clear of the axis features. Pass 3: no further item could go
+without losing a requirement (each sheet: material, flag note, threads, tighter-than-standard tolerances); stopped.
