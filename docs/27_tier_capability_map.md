@@ -1,8 +1,8 @@
 # 27 — Capability map: what the equipment in hand can do without added hardware, and the modelling map
 
-Status: 2026-11-17, **Revision B** (after the independent review, docs/31: Loop Offline and the volume of a
-composition step in §1, pressure relaxation and the step-down rule in §2, restrictor per tier in §3, tier-3
-operations in §6, added model terms in §8, three more instrument checks in §9).
+Status: 2026-11-18, **Revision C** (after the independent review and its second pass, docs/31: Loop Offline and
+the volume of a composition step in §1, pressure relaxation and the step-down rule in §2, the choice of restrictor
+in §3, tier-3 operations in §6, added model terms in §8, four more instrument checks in §9).
 Written by the orchestrator from docs/02 (hardware), a fact-check of the Waters stack made in
 this round by an agent (Appendix A, sources opened in the session) and calculations with `scripts/tier_round/`.
 Scope: tiers 1 and 2 of docs/26 (no valves, no added pump). Tier 3 may add anything; section 7 points to what
@@ -32,10 +32,10 @@ to Loop Offline) -> transfer tubing -> [tier 2: capture bed] -> MicruX wall-jet 
 100 µL to the delay, and a step of 100–160 µL of substrate does not reach the cell at all. With the loop offline
 (delay 85–110 µL, then the 50 µL mixer as one stirred tank; Derived by the feasibility reviewer,
 `scripts/tier_round/review_feasibility_calc.py` section C) the cell sees 52–82 % of the new liquid after
-100–125 µL, **95 % after 215 µL and 99 % after 295 µL**. The designs program 215 µL (2.7 min at 80 µL/min, 1.4 min
-at 150 µL/min) and set Loop Offline once two loop volumes have followed the reagent. The switch itself disturbs the
+100–125 µL, **95 % after 215 µL and 99 % after 295 µL**. The designs program 215 µL (2.7 min at 80 µL/min, 1.1 min
+at 200 µL/min) and set Loop Offline once two loop volumes have followed the reagent. The switch itself disturbs the
 baseline (docs/02 §2.4 [S]), so it is placed at least 60 s before a read window. Whether "Automatic" Loop Offline
-does this on its own is UNVERIFIED. Buffer changes are done at 50–150 µL/min, never at the loading flow.
+does this on its own is UNVERIFIED. Buffer changes are done at 50–200 µL/min, never at the loading flow.
 
 ## 2. What the pump can and cannot do
 
@@ -51,8 +51,9 @@ does this on its own is UNVERIFIED. Buffer changes are done at 50–150 µL/min,
 
 **Consequences.**
 * A design must not depend on stopping the flow unless it names its fallback. Tier 1 reads the electrode while
-  substrate flows at 150 µL/min, between two buffer windows at the same flow: it needs neither a stop nor a flow
-  below 3 µL/min (docs/30 §3). Tier 2 needs one stop of 7 min (product accumulation in the bed); its fallback is a
+  substrate flows at 200 µL/min, between two reference windows at the same flow in the substrate buffer without
+  substrate: it needs neither a stop nor a flow below 2.9 µL/min (docs/30 §3). Tier 2 needs one stop of 5 min
+  (product accumulation in the bed); its fallback is a
   continuous read at the lowest flow (docs/30 §4.5). Tier 3 closes the bed with a valve and does not need the pump
   to stop.
 * After a flow step the liquid upstream of the restrictor relaxes through it. The stored volume is V·β·ΔP, the time
@@ -64,8 +65,10 @@ does this on its own is UNVERIFIED. Buffer changes are done at 50–150 µL/min,
   the water value the creep would last minutes.
 * **Step-down rule.** Before any stop the flow is first set to 5 µL/min for at least 60 s (≤ 505 psi, ≤ 0.6 µL
   stored), and the accumulation is counted from the stop. The creep volume is measured before the design is run
-  (§9, item 10). Tier 1 has no flow step between its reference windows and its read; tier 3 lets the relaxing flow
-  pass through the valve bypass, not through the closed bed.
+  (§9, item 10). Tier 1 has no flow step between its reference windows and its read. In tier 3 the flow that
+  relaxes at the start of the accumulation passes through the valve bypass, not through the closed bed. A slow
+  step that does pass through a bed (the 2 µL/min push of the transfer) is entered with the valves in bypass for
+  1 min before they are switched (docs/31 K2).
 
 ## 3. Restrictor and pressure window
 
@@ -81,17 +84,19 @@ fixed restrictor, pressure is proportional to flow (Hagen–Poiseuille, water, 2
 | 25 µm × 45 cm | 100 | 100 psi | 330 psi | 5000 psi | 8100 psi | 180 µL/min |
 | 20 µm × 45 cm | 250 | 250 psi | 800 psi | 12 300 psi | (19 800 psi, over) | 73 µL/min |
 
-No single restrictor keeps 1000 psi at 1–3 µL/min and stays below the limit at the flush flows. Tiers 2 and 3 use
-**25 µm × 45 cm** (availability of this size UNVERIFIED) and accept 200–500 psi during loading and the read; their
-flushes run at 50–80 µL/min. Tier 1 reads at 150 µL/min and uses **25 µm × 30 cm** (10 000 psi at 150 µL/min,
-200 psi at 3 µL/min); the 40 µm kit restrictor would give 1800 psi at 150 µL/min and 36 psi at 3 µL/min, which
-keeps every pressure and the stored volume low at the price of the back-pressure guidance. Whether the BSM
-delivers a steady 2–5 µL/min at such pressures is the first instrument fact to measure (section 9, item 1). If it
-does not, the fallback for tiers 2 and 3 is the 20 µm restrictor with flushes at ≤ 70 µL/min.
+No single restrictor keeps 1000 psi at 1–3 µL/min and stays below the limit at the flush flows. The first choice
+for all tiers is the **Waters 40 µm kit restrictor**: 36–60 psi during loading, 960 psi at 80 µL/min, 2400 psi at
+the 200 µL/min of the tier-1 read. It is a known part, it keeps every pressure and the liquid stored upstream low
+(about 1 µL at 960 psi), and it gives up the back-pressure guidance during the slow steps, which Waters states as a
+matter of check-valve life, not of accuracy [V K32564]. Whether the BSM delivers a steady 2–5 µL/min against
+36–60 psi is the first instrument fact to measure (section 9, item 1). If it does not, tiers 2 and 3 use
+**25 µm × 45 cm** (availability UNVERIFIED; 300–500 psi during loading, 5000–8100 psi at the flushes, hence the
+step-down rule of section 2). Tier 1 cannot use it at 200 µL/min (20 000 psi); with 25 µm × 30 cm it would read at
+150 µL/min (10 000 psi).
 
 Pressure at the cell: the MicruX add-ons are PMMA held by magnets on an O-ring and have no stated pressure limit
-(docs/28 §1). Downstream of the cell only a short open waste line. The 0.05 mm × 0.15 m transfer line adds 13 bar at
-80 µL/min and 25 bar at 150 µL/min upstream of the cell (Derived). The tier-2 bed adds 1.0 bar at 3.4 µL/min and
+(docs/28 §1). Downstream of the cell only a short open waste line. The 0.05 mm × 0.15 m transfer line adds 12 bar at
+80 µL/min and 29 bar at 200 µL/min upstream of the cell (Derived). The tier-2 bed adds 1.0 bar at 3.4 µL/min and
 about 25 bar at 80 µL/min upstream of the cell (Kozeny–Carman, `tierkit.kozeny_carman_dp`; 1×10⁶ beads of 2.8 µm in
 a 0.2 mm bore); its fittings must be PEEK, not the vendor's polypropylene nuts.
 
@@ -106,7 +111,7 @@ a 0.2 mm bore); its fittings must be PEEK, not the vendor's polypropylene nuts.
   lines with different methods [V OG], so every reagent line pays it.
 * Sample: one full-loop 100 µL injection. The Waters default for full loop draws the sample volume plus four times
   that (about 500 µL) [V K198538]; docs/00 records the user's setting of 2× overfill (about 200 µL drawn). The setting
-  on this instrument should be read off the method (section 8, item 6).
+  on this instrument should be read off the method (section 9, item 6).
 * Moving the sample out of the loop is slow for a protein. Fraction of a full 100 µL IgG plug that has left a
   0.5 mm I.D. loop (`elisa_sim.transport.loop_transfer_interp`, as used by the model):
 
@@ -185,14 +190,15 @@ loop transfer, slit solution, bed correlation and blank statistics, and adds wha
 | Enzyme turnover | `elisa_sim.kinetics.enzyme_accumulation` | `chem.enzymes.alp.kcat_conjugate_assay_conditions` 1000 s⁻¹ [100–6000], low |
 | Product to the electrode in the stopped cell | `tierkit.ThinLayer` (axisymmetric finite volumes: electrode disc, lid, inlet bore) | hydroquinone diffusion coefficient 9×10⁻¹⁰ m²/s, held at its best estimate |
 | Product swept over the electrode | `tierkit.cell_conversion`, `elisa_sim.transport.tanks_in_series_eluted` | — |
-| Substrate background | impurity and hydrolysis, referenced by a pre-run read on the same electrode; what that subtraction leaves is a parameter | `ma.chemistries.alp_hqdp.free_product_impurity` 1×10⁻⁵ [10⁻⁷–10⁻³], low; hydrolysis 10⁻¹⁰ s⁻¹ [10⁻¹²–10⁻⁸], low; `tr.noise.preread_residual_cv` 0.03 [0.01–0.06] and `tr.noise.swept_step_residual_cv` 0.04 [0.01–0.10], UNVERIFIED |
+| Substrate background | impurity and hydrolysis product of the working solution; both decay in the reservoir with the product half-life (`tr.detection.reservoir_background_decays`; the audited model keeps them); referenced by a pre-run read on the same electrode, and what that subtraction leaves is a parameter | `ma.chemistries.alp_hqdp.free_product_impurity` 1×10⁻⁵ [10⁻⁷–10⁻³], low; hydrolysis 10⁻¹⁰ s⁻¹ [10⁻¹²–10⁻⁸], low; `tr.noise.preread_residual_cv` 0.03 [0.01–0.10] and `tr.noise.swept_step_residual_cv` 0.04 [0.01–0.10], UNVERIFIED |
 | Conjugate on walls upstream of the electrode or bed (added after the review) | `evaluate_planar` (`upstream`: inlet bore and transfer line, collected at the stream conversion or by diffusion out of the bore), `evaluate_bed` (`upstream_area`: walls that stand in substrate during a stop) | `ma.nsb.surface_factor_tubing` 3 [1–30], `tr.nsb.surface_factor_lid` 3 [1–30], low |
-| Immune-complex transfer (tier 3; revised after the review) | released fraction (parameter) × re-capture on the second bed from the bed equation at the push flow; non-specific label that comes along as the lever of docs/05 | `tr.transfer.elution_efficiency` 0.7 [0.2–0.95], UNVERIFIED; `ma.design_levers.immune_complex_transfer_nsb_factor` 0.1 [0.01–0.5], UNVERIFIED |
+| Immune-complex transfer (tier 3; revised after the review) | released fraction (parameter) × re-capture on the second bed from the bed equation at the push flow, with the depletion of its sites by all released capture antibody; non-specific label that comes along as the lever of docs/05 | `tr.transfer.elution_efficiency` 0.35 [0.05–0.74], UNVERIFIED; `ma.design_levers.immune_complex_transfer_nsb_factor` 0.1 [0.01–0.5], UNVERIFIED |
 | Noise, drift, unit-to-unit terms | `tierkit._finish`, `_noise` (docs/03 §3.6 plus single-use terms; the drift counts over the time between the two reference windows that bracket the read) | `hw.gamry.*` noise and drift, low; `ma.noise.spe_sensor_to_sensor_cv` 0.10; `tr.noise.drift_area_exponent` 0.5 [0–1]; `tr.nsb.unit_to_unit_cv_*` (UNVERIFIED) |
 
 Not represented, to be read with care: mixing in the stagnation zone under the jet; bypass through an unevenly packed
 bed; the effect of the conjugate plug's dispersion on its exposure (the exposure integral is exact, the labelling is
-computed at the mean concentration); wash efficiency (washes are fixed at ≥ 1.5 min and ≥ 2 min as in docs/05 §1.1);
+computed at the mean concentration); wash efficiency (washes are fixed at 1.5 min and 2 min, not below the minima
+of docs/05 §1.1, 1 min and 2 min);
 electrode fouling by protein (single-use electrodes); temperature.
 
 ## 9. Instrument facts to check before the first run (bench Stage 0 of this round)
@@ -205,7 +211,8 @@ electrode fouling by protein (single-use electrodes); temperature.
    time from the end of line 1 to Inject Start of line 2.
 4. **Cell geometry.** Measure the gap of the mounted add-on (feeler or O-ring cross-section and recess depth), the
    bore length and where the outlet sits; weigh the cell dry and filled (docs/28 §8).
-5. **Cell pressure.** Step the flow to 100 µL/min with a spare electrode and look for leaks at the O-ring.
+5. **Cell pressure.** Step the flow to 250 µL/min with a spare electrode and look for leaks at the O-ring (tier 1
+   reads at 200 µL/min; the add-on is not rated for pressure, docs/28 §1.4).
 6. **Full-loop draw.** Read the overfill factor in the SM-FL method; weigh a vial before and after one injection.
 7. **Outputs.** Photograph the rear terminal blocks of the BSM and SM-FL; list the switches in the Events tab.
 8. **Reference.** Open-circuit potential of the strip's printed Ag/AgCl and of the chip's gold pseudo-reference
@@ -213,11 +220,15 @@ electrode fouling by protein (single-use electrodes); temperature.
 9. **Loop Offline and the substrate front** (docs/31 F1). Step A1 → B1 with a dye or 1 µM hydroquinone in B1, with
    the loop in line and with Loop Offline set; record the volume to 50 %, 95 % and 99 % at the cell and the size of
    the disturbance at the switch. Check what the "Automatic" setting does.
-10. **Flow steps and creep** (docs/31 F2, F10). Program 80 → 5 → 0 → 5 µL/min and 50 → 150 µL/min; record the
+10. **Flow steps and creep** (docs/31 F2, F10). Program 80 → 5 → 0 → 5 µL/min, 50 → 2 µL/min and 50 → 200 µL/min;
+    record the
     pressure trace and the volume that still passes after each step (dye front or gravimetric). Record whether a
     gradient row steps the flow at once or along a ramp.
 11. **Method hygiene** (docs/31 F10). No pre-run or post-run inlet method on the instrument; the overfill factor of
     the full-loop injection (item 6); flow and pressure logged between two lines (item 3).
+12. **Second buffer on pump A** (docs/31 M1; tier 1 only). Put a dye in A2 and select A2 in the method of a second
+    line: record the volume until the cell sees 95 % of A2 at 50 and 200 µL/min, and whether the solvent
+    selection can differ between the two lines of a sample set (UNVERIFIED).
 
 ---
 
