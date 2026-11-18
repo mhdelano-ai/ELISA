@@ -13,6 +13,16 @@ from __future__ import annotations
 
 import math
 
+# ---- version ------------------------------------------------------------------------------------------
+VERSION = 2                            # appended as _v<N> to every output file in cad/out/tier2_cell/ and shown as REV
+#                                        on the drawings. 1: first issue (2026-11-18); 2: tightest tolerance +-0.03 mm
+
+
+def vname(name: str) -> str:
+    """'base.step' -> 'base_v2.step'."""
+    stem, ext = name.rsplit(".", 1)
+    return f"{stem}_v{VERSION}.{ext}"
+
 # ---- the electrode strip (MicruX S1PE, e.g. ED-S1PE-C21) ---------------------------------------------------
 STRIP_L, STRIP_W = 27.5, 10.1          # [V docs/28 section 2.1]
 STRIP_T = 0.38                         # ceramic (Al2O3) strip, e.g. ED-S1PE-C21C: 380 um, stated by the user 2026-11-18;

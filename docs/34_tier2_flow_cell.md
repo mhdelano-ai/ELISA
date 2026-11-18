@@ -62,6 +62,12 @@ allows a film up to about 0.03 mm at the worst, which would by-pass about 2 % of
 and a dimensional report on the first lot shows it. The gap is unaffected: the pocket depth is measured and the shim
 sets it. No LOD figure changes.
 
+**Version numbers (same day, at the user's request).** Every file the CAD writes to `cad/out/tier2_cell/` and its
+`drawings/` folder ends in `_v<N>`, with N = `VERSION` in `cad/elisa_cad/tier2_cell/params.py`, which also fills the
+REV field of the title blocks (the drawings went from REV A to numbered revisions). Version 1 is the first issue
+(dowel holes ⌀3.00 +0.05/+0.01, flatness 0.02); **version 2** is the ±0.03 mm set above. Raise `VERSION` and add a
+row to `REVS` in `drawings.py` for the next change.
+
 **Screw torques for acetal (same day).** The 0.5 N·m of the M4 screws had been set for PEEK; on acetal it puts
 24 MPa under the 8 mm washers, enough for the plastic to creep and the clamp to relax. Now M4 0.25 N·m and M2.5
 0.05 N·m (none had been given), each keeping the stress on the acetal near 10 MPa. The mechanics of section 6.3
@@ -257,10 +263,10 @@ spans only the openings of the screen.
 
 ## 4. The cell
 
-![Section of the cell](../cad/out/tier2_cell/section.png)
+![Section of the cell](../cad/out/tier2_cell/section_v2.png)
 
-Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `nozzle_plate_underside.png`,
-`nozzle_plate_top.png`, `body_underside.png`, `base_top.png`.
+Other views: `cad/out/tier2_cell/assembly_iso_v2.png`, `assembly_exploded_v2.png`, `nozzle_plate_underside_v2.png`,
+`nozzle_plate_top_v2.png`, `body_underside_v2.png`, `base_top_v2.png`.
 
 ### 4.1 Liquid path
 
@@ -312,9 +318,9 @@ microvolts at nanoampere currents.
 
 | Part | File | Material | Size (mm); mass | Machining |
 |---|---|---|---|---|
-| Base | `base.step` | 316L stainless | 29 × 44 × 8; 78 g | one side: pocket, 4 threads, 2 reamed holes |
-| Nozzle plate | `nozzle_plate.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 2.5; 4 g | two sides: grooves and counterbores below, retainer pocket and slot above |
-| Body | `body.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 11.4; 17 g | three sides: port and holes from the top, groove and threads from below, port from one end |
+| Base | `base_v2.step` | 316L stainless | 29 × 44 × 8; 78 g | one side: pocket, 4 threads, 2 reamed holes |
+| Nozzle plate | `nozzle_plate_v2.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 2.5; 4 g | two sides: grooves and counterbores below, retainer pocket and slot above |
+| Body | `body_v2.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 11.4; 17 g | three sides: port and holes from the top, groove and threads from below, port from one end |
 
 Why these materials (revised 2026-11-18 at the user's request for a cheaper plastic). Plate and body are acetal
 copolymer (POM-C): cheaper than PEEK (UNVERIFIED; no quote obtained, and for parts this small machining time
@@ -340,10 +346,10 @@ parameters as the STEP files, so the two cannot drift apart):
 
 | Part | Drawing | STEP | Views |
 |---|---|---|---|
-| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A |
-| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom, section A–A (2:1, under the top view), detail D of it (10:1) |
-| Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (10:1) |
-| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top view at 20:1 (thickness as a note) |
+| Base | `cad/out/tier2_cell/drawings/T2C-001_base_v2.pdf` | `T2C-001_base_v2.step` | top, section A–A |
+| Nozzle plate | `T2C-002_nozzle_plate_v2.pdf` | `T2C-002_nozzle_plate_v2.step` | top, bottom, section A–A (2:1, under the top view), detail D of it (10:1) |
+| Body | `T2C-003_body_v2.pdf` | `T2C-003_body_v2.step` | top, bottom, section A–A, detail E (10:1) |
+| Washer (cut gasket) | `T2C-004_washer_v2.pdf` | `T2C-004_washer_v2.step`; cut files `T2C-004_washer_v2.dxf`, `T2C-004_washer_sheet_v2.dxf` (100 parts) | top view at 20:1 (thickness as a note) |
 
 At the user's request the drawings carry **only the features toleranced tighter than standard and the threaded
 holes**: each such feature is flagged (finer finishes and the 0.05 mm edge break at the ends of the 0.5 mm bores

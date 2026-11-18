@@ -2,7 +2,7 @@
 
 Custom parts: base(), plate(), body().  Purchased parts and the liquid are modelled for the assembly, the
 renders and the checks only.  Threads are modelled as their tap-drill holes; the thread call-outs are in docs/34
-section 5.2 and in out/tier2_cell/drawing_notes.md.
+section 5.2 and in out/tier2_cell/drawing_notes_v<N>.md.
 """
 from __future__ import annotations
 

@@ -111,7 +111,7 @@ def checks(parts, liquid):
 def drawing_notes(masses):
     """Index of the drawings; the call-outs themselves are on the drawings (drawings.py)."""
     L = ["# Tier-2 flow cell — machining drawings (index; generated)", "",
-         "The dimensioned drawings are `out/tier2_cell/drawings/T2C-00x_*.pdf`, made by "
+         f"The dimensioned drawings are `out/tier2_cell/drawings/T2C-00x_*_v{P.VERSION}.pdf`, made by "
          "`python -m elisa_cad.tier2_cell.drawings` from the same solids and parameters as the STEP files. "
          "Upload each STEP with its PDF. Ordering notes: `out/tier2_cell/drawings/ORDERING.md`; "
          "tolerance policy: docs/34 section 5.2.", "",
@@ -120,7 +120,7 @@ def drawing_notes(masses):
                                                                           "nozzle_plate.step"),
              "body": ("T2C-003_body.pdf", "body.step")}
     for nm, (env, m) in masses.items():
-        L.append(f"| {nm} | `drawings/{files[nm][0]}` | `{files[nm][1]}` | {env} | {m:.0f} |")
+        L.append(f"| {nm} | `drawings/{P.vname(files[nm][0])}` | `{P.vname(files[nm][1])}` | {env} | {m:.0f} |")
     return "\n".join(L) + "\n"
 
 def write_washer_dxf():
@@ -142,7 +142,7 @@ def write_washer_dxf():
         if (nx, ny) != (1, 1):
             msp.add_lwpolyline([(0, 0), (nx * pitch, 0), (nx * pitch, ny * pitch), (0, ny * pitch)], close=True,
                                dxfattribs={"layer": "SHEET"})
-        doc.saveas(OUT / name)
+        doc.saveas(OUT / P.vname(name))
 
 
 def main(argv=None):
@@ -154,16 +154,16 @@ def main(argv=None):
               "membrane": (PT.membrane(), "PTFE")}
     liquid = PT.liquid()
     for nm, (o, _m) in custom.items():
-        C.export_step(o, OUT / f"{nm}.step")
-    C.export_step(PT.washer_free(), OUT / "washer.step")
+        C.export_step(o, OUT / P.vname(f"{nm}.step"))
+    C.export_step(PT.washer_free(), OUT / P.vname("washer.step"))
     write_washer_dxf()
     everything = [(nm, o, m) for nm, (o, m) in {**custom, **bought}.items()]
     everything += [(f"screw_M4_{i}", s, "steel") for i, s in enumerate(PT.screws())]
     everything += [(f"dowel_{i}", s, "steel") for i, s in enumerate(PT.dowels())]
     everything += [("working_electrode", PT.working_electrode(), "default"), ("bed", PT.bed(), "copper"),
                    ("liquid", liquid, "liquid")]
-    C.export_step(C.assembly(everything, "tier2_cell"), OUT / "assembly.step")
-    C.export_step(liquid, OUT / "liquid_path.step")
+    C.export_step(C.assembly(everything, "tier2_cell"), OUT / P.vname("assembly.step"))
+    C.export_step(liquid, OUT / P.vname("liquid_path.step"))
 
     solid = {"base": custom["base"][0], "plate": custom["nozzle_plate"][0], "body": custom["body"][0],
              "strip": bought["strip"][0], "shim": bought["shim"][0], "screen": bought["screen"][0],
@@ -175,7 +175,7 @@ def main(argv=None):
     for nm, (o, _m) in custom.items():
         bb = C._shape(o).BoundingBox()
         masses[nm] = (f"{bb.xlen:.0f} × {bb.ylen:.0f} × {bb.zlen:.1f}", vol(o) * dens[nm])
-    (OUT / "drawing_notes.md").write_text(drawing_notes(masses))
+    (OUT / P.vname("drawing_notes.md")).write_text(drawing_notes(masses))
     res = dict(checks=rows, all_pass=all(r["ok"] for r in rows),
                liquid_volume_uL=vol(liquid),
                volumes_uL=dict(bed_bore=P.BORE_AREA * P.INLET_FLOOR, exit_bore=P.EXIT_VOLUME_UL,
@@ -183,13 +183,13 @@ def main(argv=None):
                                chamber_disc=math.pi * P.CHAMBER_R ** 2 * P.GAP,
                                collecting_groove=math.pi * (P.RING_R1 ** 2 - P.RING_R0 ** 2) * P.RING_DEPTH),
                masses_g={k: v[1] for k, v in masses.items()})
-    (OUT / "check_results.json").write_text(json.dumps(res, indent=1))
+    (OUT / P.vname("check_results.json")).write_text(json.dumps(res, indent=1))
     for r in rows:
         print(("pass  " if r["ok"] else "FAIL  ") + r["check"] + "  [" + str(r["value"]) + "]")
-    S.draw(OUT / "section.png")
+    S.draw(OUT / P.vname("section.png"))
     if not fast:
         items = [(o, m) for _n, o, m in everything if _n != "liquid"]
-        C.render_png(items, OUT / "assembly_iso.png", view="iso", title="Tier-2 flow cell (docs/34)")
+        C.render_png(items, OUT / P.vname("assembly_iso.png"), view="iso", title="Tier-2 flow cell (docs/34)")
         # exploded
         lift = {"base": 0, "shim": 4, "strip": 8, "working_electrode": 8, "oring_strip": 14, "nozzle_plate": 18,
                 "washer": 23, "screen": 25, "membrane": 27, "bed": 30, "oring_interface": 29, "body": 34}
@@ -199,14 +199,14 @@ def main(argv=None):
                 continue
             dz = lift.get(nm, 46 if nm.startswith("screw") else 0)
             ex.append((o.translate((0, 0, dz)), m))
-        C.render_png(ex, OUT / "assembly_exploded.png", view="iso", size=(8, 10), title="Exploded")
-        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / "nozzle_plate_underside.png", view="bottom",
+        C.render_png(ex, OUT / P.vname("assembly_exploded.png"), view="iso", size=(8, 10), title="Exploded")
+        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / P.vname("nozzle_plate_underside.png"), view="bottom",
                      title="Nozzle plate, underside (cell face)")
-        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / "nozzle_plate_top.png", view="top",
+        C.render_png([(custom["nozzle_plate"][0], "PEEK")], OUT / P.vname("nozzle_plate_top.png"), view="top",
                      title="Nozzle plate, top face")
-        C.render_png([(custom["body"][0], "PEEK")], OUT / "body_underside.png", view="bottom",
+        C.render_png([(custom["body"][0], "PEEK")], OUT / P.vname("body_underside.png"), view="bottom",
                      title="Body, underside")
-        C.render_png([(custom["base"][0], "steel")], OUT / "base_top.png", view="top", title="Base, top face")
+        C.render_png([(custom["base"][0], "steel")], OUT / P.vname("base_top.png"), view="top", title="Base, top face")
         C.shrink_pngs(OUT)
     print("all checks pass" if res["all_pass"] else "CHECKS FAILED")
     return 0 if res["all_pass"] else 1
