@@ -260,3 +260,9 @@ The user then asked to keep simplifying until the iterations converged. Pass 1: 
 thickness note; the body's inlet-port callout moved off the bottom view (its frame touched the view); the plate's
 top-face leader shortened. Pass 2: that leader moved clear of the axis features. Pass 3: no further item could go
 without losing a requirement (each sheet: material, flag note, threads, tighter-than-standard tolerances); stopped.
+The user then asked for the views to be repositioned for best spacing until the iterations converged. View positions
+now sit in one table (`LAYOUT` in `drawings.py`) and every callout is placed relative to its view. Pass 1: views
+moved off the left edge (base and washer centred in the free area, plate detail and body detail placed in the right
+half). Pass 2: plate views raised into the empty top band, body detail E level with the main views, single-view
+sheets centred on their callout groups. Pass 3: body views moved right for an even left margin. Pass 4: no move
+larger than about 5 mm would improve the balance; stopped. No text overlaps on any sheet.

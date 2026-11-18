@@ -557,9 +557,14 @@ def marks(view, pts, r=1.5):
         view.centre_mark(x, y, 0, r=r)
 
 
-TV = (75.0, 140.0)                                # centre of every top view on the sheet (paper mm)
-BV = (168.0, 140.0)                               # centre of the bottom views
 K = 2.0                                           # scale of the main views
+# view positions on each sheet (paper mm, origin bottom left): every callout is placed relative to its view
+LAYOUT = {
+    "base": dict(top=(195.0, 165.0)),
+    "plate": dict(top=(80.0, 180.0), sec_y=95.0, det=(300.0, 180.0)),
+    "body": dict(top=(82.0, 170.0), bot=(185.0, 170.0), sec_y=68.0, det=(332.0, 168.0)),
+    "washer": dict(top=(188.0, 168.0)),
+}
 
 
 def dowel_callouts(S, top, flag):
@@ -594,6 +599,7 @@ def sheet_base():
     solid = PT.base()
     notes = [f"MATERIAL: {SS}.", FLAG_NOTE]
     S = Sheet("T2C-001", "BASE", SS, FIN, "2:1", notes, [], REVS, _mass(solid, 8.0e-3))
+    TV = LAYOUT["base"]["top"]
     top = View(S, "top", TV, K)
     top.draw(solid)
     marks(top, P.M4_XY + P.DOWEL_XY)
@@ -602,8 +608,9 @@ def sheet_base():
     dw = top.p(*P.DOWEL_XY[1], 0)
     S.leader(dw + 1.5 * K * np.array([-0.71, 0.71]), (dw[0] - 14, dw[1] + 22), "2× ⌀3.00 +0.05/+0.01",
              ha="right", flag=3)
-    flat_datum(S, top.p(-14.0, 9.0, 0), (125.0, 168.0), "TOP FACE", 1, "0.02", "A")
-    S.callout(top.p(4.0, -3.5, 0), (125.0, 120.0), "STRIP POCKET FLOOR", flag=2, frame=("par", ["0.02", "A"]))
+    xr = top.p(P.X1, 0, 0)[0]
+    flat_datum(S, top.p(-14.0, 9.0, 0), (xr + 26, TV[1] + 28), "TOP FACE", 1, "0.02", "A")
+    S.callout(top.p(4.0, -3.5, 0), (xr + 26, TV[1] - 20), "STRIP POCKET FLOOR", flag=2, frame=("par", ["0.02", "A"]))
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     return S.save("T2C-001_base")
 
@@ -616,6 +623,8 @@ def sheet_plate():
     notes = [f"MATERIAL: {PEEK}.", FLAG_NOTE]
     S = Sheet("T2C-002", "NOZZLE PLATE", PEEK_TB, FIN, "2:1 (DETAIL 10:1)", notes, [], REVS,
               _mass(solid, 1.31e-3))
+    L = LAYOUT["plate"]
+    TV = L["top"]
     top = View(S, "top", TV, K)
     top.draw(solid)
     marks(top, P.M4_XY + P.DOWEL_XY + P.M25_XY)
@@ -630,17 +639,17 @@ def sheet_plate():
     S.frame(x0, tm[1] - 6.0, "pos", ["⌀0.3", "A", "B", "C"])
     S.text(TV[0], top.p(0, -P.Y_HALF, 0)[1] - 8, "TOP VIEW", size=FS_T, ha="center", weight="bold")
     # section A-A, 2:1, projected under the top view; detail D of it at 10:1
-    sec = View(S, "front", (TV[0], 62), K)
+    sec = View(S, "front", (TV[0], L["sec_y"]), K)
     sec.draw(solid, cut=("y", 0.0))
     sec.centre_line((0, 0, -0.8), (0, 0, P.PLATE_T + 0.8))
     S.detail_circle(sec.p(0, 0, P.PLATE_T / 2), 11.5, "D")
     S.text(TV[0] + 54, sec.p(0, 0, P.PLATE_T / 2)[1], "SECTION A–A", size=FS_T, ha="center", weight="bold")
     kd = 10.0
-    det = View(S, "front", (270, 126), kd)
+    det = View(S, "front", L["det"], kd)
     clip = cq.Workplane("XY").box(10.8, 60.0, 3.0, centered=False).translate((-5.4, -30, -0.2))
     det.draw(_shape(solid).intersect(_shape(clip)), cut=("y", 0.0))
     det.centre_line((0, 0, -0.7), (0, 0, P.PLATE_T + 0.7))
-    S.text(det.o[0], 79, "DETAIL D (SECTION A–A, 10:1)", size=FS_T, ha="center", weight="bold")
+    S.text(det.o[0], det.o[1] - 47, "DETAIL D (SECTION A–A, 10:1)", size=FS_T, ha="center", weight="bold")
     # pocket: size, depth, position (frame attached under the dimension)
     q0, q1 = det.p(-rp / 2, 0, P.PLATE_T), det.p(rp / 2, 0, P.PLATE_T)
     lab = f"⌀{rp} +0.05/−0  ↧ {P.RET_POCKET_DEPTH:.2f} ±0.025"
@@ -678,13 +687,15 @@ def sheet_body():
              "(0.350 in), flat within 0.05 (0.002 in), Ra 0.8 µm (32 µin), corner radius ≤ 0.18 (0.007 in);\n"
              "chamfer ⌀6.86 (0.27 in) × 90°."]
     S = Sheet("T2C-003", "BODY", PEEK_TB, FIN, "2:1 (DETAIL 10:1)", notes, [], REVS, _mass(solid, 1.31e-3))
+    L = LAYOUT["body"]
+    TV, BV = L["top"], L["bot"]
     top = View(S, "top", TV, K)
     top.draw(solid)
     marks(top, P.M4_XY + P.DOWEL_XY)
     top.centre_mark(0, 0, 0, r=3.6)
     dowel_callouts(S, top, 6)
     pt = top.p(0, 0, 0)
-    tp = (16.0, top.p(0, P.Y_HALF, 0)[1] + 20)
+    tp = (TV[0] - 59, top.p(0, P.Y_HALF, 0)[1] + 20)
     x0, x1 = S.leader(pt + P.PORT_CHAMFER_D / 2 * K * np.array([-0.71, 0.71]), tp, "1/4-28 UNF-2B PORT, NOTE 3",
                       flag=5)
     S.frame(x0, tp[1] - 6.0, "pos", ["⌀0.10", "A", "B", "C"])
@@ -704,12 +715,12 @@ def sheet_body():
     x0, _ = S.leader(m25 + 1.35 * K * np.array([0.71, -0.71]), tm,
                      f"4× M2.5×0.45-6H ↧ {P.M25_FULL_THREAD:.1f} FULL THREAD", flag=7)
     S.frame(x0, tm[1] - 6.0, "pos", ["⌀0.3", "A", "B", "C"])
-    flat_datum(S, bot.p(-5, -3, zb), (190.0, 201.0), "UNDERSIDE INSIDE ⌀16", 2, "0.02", "A")
+    flat_datum(S, bot.p(-5, -3, zb), (BV[0] + 10, BV[1] + 61), "UNDERSIDE INSIDE ⌀16", 2, "0.02", "A")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 8, "BOTTOM VIEW", size=FS_T, ha="center", weight="bold")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 13, "part turned over about the horizontal axis", size=FS_S,
            ha="center")
     # section A-A at 2:1
-    front = View(S, "front", (TV[0], 34 - zb * K), K)
+    front = View(S, "front", (TV[0], L["sec_y"] - zb * K), K)
     front.draw(solid, cut=("y", 0.0))
     th = P.PORT_MAJOR_D / 2
     for sg in (-1, 1):            # thread major diameter, thin lines over the full-thread length
@@ -717,16 +728,16 @@ def sheet_body():
         S.line(front.p(P.X0, 0, zb + P.OUTLET_Z + sg * th), front.p(P.X0 + P.PORT_FULL_THREAD, 0,
                                                                     zb + P.OUTLET_Z + sg * th))
     op = front.p(P.X0, 0, zb + P.OUTLET_Z + th)
-    S.leader(op + np.array([0.6, 0.6]), (20.0, op[1] + 16), "1/4-28 UNF-2B PORT, NOTE 3", flag=5)
+    S.leader(op + np.array([0.6, 0.6]), (TV[0] - 55, op[1] + 16), "1/4-28 UNF-2B PORT, NOTE 3", flag=5)
     S.detail_circle(front.p(0, 0, zb + 1.6), 7.5, "E")
     S.text(TV[0] + 54, front.p(0, 0, zb + 2.0)[1], "SECTION A–A", size=FS_T, ha="center", weight="bold")
     # detail E, 10:1
     kd = 10.0
-    det = View(S, "front", (305, 104 - zb * kd), kd)
+    det = View(S, "front", (L["det"][0], L["det"][1] - zb * kd), kd)
     clip = cq.Workplane("XY").box(7.0, 60.0, 4.2, centered=False).translate((-3.5, -30, zb - 0.3))
     det.draw(_shape(solid).intersect(_shape(clip)), cut=("y", 0.0))
     det.centre_line((0, 0, zb - 0.7), (0, 0, zb + 4.4))
-    S.text(det.o[0], 80, "DETAIL E (SECTION A–A, 10:1)", size=FS_T, ha="center", weight="bold")
+    S.text(det.o[0], L["det"][1] - 24, "DETAIL E (SECTION A–A, 10:1)", size=FS_T, ha="center", weight="bold")
     b1 = det.p(P.BED_D / 2, 0, zb + 1.3)
     x0, x1 = S.leader(b1, (det.p(3.5, 0, 0)[0] + 10, b1[1] + 2), f"⌀{P.BED_D:.2f} ±0.05 THRU", flag=1)
     S.frame(x0, b1[1] - 4.5, "pos", ["⌀0.10", "A", "B", "C"])
@@ -754,7 +765,7 @@ def sheet_washer():
     S = Sheet("T2C-004", "WASHER (CUT GASKET)", "FKM sheet 0.25 mm, 70–75 Shore A", "As supplied", "20:1",
               notes, flags, REVS_WASHER, _mass(solid, 1.85e-3), general=general)
     k = 20.0
-    top = View(S, "top", (95, 150), k)
+    top = View(S, "top", LAYOUT["washer"]["top"], k)
     top.draw(solid)
     top.centre_mark(0, 0, 0, r=P.WASHER_OD / 2, ext=3.0)
     ro, ri = P.WASHER_OD / 2 * k, P.WASHER_ID / 2 * k
