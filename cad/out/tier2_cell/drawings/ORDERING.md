@@ -6,14 +6,16 @@ blocks have no checker's or approver's name.
 
 | Part | Upload (3D) | Upload (drawing) | Material to select | Quantity suggested |
 |---|---|---|---|---|
-| T2C-001 Base | `../base.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
-| T2C-002 Nozzle plate | `../nozzle_plate.step` | `T2C-002_nozzle_plate.pdf` | PEEK, unfilled, natural | 3 (one per bed unit, docs/34 §7) |
-| T2C-003 Body | `../body.step` | `T2C-003_body.pdf` | PEEK, unfilled, natural | 3 |
+| T2C-001 Base | `T2C-001_base_revA.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
+| T2C-002 Nozzle plate | `T2C-002_nozzle_plate_revA.step` | `T2C-002_nozzle_plate.pdf` | PEEK, unfilled, natural | 3 (one per bed unit, docs/34 §7) |
+| T2C-003 Body | `T2C-003_body_revA.step` | `T2C-003_body.pdf` | PEEK, unfilled, natural | 3 |
 
 For each part in the quote:
-* **Tolerance**: standard, *with drawing*. The drawing lists every tighter feature under "FLAGGED FEATURES";
-  none is tighter than ±0.025 mm (±0.001 in). Say in the notes field: "Tolerances per attached drawing; flagged
-  features to be inspected."
+* **Tolerance**: standard, *with drawing*. The drawings dimension only what the model cannot carry: the
+  features with tighter-than-standard tolerances (all flagged, none tighter than ±0.025 mm / ±0.001 in), surface
+  finish, threads, datums and edge conditions. Everything else comes from the STEP file at Xometry's standard
+  tolerance (note 2 and the title block of each drawing). Say in the notes field: "Undimensioned geometry per
+  STEP at standard tolerance; flagged features per attached drawing, to be inspected."
 * **Threads**: yes. Base 4 × M4×0.7-6H through; body 4 × M2.5×0.45-6H blind (5.5 full thread) and 2 × 1/4-28
   UNF-2B flat-bottom ports (note 7 of T2C-003). Threads are modelled as tap-drill holes in the STEP files.
 * **Finish**: as machined (Ra 3.2 µm / 125 µin) except the surfaces marked Ra 1.6 (63 µin) or Ra 0.8 (32 µin)

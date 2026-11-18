@@ -111,7 +111,7 @@ def _raster(P, depth, cols, ids, W, H, zbuf, cbuf, ibuf, alpha_pass=False, abuf=
 
 def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None, bounds=None, margin=0.04,
            tol=None, light=(-0.35, -0.55, 0.85), cut_plane=None, outline=True, note=None, bg=(1, 1, 1),
-           legend=None, dpi=150, alpha_thresh=0.5, label_units="px"):
+           legend=None, dpi=150, alpha_thresh=0.5, label_units="px", scale_bar=True):
     """items: [(shape, material|rgba, name), ...]. bounds: optional (xmin, xmax, ymin, ymax) in screen mm.
     labels: [(xyz, text, (dx_px, dy_px))]. Returns path."""
     import matplotlib
@@ -231,9 +231,10 @@ def render(items, path, view="iso_fl", px=(1800, 1300), title=None, labels=None,
     if title:
         fig.suptitle(title, fontsize=10, y=0.995, va="top")
     # scale bar
-    bar = 10 ** math.floor(math.log10((xmax - xmin) / 5))
-    ax.plot([W * 0.02, W * 0.02 + bar * scale], [H * 0.975, H * 0.975], "k-", lw=2)
-    ax.text(W * 0.02 + bar * scale / 2, H * 0.965, f"{bar:g} mm", ha="center", va="bottom", fontsize=7)
+    if scale_bar:
+        bar = 10 ** math.floor(math.log10((xmax - xmin) / 5))
+        ax.plot([W * 0.02, W * 0.02 + bar * scale], [H * 0.975, H * 0.975], "k-", lw=2)
+        ax.text(W * 0.02 + bar * scale / 2, H * 0.965, f"{bar:g} mm", ha="center", va="bottom", fontsize=7)
     fig.savefig(str(path), dpi=dpi)
     plt.close(fig)
     return str(path)

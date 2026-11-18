@@ -213,4 +213,12 @@ many standard tolerances as possible. Xometry's drawing guidance and manufacturi
 (docs/34 §5.2). Design changes to relax tolerances: strip pocket 0.65 mm at standard tolerance with a measured
 shim, second pin hole a slot, pins bonded, body 11.4 mm. New: `cad/elisa_cad/tier2_cell/drawings.py` →
 `cad/out/tier2_cell/drawings/` (three A3 PDFs, previews, `ORDERING.md`). Checked by eye only; no checker named.
+The user then asked for cleaner drawings, until 95 % confident they were clean, and that only non-standard
+features be dimensioned, the rest coming from the 3D model. The sheets were rebuilt on that basis and reviewed in
+three passes of high-resolution crops, with an automatic check for overlapping text added to the generator
+(no overlaps on any sheet). Fixed on the way: hatch seams and viewer-dependent hatch density (now explicit lines
+clipped to the merged cut faces), the third-angle symbol (was drawn in first-angle orientation), missing basic
+dimensions for the position tolerances, datum symbols of features of size moved onto their size callouts, a
+duplicate datum A removed, the renderer's scale bar removed from the reference isometrics (option added to
+`assembly/zrender.py` and `common.render_png`, default unchanged).
 

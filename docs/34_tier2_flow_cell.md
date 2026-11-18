@@ -282,9 +282,14 @@ parameters as the STEP files, so the two cannot drift apart):
 
 | Part | Drawing | STEP | Views |
 |---|---|---|---|
-| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `base.step` | top, sections A–A and B–B, detail C (pocket, 10:1), isometric |
-| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `nozzle_plate.step` | top, bottom, section A–A, detail D (section at the axis, 10:1), two isometrics |
-| Body | `T2C-003_body.pdf` | `body.step` | top, bottom, section A–A, detail E (port bottom and bed bore, 10:1), isometric |
+| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A, isometric |
+| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom (cell face), section A–A at the axis (10:1), two isometrics |
+| Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (port bottom and bed bore, 10:1), isometric |
+
+At the user's request the drawings dimension **only what the model cannot carry**: features toleranced tighter
+than standard (each flagged), surface finish, threads, datums with the basic dimensions that locate the bores from
+datum B, and edge conditions. All other geometry is defined by the STEP file of the same drawing number and
+revision at the general tolerances, which note 2 and the title block of each sheet state.
 
 Each sheet carries what Xometry's drawing guidance asks for [V, its "technical drawing best practices" page]: a
 title block with material specification, finish, scale, units, projection and a default-tolerance block; notes at
