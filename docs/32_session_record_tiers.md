@@ -156,3 +156,20 @@ orchestrator only (generator checks, rendering, the standalone file opened in a 
 fonts), not by a further agent.
 
 What the deck does not have: photographs. The pictures are schematic drawings made for it.
+
+## 8. Follow-up: flow-cell geometries (2026-11-18)
+
+Request, in the same session as the deck: "Why did you choose hydroquinone, alkaline phosphatase, and a wall jet
+configuration?" (answered in the conversation from docs/01, docs/28 and docs/03; no file changed), then "Explore
+other flow cell geometries and pick the best one." No question was put to the user.
+
+| Step | Done by | Output |
+|---|---|---|
+| Candidate geometries put into the unchanged designs of `run_tiers.py`; a solver for product released from a channel wall ahead of the electrode; wrappers for a porous electrode, a free wall jet and an ideal bound; 18 checks | orchestrator | `scripts/tier_round/cell_geometries.py`; `results/tier_round/cell_geometries.md`, `cell_geometries.json` |
+| Comparison, the pick, limits, open questions, record | orchestrator | docs/33 |
+| Entry in the kit's README, project guide | orchestrator | `scripts/tier_round/README.md`, CLAUDE.md |
+
+No agent was used and the result was not independently reviewed. `tierkit.py`, the designs, docs/26–31 and the
+deck are unchanged; `check_tierkit.py` (36 of 36) and `doc_tables.py --check` were re-run and pass. What went wrong
+on the way is in docs/33 §10.
+
