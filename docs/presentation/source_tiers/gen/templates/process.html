@@ -1,0 +1,54 @@
+<section id="process" data-transition="fade">
+<p class="eyebrow">How the session ran</p>
+<h2>Design, review, revise, twice over</h2>
+<div class="row" style="gap:14px">
+<div class="col grow in" style="gap:10px;--i:0">
+<p class="node node-o">Interview</p>
+<p class="node node-w">4 questions to you</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:1">
+<p class="node">Groundwork</p>
+<p class="node node-l">Cells, electrodes</p>
+<p class="node node-l">Literature, part A</p>
+<p class="node node-l">Literature, B and C</p>
+<p class="node node-l">Pump, sampler</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:2">
+<p class="node">Kit and designs</p>
+<p class="node node-w">36 checks of the kit</p>
+<p class="node node-w">First version</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:3">
+<p class="node">Review 1</p>
+<p class="node node-l">Numbers</p>
+<p class="node node-l">Chemistry</p>
+<p class="node node-l">Feasibility</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:4">
+<p class="node">Revision B</p>
+<p class="node node-w">Kit and designs changed</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:5">
+<p class="node">Review 2</p>
+<p class="node node-l">Numbers</p>
+<p class="node node-l">Consistency</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:6">
+<p class="node">Revision C</p>
+<p class="node node-w">Tables made from the model output</p>
+</div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#A8481A"></div><p class="small">your input</p>
+<div class="key" style="background:#14213D;margin-left:16px"></div><p class="small">phase</p>
+<div class="key" style="background:#E3EBF5;border:2px solid #1F5A96;box-sizing:border-box;margin-left:16px"></div><p class="small">independent agent task</p>
+<div class="key" style="background:#FFFDF8;border:2px solid #D9D2C2;box-sizing:border-box;margin-left:16px"></div><p class="small">work of the orchestrating session</p>
+</div>
+<div class="row">
+<div class="card fix" style="width:290px"><p class="big blue">9</p><p class="small">agent tasks gave results</p></div>
+<div class="card fix" style="width:290px"><p class="big blue">59</p><p class="small">review findings in two rounds</p></div>
+<div class="card fix" style="width:290px"><p class="big blue">7</p><p class="small">documents, docs/26 to 32</p></div>
+<div class="card" style="gap:8px"><h3>What went wrong on the way</h3><p class="small">Six research agents hit the usage limit and were redone as four. The kit’s first cross-check was off 2.8-fold. Neither early version of the designs survived its review.</p></div>
+</div>
+<aside>Nine agent tasks gave results: four for research, three first reviewers and two second reviewers; the 59 findings are 35 from round 1 and 24 from round 2, each traced to a change or to an open bench question. The agent tasks were independent and all ran on the Opus model after the first failure; each wrote only its own files. The reviewers had no part in writing the designs. The calculation kit has 36 checks and a cross-check against the project’s audited model. What went wrong on the way (docs/32 §4): a workflow runs at most two agents at a time on this machine; the first six research agents stopped after about 20 min on the account’s 5-hour usage limit and left only file skeletons; the kit’s first cross-check against the audited model was off by a factor of 2.8 until a loop-plug parameter was read; the session’s worker restarted during the last revision. Revision C answers the second review but was not reviewed again (docs/31 §4.3).</aside>
+</section>

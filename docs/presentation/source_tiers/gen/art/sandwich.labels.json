@@ -1,0 +1,62 @@
+[
+ {
+  "key": "capture",
+  "text": "capture antibody fragment on streptavidin",
+  "x": 5,
+  "y": 138,
+  "w": 150,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "igg",
+  "text": "human IgG: the analyte",
+  "x": 30,
+  "y": 12,
+  "w": 300,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "conjugate",
+  "text": "detection antibody carrying the enzyme (the conjugate)",
+  "x": 380,
+  "y": 10,
+  "w": 375,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "substrate",
+  "text": "substrate",
+  "x": 612,
+  "y": 108,
+  "w": 140,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "product",
+  "text": "product, oxidised at the electrode",
+  "x": 612,
+  "y": 252,
+  "w": 145,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "blank",
+  "text": "conjugate stuck to the surface without analyte: this is the blank",
+  "x": 5,
+  "y": 330,
+  "w": 150,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ }
+]

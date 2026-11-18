@@ -1,0 +1,15 @@
+<section id="tier2" data-transition="fade">
+<p class="eyebrow">Tier 2 · plus passive in-line parts</p>
+<h2>Tier 2: a bead bed at the cell inlet</h2>
+<div class="row" style="gap:48px">
+{{art:cell_t2}}
+<div class="col grow" style="gap:14px">
+<div class="card fix" style="flex-direction:row;align-items:center;gap:28px"><div class="col fix" style="gap:4px"><p class="small strong rust">Predicted limit</p><p class="big">{{n:t2.nom}} pg/mL</p></div><p class="small">Model, best estimate. Median of 2000 model draws: {{n:t2.med}} pg/mL; nine in ten fall between {{n:t2.p05}} and {{n:t2.p95}}. {{n:t2.min}} min from injection to result.</p></div>
+<p class="small"><b>Capture.</b> The sample passes a bed of a million streptavidin beads at 3.4 µL/min for 37 min. The bed is packed by hand against a frit in a capillary; {{n:t2.cap}} % of the IgG is captured.</p>
+<p class="small"><b>Read.</b> Substrate in, flow stopped for 5 min, then the product is swept over a printed carbon electrode in 90 s. The electrode converts 62 % of it.</p>
+<p class="small"><b>What limits it.</b> Conjugate on the walls above the bed (45 % of the blank) and on the frit (21 %), more than on the beads (31 %).</p>
+<p class="small"><b>Unproven.</b> A zero-flow step in the pump method; the wetted area of the frit; the fit of the sleeve in the inlet port.</p>
+</div>
+</div>
+<aside>Source: docs/30 §4. Bed: 1×10⁶ streptavidin beads of 2.8 µm carrying the biotinylated capture fragment, packed against a frit in a fused-silica capillary of 0.20 mm bore; 19 nL, 0.6 mm long, 24 mm² of bead surface. The capillary passes through the inlet port in a sleeve and ends 1 mm above a printed carbon strip; a fresh strip with every bed. 5 nM conjugate for 4 min. Read: 215 µL of substrate at 80 µL/min, 1 min at 5 µL/min, stop 5 min, sweep 90 s at 5 µL/min; the signal is the charge of the trace minus the trace of the same stop and sweep recorded on the fresh bed and strip. Model limits for a frit of 1, 5 and 20 mm²: 1.7, 2.1 and 3.4 pg/mL. If the pump cannot stop, a continuous read at 1 µL/min gives 2.8 (optimistic: the drift over the hour is not in the kit). Fritted capillary part numbers and the sleeve fit are unverified.</aside>
+</section>

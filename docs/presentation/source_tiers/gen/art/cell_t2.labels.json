@@ -1,0 +1,82 @@
+[
+ {
+  "key": "capillary",
+  "text": "capillary, 0.2 mm bore",
+  "x": 150,
+  "y": 15,
+  "w": 208,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "sleeve",
+  "text": "sleeve",
+  "x": 4,
+  "y": 160,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "bed",
+  "text": "bed: 1 million beads of 2.8 µm, 0.6 mm long",
+  "x": 4,
+  "y": 202,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "frit",
+  "text": "frit",
+  "x": 4,
+  "y": 357,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "tip",
+  "text": "tip 1 mm above the electrode",
+  "x": 4,
+  "y": 410,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "conjugate",
+  "text": "orange: conjugate on the walls above the bed and on the frit",
+  "x": 640,
+  "y": 230,
+  "w": 156,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "waste",
+  "text": "to waste",
+  "x": 650,
+  "y": 132,
+  "w": 140,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "we",
+  "text": "printed carbon working electrode",
+  "x": 170,
+  "y": 545,
+  "w": 450,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ }
+]

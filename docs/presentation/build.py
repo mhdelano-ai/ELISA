@@ -8,7 +8,8 @@ import json
 import pathlib
 
 here = pathlib.Path(__file__).parent
-DECKS = [("source", "in_silico_summary.html"), ("source_cartridge", "cartridge_round.html")]
+DECKS = [("source", "in_silico_summary.html"), ("source_cartridge", "cartridge_round.html"),
+         ("source_tiers", "tier_round.html")]
 
 # Extra rules and script for decks that carry a deck.css: shapes and coordinate connectors.
 SHAPES_CSS = """

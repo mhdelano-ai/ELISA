@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="360" viewBox="0 0 1600 360" role="img" aria-label="A liquid-chromatography stack with pump and autosampler feeds a liquid line into a flow cell clamped on a printed electrode strip, which a cable connects to a potentiostat.">
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<rect x="56" y="58" width="346" height="14" rx="4" fill="#ECE7DB" stroke-width="3"/>
+<rect x="92" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="108" y="20" width="24" height="12" rx="3" fill="#1F5A96" stroke-width="2"/>
+<rect x="177" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="193" y="20" width="24" height="12" rx="3" fill="#D9773F" stroke-width="2"/>
+<rect x="262" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="278" y="20" width="24" height="12" rx="3" fill="#2F8072" stroke-width="2"/>
+<rect x="30" y="72" width="400" height="104" rx="8" fill="#ECE7DB" stroke-width="3"/>
+<rect x="48" y="86" width="276" height="78" rx="5" fill="#FFFDF8" stroke-width="2"/>
+<rect x="64" y="96" width="244" height="58" rx="4" fill="#E3EBF5" stroke-width="2"/>
+<rect x="76" y="132" width="220" height="14" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<g stroke-width="2">
+<rect x="84" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="110" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="136" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="162" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="188" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="214" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="240" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="266" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+</g>
+<g fill="#1F5A96" stroke-width="2">
+<rect x="84" y="100" width="16" height="8" rx="2"/><rect x="110" y="100" width="16" height="8" rx="2"/><rect x="136" y="100" width="16" height="8" rx="2"/><rect x="162" y="100" width="16" height="8" rx="2"/><rect x="188" y="100" width="16" height="8" rx="2"/><rect x="214" y="100" width="16" height="8" rx="2"/><rect x="240" y="100" width="16" height="8" rx="2"/><rect x="266" y="100" width="16" height="8" rx="2"/>
+</g>
+<rect x="336" y="86" width="80" height="78" rx="5" fill="#F6F3EC" stroke-width="2"/>
+</g>
+<g fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round">
+<circle cx="370" cy="125" r="22"/>
+<circle cx="376" cy="125" r="22"/>
+<path d="M398 125 L426 125"/>
+<path d="M430 125 L636 125"/>
+<path d="M352 125 L346 125"/>
+</g>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<rect x="30" y="180" width="400" height="105" rx="8" fill="#ECE7DB" stroke-width="3"/>
+<rect x="48" y="194" width="364" height="77" rx="5" fill="#FFFDF8" stroke-width="2"/>
+<circle cx="140" cy="232" r="26" fill="#9AA5B8" stroke-width="3"/>
+<circle cx="140" cy="232" r="10" fill="#5E6B85" stroke-width="2"/>
+<circle cx="250" cy="232" r="26" fill="#9AA5B8" stroke-width="3"/>
+<circle cx="250" cy="232" r="10" fill="#5E6B85" stroke-width="2"/>
+<circle cx="384" cy="212" r="8" fill="#2F8072" stroke-width="2"/>
+<path d="M330 244 L396 244 M330 256 L396 256" fill="none" stroke-width="2"/>
+<rect x="670" y="90" width="330" height="120" rx="14" fill="#FFFDF8" stroke-width="3"/>
+</g>
+<g fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M808 118 L822 110 L952 110"/>
+<path d="M790 145 L952 145"/>
+<path d="M826 164 L842 180 L952 180"/>
+</g>
+<path d="M802.2 122.9 A42 42 0 1 0 802.2 177.1" fill="none" stroke="#2B2F3A" stroke-width="10" stroke-linecap="round"/>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="770" cy="150" r="23" fill="#C9A227" stroke-width="2"/>
+<rect x="810" y="156" width="18" height="16" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="98" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="133" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="168" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="650" y="85" width="240" height="130" rx="10" fill="#E3EBF5" fill-opacity="0.45" stroke-width="3"/>
+<rect x="636" y="115" width="14" height="20" rx="3" fill="#B9CCE3" stroke-width="2"/>
+<circle cx="668" cy="103" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="872" cy="103" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="668" cy="197" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="872" cy="197" r="7" fill="#9AA5B8" stroke-width="2"/>
+</g>
+<path d="M700 215 L700 256" fill="none" stroke="#B9CCE3" stroke-width="4" stroke-linecap="round"/>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<path d="M672 240 L676 284 L724 284 L728 240" fill="#F6F3EC" stroke-width="3"/>
+<path d="M675 266 L725 266" fill="none" stroke="#B9CCE3" stroke-width="4"/>
+<rect x="1230" y="65" width="300" height="170" rx="10" fill="#ECE7DB" stroke-width="3"/>
+<rect x="1248" y="82" width="264" height="136" rx="6" fill="#FFFDF8" stroke-width="2"/>
+<rect x="1266" y="96" width="160" height="50" rx="4" fill="#F6F3EC" stroke-width="2"/>
+<path d="M1276 134 C1306 134 1316 106 1336 106 C1356 106 1366 132 1416 132" fill="none" stroke="#2F8072" stroke-width="3"/>
+<circle cx="1478" cy="110" r="9" fill="#2F8072" stroke-width="2"/>
+<rect x="1450" y="164" width="44" height="26" rx="4" fill="#F6F3EC" stroke-width="2"/>
+<rect x="1252" y="235" width="30" height="8" rx="2" fill="#5E6B85" stroke-width="2"/>
+<rect x="1478" y="235" width="30" height="8" rx="2" fill="#5E6B85" stroke-width="2"/>
+<circle cx="1310" cy="182" r="24" fill="#9AA5B8" stroke-width="3"/>
+</g>
+<g fill="#14213D">
+<circle cx="1310" cy="172" r="3"/><circle cx="1301" cy="182" r="3"/><circle cx="1319" cy="182" r="3"/><circle cx="1310" cy="192" r="3"/>
+</g>
+<path d="M1286 182 C1180 182 1120 250 1060 230 C1030 220 1030 150 1010 146" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round"/>
+<rect x="966" y="94" width="40" height="102" rx="6" fill="#2B2F3A" fill-opacity="0.85" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/>
+<g fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round">
+<path d="M402 140 L452 196"/>
+<path d="M778 128 L792 62"/>
+</g>
+</svg>

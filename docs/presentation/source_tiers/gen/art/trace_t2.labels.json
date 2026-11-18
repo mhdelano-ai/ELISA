@@ -1,0 +1,62 @@
+[
+ {
+  "key": "current",
+  "text": "current",
+  "x": 58,
+  "y": 0,
+  "w": 120,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "time",
+  "text": "time",
+  "x": 436,
+  "y": 216,
+  "w": 70,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "stopped",
+  "text": "flow stopped",
+  "x": 80,
+  "y": 58,
+  "w": 200,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "baseline",
+  "text": "baseline",
+  "x": 250,
+  "y": 262,
+  "w": 120,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "sweep",
+  "text": "sweep",
+  "x": 376,
+  "y": 262,
+  "w": 80,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "signal",
+  "text": "signal = area",
+  "x": 414,
+  "y": 66,
+  "w": 104,
+  "align": "left",
+  "size": 24,
+  "weight": 600
+ }
+]

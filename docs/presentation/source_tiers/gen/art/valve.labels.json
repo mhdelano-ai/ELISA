@@ -1,0 +1,202 @@
+[
+ {
+  "key": "title_in",
+  "text": "IN: stream passes through bed",
+  "x": 20,
+  "y": 12,
+  "w": 460,
+  "align": "center",
+  "size": 28,
+  "weight": 600
+ },
+ {
+  "key": "title_out",
+  "text": "OUT: bed closed and bypassed",
+  "x": 520,
+  "y": 12,
+  "w": 460,
+  "align": "center",
+  "size": 28,
+  "weight": 600
+ },
+ {
+  "key": "p1_in",
+  "text": "1",
+  "x": 145,
+  "y": 145,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p2_in",
+  "text": "2",
+  "x": 85,
+  "y": 228,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p3_in",
+  "text": "3",
+  "x": 135,
+  "y": 335,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p4_in",
+  "text": "4",
+  "x": 335,
+  "y": 335,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p5_in",
+  "text": "5",
+  "x": 385,
+  "y": 228,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p6_in",
+  "text": "6",
+  "x": 325,
+  "y": 145,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p1_out",
+  "text": "1",
+  "x": 645,
+  "y": 145,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p2_out",
+  "text": "2",
+  "x": 585,
+  "y": 228,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p3_out",
+  "text": "3",
+  "x": 635,
+  "y": 335,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p4_out",
+  "text": "4",
+  "x": 835,
+  "y": 335,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p5_out",
+  "text": "5",
+  "x": 885,
+  "y": 228,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "p6_out",
+  "text": "6",
+  "x": 825,
+  "y": 145,
+  "w": 30,
+  "align": "center",
+  "size": 24,
+  "weight": 600
+ },
+ {
+  "key": "autosampler",
+  "text": "from the autosampler",
+  "x": 40,
+  "y": 60,
+  "w": 280,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "cell_in",
+  "text": "to the cell",
+  "x": 395,
+  "y": 134,
+  "w": 90,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "cell_out",
+  "text": "to the cell",
+  "x": 895,
+  "y": 134,
+  "w": 90,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "plugged",
+  "text": "plugged",
+  "x": 200,
+  "y": 392,
+  "w": 100,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "bed_in",
+  "text": "bead bed and frit in the loop",
+  "x": 40,
+  "y": 496,
+  "w": 420,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "bed_out",
+  "text": "product collects in the closed bed",
+  "x": 520,
+  "y": 496,
+  "w": 460,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ }
+]

@@ -1,0 +1,191 @@
+# Parameters added by the three-tier round (docs/26).  Namespace tr.<section>.<name>.
+# Schema as params/*.yaml: value (best estimate), low, high (plausible bounds), unit, source, confidence, note.
+# Everything here is an engineering estimate unless a source is named; the bench experiment that replaces each
+# value is named in docs/30.  Geometry, flows, times and reagent concentrations are design choices and live in the
+# design dictionaries of scripts/tier_round/run_tiers.py, not here.
+
+capture:
+  site_factor_adsorbed:
+    value: 0.3
+    low: 0.1
+    high: 0.6
+    unit: fraction
+    source: "UNVERIFIED (randomly oriented, passively adsorbed capture antibody; literature values of 10-30 % active are common textbook figures, not checked here)"
+    confidence: low
+    note: "Active capture sites of an adsorbed antibody layer relative to the oriented monolayer of chem.surfaces (1e16 /m^2 x 0.85)."
+  site_factor_streptavidin_biotin:
+    value: 1.0
+    low: 0.4
+    high: 1.0
+    unit: fraction
+    source: "derived: chem.surfaces.active_fraction_oriented already describes biotin-streptavidin oriented capture (Chang2012)"
+    confidence: medium
+    note: "Biotinylated capture antibody on a streptavidin layer (electrode SAM or beads); lower bound for an incomplete streptavidin layer on a hand-made surface."
+
+nsb:
+  surface_factor_printed_electrode:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: "ma.nsb.surface_factor_chip (UNVERIFIED there: Jenkins1988, Qu1998)"
+    confidence: low
+    note: "NSB of the conjugate on a blocked printed carbon or gold electrode and on the printed dielectric around it, relative to blocked streptavidin beads."
+  surface_factor_gold_oeg:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: "UNVERIFIED (oligo-ethylene-glycol thiol monolayers on gold resist protein adsorption: Nishimura2011, abstract, via lit_B; no conjugate density measured)"
+    confidence: low
+    note: "Thin-film gold carrying a mixed biotin-OEG / OEG thiol monolayer with streptavidin and biotinylated capture antibody."
+  surface_factor_glass_blocked:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: "ma.nsb.surface_factor_chip"
+    confidence: low
+    note: "Glass, SU-8 and unused metal of a thin-film chip around the working electrode after blocking."
+  surface_factor_lid:
+    value: 3.0
+    low: 1.0
+    high: 30.0
+    unit: fold
+    source: "ma.nsb.surface_factor_tubing (UNVERIFIED there)"
+    confidence: low
+    note: "Polymer lid (PMMA or PEEK flow add-on) of the cell after a blocking rinse."
+  surface_factor_frit:
+    value: 10.0
+    low: 1.0
+    high: 100.0
+    unit: fold
+    source: UNVERIFIED
+    confidence: low
+    note: "Per unit of the frit or membrane area that is counted in bed.extra_area (internal pore area)."
+  unit_to_unit_cv_planar:
+    value: 0.15
+    low: 0.05
+    high: 0.4
+    unit: fraction
+    source: "UNVERIFIED (hand-coated single-use electrodes; printed-sensor immunoassay CVs of 5-13 % in lit_B section B.1 are for signals, not blanks)"
+    confidence: low
+    note: "Extra relative SD of the non-specific label count between hand-prepared electrodes, added in quadrature to chem.nsb.blank_CV_analog_electrochemical."
+  unit_to_unit_cv_bed:
+    value: 0.10
+    low: 0.03
+    high: 0.3
+    unit: fraction
+    source: "UNVERIFIED (hand-packed bed: bed mass variation; ma.capture.bead_dose_cv is 0.05 for a dispensed bead dose)"
+    confidence: low
+    note: "Extra relative SD of the non-specific label count between hand-packed single-use beds."
+
+noise:
+  thinfilm_sensor_to_sensor_cv:
+    value: 0.05
+    low: 0.02
+    high: 0.1
+    unit: fraction
+    source: "UNVERIFIED (lithographic thin-film electrodes have better-defined area than printed ones; Wilson2005 interassay CV 1.9-8.2 % on 1 mm thin-film electrodes, abstract, via lit_B)"
+    confidence: low
+    note: "Unit-to-unit CV of the response of single-use thin-film electrodes; printed electrodes use ma.noise.spe_sensor_to_sensor_cv."
+  preread_residual_cv:
+    value: 0.03
+    low: 0.01
+    high: 0.10
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection. Also applied to the substrate background itself when that pre-read is the only reference for it (review findings N1, N11; bounds as proposed in N11)."
+  swept_step_residual_cv:
+    value: 0.04
+    low: 0.01
+    high: 0.10
+    unit: fraction
+    source: "UNVERIFIED (review finding N4: 3-5 % until the baseline shape is measured)"
+    confidence: low
+    note: "Swept read after a stop with the electrode on: residual of the impurity-current step after subtracting the trace of an identical pre-run on the same bed and strip, as a fraction of the impurity charge in the read window."
+  drift_area_exponent:
+    value: 0.5
+    low: 0.0
+    high: 1.0
+    unit: dimensionless
+    source: "UNVERIFIED (the part of the drift that is background current scales with electrode area, the part from the reference, temperature and the instrument does not; review finding N7; 0 reproduces the existing model)"
+    confidence: low
+    note: "hw.gamry.baseline_drift is taken at ma.noise.reference_electrode_area and scaled by (A / A_ref)^exponent."
+
+detection:
+  chemical_cycling_rate_constant:
+    value: 1.0
+    low: 0.1
+    high: 10.0
+    unit: 1/s
+    source: "UNVERIFIED (pseudo-first-order regeneration of the oxidised product by a millimolar reductant; no rate constant checked)"
+    confidence: low
+    note: "k_reg of cycling_surface_velocity: quinone or quinone-imine reduced back by TCEP, hydrazine or NADH."
+  reductant_background_current_density:
+    value: 1.0e-3
+    low: 1.0e-4
+    high: 1.0e-1
+    unit: A/m^2
+    source: "UNVERIFIED (direct oxidation of the reductant at the electrode; the literature uses ITO or long SAMs to keep it low: Das2007, Kwon2008, Akanda2011 via docs/01)"
+    confidence: low
+    note: "0.1 uA/cm^2 best estimate; printed carbon and gold are more electrocatalytic than ITO."
+  cycling_noise_factor:
+    value: 2.0
+    low: 1.0
+    high: 5.0
+    unit: fold
+    source: "ma.chemistries.alp_aap.tcep_noise_factor (same idea, UNVERIFIED there)"
+    confidence: low
+    note: "Current noise multiplier when a reductant is present."
+  ida_two_electrode_efficiency:
+    value: 0.5
+    low: 0.1
+    high: 1.0
+    unit: fraction
+    source: UNVERIFIED
+    confidence: low
+    note: "Redox-cycling current of an interdigitated array driven by ONE channel (second comb as counter and reference) relative to bipotentiostat operation."
+  monolayer_collection_efficiency:
+    value: 1.0
+    low: 0.1
+    high: 1.0
+    unit: fraction
+    source: "UNVERIFIED (review finding C2: hydroquinone is an inner-sphere couple and may be slowed by a thiol monolayer and the protein layer on it; no measurement on these electrodes)"
+    confidence: low
+    note: "Coated gold electrodes only. Fraction of the transport-limited current that the electrode delivers at the read potential; a lumped factor on every current through the electrode (signal, non-specific label, impurity, hydrolysis). Bench item T1-1 asks for at least 0.7."
+  reservoir_background_decays:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean (1 = free product in the substrate reservoir decays with the product half-life)
+    source: "consistency (second review, finding M2): the product half-life at pH 9.5 has to hold in the reservoir as well as in the bed"
+    confidence: low
+    note: "1: the free hydroquinone of the substrate lot decays over the reservoir age and the hydrolysis product stands at its steady state k_hyd S0 / k_decay. 0: the oxidisable background of the working solution is free_product_impurity x S0 at the time of use and hydrolysis product accumulates over the reservoir age (the assumption of the audited model and of Revision B)."
+  step_background_charge_density:
+    value: 0.1
+    low: 0.02
+    high: 0.5
+    unit: C/m^2
+    source: "UNVERIFIED (double-layer and surface charge of a potential step of about 0.35 V at 10-50 uF/cm^2; lit_A A.4 prefers held-potential amperometry for this reason)"
+    confidence: low
+    note: "Background charge of the potential step in read mode accumulate_step; its noise is ma.noise.background_current_relative_noise of this charge."
+
+transfer:
+  elution_efficiency:
+    value: 0.35
+    low: 0.05
+    high: 0.74
+    unit: fraction
+    source: "UNVERIFIED (release of the captured complex from the first bed in a 5 min hold by cleaving a linker; no rate known. Bounds as asked by the chemistry review and the second review: overall transfer 0.05-0.7 until measured; findings C8, K7. docs/05 assumed 0.7 for a tube protocol of 15 + 30 min)"
+    confidence: low
+    note: "Tier 3. The specific transfer is this fraction times the re-capture computed from the bed equation at the push flow."
+  elution_efficiency_desthiobiotin:
+    value: 0.1
+    low: 0.003
+    high: 0.26
+    unit: fraction
+    source: "Derived by the chemistry reviewer (results/tier_round/review_chemistry.md C8) from Kd about 1e-11 M (UNVERIFIED) and kon 1e6-1e8 /M/s: 0.3-26 % of singly tagged antibody released in 5 min"
+    confidence: low
+    note: "Tier 3 alternative of docs/06 section 4.12: desthiobiotin displaced by biotin, 5 min contact."

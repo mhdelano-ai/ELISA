@@ -21,6 +21,11 @@ or automatically renewed; buffer matrix only; no manual step between loading the
   determinations with ≥ 3 min margin to 60 min. Carry-over 1×10⁻⁴ kept + mandatory cleaning cycle and blank check
   after any result > 100 pg/mL. M5a (read background, catalogue die, existing Gamry) approved before G1; everything
   else for the cartridge waits for G1 and E1.2b.
+- Tier round (2026-11-17, docs/26 §2): the equipment in hand is the BSM + SM-FL, the Reference 600+ and a MicruX
+  flow cell (both versions: printed strips and thin-film chips). Three implementations by what may be added:
+  tier 1 consumables only, tier 2 plus passive in-line parts, tier 3 anything. Unattended per sample (bench
+  preparation and a fresh electrode or bed per determination are allowed; no unattended queue required);
+  ≤ 100 µL injected and ≤ 60 min still apply.
 
 ## Sourcing rule
 Every number carries a source (DOI/URL/vendor document) and a confidence. Anything not checked in the session is
@@ -38,11 +43,19 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
   (docs/18, Revision C), card (19), dock lid (20), lower bay (21), base and enclosure (22), integration with the
   authoritative tables of choices, deviations from docs/13 and open items (23), independent review and resolution of
   findings (24, §8), session record (25). docs/13 stays the specification; docs/18–24 list departures as deviations.
+- `docs/26–32` — tier round: lowest-LOD assays on the equipment in hand, in three tiers. Brief and interview (26),
+  capability map of the Waters stack without added hardware and instrument checks (27, Revision C), MicruX cells,
+  electrodes and parts (28), literature (29), **the implementations (30, Revision C)**, the two review rounds and
+  the resolution of every finding (31), session record (32).
+- `scripts/tier_round/` — calculation kit and designs behind docs/30 (`README.md` there; `tierkit.py`,
+  `designs.py`, `run_tiers.py`, `tier_params.yaml` with the `tr.*` parameters of the round); outputs and the five
+  reviewer reports in `results/tier_round/`. The kit imports `elisa_sim` and edits nothing in `src/` or `params/`.
 - `cad/` — parametric CadQuery model behind docs/18–24 (`cad/elisa_cad/interface.py` is the single source of truth
   for interface geometry; packages `card`, `dock_upper`, `dock_lower`, `dock_base`, `assembly`); outputs (STEP, DXF,
   PNG, check results) in `cad/out/`. See `cad/README.md`.
 - `scripts/chip_round/` — the agents' working scripts and outputs behind docs/09–16 (record only; see its README).
-- `docs/presentation/` — summary slide decks (in silico phase; cartridge round) as standalone HTML, sources, `build.py`.
+- `docs/presentation/` — summary slide decks (in silico phase; cartridge round; tier round) as standalone HTML,
+  sources, `build.py`; the tier-round deck is generated from the model output (`source_tiers/gen/`).
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
 - `params/*.yaml` — model parameters (`chem.*`, `hw.*`, `ma.*`; schema in the file headers).
 - `src/elisa_sim/` — simulation package; `tests/` — its tests; `scripts/` — design scripts (`design_lib.py`).
@@ -64,10 +77,14 @@ python -m elisa_auto.analyze bench/<folder>         # gate quantities from bench
 python -m elisa_auto.model_feedback bench/measured_values.yaml   # re-run the model with bench values
 pip install -r cad/requirements.txt && pip install -e cad         # CAD model (CadQuery; no test suite, one-off checks)
 python -m elisa_cad.card.build         # card (~1 min); likewise dock_upper, dock_lower, dock_base (`--fast`), assembly (~25 min)
+python scripts/tier_round/check_tierkit.py          # tier round: 36 checks of the kit (~1 min)
+python scripts/tier_round/run_tiers.py              # tier round: all designs, scenarios, alternatives (~2 min)
+python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
+python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
 
-## Status (2026-11-13)
+## Status (2026-11-18)
 In silico phase complete; the final review's findings are resolved or listed as open in docs/08 §10. **Next:
 bench Stage 0 (instrument facts, ordering) and Stage 1A (E1.1 readout, E1.2 U3 free HQ, E1.3 U1 conjugate NSB with
 the reservoir-ageing arm; plus E1.2b HQDP pre-electrolysis "guard cell" test, weeks 5–7, informational, not a G1a/G1
@@ -86,6 +103,25 @@ decision-grade LOD advantage: A Rev B without pre-electrolysis credit median 3.6
 56 min per result), automation and buffer use. **Approved before G1: only M5a** (docs/06; informational, not a
 G1a/G1 input; its weeks 6–8 slot does not fit the bench load — options in docs/06 M5a). Everything else for the
 cartridge waits for G1 and E1.2b.
+
+**Tier round complete as desk work (2026-11-18, docs/26–32):** three implementations on the equipment in hand,
+all sequential sandwich assays with the same reagents (docs/30 Revision C; model predictions from
+`scripts/tier_round`, not on the same footing as the docs/05 numbers). Tier 1, capture on a printed gold strip in
+the MicruX wall-jet cell, read under 200 µL/min substrate flow between two reference windows: nominal 3.6 pg/mL,
+median 16 [2.8–110]. Tier 2, 1×10⁶ beads packed against a frit in a capillary whose tip sits in the cell's inlet
+bore, stop 5 min and sweep: 2.1, median 8.4 [1.0–100], P(LOD ≤ 1) 0.05. Tier 3, the same bed in the loop of one
+6-port valve: 1.2, median 5.1 [0.78–58], P 0.09. An immune-complex transfer to a second bed gives 1.1 at a release
+of 0.35 (0.05–0.74, nothing measured) and 0.53 at 0.7; it is conditional on its own test. **Two bench questions
+from the review reach the whole project and come before E1.2 (docs/30 §2.6, docs/31 §6):** (1) alkaline
+phosphatase should turn hydroquinone diphosphate into the monophosphate, not hydroquinone, at picomolar enzyme
+(finding C1; if the monophosphate is not oxidised at the read potential every predicted signal of the project is
+10²–10⁵ too high and the substrate has to change); (2) the half-life of hydroquinone at pH 9.5 may be about
+10 min, not 2 h (C5, M2; then the substrate's free hydroquinone is gone before use). Recommendation of the round:
+the two questions first, then tier 2, with one valve as soon as it can be had. Nothing is ordered; no gate,
+kill criterion or order of docs/06 is changed; whether the round's experiments enter the bench plan is the user's
+decision (docs/30 §8, with the other open questions). Revision C answers the second review pass but was not
+reviewed again (docs/31 §4.3). A 21-slide summary of the round is `docs/presentation/tier_round.html` (charts and
+headline figures generated from `tiers.json`; checked twice by independent agents, docs/32 §7).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in
