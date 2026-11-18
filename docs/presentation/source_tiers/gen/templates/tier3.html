@@ -4,10 +4,10 @@
 <div class="row" style="gap:40px">
 {{art:valve}}
 <div class="col grow" style="gap:14px">
-<div class="card fix" style="gap:8px"><p class="big">{{n:t3.nom}} pg/mL</p><p class="small">nominal · median {{n:t3.med}} [{{n:t3.p05}}–{{n:t3.p95}}] · {{n:t3.min}} min · {{n:t3.cap}} % of the IgG captured</p></div>
+<div class="card fix" style="gap:6px"><p class="small strong rust">Predicted limit</p><p class="big">{{n:t3.nom}} pg/mL</p><p class="small">Model, best estimate. Median of 2000 model draws: {{n:t3.med}} pg/mL; nine in ten fall between {{n:t3.p05}} and {{n:t3.p95}}. {{n:t3.min}} min; {{n:t3.cap}} % of the IgG captured.</p></div>
 <p class="small"><b>Read.</b> The valve closes the bed for 3 min while substrate keeps flowing through the cell. Then it opens, and the product is swept over the electrode in 90 s.</p>
 <p class="small"><b>What the valve buys.</b> Walls upstream give a steady current, not part of the peak. The pump never stops.</p>
-<p class="small"><b>Conditional.</b> A second valve and bed for a transfer of the immune complex: {{n:t3t.nom}} pg/mL, at a release nobody has measured.</p>
+<p class="small"><b>Conditional.</b> A second valve and bed, to move the captured complex to a clean bed: {{n:t3t.nom}} pg/mL if 35 % of it is released in 5 min, which nobody has measured.</p>
 </div>
 </div>
 <aside>Source: docs/30 §5. One 2-position 6-port valve between the autosampler and the cell: port 1 in, port 6 out, the bed between ports 2 and 5, ports 3 and 4 plugged. IN (1–2 and 5–6 connected): the stream passes through the bed, for sample, washes, conjugate, substrate and the read. OUT (1–6 connected): the bed is bypassed and closed at both ends, for the 3 min accumulation, with the pump at 5 µL/min through the bypass and the cell. Sample at 3.15 µL/min for 40 min; 5 nM conjugate. Only the bed, its frit and the loop of the valve (10 mm² taken; with 30 mm² the limit is 1.7) hold conjugate that counts in the read. The steady currents of the electrode and the upstream walls (about 12 and 13 pA) are removed by the baseline. The valve is driven by the project’s Python layer.</aside>

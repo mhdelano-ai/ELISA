@@ -52,8 +52,12 @@ def panel(cx, mode):
     o.append(line([(p[2][0] - 13, CY), (cx - 190, CY), (cx - 190, 460), (cx - 85, 460)], loopcol, 6))
     o.append(line([(cx + 85, 460), (cx + 190, 460), (cx + 190, CY), (p[5][0] + 13, CY)], loopcol, 6))
     # flow cell icon
-    o.append('<rect x="%s" y="118" width="70" height="10" fill="%s" stroke="%s" stroke-width="2" stroke-linejoin="round"/>' % (f(cx + 155), SAND, INK))
-    o.append('<rect x="%s" y="92" width="44" height="26" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % (f(cx + 168), PBLUE, INK))
+    # a block with the end of a printed strip showing, as on the cover
+    o.append('<rect x="%s" y="99" width="36" height="12" fill="%s" stroke="%s" stroke-width="2" stroke-linejoin="round"/>' % (f(cx + 208), SAND, INK))
+    for px in (230, 237):
+        o.append('<rect x="%s" y="102" width="4" height="6" fill="%s"/>' % (f(cx + px), STEEL))
+    o.append('<rect x="%s" y="88" width="46" height="34" rx="6" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % (f(cx + 168), PBLUE, INK))
+    o.append('<circle cx="%s" cy="105" r="7" fill="%s" stroke="%s" stroke-width="2"/>' % (f(cx + 196), "#C9A227", INK))
     # bed
     bx, by = cx - 85, 445
     o.append('<rect x="%s" y="%s" width="170" height="30" rx="4" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % (f(bx), by, PBLUE if mode == "in" else PTEAL, INK))

@@ -98,14 +98,17 @@ def t1():
             o.append(f'<circle cx="{x}" cy="451" r="6" fill="{BLUE}" stroke="{INK}" stroke-width="2"/>')
     o += orings()
     o.append(arrow('M395,175 L395,425'))
-    o.append(arrow('M286,456 L230,456'))
+    o.append(arrow('M286,456 L262,456'))
     o.append(arrow('M504,456 L540,456 L540,190'))
+    # dimension mark across the gap
+    o.append(line(236, 445, 236, 467, INK, 2)); o.append(line(230, 444, 242, 444, INK, 2))
+    o.append(line(230, 468, 242, 468, INK, 2))
     # leaders
     o.append(leader(384, 45, 366, 45))            # inlet line
     o.append(leader(365, 215, 168, 215))          # bore
     o.append(leader(362.5, 330, 168, 330))        # conjugate walls
     o.append(leader(232, 446, 232, 470) if False else '')
-    o.append(leader(250, 456, 168, 470))          # gap
+    o.append(leader(168, 425, 236, 425)); o.append(leader(236, 425, 236, 442))   # gap, clear of the O-ring
     o.append(leader(608, 444, 632, 412))          # O-ring
     o.append(leader(612, 500, 632, 500))          # strip
     o.append(leader(346, 484, 346, 532))          # antibody on WE
@@ -126,7 +129,7 @@ def t1():
 def t2():
     o = base(2)
     # sleeve
-    o.append(rect(359, 150, 16, 180, SAND, INK, 2)); o.append(rect(415, 150, 16, 180, SAND, INK, 2))
+    o.append(rect(359, 150, 16, 250, SAND, INK, 2)); o.append(rect(415, 150, 16, 250, SAND, INK, 2))
     # capillary walls
     o.append(rect(375, 0, 12, 400, PBLUE, INK, 2)); o.append(rect(403, 0, 12, 400, PBLUE, INK, 2))
     # lumen
@@ -154,19 +157,18 @@ def t2():
     o.append(arrow('M410,456 L512,456'))
     o.append(arrow('M540,420 L540,190'))
     o.append(leader(375, 40, 366, 40))       # capillary
-    o.append(leader(366, 190, 168, 190))     # sleeve
-    o.append(leader(389.5, 260, 168, 285))   # conjugate
+    o.append(leader(366, 175, 168, 175))     # sleeve
+    o.append(leader(388, 352, 168, 262))     # bed
+    o.append(leader(387, 393, 168, 372))     # frit
     o.append(leader(380, 405, 168, 440))     # tip
-    o.append(leader(403, 340, 632, 290))     # bed
-    o.append(leader(403, 393, 632, 393))     # frit
     o.append(leader(440, 482, 440, 532))     # WE
     labels = [
         dict(key='capillary', text='capillary, 0.2 mm bore', x=150, y=15, w=208, align='right'),
-        dict(key='sleeve', text='sleeve', x=4, y=175, w=156, align='right'),
-        dict(key='conjugate', text='conjugate on the walls above the bed (orange)', x=4, y=240, w=156, align='right'),
-        dict(key='tip', text='tip 1 mm above the electrode', x=4, y=395, w=156, align='right'),
-        dict(key='bed', text='bed: 1 million beads of 2.8 µm, 0.6 mm long', x=640, y=200, w=160, align='left'),
-        dict(key='frit', text='frit', x=640, y=378, w=150, align='left'),
+        dict(key='sleeve', text='sleeve', x=4, y=160, w=156, align='right'),
+        dict(key='bed', text='bed: 1 million beads of 2.8 µm, 0.6 mm long', x=4, y=202, w=156, align='right'),
+        dict(key='frit', text='frit', x=4, y=357, w=156, align='right'),
+        dict(key='tip', text='tip 1 mm above the electrode', x=4, y=410, w=156, align='right'),
+        dict(key='conjugate', text='orange: conjugate on the walls above the bed and on the frit', x=640, y=230, w=156, align='left'),
         dict(key='waste', text='to waste', x=650, y=132, w=140, align='left'),
         dict(key='we', text='printed carbon working electrode', x=170, y=545, w=450, align='center'),
     ]

@@ -46,7 +46,7 @@ b=''
 # leaders first (under artwork)
 b+=lead(163,248,286,388)          # capture -> unit 1 right arm
 b+=lead(345,276,320,52)           # IgG -> left arm tip
-b+=lead(470,184,470,80)           # conjugate -> enzyme
+b+=lead(470,208,470,80)           # conjugate -> enzyme
 b+=lead(582,125,604,124)          # substrate
 b+=lead(592,312,604,312)          # product
 b+=lead(162,440,180,440)          # blank
@@ -120,5 +120,7 @@ labs=[L("substrate","hydroquinone diphosphate, the substrate",80,268,300,"center
       L("hq","hydroquinone",1180,268,220,"center"),
       L("fast","one phosphate off per turnover",295,14,400,"center"),
       L("slow","the second phosphate comes off slowly",795,14,460,"center"),
-      L("electrode","2 electrons at the electrode",1404,244,192,"center")]
+      L("electrode","2 electrons at the electrode",1404,244,192,"center"),
+      L("phosphate","phosphate",258,47,130,"left"),
+      L("oh","OH",1310,55,60,"left")]
 write("product",1600,330,"Reaction scheme: the enzyme removes one phosphate from hydroquinone diphosphate quickly, the second phosphate slowly, and the hydroquinone formed gives two electrons to a gold electrode.",b,labs)

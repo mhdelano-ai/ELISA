@@ -257,7 +257,8 @@ def chart_conv():
     return f'<div class="host plate" style="width:{W + 4}px;height:{H + 4}px">\n' + "\n".join(out) + "\n</div>"
 
 
-SHORT = ["Tier 1", "Tier 2", "Tier 3, one valve", "Tier 3, transfer"]
+HEADS = [("Tier 1", "on the electrode"), ("Tier 2", "bed at the inlet"), ("Tier 3", "one valve"),
+         ("Tier 3", "with transfer")]
 TIER_NAMES = [("t1", "Tier 1", "capture on the electrode"), ("t2", "Tier 2", "bead bed at the cell inlet"),
               ("t3", "Tier 3, one valve", "the bed in a valve loop"),
               ("t3t", "Tier 3 with transfer", "second bed, conditional")]
@@ -265,7 +266,7 @@ TIER_NAMES = [("t1", "Tier 1", "capture on the electrode"), ("t2", "Tier 2", "be
 
 def chart_lod():
     """Predicted detection limits: nominal, median and 5-95 % range on a log axis (docs/30 section 0)."""
-    PW, ROW, AX = 872, 92, 56
+    PW, ROW, AX = 872, 84, 56
     lx = lambda v: 20 + (math.log10(v) + 1) * 200
     s = [svg_open(PW, 4 * ROW + AX,
                   "Range chart on a logarithmic axis from 0.1 to 1000 pg/mL. " + " ".join(
@@ -308,13 +309,13 @@ def chart_lod():
         for k, _, _ in TIER_NAMES])
     prob = column(200, "P(≤ 1 pg/mL)", [f'<p class="strong">{VALUES[k + ".p1"]}</p>' for k, _, _ in TIER_NAMES])
     mid = (f'<div class="col fix" style="width:{PW}px;gap:0"><p class="small strong" style="height:48px">'
-           f"Predicted detection limit, pg/mL (log scale)</p>{plot}</div>")
+           f"Model prediction of the detection limit, pg/mL (log scale)</p>{plot}</div>")
     return f'<div class="row" style="gap:24px">\n{names}\n{mid}\n{med}\n{prob}\n</div>'
 
 
 def chart_timeline():
     """One row per design, 22 px per minute, from the step tables of the model output."""
-    PX, LABW = 21, 260
+    PX, LABW = 20, 300
     plans = {   # (category, number of steps of the model's table it covers, words in the bar)
         "t1": [("sample", 2, "Sample over the electrode: 44 min at 2.86 µL/min"), ("wash", 1, ""), ("conj", 2, ""),
                ("wash2ref", 1, ""), ("sub", 1, ""), ("read", 1, ""), ("wash", 1, ""), ("read", 1, "")],
@@ -334,7 +335,7 @@ def chart_timeline():
     rows.append(f'<div class="row" style="gap:0"><div class="fix" style="width:{LABW}px"></div>{ticks}'
                 f'<p class="small strong fix" style="width:120px;padding-left:11px;box-sizing:border-box;'
                 f'color:{RUST}">60 min</p></div>')
-    for k, name in zip(("t1", "t2", "t3", "t3t"), SHORT):
+    for k, name, _ in TIER_NAMES:
         steps = [st for st in D[k]["steps"] if st[2]]
         assert abs(sum(st[1] for st in steps) - D[k]["time_to_result_min"]) < 1e-6, k
         segs, i, t = [], 0, 0.0
@@ -460,17 +461,17 @@ def chart_revisions():
 
 def chart_heat():
     """Nominal detection limit of every design in seven cases; darker means a higher limit."""
-    rows = [("spec", "As specified"), ("L67", "Detection reagent and substrate lot screened"),
-            ("L367", "Screened, plus credit for a F(ab′)₂ conjugate"),
-            ("ND", "Substrate background does not decay"),
+    rows = [("spec", "As specified"), ("L67", "Slow-releasing detection antibody, purer substrate"),
+            ("L367", "The same, and a conjugate that sticks less (assumed)"),
+            ("ND", "The substrate’s background does not decay"),
             ("S1", "Conjugate sticks 25 times more than assumed"),
-            ("S4", "Substrate background of 10⁻³, no decay"),
-            ("P01", "Only 1 % of the product is electroactive")]
+            ("S4", "Substrate carries 10⁻³ oxidisable impurity"),
+            ("P01", "Only 1 % of the enzyme’s product is electroactive")]
 
     def shade(v):
         return "h-1" if v <= 1 else "h-2" if v <= 3 else "h-3" if v <= 10 else "h-4" if v <= 100 else "h-5"
 
-    cells = ['<p class="colhead"></p>'] + [f'<p class="colhead">{n}</p>' for n in SHORT]
+    cells = ['<p class="colhead"></p>'] + [f'<p class="colhead">{a}<br>{b}</p>' for a, b in HEADS]
     for s, words in rows:
         cells.append(f'<p class="rowhead">{words}</p>')
         for k, _, _ in TIER_NAMES:
@@ -512,7 +513,7 @@ def chart_transfer():
                  f'stroke-width="3"/>')
     s.append("</svg>")
     out = ["".join(s)]
-    out.append(pin("lab strong", 28, 14, 700, "Detection limit of the transfer design, pg/mL (log scale)"))
+    out.append(pin("lab strong", 28, 14, 700, "Detection limit of tier 3 with transfer, pg/mL (log scale)"))
     for v, t in ((0.1, "0.1"), (0.3, "0.3"), (1, "1"), (3, "3"), (10, "10")):
         out.append(pin("tick", 20, ly(v) - 15, 88, t, "right"))
     for r in (0, 0.2, 0.4, 0.6, 0.8, 1.0):

@@ -32,9 +32,10 @@ pre-electrolysis credit); they were not re-run for Revision B.
 - `tier_round.html` — the 21-slide deck on the three-tier round (docs/26–32) as one self-contained file (same
   viewer: arrow keys or Back / Next; print gives one slide per page). It covers the request and the interview, how
   the session ran, what sets the detection limit on the equipment in hand, the shared assay, the three designs with
-  cross-sections of the cell and the valve in both positions, how each design reads, the hour of one determination,
-  the predicted limits and what limits them, the two review rounds and what they did to the numbers, the scenarios,
-  the conditional transfer to a second bed, the two bench questions, the bench order and the questions for the user.
+  cross-sections of the cell and the valve in both positions, the conditional transfer to a second bed, how each
+  design reads, the hour of one determination, the predicted limits and what limits them, the two review rounds and
+  what they did to the numbers, the scenarios, the two bench questions, the bench order, and the questions and
+  choices left to the user.
 - `source_tiers/` — its sources: `deck.json`, `deck.css` (shared styles) and one file per slide in `slides/`, with
   sources and caveats in each slide's `<aside>`. The slide files are generated; do not edit them by hand.
 - `source_tiers/gen/` — how the slides are made:

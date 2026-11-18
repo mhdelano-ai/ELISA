@@ -58,5 +58,25 @@
   "align": "center",
   "size": 24,
   "weight": 400
+ },
+ {
+  "key": "phosphate",
+  "text": "phosphate",
+  "x": 258,
+  "y": 47,
+  "w": 130,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "oh",
+  "text": "OH",
+  "x": 1310,
+  "y": 55,
+  "w": 60,
+  "align": "left",
+  "size": 24,
+  "weight": 400
  }
 ]

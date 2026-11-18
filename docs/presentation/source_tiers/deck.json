@@ -5,11 +5,11 @@
   "format": {"v": 1, "shared": ["project/deck.css"]},
   "title": "ELISA three-tier round",
   "cover": "cover",
-  "order": ["cover", "request", "tiers", "process", "physics", "assay", "tier1", "tier2", "tier3", "reads", "timeline", "results", "statement", "limits", "review", "revisions", "scenarios", "transfer", "questions", "plan", "open"],
+  "order": ["cover", "request", "tiers", "process", "physics", "assay", "tier1", "tier2", "tier3", "transfer", "reads", "timeline", "results", "statement", "limits", "review", "revisions", "scenarios", "questions", "plan", "open"],
   "sections": {
     "s1": {"description": "What was asked, what the user fixed in the interview, and how the session ran.", "start": "cover"},
     "s2": {"description": "What sets the detection limit on this equipment, and the assay that all three designs share.", "start": "physics"},
-    "s3": {"description": "The three implementations in pictures, how each one reads, and how they fit in an hour.", "start": "tier1"},
+    "s3": {"description": "The three implementations in pictures, the conditional transfer to a second bed, how each design reads, and how they fit in an hour.", "start": "tier1"},
     "s4": {"description": "Predicted detection limits, what limits each design, and how two review rounds changed the numbers.", "start": "results"},
     "s5": {"description": "The two bench questions that come first, the plan, and what the user is asked to decide.", "start": "questions"}
   },

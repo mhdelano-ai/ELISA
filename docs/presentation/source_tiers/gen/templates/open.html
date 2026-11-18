@@ -8,20 +8,19 @@
 <div class="row center" style="gap:18px"><p class="num num-o">3</p><p class="small grow">Does a pump method accept a row at zero flow? Is a restrictor installed, and which?</p></div>
 <div class="row center" style="gap:18px"><p class="num num-o">4</p><p class="small grow">Is the full-loop overfill set to twice the loop on this autosampler?</p></div>
 <div class="row center" style="gap:18px"><p class="num num-o">5</p><p class="small grow">Is there a UV detector and a reversed-phase column on the stack, for the product test?</p></div>
-<div class="row center" style="gap:18px"><p class="num num-o">6</p><p class="small grow">Does a fritted capillary count as a fitting? If so, the tier-2 design is also the best tier-1 design.</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">6</p><p class="small grow">Does a fritted capillary count as a fitting? If so, the design of tier 2 is also the best design for tier 1.</p></div>
 <div class="row center" style="gap:18px"><p class="num num-o">7</p><p class="small grow">Should the experiments, above all the two chemistry questions, enter the bench plan, and before or after gate G1a?</p></div>
 </div>
-<div class="card card-dark fix" style="width:600px;gap:8px;align-self:flex-start">
+<div class="col fix" style="width:600px;gap:16px">
+<div class="card card-dark fix" style="gap:8px">
+<h3>Choices made for you, which you may overrule</h3>
+<p class="small">Gold rather than carbon in tier 1, and its read at 200 µL/min. The bead size, 5 nM conjugate and 5 min stop of tier 2. One valve as the tier-3 design. The 40 µm restrictor. A cell gap of 0.2 mm. The range reported, not enforced. One stability of hydroquinone for the whole liquid path.</p>
+</div>
+<div class="card card-dark fix" style="gap:8px">
 <h3>Where everything is</h3>
-<p class="small"><b>docs/30</b> the three designs, step by step</p>
-<p class="small"><b>docs/31</b> both reviews and every finding</p>
-<p class="small"><b>docs/27</b> what pump and sampler can do</p>
-<p class="small"><b>docs/28</b> cells, electrodes and parts</p>
-<p class="small"><b>docs/29</b> the literature</p>
-<p class="small"><b>docs/26, 32</b> brief and session record</p>
-<p class="small"><b>scripts/tier_round</b> the calculation kit</p>
-<p class="small"><b>results/tier_round</b> model output and the five reviewer reports</p>
+<p class="small">Designs: docs/30. Reviews: docs/31. Pump, sampler and cell: docs/27, 28. Literature: docs/29. Brief and session record: docs/26, 32. Kit and model output: scripts/tier_round, results/tier_round.</p>
 </div>
 </div>
-<aside>Source: docs/30 §8 (questions only the user can answer; details in docs/27 §9 and docs/28 §8). On question 2: the model takes the gap of the strip cell as 0.2 mm, which fits 10 µL; the vendor states less than 5 µL, which would mean 0.1 mm or less. On question 4: the vendor’s default full-loop injection draws five loop volumes. On question 6: an in-line filter is a fitting; if a fritted capillary counts as one too, the electrode-capture design becomes the runner-up of tier 1. Choices the orchestrator made and you may overrule are listed in docs/30 §8 as well: gold rather than carbon in tier 1, the read at 200 µL/min, the bead size and operating point of tier 2, one valve as the tier-3 design, the restrictor, the cell gap, and one stability of hydroquinone for the whole liquid path. To re-run the numbers: python scripts/tier_round/run_tiers.py; to rebuild this deck: docs/presentation/README.md.</aside>
+</div>
+<aside>Source: docs/30 §8 (questions only the user can answer; details in docs/27 §9 and docs/28 §8). On question 2: the model takes the gap of the strip cell as 0.2 mm, which fits 10 µL; the vendor states less than 5 µL, which would mean 0.1 mm or less. On question 4: the vendor’s default full-loop injection draws five loop volumes. On question 6: an in-line filter is a fitting; if a fritted capillary counts as one too, the electrode-capture design becomes the runner-up of tier 1. The eight choices on the right are those of docs/30 §8; the tier-1 read also uses about 0.8 mL of substrate solution and a second buffer line per determination, and tier 2 takes a fresh strip with every bed. The five reviewer reports are in results/tier_round. To re-run the numbers: python scripts/tier_round/run_tiers.py; to rebuild this deck: docs/presentation/README.md.</aside>
 </section>
