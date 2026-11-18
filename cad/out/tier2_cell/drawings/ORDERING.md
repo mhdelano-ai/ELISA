@@ -21,15 +21,16 @@ For each part in the quote:
   drawing); how to make the parts is left to the supplier. Say in the notes field: "Undimensioned geometry per
   STEP at standard tolerance; flagged features per attached drawing, to be inspected."
 * **Threads**: yes. Base 4 × M4×0.7-6H through; body 4 × M2.5×0.45-6H blind (6.0 full thread) and 2 × 1/4-28
-  UNF-2B flat-bottom ports (note 2 of T2C-003). Threads are modelled as tap-drill holes in the STEP files.
-* **Finish**: as machined (Ra 3.2 µm / 125 µin) except the surfaces marked Ra 1.6 (63 µin) or Ra 0.8 (32 µin)
-  on the drawings. No bead blast, no anodising, no marking on the parts.
+  UNF-2B flat-bottom ports (note 3 of T2C-003). Threads are modelled as tap-drill holes in the STEP files.
+* **Finish**: Ra 1.6 µm (63 µin) all over for base, plate and body (title blocks); on the body Ra 0.8 (32 µin)
+  at the port bottoms (note 3) and Ra 0.4 (16 µin) inside ⌀3 around the bed bore. Whether Xometry's quote form
+  offers Ra 1.6 as a selection was not checked: if not, state it in the notes field. No bead blast, no anodising, no marking on the parts.
 * **Inspection**: standard, plus the flagged features. A dimensional report for the flagged features is worth
   requesting for the first lot.
 * **Ports**: the values of the 1/4-28 flat-bottom port drawing (depth 0.350 in, full thread 0.28 in minimum,
   bottom flat within 0.002 in at 32 µin, corner radius ≤ 0.007 in, chamfer ⌀0.27 in × 90°) are written out in
-  note 2 and flag 4 of T2C-003, so no separate port drawing is needed. Beyond the user's port drawing, T2C-003 adds the port
-  position and perpendicularity to datum A (the flow path is a 0.5 mm bore in the port floor).
+  note 3 of T2C-003, so no separate port drawing is needed. Beyond the user's port drawing, T2C-003 adds only the
+  inlet port's position (the flow path is a 0.5 mm bore in the port floor).
 
 The washer (⌀1.40 ±0.10 / ⌀0.75 ±0.10 × 0.25 ±0.05, hole concentric within ⌀0.10) is a cut-rubber part: a CNC shop
 may not take it. A gasket cutter works from the

@@ -250,3 +250,9 @@ The user then asked for a less expensive plastic. Plate and body changed from PE
 not homopolymer), PEEK kept as the fallback; drawings T2C-002/003, ORDERING.md, docs/34 (§2 table, §5.4 with the
 reasons and open points, §8.3) and the project guide updated. At the user's direction the bending and pressure
 checks were not re-run (numbers in docs/34 §6.3 stay those for PEEK).
+The user then asked that the drawings be as simple as possible. Removed: the list of flagged features (requirements
+and flags now only on the views), basic dimensions (locations BASIC per the STEP model, in the title block), the
+base's section, the plate's bottom view, separate Ra 1.6 symbols (Ra 1.6 all over in the title block), the riser
+position tolerance, the port-bottom perpendicularity and the body's overall flatness 0.05. M4 clearance in plate and
+body ⌀4.8 → ⌀5.5 so that the M4 positions are at standard tolerance (build: all checks pass; `tier2_cell.py` re-run:
+bearing stress under the M4 washers 24 MPa, margin 5). The collecting groove keeps ±0.10 (flow uniformity).

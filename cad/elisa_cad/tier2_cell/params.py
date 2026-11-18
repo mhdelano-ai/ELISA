@@ -46,7 +46,8 @@ GAP_TOL = 0.03                         # Derived: depth measured to +-0.01, stri
 
 # ---- fasteners and pins -----------------------------------------------------------------------------------
 M4_XY = [(-12.0, -16.0), (-12.0, 16.0), (8.0, -16.0), (8.0, 16.0)]   # CHOICE: main screws, into the base
-M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 4.8, 3.3, 7.0   # clearance 4.8 (was 4.3): the dowels locate, the screws only clamp
+M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 5.5, 3.3, 7.0   # clearance 5.5 (was 4.8): positions at standard tolerance
+#                                       (fixed fastener: 5.5 - 4.0 = 1.5 >= 0.37 steel + 0.71 plastic, Derived)
 DOWEL_XY = [(-2.0, -16.0), (-2.0, 16.0)]                              # CHOICE: 3 mm pins, pressed into the base
 DOWEL_D = 3.0                          # pin 3 m6; holes 3.00 +0.04/0 in all three parts (pins bonded into the base)
 DOWEL_SLOT_L = 3.6                     # CHOICE: plate and body take the second pin in a slot along y, so that the pin

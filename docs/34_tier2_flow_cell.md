@@ -323,7 +323,17 @@ included), with the datums and basic dimensions its tolerance needs. All other g
 of the same drawing number and revision at the standard tolerance stated in the title block. A second request
 removed every note on how to make, clean or pack the parts (left to the supplier), the reasons in the flag texts,
 the isometric views, the part masses and the washer's actual-size outline; the notes are now the material and the
-threads only.
+threads only. A third request ("as simple as possible") removed the list of flagged features (each requirement now
+sits on the views, with its numbered flag), the basic dimensions (locations of toleranced features are BASIC per
+the STEP model, stated in the title block), the base's section and the plate's bottom view, and the separate Ra 1.6
+symbols (Ra 1.6 all over in the title block of the three machined parts; only the body's Ra 0.4 and the port
+bottoms' Ra 0.8 remain). To let the M4 holes go to standard tolerance their clearance in plate and body became
+⌀5.5 (fixed-fastener check: 5.5 − 4.0 = 1.5 mm ≥ ⌀0.37 for steel at ±0.13 plus ⌀0.71 for plastic at ±0.25,
+Derived). The riser position went back to standard: the riser only has to open into the collecting groove inside
+the liquid disc, which it does anywhere within ±0.25. The collecting groove keeps ±0.10: at standard tolerance on
+its diameters and depth the flow through the far side of the thin layer could fall from 0.75 to 0.21 of the near
+side (Derived, same formula as `tier2_cell.md` §5). The port-bottom perpendicularity and the body's overall
+flatness of 0.05 (both added after the review, neither needed for a seal) were dropped.
 
 Each sheet carries what Xometry's drawing guidance asks for [V, its "technical drawing best practices" page]: a
 title block with material specification, finish, scale, units, projection and a default-tolerance block; notes at
@@ -346,19 +356,18 @@ What remains tighter than standard, and why:
 | Part | Feature | Called out | Why |
 |---|---|---|---|
 | all | dowel hole (B) and slot (C) | ⌀3.00 +0.05/+0.01 | locate the three parts on ⌀3 m6 pins (bonded in the base, so the base holes need room for the compound) |
-| all | screw holes (M4 in the base, M2.5 clearance and counterbores in the plate, M2.5 tapped and M4 clearance in the body) | position ⌀0.3 to A\|B\|C | the screws must pass through three parts located on the pins; M4 clearance ⌀4.8 |
+| Plate, body | M2.5 clearance holes (plate) and tapped holes (body) | position ⌀0.3 to A\|B\|C | M2.5 in ⌀3.2 leaves 0.7 mm, less than two plastic parts at standard (1.42); the M4 holes are at standard with a ⌀5.5 clearance |
 | Base | top face (datum A) | flat 0.02 | the plate rests on it; sets the gap |
-| Base | pocket floor | parallel to A within 0.02, Ra 1.6 | carries the brittle ceramic strip; keeps the gap even across the electrode |
+| Base | pocket floor | parallel to A within 0.02 | carries the brittle ceramic strip; keeps the gap even across the electrode |
 | Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.65 +0.05/−0; position ⌀0.10 to A\|B\|C; edge break ≤ 0.05 at both ends of the bore | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm) |
 | Plate | retainer pocket depth | 0.27 ±0.025 | sets the washer's squeeze; the washer is picked by measured thickness to suit the measured depth (section 3.1) |
 | Plate | strip O-ring groove; collecting groove | ⌀ ±0.05 and depth ±0.05; ⌀ ±0.10 and depth ±0.10 | O-ring gland; radial outflow |
-| Plate | riser position | 2.6 ±0.10 from the axis | must stay inside the 0.6 mm collecting groove |
-| Plate | cell face inside ⌀9.3, groove floors | Ra 1.6 | lid of the thin layer, O-ring seat |
+| Base, plate, body | all surfaces | Ra 1.6 all over (title block) | lid of the thin layer, O-ring seats, sealing faces; one call-out instead of a symbol on each |
 | Plate | top face inside ⌀16 | flat 0.02 | the body seals on it, face to face |
 | Body | bed bore | ⌀0.50 ±0.05, position ⌀0.10 to A\|B\|C, edge break ≤ 0.05 at both ends | as for the exit bore |
-| Body | underside (datum A) | flat 0.05; inside ⌀16 flat 0.02 and Ra 1.6; inside ⌀3 Ra 0.4 | the membrane seals on the ⌀3 area, the 12 × 1 O-ring and the face-to-face joint on the ⌀16 area |
+| Body | underside (datum A) | inside ⌀16 flat 0.02; inside ⌀3 Ra 0.4 | the membrane seals on the ⌀3 area, the 12 × 1 O-ring and the face-to-face joint on the ⌀16 area |
 | Body | body–plate O-ring groove | ⌀ ±0.10, depth ±0.05 | O-ring gland |
-| Body | both 1/4-28 ports | values of the user's port drawing: bottom flat 0.05, Ra 0.8, corner R ≤ 0.18, full thread ≥ 7.11; added here: bottom perpendicular to the thread axis within 0.05, inlet thread position ⌀0.10 to A\|B\|C | the fitting seals on the port bottom; the tubing end must sit over the bed bore |
+| Body | both 1/4-28 ports | values of the user's port drawing: bottom flat 0.05, Ra 0.8, corner R ≤ 0.18, full thread ≥ 7.11; added here: inlet thread position ⌀0.10 to A\|B\|C | the fitting seals on the port bottom; the tubing end must sit over the bed bore |
 | Washer (T2C-004) | outer and inner diameter; thickness; hole position | ⌀1.40 ±0.10 / ⌀0.75 ±0.10; 0.25 ±0.05 (sheet tolerance); ⌀0.10 to the outer edge (B) | wall ≥ 0.175 mm; washers are sorted by measured thickness at assembly |
 
 Nothing is tighter than ±0.025 mm. Outside ⌀16 the plate's flatness is left at standard: the 2.5 mm plate is
@@ -388,7 +397,7 @@ after manual review was not tried. No quote was requested; price and lead time a
 | Washer | drawing T2C-004: cut gasket ⌀1.4/⌀0.75 from FKM (or EPDM) sheet 0.25 ±0.05 mm, 70–75 Shore A, cut with a compound punch die or fine waterjet from the DXF (not laser: FKM releases HF); one washer per bed (or punched in the lab with 1.4 and 0.75 mm biopsy punches) | sheet thickness tolerance and punch sizes UNVERIFIED |
 | Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
-| Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 6 low-head socket (DIN 7984; head about ⌀4.5 × 1.6, UNVERIFIED) in ⌀5.5 × 1.9 counterbores; 2 × ⌀3 m6 × 16 dowel pins, bonded into the base with a retaining compound; stainless | standard |
+| Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433) over ⌀5.5 clearance holes; 4 × M2.5 × 6 low-head socket (DIN 7984; head about ⌀4.5 × 1.6, UNVERIFIED) in ⌀5.5 × 1.9 counterbores; 2 × ⌀3 m6 × 16 dowel pins, bonded into the base with a retaining compound; stainless | standard |
 | Shim | stainless shim stock 0.01, 0.02, 0.05 and 0.10 mm, cut 10 × 20 mm, stacked to depth − 0.38 − 0.10 (0.17 at the nominal pocket depth) | standard |
 | Beads | Dynabeads M-280 Streptavidin 11205D | docs/07 |
 
@@ -480,7 +489,7 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Force parting body and plate (the same, 14.3 mm) | 554 N |
 | Clamp force of the four M4 screws at 0.5 N·m; needed; margin | 2500 N; 854 N; 2.9 |
 | Each M2.5 if the plate screws alone held the body–plate joint; thread strip-out in PEEK; margin | 149 N; 1145 N; 7.7 |
-| Bearing stress under the M4 washers (8 mm); margin to yield | 17 MPa; 7 |
+| Bearing stress under the M4 washers (8 mm, on a ⌀5.5 clearance hole); margin to yield | 24 MPa; 5 |
 | Sag of body and plate across the strip pocket | 0.4 µm |
 | Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
 | Thinnest drilled wall (inlet thread to riser) | 1.0 mm |

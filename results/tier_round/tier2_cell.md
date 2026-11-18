@@ -95,7 +95,7 @@ Bed: Kozeny–Carman as in the kit. Bores: Hagen–Poiseuille. Gap: radial creep
 | Four M4 screws at 0.5 N·m: clamp force | 2500 N |
 | Needed on the main screws; margin | 854 N; 2.9 |
 | Load on each M2.5 if the plate screws carry the body–plate joint alone; thread strip-out in PEEK; margin | 149 N; 1124 N; 7.6 |
-| Bearing stress under the M4 washers; margin to compressive yield | 19 MPa; 6 |
+| Bearing stress under the M4 washers; margin to compressive yield | 24 MPa; 5 |
 | Sag of body and plate across the strip pocket | 0.43 µm |
 | Deflection of the port floor under the inlet fitting (236 N) | 3.1 µm |
 | Retainer washer squeeze, low / nominal / high tolerance | 11 % / 26 % / 39 % |
