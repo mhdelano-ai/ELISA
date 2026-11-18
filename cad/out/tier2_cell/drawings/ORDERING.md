@@ -7,9 +7,12 @@ blocks have no checker's or approver's name.
 | Part | Upload (3D) | Upload (drawing) | Material to select | Quantity suggested |
 |---|---|---|---|---|
 | T2C-001 Base | `T2C-001_base_revA.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
-| T2C-002 Nozzle plate | `T2C-002_nozzle_plate_revA.step` | `T2C-002_nozzle_plate.pdf` | PEEK, unfilled, natural | 3 (one per bed unit, docs/34 §7) |
-| T2C-003 Body | `T2C-003_body_revA.step` | `T2C-003_body.pdf` | PEEK, unfilled, natural | 3 |
+| T2C-002 Nozzle plate | `T2C-002_nozzle_plate_revA.step` | `T2C-002_nozzle_plate.pdf` | Acetal copolymer (POM-C), natural; not Delrin (homopolymer) | 3 (one per bed unit, docs/34 §7) |
+| T2C-003 Body | `T2C-003_body_revA.step` | `T2C-003_body.pdf` | Acetal copolymer (POM-C), natural | 3 |
 | T2C-004 Washer (cut gasket) | `T2C-004_washer_revA.step` + `T2C-004_washer.dxf` / `T2C-004_washer_sheet.dxf` | `T2C-004_washer.pdf` | FKM sheet 0.25 mm, 70–75 Shore A | 100 (one per bed) |
+
+Plate and body were PEEK until 2026-11-18; acetal copolymer is cheaper and machines as well. PEEK, unfilled,
+natural stays the fallback (docs/34 §5.4): quoting both is a quick way to see the price difference.
 
 For each part in the quote:
 * **Tolerance**: standard, *with drawing*. The drawings carry only the features with tighter-than-standard

@@ -528,7 +528,7 @@ class Sheet:
 
 
 # ---- common text and helpers ---------------------------------------------------------------------------------------
-PEEK = "PEEK, unfilled, natural"
+PEEK = "Acetal copolymer (POM-C), natural, not homopolymer"   # plate and body; PEEK is the fallback (docs/34 §5.4)
 PEEK_TB = PEEK
 SS = "Stainless steel 316L"
 REVS = [["A", DATE, "First issue", "generated"]]

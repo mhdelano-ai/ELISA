@@ -81,8 +81,8 @@ the 2 µm screen**: the membrane retains, the screen carries it. The 10–14 µm
 
 | Part | Material | What it carries |
 |---|---|---|
-| Body | PEEK | inlet port on top; the port floor is 2.5 mm thick and the **bed bore (0.5 mm) runs through it**, so the bed sits in the body; its flat underside is the face the membrane seals against; outlet port on the end face |
-| Nozzle plate | PEEK | pocket in its top face for the retainer (washer, screen, membrane), which the washer presses against the body; exit bore (0.5 mm) to the electrode; its underside is the lid of the thin layer, with the O-ring that seals on the strip and a collecting groove around the electrode |
+| Body | acetal copolymer (PEEK fallback) | inlet port on top; the port floor is 2.5 mm thick and the **bed bore (0.5 mm) runs through it**, so the bed sits in the body; its flat underside is the face the membrane seals against; outlet port on the end face |
+| Nozzle plate | acetal copolymer (PEEK fallback) | pocket in its top face for the retainer (washer, screen, membrane), which the washer presses against the body; exit bore (0.5 mm) to the electrode; its underside is the lid of the thin layer, with the O-ring that seals on the strip and a collecting groove around the electrode |
 | Base | 316L stainless | pocket that locates the MicruX strip and sets the gap (0.10 mm) with a shim |
 
 The bed is 2.5 mm above the working electrode with 0.52 µL between them, the same dead volume as docs/30. The
@@ -123,7 +123,7 @@ drawing for each part (section 8.2).
 | Request | Consequence |
 |---|---|
 | The bed is part of the cell | The bed bore is machined into the body, on the axis of the electrode. The retainer cannot be a frit in a capillary; it is a stack held between two parts of the cell |
-| 500 psi | The MicruX add-on is PMMA, held by magnets, with no pressure rating (docs/28 §1.1). The new cell is PEEK on a steel base, bolted, with O-rings in grooves and a hard stop that sets the gap |
+| 500 psi | The MicruX add-on is PMMA, held by magnets, with no pressure rating (docs/28 §1.1). The new cell is acetal copolymer (or PEEK) on a steel base, bolted, with O-rings in grooves and a hard stop that sets the gap |
 | Custom parts from a service such as Xometry | No hole below 0.5 mm, no micro-drilling, no bonded or moulded part, no custom electrode. Everything else is a catalogue part |
 | "What type of beads?" | Section 2 |
 
@@ -247,9 +247,9 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 | # | Element | Dimensions (mm) | Volume | Note |
 |---|---|---|---|---|
 | 1 | Inlet port | 1/4-28 flat-bottom, in the top of the body, on the electrode axis | — | the 1/16 in transfer line butts on the port floor; no cavity between tube and bore |
-| 2 | **Bed bore** | ⌀0.5 × 2.5, the floor of the inlet port | 0.49 µL | the bed occupies the lowest 0.10 mm (M-280) or 0.41 mm (10–14 µm); the rest is 3.8 mm² of PEEK wall above the bed (docs/30: 13 mm² of capillary) |
+| 2 | **Bed bore** | ⌀0.5 × 2.5, the floor of the inlet port | 0.49 µL | the bed occupies the lowest 0.10 mm (M-280) or 0.41 mm (10–14 µm); the rest is 3.8 mm² of plastic wall above the bed (docs/30: 13 mm² of capillary) |
 | 3 | Retainer | membrane on screen on washer, in a pocket in the plate, section 3.1 | about 6 nL of pores | |
-| 4 | Washer hole and exit bore | ⌀0.75 × 0.185 in the washer, then ⌀0.5 × 2.23 through the plate | 0.08 + 0.44 µL | 3.5 mm² of PEEK and 0.44 mm² of elastomer between bed and electrode (docs/30: 2.5 mm²); the elastomer is counted with the retainer at the frit factor (UNVERIFIED); the volume is kept at 0.5 µL on purpose, section 6.1 |
+| 4 | Washer hole and exit bore | ⌀0.75 × 0.185 in the washer, then ⌀0.5 × 2.23 through the plate | 0.08 + 0.44 µL | 3.5 mm² of plastic and 0.44 mm² of elastomer between bed and electrode (docs/30: 2.5 mm²); the elastomer is counted with the retainer at the frit factor (UNVERIFIED); the volume is kept at 0.5 µL on purpose, section 6.1 |
 | 5 | Thin layer | gap 0.10 over the strip, liquid disc ⌀6.9 inside the O-ring | 0.71 µL over the electrode, 3.7 µL in all | flat land of the plate out to r = 2.3; the 3 mm electrode ends at r = 1.5 |
 | 6 | Collecting groove | r = 2.3–2.9, 0.5 deep, in the plate underside | 4.9 µL | takes the liquid all round the electrode so that the outflow is radial, as the kit assumes. The sector opposite the riser carries 0.75 of the flow of the nearest one (`tier2_cell.md` §5) |
 | 7 | Riser, cross channel, riser | ⌀0.6 through the plate; slot 0.8 × 0.5 in the top face of the plate; ⌀1.0 in the body | — | the slot moves the liquid outward past the inlet port; it is closed by the body underside inside the 12 × 1 O-ring |
@@ -285,10 +285,21 @@ microvolts at nanoampere currents.
 | Part | File | Material | Size (mm); mass | Machining |
 |---|---|---|---|---|
 | Base | `base.step` | 316L stainless | 29 × 44 × 8; 78 g | one side: pocket, 4 threads, 2 reamed holes |
-| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 29 × 44 × 2.5; 4 g | two sides: grooves and counterbores below, retainer pocket and slot above |
-| Body | `body.step` | PEEK, natural, unfilled | 29 × 44 × 11.4; 17 g | three sides: port and holes from the top, groove and threads from below, port from one end |
+| Nozzle plate | `nozzle_plate.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 2.5; 4 g | two sides: grooves and counterbores below, retainer pocket and slot above |
+| Body | `body.step` | acetal copolymer (POM-C), natural; PEEK fallback | 29 × 44 × 11.4; 17 g | three sides: port and holes from the top, groove and threads from below, port from one end |
 
-Why these materials. PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
+Why these materials (revised 2026-11-18 at the user's request for a cheaper plastic). Plate and body are acetal
+copolymer (POM-C): cheaper than PEEK (UNVERIFIED; no quote obtained, and for parts this small machining time
+dominates the price), it machines cleanly to burr-free 0.5 mm bores, fine threads and flat faces, its modulus
+(about 2.8–3.1 GPa against 3.6, UNVERIFIED) is close to PEEK's, and it takes neutral and mildly alkaline buffer
+(pH 9.5), isopropanol and methanol (UNVERIFIED against a chemical-resistance table). Copolymer, not Delrin
+homopolymer: thick homopolymer stock can be porous along its centreline, where the bed bore runs. Open points:
+the conjugate uptake of the walls between bed and electrode was taken for PEEK and may differ for acetal (test
+C-3 and the bench conjugate-sticking test show it); acetal can release traces of formaldehyde (effect on the read
+UNVERIFIED, not expected at the read potential). The bending and pressure numbers of section 6.3 were computed
+for PEEK and were not re-run (user's decision): with a modulus about 20 % lower the plate bows about 4 µm
+instead of 3.3, and the working pressure is about 1 bar. PEEK, unfilled, natural, stays the fallback if the
+bench shows conjugate uptake or leachables. The reasons first given for PEEK: PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
 craze in the 10 % methanol used for storage; PMMA does (docs/28 §4). Unfilled, because glass or carbon fill
 would put fibres at the bore edges and carbon-filled PEEK conducts. The base is not wetted in normal use; 316L
 keeps threads and flatness and tolerates spilled chloride buffer. Xometry lists PEEK for machining [V, its
@@ -477,7 +488,7 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Bow of the plate under the washer | ≤ 3.3 µm |
 | Force of the flow pushing the stack off the body face, 80 / 200 µL/min (upper bound) | 0.21 / 0.53 N |
 
-PEEK properties are typical values for unfilled PEEK (modulus 3.6 GPa, shear strength 53 MPa, compressive yield
+These numbers were computed for PEEK and not re-run for acetal (section 5.4). PEEK properties are typical values for unfilled PEEK (modulus 3.6 GPa, shear strength 53 MPa, compressive yield
 118 MPa), UNVERIFIED; the O-ring load is taken as 1 N per mm of ring.
 
 Not covered by these numbers, and to be shown by the proof test: the seal of a 70 Shore A O-ring over the printed
@@ -517,7 +528,7 @@ hole is below the feature size Xometry recommends and belongs to its micro-machi
 2. **Pack.** Connect a packing line (1/16 in tube holding at least 25 µL) to the inlet port and push the bead
    suspension of docs/30 §4.2 (1.5 µL of coated M-280 in 20 µL of assay buffer) through at 20–50 µL/min, then
    assay buffer at 80 µL/min for 1 min. Never above 80 µL/min through the bed (section 3.1). The beads collect on the membrane at the bottom of the bore. Check by
-   looking down the port bore with a stereo microscope; PEEK is opaque, so the bed cannot be seen from the side.
+   looking down the port bore with a stereo microscope; the body is opaque, so the bed cannot be seen from the side.
 3. **Mount.** Once per base: measure the pocket depth with a depth micrometer and cut the shim stack to
    depth − 0.38 − 0.10. Shim and a fresh strip into the base pocket against its stop, O-ring 7 × 1 into the plate, the bed
    unit onto the pins, four M4 screws to 0.5 N·m. Connect the transfer line and the cable.
@@ -569,7 +580,7 @@ pressure in the cell is released through the bed when the flow stops.
 3. **Rating**: is 500 psi wanted for the bed side only, or for the whole cell including the strip seal? The
    design takes the second, stricter reading.
 4. **Gap**: 0.10 mm (chosen) or 0.05 mm by a thicker shim?
-5. **Body material**: PEEK (chosen, opaque). A polished polyetherimide body would let the bed be seen from the
+5. **Body material**: acetal copolymer (chosen 2026-11-18, opaque; PEEK fallback). An acrylic body for low-pressure trials only would show the bed packing. A polished polyetherimide body would let the bed be seen from the
    side; its resistance to the pH 9.5 buffer over months was not checked.
 6. Settled: ceramic strips, 0.38 mm; the drawing's dimensions are accurate (the user, 2026-11-18).
 7. Whether this cell replaces the capillary in docs/30 §4, and whether tests C-1 … C-6 enter the bench plan, is

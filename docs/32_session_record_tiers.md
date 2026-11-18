@@ -246,3 +246,7 @@ The user then reported that section A–A on the plate drawing did not line up w
 had been labelled SECTION A–A but showed only ±5.4 mm about the axis, detached from the top view and without break
 lines. A full section A–A at 2:1 now sits under the top view, aligned with it as on the base and body sheets, and
 the 10:1 view is detail D of that section (geometry unchanged; checked against the model).
+The user then asked for a less expensive plastic. Plate and body changed from PEEK to acetal copolymer (POM-C,
+not homopolymer), PEEK kept as the fallback; drawings T2C-002/003, ORDERING.md, docs/34 (§2 table, §5.4 with the
+reasons and open points, §8.3) and the project guide updated. At the user's direction the bending and pressure
+checks were not re-run (numbers in docs/34 §6.3 stay those for PEEK).
