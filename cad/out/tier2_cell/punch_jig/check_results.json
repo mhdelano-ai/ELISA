@@ -21,9 +21,19 @@
    "value": "ring r 3.2-4.8, head r 3.57-4.37; recesses anywhere"
   },
   {
-   "check": "finger swung 90 deg either way (shifted 0.1 toward the axis): a head of the largest diameter lifts out freely; boss >= 0.6 from it",
+   "check": "finger swung 60-74 deg either way (shifted 0.1 toward the axis): a head of the largest diameter lifts out freely; boss >= 0.6 from it [R3-4]",
    "ok": true,
    "value": "0.0e+00 mm3, boss 1.03 mm"
+  },
+  {
+   "check": "finger at its stop (74 deg either way) touches no part",
+   "ok": true,
+   "value": "none"
+  },
+  {
+   "check": "information: at 90 deg the finger would meet (so it stops earlier, on the thumb head)",
+   "ok": true,
+   "value": "screw_0"
   },
   {
    "check": "nose of the handle passes inside the ring (radial >= 0.3, finger shifted by its play)",
@@ -33,7 +43,7 @@
   {
    "check": "finger height is set at assembly: spacer printed high enough to be faced for the highest head, and the shoulder leaves room for the shims at the lowest",
    "ok": true,
-   "value": "head top 4.57-6.56 above the plate; spacer printed 6.86, faced to 4.67-6.66; shims above 1.19 nominal"
+   "value": "head top 4.57-6.56 above the plate; spacer printed 6.81, faced to 4.62-6.61; shims above 1.19 nominal"
   },
   {
    "check": "bushing head seats on the liner end, not on the plate (liner top above the plate top >= 0.1 over the tolerances)",
@@ -41,19 +51,19 @@
    "value": "0.20-1.40 mm"
   },
   {
-   "check": "liner floats above its ledge at bonding over the length tolerances (gap >= 0.1); ledge ring >= 1.5 thick",
+   "check": "liner floats above its ledge at bonding over the length tolerances and the ledge's position (+-0.2) (gap >= 0.1); ledge ring >= 1.5 thick [R3-3]",
    "ok": true,
-   "value": "gap 0.21 at the worst stack, ring 2.17"
+   "value": "gap 0.41 at the worst stack, ring 1.77 +- 0.2"
   },
   {
-   "check": "bushing face flush with the foot (bonding procedure with the longer bushing; faces matched)",
+   "check": "procedure, not computed: bushing face flush with the foot (bonded with the longer bushing; faces matched or ground) and checked after cure with a straightedge and a 0.02 feeler",
    "ok": true,
-   "value": "0 to -0.02 mm (matched order or lapped, docs/36 section 4)"
+   "value": "0 to -0.02 mm (docs/36 section 2.4)"
   },
   {
    "check": "tip depth into the backing at the stop stays in 0.1 to backing - 0.3 (sheet tolerance and the setting)",
    "ok": true,
-   "value": "0.15-0.35 mm of 0.79"
+   "value": "0.12-0.38 mm of 0.79"
   },
   {
    "check": "the nose is always faced, never too short (facing >= 0), and keeps >= 5 mm of its length",
@@ -63,7 +73,7 @@
   {
    "check": "grip clears the shoulder-screw head at the stop over the head-top tolerance (>= 0.5)",
    "ok": true,
-   "value": "2.07 mm"
+   "value": "1.57 mm"
   },
   {
    "check": "hole punch (SYNEO CR0350275N20R4): tube 17.96 below the nose, 20.14 in the handle (pocket ends in the grip, >= 3 below its top)",
@@ -121,9 +131,9 @@
    "value": "smallest 6.00 mm"
   },
   {
-   "check": "shoulder screw: M3 thread (6, UNVERIFIED) fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
+   "check": "shoulder screw: M3 thread fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
    "ok": true,
-   "value": "6.0 mm"
+   "value": "7.0 mm in 7.5"
   },
   {
    "check": "parking holes for the idle bushing clear the plate, the screws and the rails",
@@ -133,12 +143,12 @@
   {
    "check": "thumb screw engagement at the thinnest stack: >= 5.7 (whole insert) and <= hole depth - 0.3",
    "ok": true,
-   "value": "7.16 mm"
+   "value": "7.19 mm"
   },
   {
    "check": "thumb screw engagement at the thickest stack: >= 5.7 (whole insert) and <= hole depth - 0.3",
    "ok": true,
-   "value": "6.96 mm"
+   "value": "6.93 mm"
   },
   {
    "check": "hole-to-outside offset, root-sum-square <= 0.05 (T2C-004: within dia 0.10); acceptance rests on the measured washers (docs/36 section 5)",
@@ -178,12 +188,12 @@
   {
    "check": "plate floats: at the thinnest stack the underside outside the relief clears the base by >= 0.4",
    "ok": true,
-   "value": "0.94 mm"
+   "value": "0.91 mm"
   },
   {
    "check": "relief over the strip clears the rails by >= 0.5 and lies over them",
    "ok": true,
-   "value": "1.64 mm; rail outer edge 8.8"
+   "value": "1.61 mm; rail outer edge 8.8"
   },
   {
    "check": "strip slides under the relief (the plate rides on the strip: clearance = relief depth >= 0.5)",
@@ -203,7 +213,7 @@
   {
    "check": "dowel engages the plate >= 3 mm at the thickest stack; plate holes a slide fit, base holes a press fit",
    "ok": true,
-   "value": "4.86 mm; plate 3.02-3.04, base reamed 2.95"
+   "value": "4.83 mm; plate 3.02-3.04, base reamed 2.95"
   },
   {
    "check": "pitch scale ticks on the hole positions, downstream of the plate",
@@ -211,7 +221,7 @@
    "value": "first tick x = 21.0, plate edge 20.0"
   }
  ],
- "n_checks": 42,
+ "n_checks": 44,
  "all_pass": true,
  "numbers": {
   "z_foot": 1.04,
@@ -219,8 +229,8 @@
   "foot_d": 11.0,
   "z_head_top": 18.502499999999998,
   "protrusion": 17.9625,
-  "spacer_h": 5.662499999999998,
-  "shims_above": 1.1875000000000022,
+  "spacer_h": 5.612499999999997,
+  "shims_above": 1.1875000000000029,
   "head_top_range": [
    4.568749999999996,
    6.556249999999997
@@ -232,8 +242,8 @@
   "pocket_A": 20.137499999999996,
   "pocket_B": 20.137499999999996,
   "tip_depth": [
-   0.15000000000000002,
-   0.35
+   0.11999999999999998,
+   0.38
   ],
   "slip_bore_A_in": 0.0352,
   "slip_bore_B_in": 0.06520000000000001,

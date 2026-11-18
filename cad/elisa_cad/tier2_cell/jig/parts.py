@@ -50,7 +50,9 @@ def base():
         b = b.union(_box(-hx + 3.0, hx - 3.0, y0, y1, 0.0, J.RAIL_H))
     tools = [_cyl(J.DOWEL_D, J.DOWEL_IN_BASE, x, y, -J.DOWEL_IN_BASE) for x, y in J.DOWEL_XY]
     tools += [_cyl(J.INSERT_HOLE_D, J.INSERT_HOLE_DEPTH, x, y, -J.INSERT_HOLE_DEPTH) for x, y in J.SCREW_XY]
-    tools += [_cyl(J.PARK_D, J.PARK_DEPTH, x, y, -J.PARK_DEPTH) for x, y in J.PARK_XY]        # idle bushing
+    for x, y in J.PARK_XY:                                                     # bosses for the idle bushing
+        b = b.union(_cyl(J.PARK_BOSS_D, J.PARK_BOSS_H, x, y, 0.0))
+    tools += [_cyl(J.PARK_D, J.PARK_DEPTH + J.PARK_BOSS_H, x, y, -J.PARK_DEPTH) for x, y in J.PARK_XY]
     w, l, d = J.SCALE_TICK
     y_tick = y_in + J.RAIL_W + 0.4
     n = int(round((J.SCALE_X1 - J.SCALE_X0) / J.PITCH)) + 1
@@ -108,6 +110,10 @@ def finger(angle_deg=-90.0, toward_axis=0.0):
     boss = _cyl(J.BOSS_D, J.FINGER_T)
     f = arm.union(ring).union(boss)
     f = f.cut(_cyl(2 * J.RING_R_IN, J.FINGER_T, J.LOCK_R, 0, 0)).cut(_cyl(J.FINGER_HOLE_D, J.FINGER_T))
+    c = J.FINGER_CHAMFER                                                # lead-in under the ring's outer edge
+    lead = cq.Workplane("XY").add(cq.Solid.makeCone(J.RING_R_OUT - c, J.RING_R_OUT + 0.01, c,
+                                                    cq.Vector(J.LOCK_R, 0, 0), cq.Vector(0, 0, 1)))
+    f = f.cut(_tube(2 * J.RING_R_OUT - 2 * c, 2 * J.RING_R_OUT + 2, c, J.LOCK_R, 0, 0).cut(lead))
     f = f.rotate((0, 0, 0), (0, 0, 1), angle_deg)
     return f.translate((lx, ly - toward_axis, J.Z_FINGER0))
 
@@ -133,11 +139,11 @@ def punch(p):
 
 
 def lock_screw():
-    """ISO 7379 shoulder screw (shoulder 4 x 10, M3) and the shim rings above the finger."""
+    """ISO 7379-4-M3-10 shoulder screw and, above the finger, the O-ring and the shim rings (one solid)."""
     lx, ly = J.LOCK_XY
     sc = _cyl(J.SHOULDER_D, J.SHOULDER_L, lx, ly, J.Z_PLATE_TOP) \
         .union(_cyl(J.SHOULDER_HEAD_D, J.SHOULDER_HEAD_H, lx, ly, J.Z_SHOULDER_TOP)) \
-        .union(_cyl(J.SCREW_D, 6.0, lx, ly, J.Z_PLATE_TOP - 6.0))
+        .union(_cyl(J.SCREW_D, J.SHOULDER_THREAD, lx, ly, J.Z_PLATE_TOP - J.SHOULDER_THREAD))
     z_sh = J.Z_FINGER0 + J.FINGER_T + J.FINGER_PLAY
     shims = _tube(J.SHOULDER_D + 0.1, 8.0, J.Z_SHOULDER_TOP - z_sh, lx, ly, z_sh)
     return shims, sc

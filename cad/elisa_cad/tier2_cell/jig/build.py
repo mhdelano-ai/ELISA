@@ -71,17 +71,31 @@ def checks(solids):
     add("ring finger locked: bears on the whole head rim, also at the smallest head (r_in < head r min - 0.3)",
         J.RING_R_IN <= head_min / 2 - 0.3 and J.RING_R_OUT >= head_max / 2 + 0.3,
         f"ring r {J.RING_R_IN}-{J.RING_R_OUT}, head r {head_min / 2:.2f}-{head_max / 2:.2f}; recesses anywhere")
-    clear_vol = max(common_volume(PT.finger(a, J.FINGER_PLAY_DESIGN), lift) for a in (0.0, 180.0))
+    swings = [a for a in range(int(J.SWING_MIN), int(J.SWING_STOP) + 1, 7)] + [int(J.SWING_STOP)]
+    clear_vol = max(common_volume(PT.finger(-90.0 + sgn * a, J.FINGER_PLAY_DESIGN), lift)
+                    for a in swings for sgn in (1, -1))
     d_boss = J.LOCK_R - J.FINGER_PLAY_DESIGN - J.BOSS_D / 2 - head_max / 2
-    add("finger swung 90 deg either way (shifted 0.1 toward the axis): a head of the largest diameter lifts out "
-        "freely; boss >= 0.6 from it", clear_vol <= 1e-6 and d_boss >= 0.6, f"{clear_vol:.1e} mm3, boss {d_boss:.2f} mm")
+    add(f"finger swung {J.SWING_MIN:.0f}-{J.SWING_STOP:.0f} deg either way (shifted 0.1 toward the axis): a head of the "
+        f"largest diameter lifts out freely; boss >= 0.6 from it [R3-4]", clear_vol <= 1e-6 and d_boss >= 0.6,
+        f"{clear_vol:.1e} mm3, boss {d_boss:.2f} mm")
+    others = {k: v for k, v in solids.items() if k not in ("finger",)}
+    hits = []
+    for sgn in (1, -1):
+        f_sw = PT.finger(-90.0 + sgn * J.SWING_STOP)
+        hits += [k for k, v in others.items() if common_volume(f_sw, v) > 1e-4]
+    add(f"finger at its stop ({J.SWING_STOP:.0f} deg either way) touches no part", not hits,
+        "none" if not hits else ", ".join(sorted(set(hits))))
+    f90 = [k for k, v in others.items() if common_volume(PT.finger(0.0), v) > 1e-4]
+    add("information: at 90 deg the finger would meet (so it stops earlier, on the thumb head)", True,
+        ", ".join(f90) if f90 else "nothing")
     add("nose of the handle passes inside the ring (radial >= 0.3, finger shifted by its play)",
         J.RING_R_IN - J.FINGER_PLAY_DESIGN - J.NOSE_D / 2.0 >= 0.3,
         f"{J.RING_R_IN - J.FINGER_PLAY_DESIGN - J.NOSE_D / 2.0:.2f} mm")
     lo_h, hi_h = J.head_top_range()
     add("finger height is set at assembly: spacer printed high enough to be faced for the highest head, and the "
         "shoulder leaves room for the shims at the lowest", J.SPACER_H + J.FINGER_SET_ALLOW >= hi_h + J.FINGER_GAP
-        and J.SHOULDER_L - (hi_h + J.FINGER_GAP) - J.FINGER_T - J.FINGER_PLAY >= 0.0 and lo_h + J.FINGER_GAP > 1.0,
+        and J.SHOULDER_L + 0.25 - (hi_h + J.FINGER_GAP) - J.FINGER_T - J.ORING_H >= 0.0
+        and lo_h + J.FINGER_GAP > 1.0,
         f"head top {lo_h:.2f}-{hi_h:.2f} above the plate; spacer printed {J.SPACER_H + J.FINGER_SET_ALLOW:.2f}, faced "
         f"to {lo_h + J.FINGER_GAP:.2f}-{hi_h + J.FINGER_GAP:.2f}; shims above {J.SHIMS_ABOVE:.2f} nominal")
     proud = (J.Z_LINER_TOP - J.Z_PLATE_TOP - J.BODY_L_TOL - J.PRINT_TOL,
@@ -89,11 +103,14 @@ def checks(solids):
     add("bushing head seats on the liner end, not on the plate (liner top above the plate top >= 0.1 over the "
         "tolerances)", proud[0] >= 0.1, f"{proud[0]:.2f}-{proud[1]:.2f} mm")
     liner_bot_lo = J.BODY_L - J.BODY_L_TOL - (J.LINER_L + J.LINER_L_TOL)
-    add("liner floats above its ledge at bonding over the length tolerances (gap >= 0.1); ledge ring >= 1.5 thick",
-        liner_bot_lo - (J.Z_LEDGE - J.Z_FOOT) >= 0.1 and J.Z_LEDGE - J.Z_FOOT >= 1.5,
-        f"gap {liner_bot_lo - (J.Z_LEDGE - J.Z_FOOT):.2f} at the worst stack, ring {J.Z_LEDGE - J.Z_FOOT:.2f}")
-    add("bushing face flush with the foot (bonding procedure with the longer bushing; faces matched)",
-        J.FACE_MATCH <= 0.03, f"0 to -{J.FACE_MATCH} mm (matched order or lapped, docs/36 section 4)")
+    ledge_hi = J.Z_LEDGE - J.Z_FOOT + J.PRINT_TOL
+    add("liner floats above its ledge at bonding over the length tolerances and the ledge's position (+-0.2) "
+        "(gap >= 0.1); ledge ring >= 1.5 thick [R3-3]",
+        liner_bot_lo - ledge_hi >= 0.1 and J.Z_LEDGE - J.Z_FOOT - J.PRINT_TOL >= 1.5,
+        f"gap {liner_bot_lo - ledge_hi:.2f} at the worst stack, ring {J.Z_LEDGE - J.Z_FOOT:.2f} +- {J.PRINT_TOL}")
+    add("procedure, not computed: bushing face flush with the foot (bonded with the longer bushing; faces matched or "
+        "ground) and checked after cure with a straightedge and a 0.02 feeler", True,
+        f"0 to -{J.FACE_MATCH} mm (docs/36 section 2.4)")
     # stroke depth
     lo, hi = J.tip_depth_range()
     add("tip depth into the backing at the stop stays in 0.1 to backing - 0.3 (sheet tolerance and the setting)",
@@ -132,8 +149,8 @@ def checks(solids):
         walls += [math.hypot(x - dx, y - dy) - J.INSERT_HOLE_D / 2 - J.DOWEL_D / 2 for dx, dy in J.DOWEL_XY]
     add(f"base: inserts >= {J.INSERT_WALL} from the edge and from the pin holes", min(walls) >= J.INSERT_WALL,
         f"smallest {min(walls):.2f} mm")
-    add("shoulder screw: M3 thread (6, UNVERIFIED) fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
-        4.0 <= 6.0 <= J.INSERT_HOLE_DEPTH - 0.3, "6.0 mm")
+    add("shoulder screw: M3 thread fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
+        4.0 <= J.SHOULDER_THREAD <= J.INSERT_HOLE_DEPTH - 0.3, f"{J.SHOULDER_THREAD} mm in {J.INSERT_HOLE_DEPTH}")
     add("parking holes for the idle bushing clear the plate, the screws and the rails",
         all(abs(x) - J.PARK_D / 2 >= J.PLATE_X / 2 + 2 and abs(y) - J.PARK_D / 2 >= J.STRIP_W / 2 + J.RAIL_GAP / 2
             + J.RAIL_W + 1 and all(math.hypot(x - sx, y - sy) >= J.SLIP_HEAD_D / 2 + J.THUMB_HEAD_D / 2 + 1
@@ -256,8 +273,17 @@ def main(argv=None):
             except Exception:
                 pass
         C.render_png(sec, OUT / "section.png", view="front", title="Section y = 0 (punch axis), stroke 2")
-        C.render_png(sec, OUT / "section_detail.png", view="front", title="Section y = 0: foot, sheet, tip",
-                     xlim=(-6, 6), ylim=(-1.0, 3.0))
+        win = C.box_from_corners((-8, -1, -2), (8, 10, 6))                # only what lies in the detail window
+        det = []
+        for o, m in sec:
+            try:
+                c = o.intersect(win)
+                if C._shape(c).Volume() > 1e-6:
+                    det.append((c, m))
+            except Exception:
+                pass
+        C.render_png(det, OUT / "section_detail.png", view="front", title="Section y = 0: foot, bushing face, sheet, tip",
+                     size=(9, 4.5), xlim=(-7, 7), ylim=(-1.0, 6.0))
         C.render_png([(plate, "PEEK")], OUT / "head_plate_underside.png", view="bottom", title="Head plate, underside")
         C.render_png([(base, "PEEK")], OUT / "base_top.png", view="top", title="Base, top")
         C.render_png([(PT.handle(J.PUNCH_B).cut(C.box_from_corners((-20, -20, -1), (20, 0, 40))), "PEEK")],

@@ -17,6 +17,11 @@ liner one size shorter (L-20-6) and bonded with the bushing face flush with the 
 clamps the sheet whatever the lengths [R2-1]; ring finger bearing on the whole head rim (recesses anywhere) [R2-3];
 pivot at 9.5 on an ISO 7379 shoulder screw, finger height set at assembly by facing a spacer and with shim rings
 [R2-2, R2-4, R2-7]; nose printed long and faced to set the depth [R2-5]; pin fits [R2-8]; parking holes [R2-12].
+Revision D (review round 3, review_jig_r3.md): bonding procedure with paste epoxy, release film and two flats
+(docs/36 section 2.4) [R3-1, R3-2]; ledge gap 1.4 with the plate's print tolerance [R3-3]; finger swing checked over
+its real range (stops on a thumb head near 75 deg) [R3-4]; finger preloaded by an O-ring, gap 0.05 [R3-5]; shoulder
+screw head 7 x 3, thread 7 (Ganter GN 35215) [R3-7]; stock sheet +-0.08, ring lead-in chamfer modelled, parking bosses
+[R3-8, R3-10].
 
 Units mm.  Coordinates: origin on the punch axis, z = 0 on the top face of the base (the datum on which the
 backing strip and the sheet lie); +x is the feed direction of the strip, y across it, z up.
@@ -35,7 +40,8 @@ IN = 25.4
 
 # ---- the part --------------------------------------------------------------------------------------------------
 WASHER_ID, WASHER_OD, SHEET_T = P2.WASHER_ID, P2.WASHER_OD, P2.WASHER_T     # drawing T2C-004
-SHEET_T_TOL = P2.WASHER_T_TOL
+SHEET_T_TOL = 0.08                     # the stock sheet (J-Flex 0.25 +-0.08 [J-src 6]); washers are sorted to the
+#                                        drawing's +-0.05 afterwards [R3-8]
 CONC_LIMIT = 0.10                      # T2C-004: hole concentric to the outside within dia 0.10 (offset <= 0.05)
 
 # ---- punches (bought; [J-src 1, 2]) ---------------------------------------------------------------------------------
@@ -91,21 +97,28 @@ SLIP_RUNOUT = 0.005                    # UNVERIFIED: bore to body, radial (conce
 LINER_HOLE_D = 8.00                    # CHOICE: printed 7.8, reamed 8.00 H7 (0/+0.015); bond gap 0.022-0.045 [R1-2]
 BODY_HOLE_D = 5.2                      # CHOICE: below the liner the bushing body passes through the plate (printed,
 #                                        drilled 5.2): the printed foot ring presses the sheet from r 2.6 outwards
-LEDGE_GAP = 1.0                        # CHOICE: below the liner's bottom: room for the liner to float at bonding
+LEDGE_GAP = 1.4                        # CHOICE: below the liner's bottom: room for the liner to float at bonding,
+#                                        with the plate's print tolerance [R3-3]; ream with a chucking reamer, depth
+#                                        set from the foot face (ledge 1.775 above it)
 
-# Ring finger (J-005, printed PA12, reamed 4 H8) on a shoulder screw ISO 7379, shoulder 4 x 10, M3 thread (head
-# 8 x 2.5 UNVERIFIED).  Stack on the shoulder from the plate top: spacer J-004 (printed FINGER_SET_ALLOW high and
-# faced at assembly; or shim rings DIN 988 4 x 8 under it), the finger, shim rings DIN 988 4 x 8 above it to leave
-# 0.1-0.2 axial play.  The ring bears on the whole rim of the bushing head, wherever its recesses are [R2-3].
+# Ring finger (J-005, printed PA12, reamed 4 H8) on a shoulder screw ISO 7379-4-M3-10 (Ganter GN 35215: head 7 x 3,
+# thread 7, shoulder 10 +0.25, d1 f9 [R3-7, page read by the round-3 reviewer]; 4-M3 is a maker's extension of the
+# ISO sheet).  Stack on the shoulder from the plate top: spacer J-004 (printed FINGER_SET_ALLOW high and faced at
+# assembly), the finger, an NBR O-ring 4 x 1 (compressed to about 0.7: presses the finger down onto the spacer, so it
+# has no axial play and turns with light friction [R3-5]), shim rings DIN 988 4 x 8 to fill up to the screw head.
+# The ring bears on the whole rim of the bushing head, wherever its recesses are [R2-3].
 LOCK_R, LOCK_ANGLE = 9.5, 90.0         # CHOICE: pivot 9.5 from the punch axis, at +y [R2-4]
-FINGER_T, FINGER_W = 3.0, 5.0          # CHOICE
+FINGER_T, FINGER_W = 2.5, 5.0          # CHOICE (2.5: room on the 10 mm shoulder at the highest head, R3-7)
 RING_R_IN, RING_R_OUT = 3.2, 4.8       # CHOICE: ring around the nose (r 2.5), over the head rim (r 3.97 +- 0.40)
 BOSS_D, FINGER_HOLE_D = 8.0, 4.0       # CHOICE: hole reamed 4 H8 on the 4 mm shoulder
-FINGER_GAP = 0.10                      # CHOICE: set at assembly over the thicker head (feeler 0.10)
-FINGER_PLAY = 0.15                     # CHOICE: axial play on the shoulder (set with shim rings)
-FINGER_CHAMFER = 0.3                   # CHOICE: lead-in chamfer under the ring's outer edge [R2-2]
-SHOULDER_D, SHOULDER_L = 4.0, 10.0     # ISO 7379 d1 = 4 (M3), shoulder length 10 (stock length UNVERIFIED)
-SHOULDER_HEAD_D, SHOULDER_HEAD_H = 8.0, 2.5   # UNVERIFIED
+FINGER_GAP = 0.05                      # CHOICE: set at assembly over the thicker head (feeler 0.05) [R3-5]
+FINGER_PLAY = 0.0                      # the O-ring preload takes the axial play out [R3-5]
+ORING_H = 0.7                          # NBR O-ring 4 x 1, compressed height (CHOICE)
+FINGER_CHAMFER = 0.3                   # CHOICE: lead-in chamfer under the ring's outer edge [R2-2], modelled [R3-8]
+SHOULDER_D, SHOULDER_L = 4.0, 10.0     # ISO 7379-4-M3-10 [R3-7]
+SHOULDER_HEAD_D, SHOULDER_HEAD_H, SHOULDER_THREAD = 7.0, 3.0, 7.0   # Ganter GN 35215 [R3-7]
+SWING_STOP = 74.0                      # deg: with DIN 464 heads (7.5 tall) the swung finger stops on a thumb head
+SWING_MIN = 60.0                       # deg: the bushing lifts out freely from here on [R3-4]
 SPACER_D = 8.0                         # J-004
 FINGER_SET_ALLOW = 1.2                 # CHOICE: spacer printed this much higher, faced at assembly
 FINGER_PLAY_DESIGN = 0.1               # CHOICE: a finger offset of this much toward the axis is checked [R2-4]
@@ -126,7 +139,8 @@ RAIL_W, RAIL_H = 1.5, 0.30             # CHOICE: printed rails on the base top; 
 SCALE_X0, SCALE_X1, SCALE_TICK = 21.0, 39.0, (0.4, 1.2, 0.3)   # CHOICE: ticks on the hole positions; long tick at 30;
 #                                        load the strip with its leading end on the tick at 21 [R2-14]
 PARK_XY = [(-32.0, 14.0), (-32.0, -14.0)]   # CHOICE: parking holes for the idle bushing (body down) [R2-12]
-PARK_D, PARK_DEPTH = 5.3, 9.0
+PARK_D, PARK_BOSS_D, PARK_BOSS_H = 5.3, 10.0, 4.5   # CHOICE: on a boss, deep enough that the bushing hangs on its
+#                                        head and its ground face touches nothing [R3-10]
 
 # ---- head plate (printed, same process as the base) ---------------------------------------------------------------
 PLATE_X, PLATE_Y = 40.0, 40.0          # CHOICE
@@ -160,7 +174,7 @@ Z_SHEET0 = BACKING_T                             # underside of the sheet
 Z_TIP = BACKING_T - TIP_INTO_BACKING             # punch tip at the bottom of the stroke
 Z_FINGER0 = Z_HEAD_TOP + FINGER_GAP              # finger underside (set at assembly)
 SPACER_H = Z_FINGER0 - Z_PLATE_TOP               # spacer height as faced (nominal)
-SHIMS_ABOVE = SHOULDER_L - SPACER_H - FINGER_T - FINGER_PLAY   # shim rings between finger and screw head
+SHIMS_ABOVE = SHOULDER_L - SPACER_H - FINGER_T - ORING_H       # shim rings between the O-ring and the screw head
 Z_SHOULDER_TOP = Z_PLATE_TOP + SHOULDER_L        # underside of the shoulder-screw head
 LOCK_XY = (LOCK_R * math.cos(math.radians(LOCK_ANGLE)), LOCK_R * math.sin(math.radians(LOCK_ANGLE)))
 
@@ -185,6 +199,9 @@ def head_top_range():
     nom = Z_HEAD_TOP - Z_PLATE_TOP
     d = BODY_L_TOL + HEAD_TOL + PRINT_TOL
     return nom - d, nom + d
+
+
+PARK_DEPTH = BODY_L + 0.5 - PARK_BOSS_H          # hole below the base top (the boss adds PARK_BOSS_H)
 
 
 def facing_range():
