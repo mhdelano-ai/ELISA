@@ -45,7 +45,9 @@ V_REF_UL = 0.019          # bed volume of 1e6 M-280 (docs/30)
 EPS = 0.4                 # bed porosity of the kit
 
 PHI = (0.5, 0.1, 0.9)      # share of M-280's bead NSB that sits on the capture-antibody layer (UNVERIFIED, docs/35 §3)
-COV = (1 / 3.0, 1 / 10.0, 1 / 1.5)   # covalent random F(ab')2: 1 / chem.antibodies.oriented_vs_random_capacity_gain
+COV = (0.7, 0.3, 1.0)      # covalent random F(ab')2 relative to biotin-F(ab')2 on streptavidin: UNVERIFIED judgement
+COV_PELUSO = (1 / 3.0, 1 / 10.0, 1 / 1.5)   # sensitivity: 1 / chem.antibodies.oriented_vs_random_capacity_gain
+# (Peluso2003 compares site-specific with random biotinylation, both on streptavidin; review round 2, M1)
 
 # candidates: rel = NSB per area of the bead surface (not of the capture layer) relative to M-280 Streptavidin as
 # used in the project (re-blocked in IgG-free BSA), value, low, high; sites = active capture sites relative to the
@@ -58,6 +60,8 @@ CANDIDATES = [
          rel=(0.8, 0.4, 2.0), sites=None, status="catalogue, drop-in"),
     dict(key="lodesa", label="Agilent LodeStars 2.7 µm Streptavidin (PL6727-1001)", d_um=2.7,
          rel=(0.8, 0.4, 2.0), sites=(0.7, 0.5, 1.0), status="catalogue, drop-in"),
+    dict(key="magnalink", label="Vector MagnaLINK Streptavidin 2.8 µm (M-1003), coated as docs/30 (10 µg/mg)",
+         d_um=2.8, rel=(0.8, 0.4, 3.0), sites=None, status="catalogue [V vendor page, review round 2]"),
     dict(key="magplex", label="Luminex MagPlex-Avidin 6.5 µm (deglycosylated avidin)", d_um=6.5,
          rel=(0.8, 0.4, 2.0), sites=(0.7, 0.3, 1.0), status="catalogue [S]"),
     dict(key="lodecooh", label="Agilent LodeStars 2.7 µm Carboxyl (PL6727-0001), F(ab')₂ by EDC/NHS", d_um=2.7,
@@ -68,15 +72,15 @@ CANDIDATES = [
          d_um=10.0, rel=(0.5, 0.15, 1.5), sites=COV, status="catalogue (2010 data sheet)"),
     dict(key="brush", label="POEGMA or carboxybetaine brush on M-270 Amine (in house), antibody entangled or "
          "coupled in the brush", d_um=2.8, rel=(0.25, 0.05, 1.0), sites=(0.3, 0.05, 1.0),
-         status="development project"),
+         load=0.3, status="development project"),
     dict(key="mm_sa10", label="micromod micromer-M Streptavidin 10 µm (08-19-104), sub-monolayer streptavidin",
-         d_um=10.0, rel=(1.3, 0.7, 7.0), sites=(0.4, 0.1, 0.8), status="catalogue"),
+         d_um=10.0, rel=(1.3, 0.7, 7.0), sites=(0.4, 0.1, 0.8), load=0.4, status="catalogue"),
     dict(key="svp", label="Spherotech SVP-100-4 streptavidin polystyrene 10–14 µm (docs/34 fallback)",
          d_um=12.0, rel=(1.3, 0.7, 7.0), sites=(0.7, 0.1, 1.0), status="catalogue, fallback of docs/34"),
     dict(key="silica5", label="streptavidin silica 5 µm, non-porous (Bangs CS01002 type)", d_um=5.0,
          rel=(1.3, 0.7, 7.0), sites=(0.7, 0.1, 1.0), status="catalogue (not checked)"),
 ]
-MULTS = (0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)   # bead area relative to 24.4 mm2
+MULTS = (0.25, 0.35, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0)   # bead area relative to 24.4 mm2
 
 
 def beads_dict(c, mult):
@@ -100,8 +104,9 @@ def ltri(v, rng, n):
 
 
 def bead_mult(c, phi):
-    """Bed factor relative to M-280: capture layer (same per area for every bead) + bead surface."""
-    return phi + (1.0 - phi) * c["rel"][0]
+    """Bed factor relative to M-280: capture layer (scales with the capture antibody loaded per area, `load`,
+    relative to M-280 coated as in docs/30) + bead surface (`rel`)."""
+    return phi * c.get("load", 1.0) + (1.0 - phi) * c["rel"][0]
 
 
 def pset(ps, c, phi=PHI[0], zero_nsb=False):
@@ -130,7 +135,7 @@ def paired_mc(c, mult, ps, n):
     rng2 = np.random.default_rng(seed + 1)
     phi = ltri(PHI, rng2, n)
     rel = ltri(c["rel"], rng2, n)
-    sampled.values[PB] = np.asarray(sampled.values[PB]) * (phi + (1.0 - phi) * rel)
+    sampled.values[PB] = np.asarray(sampled.values[PB]) * (phi * c.get("load", 1.0) + (1.0 - phi) * rel)
     res = tk.evaluate_bed(design, sampled)
     lod = np.where(np.isfinite(np.asarray(res.lod_pgml, float)), np.asarray(res.lod_pgml, float), 1e30)
     q = lambda x: float(np.percentile(lod, x))
@@ -191,14 +196,43 @@ def main(argv=None):
                              phi_scan={str(phi): dict(best_mult=v[1]["mult"], lod=v[1]["lod"])
                                        for phi, v in by_phi.items()})
     ref = res["m280"]["at_ref"]
+    m280_at = {1.0: ref}
     for k, r in res.items():
+        m = r["best_mult"]
+        if m not in m280_at:
+            m280_at[m] = paired_mc(CANDIDATES[0], m, ps, n)
         for tag in ("at_ref", "at_best"):
             r[tag]["p_better_than_m280"] = float(np.mean(r[tag]["_lod"] < ref["_lod"]))
             r[tag]["same_keys"] = r[tag]["keys"] == ref["keys"]
+        r["at_best"]["p_better_than_m280_same_area"] = float(np.mean(r["at_best"]["_lod"] < m280_at[m]["_lod"]))
+
         print(f"{k:9s} same area {r['at_ref']['lod_nominal']:.3g} (median {r['at_ref']['lod_median']:.3g}, "
               f"P<M280 {r['at_ref']['p_better_than_m280']:.2f})  best x{r['best_mult']:g} "
               f"{r['at_best']['lod_nominal']:.3g} (median {r['at_best']['lod_median']:.3g}, "
               f"P<M280 {r['at_best']['p_better_than_m280']:.2f})", flush=True)
+
+    # sensitivity variants (review round 2): best amount, nominal and paired median
+    C = {c["key"]: c for c in CANDIDATES}
+    VARIANTS = [
+        ("covalent beads at Peluso's 1/3 of the sites (Rev B assumption)", "peg10", dict(sites=COV_PELUSO)),
+        ("the same, LodeStars Carboxyl", "lodecooh", dict(sites=COV_PELUSO)),
+        ("PEG-COOH 10 µm with the sites of M-280 (covalent as good as oriented)", "peg10", dict(sites=(1.0, 0.4, 1.0))),
+        ("MagnaLINK coated with 3 × the antibody (30 µg/mg), sites 2 (0.7–3)", "magnalink",
+         dict(sites=(2.0, 0.7, 3.0), load=3.0)),
+        ("the same, all of it active: sites 3", "magnalink", dict(sites=(3.0, 1.0, 3.0), load=3.0)),
+        ("the same, the extra antibody inaccessible: sites 1", "magnalink", dict(sites=(1.0, 0.4, 1.0), load=3.0)),
+        ("the same with sites 3, capture-layer NSB not scaling with the load", "magnalink",
+         dict(sites=(3.0, 1.0, 3.0), load=1.0)),
+        ("MagnaLINK as docs/30, its 3D polymer surface 3 × M-280", "magnalink", dict(rel=(3.0, 1.0, 10.0))),
+        ("brush with the capture layer per area of M-280 (load 1)", "brush", dict(load=1.0)),
+    ]
+    variants = []
+    for label, key, ov in VARIANTS:
+        c = dict(C[key], **ov)
+        rows, best = scan(c, PHI[0])
+        mc = paired_mc(c, best["mult"], ps, n)
+        variants.append(dict(label=label, key=key, best_mult=best["mult"], lod_nominal=best["lod"],
+                             lod_median=mc["lod_median"], p_better=float(np.mean(mc["_lod"] < ref["_lod"]))))
 
     # the ceiling of the bead lever: no NSB on the beads at all (M-280 geometry and sites)
     ceil, cbest = scan(CANDIDATES[0], 0.0, zero=True)
@@ -246,31 +280,39 @@ def main(argv=None):
     L += ["", "## 2. Candidates (LOD in pg/mL)", "",
           f"Bed factor = M-280's `{PB}` (3, 1–30) × (φ + (1 − φ) × rel), φ = share of M-280's bead NSB on the "
           f"capture-antibody layer, {PHI[0]} ({PHI[1]}–{PHI[2]}); rel = the bead surface relative to M-280. "
-          "'Same area' = 24.4 mm² of beads (1×10⁶ M-280). 'Best amount' = lowest nominal LOD over 0.5–8 × that "
+          "'Same area' = 24.4 mm² of beads (1×10⁶ M-280). 'Best amount' = lowest nominal LOD over 0.25–8 × that "
           "area, within the washer-lift check at 80 µL/min and the bed bore (0.5 mm × 2.5 mm). P(< M-280) = share "
           "of paired draws in which the bead's LOD is below that of 1×10⁶ M-280.", "",
-          "| Bead | rel (low–high) | Sites (low–high) | Same area: nominal; median [5–95 %]; P(≤ 1); P(< M-280) | "
-          "Best amount: × area (beads) | Best: nominal; median [5–95 %]; P(≤ 1); P(< M-280) | Bed Δp at "
-          "80 µL/min (bar) |", "|---|---|---|---|---|---|---|"]
+          "P(< M-280, same area) compares with M-280 at the bead's best area. load = capture antibody per area "
+          "relative to M-280 coated as in docs/30; the capture-layer share scales with it.", "",
+          "| Bead | rel (low–high) | Sites (low–high); load | Same area: nominal; median [5–95 %]; P(≤ 1); P(< M-280) | "
+          "Best amount: × area (beads) | Best: nominal; median [5–95 %]; P(≤ 1); P(< M-280); P(< M-280, same area) "
+          "| Bed Δp at 80 µL/min (bar) |", "|---|---|---|---|---|---|---|"]
     for c in CANDIDATES:
         r = res[c["key"]]
         a1, ab, bs = r["at_ref"], r["at_best"], r["best_row"]
         s_ = "kit (1, 0.4–1)" if c["sites"] is None else f"{c['sites'][0]:.2g} ({c['sites'][1]:.2g}–{c['sites'][2]:.2g})"
+        s_ += f"; {c.get('load', 1.0):g}"
         L.append(f"| {c['label']} | {c['rel'][0]:g} ({c['rel'][1]:g}–{c['rel'][2]:g}) | {s_} | "
                  f"{fmt(a1['lod_nominal'])}; {med(a1)}; {a1['p_lod_le_target']:.2f}; {a1['p_better_than_m280']:.2f} | "
                  f"{r['best_mult']:g} ({bs['n_beads']:.2g}) | {fmt(ab['lod_nominal'])}; {med(ab)}; "
-                 f"{ab['p_lod_le_target']:.2f}; {ab['p_better_than_m280']:.2f} | {bs['dp_bed_80_bar']:.2g} |")
+                 f"{ab['p_lod_le_target']:.2f}; {ab['p_better_than_m280']:.2f}; "
+                 f"{ab['p_better_than_m280_same_area']:.2f} | {bs['dp_bed_80_bar']:.2g} |")
     at1 = lambda rows: fmt(next(x["lod"] for x in rows if x["mult"] == 1.0))
     L += ["", "Limits of the bead lever (M-280 geometry and sites, nominal): a bead surface with no NSB, the "
           f"capture layer kept (φ = {PHI[0]}): same area {at1(surf0)}, best × {sbest['mult']:g} {fmt(sbest['lod'])}. "
           f"No NSB on the beads at all, capture layer included: same area {at1(ceil)}, best × {cbest['mult']:g} "
-          f"{fmt(cbest['lod'])}.", "",
+          f"{fmt(cbest['lod'])} (at the edge of the allowed amounts: 6 × fails the washer-lift check).", "",
           "## 3. Best-amount nominal LOD against the capture-layer share φ", "",
           "| Bead | " + " | ".join(f"φ = {p:g}: × amount, LOD" for p in PHIS) + " |", "|---|" + "---|" * len(PHIS)]
     for c in CANDIDATES:
         ps_ = res[c["key"]]["phi_scan"]
         L.append(f"| {c['key']} | " + " | ".join(f"× {ps_[str(p)]['best_mult']:g}, {fmt(ps_[str(p)]['lod'])}"
                                               for p in PHIS) + " |")
+    L += ["", f"## 3a. Sensitivity (φ = {PHI[0]}, best amount)", "",
+          "| Variant | Best × area | Nominal | Median | P(< M-280) |", "|---|---|---|---|---|"]
+    L += [f"| {v['label']} | {v['best_mult']:g} | {fmt(v['lod_nominal'])} | {fmt(v['lod_median'])} | "
+          f"{v['p_better']:.2f} |" for v in variants]
     L += ["", f"## 4. Nominal LOD against bead amount (φ = {PHI[0]})", "",
           "| Bead | " + " | ".join(f"× {m:g}" for m in MULTS) + " |", "|---|" + "---|" * len(MULTS)]
     for c in CANDIDATES:
@@ -289,7 +331,7 @@ def main(argv=None):
                 r[t].pop("_lod", None)
         (OUT / "tier2_beads.md").write_text(text + "\n")
         (OUT / "tier2_beads.json").write_text(json.dumps(
-            dict(n=n, phi=PHI, candidates=res, ceiling=dict(scan=ceil, best=cbest, surface_clean=dict(scan=surf0, best=sbest)), blank_share=share,
+            dict(n=n, phi=PHI, candidates=res, ceiling=dict(scan=ceil, best=cbest, surface_clean=dict(scan=surf0, best=sbest)), blank_share=share, variants=variants,
                  checks=[dict(check=c[0], ok=bool(c[1]), value=c[2]) for c in checks]), indent=1, default=float))
     return 0 if all(c[1] for c in checks) else 1
 
