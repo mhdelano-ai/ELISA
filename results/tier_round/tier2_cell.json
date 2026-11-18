@@ -859,18 +859,29 @@
   "F_iface_N": 553.6701550898127,
   "F_oring_strip_N": 25.132741228718345,
   "F_oring_iface_N": 40.840704496667314,
-  "m4_torque_Nm": 0.5,
-  "m4_preload_total_N": 2500.0,
-  "main_needed_N": 853.8209772821058,
-  "main_margin": 2.9280142635497586,
+  "m4_torque_Nm": 0.25,
+  "m4_preload_total_N": 1250.0,
+  "main_needed_N": 594.51085958648,
+  "main_needed_bound_N": 853.8209772821058,
+  "plate_net_down_N": 335.20074189085426,
+  "main_margin": 2.102568825857032,
+  "main_margin_bound": 1.4640071317748793,
+  "main_margin_relaxed": 1.4717981780999223,
+  "relax": 0.3,
+  "main_margin_operating": 18.947017034749443,
+  "m25_torque_Nm": 0.05,
+  "m25_preload_N": 100.0,
+  "m25_bearing_MPa": 12.71967577158005,
+  "m25_need_N": 44.04070449666732,
+  "m25_hold_margin": 9.082506843873697,
   "m25_load_each_N": 148.62771489662,
-  "m25_strip_out_N": 1123.9047718217487,
-  "m25_margin": 7.561878836685982,
-  "bearing_MPa": 23.5785100876882,
-  "bearing_margin": 5.00455709716854,
-  "sag_um": 0.42576495362747746,
+  "m25_strip_out_N": 848.2300164692442,
+  "m25_margin": 5.707078367310174,
+  "bearing_MPa": 11.7892550438441,
+  "bearing_guide_MPa": 10.0,
+  "sag_um": 0.5474120832353281,
   "fitting_force_N": 236.22047244094486,
-  "floor_deflection_um": 3.119416474740507,
+  "floor_deflection_um": 4.113335939568416,
   "washer_squeeze": [
    0.11304347826086958,
    0.26,
@@ -886,7 +897,7 @@
    2.01114225,
    3.0081187499999995
   ],
-  "plate_bow_um": 3.3115537045499988,
+  "plate_bow_um": 4.366692610312498,
   "pocket_area_mm2": 2.138246499849553,
   "washer_E_MPa": 6.0,
   "bed_force_N": 0.6768914801332738,
@@ -896,10 +907,12 @@
    0.21999999999999997
   ],
   "squeeze_iface": 0.25,
-  "peek_assumed": {
-   "E_MPa": 3600.0,
-   "shear_MPa": 53.0,
-   "compressive_yield_MPa": 118.0
+  "acetal_assumed": {
+   "E_MPa": 2800.0,
+   "shear_MPa": 40.0,
+   "poisson": 0.35,
+   "bearing_guide_MPa": 10.0,
+   "nut_factor": 0.2
   },
   "stack_push_N": {
    "3.4": 0.009035353270451699,
@@ -1107,14 +1120,24 @@
    "value": "2.49 bar"
   },
   {
-   "check": "main screws hold the rated pressure with a margin of at least 2",
+   "check": "main screws hold the rated pressure with a margin of at least 2 (at least 1.2 after relaxation)",
    "ok": true,
-   "value": "2.9"
+   "value": "2.1; 1.5"
+  },
+  {
+   "check": "the plate stays on the base at the rated pressure",
+   "ok": true,
+   "value": "335 N down"
+  },
+  {
+   "check": "plate screws hold the bed unit (O-ring and retainer washer) with a margin of at least 3",
+   "ok": true,
+   "value": "9.1"
   },
   {
    "check": "plate screws alone hold the body-plate joint at the rated pressure, margin at least 3",
    "ok": true,
-   "value": "7.6"
+   "value": "5.7"
   },
   {
    "check": "the lowest washer force holds the retainer against the body face at 80 uL/min with a margin of 2",

@@ -128,8 +128,13 @@ def hydraulics(ps, beads, bore_d, membrane):
 # ---- mechanics at the rated pressure ----------------------------------------------------------------------------
 def mechanics():
     """Forces and stresses with the whole liquid path at 500 psi (the bed itself needs a few bar, section 4).
-    PEEK properties are typical values for unfilled PEEK, UNVERIFIED (take them from the certificate of the stock)."""
-    E, SHEAR, COMP = 3600.0, 53.0, 118.0          # MPa: modulus, shear strength, compressive yield (UNVERIFIED)
+    Body and plate are acetal copolymer (POM-C) since 2026-11-18; its properties are typical values, UNVERIFIED
+    (take them from the data sheet of the stock).  Screw preload from T = K d F with K = 0.2 (dry steel threads);
+    the torques are set so that the stress under washer and screw heads stays near a long-term guide for acetal."""
+    E, SHEAR, NU = 2800.0, 40.0, 0.35             # MPa, MPa, -: acetal copolymer modulus, shear strength (UNVERIFIED)
+    BEARING_GUIDE = 10.0                          # MPa: long-term bearing stress on acetal without creep (UNVERIFIED)
+    K_NUT = 0.2                                   # nut factor, dry steel threads (anti-seize: about 0.15, more preload)
+    RELAX = 0.30                                  # loss of preload by relaxation of the acetal (UNVERIFIED)
     p = P_RATED / 1e6                             # MPa = N/mm2
     A = lambda d: math.pi * d * d / 4.0
     F_strip = p * A(P.GROOVE_STRIP_OD)            # worst case: pressure out to the outer wall of the groove
@@ -137,19 +142,28 @@ def mechanics():
     oring_n_per_mm = 1.0                          # UNVERIFIED: 1 mm cord, 70 Shore A, 25 % squeeze
     F_or_strip = oring_n_per_mm * math.pi * (P.ORING_STRIP[0] + P.ORING_STRIP[1])
     F_or_iface = oring_n_per_mm * math.pi * (P.ORING_IFACE[0] + P.ORING_IFACE[1])
-    torque_m4 = 0.5                               # N m, CHOICE
-    preload_m4 = torque_m4 / (0.2 * 0.004)        # N per screw, T = 0.2 d F
-    need_main = F_strip + F_or_strip + F_iface + F_or_iface
-    le = 6.0 - (P.PLATE_T - P.M25_CBORE_DEPTH)    # M2.5 x 6 low-head screw in a counterbore: engagement in the body
-    strip_out = 0.5 * math.pi * 2.5 * le * SHEAR  # N per M2.5 thread in PEEK
-    per_m25 = (F_iface + F_or_iface) / 4.0
+    torque_m4 = 0.25                              # N m, CHOICE (0.5 for PEEK before 2026-11-18)
+    preload_m4 = torque_m4 / (K_NUT * 0.004)      # N per screw
+    # Load path: the body-plate pressure and the 12 x 1 O-ring push the body up against the M4 heads; the plate is
+    # pushed down by them harder than the strip pressure and its O-ring push it up, so it stays on the base.
+    plate_net_down = F_iface + F_or_iface - F_strip - F_or_strip
+    need_main = F_iface + F_or_iface              # what the M4 screws carry
+    need_main_bound = F_strip + F_or_strip + F_iface + F_or_iface   # every load added (the earlier, conservative sum)
     bearing = preload_m4 / (math.pi / 4.0 * (8.0 ** 2 - P.M4_CLEAR ** 2))   # under an 8 mm washer (DIN 433)
-    # body and plate as one beam across the strip pocket, strip force at mid-span
+    # M2.5: hold the bed unit together off the base (O-ring 12 x 1 and retainer washer); in service the M4 clamp
+    torque_m25 = 0.05                             # N m, CHOICE
+    preload_m25 = torque_m25 / (K_NUT * 0.0025)
+    head_area = A(4.5) - A(P.M25_CLEAR)           # DIN 7984 head about 4.5 (UNVERIFIED) on the 3.2 clearance hole
+    bearing_m25 = preload_m25 / head_area
+    m25_need = F_or_iface + 3.2                   # O-ring + nominal retainer washer force, all four screws
+    le = 6.0 - (P.PLATE_T - P.M25_CBORE_DEPTH)    # M2.5 x 6 low-head screw in a counterbore: engagement in the body
+    strip_out = 0.5 * math.pi * 2.5 * le * SHEAR  # N per M2.5 thread in acetal
+    per_m25 = (F_iface + F_or_iface) / 4.0
     I_beam = (P.X1 - P.X0) * P.BODY_T ** 3 / 12.0
     sag = F_strip * P.POCKET_W ** 3 / (48.0 * E * I_beam)
     # floor of the inlet port (body floor + plate, not bonded) as a clamped disc under the fitting's seating force
     F_fit = 0.3 / (0.2 * 0.00635)                 # N at 0.3 N m on 1/4-28 (finger tight, UNVERIFIED)
-    Dfl = E * (P.INLET_FLOOR ** 3 + P.PLATE_T ** 3) / (12.0 * (1 - 0.38 ** 2))
+    Dfl = E * (P.INLET_FLOOR ** 3 + P.PLATE_T ** 3) / (12.0 * (1 - NU ** 2))
     floor = F_fit * (0.5 * P.PORT_TAP_DRILL) ** 2 / (16.0 * math.pi * Dfl)
     # retainer: the washer is the spring that presses screen and membrane against the body face.
     # Squeeze over the tolerances after selection: the pocket is made to +-0.025 (drawing T2C-002), measured, and
@@ -166,14 +180,20 @@ def mechanics():
     no = washer_force(P.WASHER_T, P.RET_POCKET_DEPTH, P.MEMBRANE_T, P.SCREEN_T)
     hi = washer_force(P.WASHER_T + 0.02, P.RET_POCKET_DEPTH - 0.01, 0.015, P.SCREEN_T + 0.005)
     A_clamp = A(P.MEMBRANE_DISC_D) - A(P.BED_D)                             # band where the membrane seals
-    Dpl = E * P.PLATE_T ** 3 / (12.0 * (1 - 0.38 ** 2))
+    Dpl = E * P.PLATE_T ** 3 / (12.0 * (1 - NU ** 2))
     plate_k = 16.0 * math.pi * Dpl * 1e-3 / (math.hypot(*P.M25_XY[0]) ** 2)   # N per um, clamped disc (soft bound)
     squeeze = lambda cs, gland: 1.0 - gland / cs
     return dict(
         p_MPa=p, F_strip_N=F_strip, F_iface_N=F_iface, F_oring_strip_N=F_or_strip, F_oring_iface_N=F_or_iface,
         m4_torque_Nm=torque_m4, m4_preload_total_N=4 * preload_m4, main_needed_N=need_main,
-        main_margin=4 * preload_m4 / need_main, m25_load_each_N=per_m25, m25_strip_out_N=strip_out,
-        m25_margin=strip_out / per_m25, bearing_MPa=bearing, bearing_margin=COMP / bearing,
+        main_needed_bound_N=need_main_bound, plate_net_down_N=plate_net_down,
+        main_margin=4 * preload_m4 / need_main, main_margin_bound=4 * preload_m4 / need_main_bound,
+        main_margin_relaxed=(1 - RELAX) * 4 * preload_m4 / need_main, relax=RELAX,
+        main_margin_operating=4 * preload_m4 / (F_or_iface + F_or_strip),
+        m25_torque_Nm=torque_m25, m25_preload_N=preload_m25, m25_bearing_MPa=bearing_m25,
+        m25_need_N=m25_need, m25_hold_margin=4 * preload_m25 / m25_need,
+        m25_load_each_N=per_m25, m25_strip_out_N=strip_out,
+        m25_margin=strip_out / per_m25, bearing_MPa=bearing, bearing_guide_MPa=BEARING_GUIDE,
         sag_um=sag * 1e3, fitting_force_N=F_fit, floor_deflection_um=floor * 1e3,
         washer_squeeze=[lo[1], no[1], hi[1]], washer_force_N=[lo[0], no[0], hi[0]],
         membrane_clamp_MPa=[f / A_clamp for f in (lo[0], no[0], hi[0])],
@@ -182,7 +202,7 @@ def mechanics():
         squeeze_strip=[squeeze(P.ORING_STRIP[1], P.GROOVE_STRIP_DEPTH + g)
                        for g in (P.GAP - P.GAP_TOL, P.GAP, P.GAP + P.GAP_TOL)],
         squeeze_iface=squeeze(P.ORING_IFACE[1], P.GROOVE_IFACE_DEPTH),
-        peek_assumed=dict(E_MPa=E, shear_MPa=SHEAR, compressive_yield_MPa=COMP))
+        acetal_assumed=dict(E_MPa=E, shear_MPa=SHEAR, poisson=NU, bearing_guide_MPa=BEARING_GUIDE, nut_factor=K_NUT))
 
 
 def side_paths(ps):
@@ -325,8 +345,13 @@ def main(argv=None):
          abs(P.EXIT_VOLUME_UL / 0.5 - 1) < 0.05, f"{P.EXIT_VOLUME_UL:.3f} uL"),
         ("total pressure drop of the cell at 200 uL/min is below a tenth of the rating (M-280)",
          hyd["M-280"][200.0]["total"] < 0.1 * P_RATED, f"{hyd['M-280'][200.0]['total'] / 1e5:.2f} bar"),
-        ("main screws hold the rated pressure with a margin of at least 2", mech["main_margin"] >= 2.0,
-         f"{mech['main_margin']:.1f}"),
+        ("main screws hold the rated pressure with a margin of at least 2 (at least 1.2 after relaxation)",
+         mech["main_margin"] >= 2.0 and mech["main_margin_relaxed"] >= 1.2,
+         f"{mech['main_margin']:.1f}; {mech['main_margin_relaxed']:.1f}"),
+        ("the plate stays on the base at the rated pressure", mech["plate_net_down_N"] > 0,
+         f"{mech['plate_net_down_N']:.0f} N down"),
+        ("plate screws hold the bed unit (O-ring and retainer washer) with a margin of at least 3",
+         mech["m25_hold_margin"] >= 3.0, f"{mech['m25_hold_margin']:.1f}"),
         ("plate screws alone hold the body-plate joint at the rated pressure, margin at least 3",
          mech["m25_margin"] >= 3.0, f"{mech['m25_margin']:.1f}"),
         ("the lowest washer force holds the retainer against the body face at 80 uL/min with a margin of 2",
@@ -385,10 +410,15 @@ def main(argv=None):
           f"| Force that lifts the plate off the strip (pressure to the outer groove wall, 9.3 mm) | {m['F_strip_N']:.0f} N |",
           f"| Force that parts body and plate (pressure to the outer groove wall, 14.3 mm) | {m['F_iface_N']:.0f} N |",
           f"| O-ring compression loads (1 N/mm, UNVERIFIED) | {m['F_oring_strip_N']:.0f} N + {m['F_oring_iface_N']:.0f} N |",
-          f"| Four M4 screws at {m['m4_torque_Nm']} N·m: clamp force | {m['m4_preload_total_N']:.0f} N |",
-          f"| Needed on the main screws; margin | {m['main_needed_N']:.0f} N; {m['main_margin']:.1f} |",
-          f"| Load on each M2.5 if the plate screws carry the body–plate joint alone; thread strip-out in PEEK; margin | {m['m25_load_each_N']:.0f} N; {m['m25_strip_out_N']:.0f} N; {m['m25_margin']:.1f} |",
-          f"| Bearing stress under the M4 washers; margin to compressive yield | {m['bearing_MPa']:.0f} MPa; {m['bearing_margin']:.0f} |",
+          f"| Plate: pushed down by the body–plate pressure and O-ring, up by the strip pressure and O-ring; net | {m['plate_net_down_N']:.0f} N down (stays on the base) |",
+          f"| Four M4 screws at {m['m4_torque_Nm']} N·m (K 0.2): clamp force | {m['m4_preload_total_N']:.0f} N |",
+          f"| Carried by the M4 screws (body–plate pressure + 12 × 1 O-ring); margin; after {100 * m['relax']:.0f} % relaxation | {m['main_needed_N']:.0f} N; {m['main_margin']:.1f}; {m['main_margin_relaxed']:.1f} |",
+          f"| Every load added (conservative bound); margin | {m['main_needed_bound_N']:.0f} N; {m['main_margin_bound']:.1f} |",
+          f"| Margin of the M4 clamp in operation (about 1 bar: the two O-rings only) | {m['main_margin_operating']:.0f} |",
+          f"| Bearing stress under the M4 washers (8 mm, DIN 433); long-term guide for acetal (UNVERIFIED) | {m['bearing_MPa']:.1f} MPa; {m['bearing_guide_MPa']:.0f} MPa |",
+          f"| Four M2.5 screws at {m['m25_torque_Nm']} N·m: preload each; stress under the head (⌀4.5 on ⌀3.2) | {m['m25_preload_N']:.0f} N; {m['m25_bearing_MPa']:.1f} MPa |",
+          f"| M2.5: what they hold off the base (12 × 1 O-ring + retainer washer); margin | {m['m25_need_N']:.0f} N; {m['m25_hold_margin']:.1f} |",
+          f"| Load on each M2.5 if the plate screws carried the body–plate joint alone at 500 psi; thread strip-out in acetal; margin | {m['m25_load_each_N']:.0f} N; {m['m25_strip_out_N']:.0f} N; {m['m25_margin']:.1f} |",
           f"| Sag of body and plate across the strip pocket | {m['sag_um']:.2f} µm |",
           f"| Deflection of the port floor under the inlet fitting ({m['fitting_force_N']:.0f} N) | {m['floor_deflection_um']:.1f} µm |",
           "| Retainer washer squeeze, low / nominal / high tolerance | " + " / ".join(f"{100 * x:.0f} %" for x in m["washer_squeeze"]) + " |",
