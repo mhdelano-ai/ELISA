@@ -50,6 +50,9 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 - `docs/33_flow_cell_geometries.md` — follow-up to the tier round: other flow-cell geometries put into the designs
   of docs/30, and the pick (radial thin-layer cell, gap about 50 µm). Calculations in
   `scripts/tier_round/cell_geometries.py`; not independently reviewed.
+- `docs/34_tier2_flow_cell.md` — follow-up: a custom flow cell for tier 2 with the bead bed inside the cell (three
+  machined parts, 500 psi, MicruX strip as the electrode). Dimensions in `cad/elisa_cad/tier2_cell/params.py`, CAD
+  output in `cad/out/tier2_cell/`, numbers from `scripts/tier_round/tier2_cell.py`; not independently reviewed.
 - `scripts/tier_round/` — calculation kit and designs behind docs/30 (`README.md` there; `tierkit.py`,
   `designs.py`, `run_tiers.py`, `tier_params.yaml` with the `tr.*` parameters of the round); outputs and the five
   reviewer reports in `results/tier_round/`. The kit imports `elisa_sim` and edits nothing in `src/` or `params/`.
@@ -84,6 +87,9 @@ python scripts/tier_round/check_tierkit.py          # tier round: 36 checks of t
 python scripts/tier_round/run_tiers.py              # tier round: all designs, scenarios, alternatives (~2 min)
 python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
 python scripts/tier_round/cell_geometries.py        # docs/33: flow-cell geometries (~4 min; `--doc` prints its tables)
+python scripts/tier_round/tier2_cell.py             # docs/34: tier-2 cell with the bed inside: model, pressure, 500 psi (~1 min)
+(cd cad && python -m elisa_cad.tier2_cell.build)    # docs/34: STEP files, section, drawing notes, 28 checks (~1 min)
+(cd cad && python -m elisa_cad.tier2_cell.drawings) # docs/34: dimensioned A3 drawings T2C-001..004 (PDF + PNG, ~15 s)
 python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
@@ -135,6 +141,28 @@ times lower if the signal is weak (1 % electroactive, with a faster sweep). A cr
 gap only if the electrode is the first surface; a large-gap wall jet and a porous flow-through electrode are worse.
 No other cell needs to be bought. The gap of the cell in hand is unmeasured (docs/27 §9 item 4; docs/33 §6.2).
 Nothing in docs/30 is changed; whether tier 1 takes the thin gap is the user's decision (docs/33 §8).
+
+**Tier-2 flow cell with the bed inside (2026-11-18, docs/34; desk work, not reviewed, nothing ordered):** a stack
+of three machined parts, 29 × 44 × 21.9 mm (plate and body acetal copolymer since 2026-11-18, PEEK fallback): body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
+nozzle plate (retainer pocket, exit bore, lid of the thin layer, O-ring on the strip), 316L base (strip
+pocket; a shim sets the gap, 0.10 mm). Revision B: in the plate's pocket a washer punched from 0.25 mm FKM sheet
+presses screen and membrane against the flat body face around the bed bore (no 0.5 mm O-rings; body and plate
+face to face; keep flows through the bed ≤ 80 µL/min). Beads stay Dynabeads M-280, 1×10⁶; because catalogue stainless screens are
+only nominally rated (1 µm screen absolute at 6–7 µm), the retainer is a 1 µm track-etched membrane on a 2 µm
+screen; non-porous 10–14 µm streptavidin polystyrene beads on the screen alone are the fallback. Model: 1.9 pg/mL
+nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30; the retainer's conjugate uptake
+(2.3–11 mm², UNVERIFIED) moves it between 1.7 and 2.4. Working pressure about 1 bar at 80 µL/min; laid out for
+500 psi with a margin of 2.9 on the main screws, but the O-ring seal on a printed strip at 500 psi needs a proof
+test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip settled
+by the user: ceramic S1PE strips, 0.38 mm (shim 0.07 mm); positions from MicruX's drawing, confirmed accurate
+(electrode centre 8.26 mm from the free end, print to r 3.64 mm; docs/34 §5.4). docs/30 is not changed; the
+choices for the user are in docs/34 §8.3. Dimensioned drawings for ordering (Xometry), mostly at standard
+tolerance (none tighter than ±0.025 mm): `cad/out/tier2_cell/drawings/` with `ORDERING.md`; tolerance policy in
+docs/34 §5.2 (strip pocket at standard tolerance, gap set by a measured shim; second pin hole a slot). The
+retainer washer is a cut gasket, T2C-004 (⌀1.4/⌀0.75 × 0.25 FKM; STEP and DXF cut files). The four drawings were
+reviewed by an independent agent (19 findings, 17 applied: counterbored M2.5 screws, screw positions, sealing-face
+flatness and finish; docs/34 Revision notes). Since then simplified at the user's request: only tolerances tighter
+than standard and threads on the views, Ra 1.6 all over, M4 clearance ⌀5.5 (docs/34 §5.2).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

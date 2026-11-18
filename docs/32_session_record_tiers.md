@@ -173,3 +173,96 @@ No agent was used and the result was not independently reviewed. `tierkit.py`, t
 deck are unchanged; `check_tierkit.py` (36 of 36) and `doc_tables.py --check` were re-run and pass. What went wrong
 on the way is in docs/33 §10.
 
+## 9. Follow-up: a custom flow cell for tier 2 (2026-11-18)
+
+Request, in a new session: "Let's design a custom flow cell for tier 2. What type of beads? I'd like the bead bed
+to be part of the flow cell not the inlet tubing. It should handle 500 psi. Ideally all custom parts can be
+ordered from a place like xometry." No question was put to the user; the choices made for them are listed in
+docs/34 §8.3.
+
+| Step | Done by | Output |
+|---|---|---|
+| Vendor facts: retention of catalogue screens and frits, machining limits of Xometry, fittings, beads, membranes | orchestrator (web search and pages) | docs/34 §9 |
+| Model cases for the bed inside the cell, pressure drop, forces at 500 psi, side paths; 7 checks | orchestrator | `scripts/tier_round/tier2_cell.py`; `results/tier_round/tier2_cell.md`, `tier2_cell.json` |
+| Parametric CAD of base, nozzle plate and body; assembly; labelled section; drawing notes; 24 checks | orchestrator | `cad/elisa_cad/tier2_cell/`; `cad/out/tier2_cell/` |
+| Design document | orchestrator | docs/34 |
+| Entries in the two READMEs and the project guide | orchestrator | `scripts/tier_round/README.md`, `cad/README.md`, CLAUDE.md |
+
+No agent was used and the result was not independently reviewed. `tierkit.py`, the designs, docs/26–31, docs/33
+and the deck are unchanged. What went wrong on the way is in docs/34 §10.
+
+Revision B of docs/34, same day. The user asked "How is the seal made between the bed bore and exit bore?"; the
+answer found that the first version's pinched screen had no defined force, held body and plate apart and bowed the
+plate. The user accepted a proposed fix ("Yes"); while it was being made they wrote that O-rings of 0.5 mm
+cross-section are hard to get and asked whether 1 mm would do. The proposal had already been replaced by a washer
+punched from 0.25 mm FKM sheet, acting as a spring in a pocket of the nozzle plate; a 1 mm O-ring variant is
+compared in docs/34 §6.4. Changed: `cad/elisa_cad/tier2_cell/` (params, parts, section, build: 28 checks),
+`scripts/tier_round/tier2_cell.py` (washer force, lift-off check: 8 checks), docs/34, the project guide.
+
+Strip dimensions, same day. The user sent MicruX's drawing of the S1PE strip (image, no text). It is to scale;
+three of the four UNVERIFIED strip dimensions were measured on it (electrode centre 8.26 mm from the free end
+instead of 6.0; print to r = 3.64 instead of 3.3; pads from 21.78 mm). `params.py`, docs/34 §5.4 and the project
+guide were updated; the stack was shortened by 1 mm and the strip pocket deepened for ceramic strips.
+The user then stated: ceramic strips, 380 µm, and the drawing is accurate. Strip thickness 0.38 mm and shim
+0.07 mm entered; the caliper caveats were removed.
+The user then sent a 1/4-28 flat-bottom port drawing (image): depth 0.350 in, 0.28 in minimum full thread, 0.27 in
+x 90° chamfer, bottom flat within 0.002 in, 32 µin, corner radius ≤ 0.007 in. Entered for both ports; the body is
+now 11.39 mm thick so that the 2.5 mm port floor (the bed bore) is kept.
+The user then asked for dimensioned drawings of the three parts meeting Xometry's drawing requirements, with as
+many standard tolerances as possible. Xometry's drawing guidance and manufacturing standard were read
+(docs/34 §5.2). Design changes to relax tolerances: strip pocket 0.65 mm at standard tolerance with a measured
+shim, second pin hole a slot, pins bonded, body 11.4 mm. New: `cad/elisa_cad/tier2_cell/drawings.py` →
+`cad/out/tier2_cell/drawings/` (three A3 PDFs, previews, `ORDERING.md`). Checked by eye only; no checker named.
+The user then asked for cleaner drawings, until 95 % confident they were clean, and that only non-standard
+features be dimensioned, the rest coming from the 3D model. The sheets were rebuilt on that basis and reviewed in
+three passes of high-resolution crops, with an automatic check for overlapping text added to the generator
+(no overlaps on any sheet). Fixed on the way: hatch seams and viewer-dependent hatch density (now explicit lines
+clipped to the merged cut faces), the third-angle symbol (was drawn in first-angle orientation), missing basic
+dimensions for the position tolerances, datum symbols of features of size moved onto their size callouts, a
+duplicate datum A removed, the renderer's scale bar removed from the reference isometrics (option added to
+`assembly/zrender.py` and `common.render_png`, default unchanged).
+The user then asked for the CAD of the cut gasket and an independent review of the drawings. The washer became
+T2C-004 (STEP, DXF cut files, drawing); its outer diameter went from 1.2 to 1.4 mm so that the ring wall cannot
+fall below 0.175 mm at the tolerance limits (washer force 3.2 N nominal, plate bow ≤ 3.3 µm, lift-off margin 2.6
+at 200 µL/min; `tier2_cell.py` re-run, all checks pass).
+
+An independent agent (not shown the design work) then reviewed the four drawings against the STEP files and
+Xometry's drawing requirements: 19 findings. Applied: M2.5 countersinks replaced by counterbores for low-head
+screws (the countersinks would have centred the plate against the dowels); dowel holes +0.05/+0.01; screw-hole
+positions ⌀0.3; M4 clearance ⌀4.8; body underside flat 0.02 and Ra 1.6 inside ⌀16, Ra 0.4 inside ⌀3; plate top
+face flat 0.02 inside ⌀16; base pocket floor parallel to A; both ends of both 0.5 mm bores sharp; inlet-port
+position and port-bottom perpendicularity (added beyond the user's port drawing); 6.0 mm full thread on M2.5;
+washer thickness ±0.05 and a process note (die or waterjet, not laser); clip box of the sections; title-block and
+note wording; flags per dimension; larger fonts. Not applied: an ASTM D2000 line call-out for the washer (could not
+be checked) and a cosmetic M4 thread display. docs/34 §5.2 table, §5.4, ORDERING.md and the project guide updated;
+build (28 checks), drawings (no overlaps), `tier2_cell.py`, `check_tierkit.py` (36/36) and `doc_tables.py --check`
+re-run.
+The user then asked that notes describing how to make the parts be removed (left to Xometry) and that the drawings
+carry nothing but the tighter-than-standard tolerances and the threaded holes. Removed: cleaning, packing, process
+and cutting-method notes (including "not laser" for the FKM washer), datum and screw explanations, reasons in the
+flag texts, isometric views, masses, the washer's actual-size outline, the project name in the title. "SHARP" at
+the ends of the 0.5 mm bores became a tolerance (edge break 0.05 max). Notes are now material plus threads.
+The user then reported that section A–A on the plate drawing did not line up with the features. The 10:1 view
+had been labelled SECTION A–A but showed only ±5.4 mm about the axis, detached from the top view and without break
+lines. A full section A–A at 2:1 now sits under the top view, aligned with it as on the base and body sheets, and
+the 10:1 view is detail D of that section (geometry unchanged; checked against the model).
+The user then asked for a less expensive plastic. Plate and body changed from PEEK to acetal copolymer (POM-C,
+not homopolymer), PEEK kept as the fallback; drawings T2C-002/003, ORDERING.md, docs/34 (§2 table, §5.4 with the
+reasons and open points, §8.3) and the project guide updated. At the user's direction the bending and pressure
+checks were not re-run (numbers in docs/34 §6.3 stay those for PEEK).
+The user then asked that the drawings be as simple as possible. Removed: the list of flagged features (requirements
+and flags now only on the views), basic dimensions (locations BASIC per the STEP model, in the title block), the
+base's section, the plate's bottom view, separate Ra 1.6 symbols (Ra 1.6 all over in the title block), the riser
+position tolerance, the port-bottom perpendicularity and the body's overall flatness 0.05. M4 clearance in plate and
+body ⌀4.8 → ⌀5.5 so that the M4 positions are at standard tolerance (build: all checks pass; `tier2_cell.py` re-run:
+bearing stress under the M4 washers 24 MPa, margin 5). The collecting groove keeps ±0.10 (flow uniformity).
+The user then asked to keep simplifying until the iterations converged. Pass 1: the washer's section replaced by a
+thickness note; the body's inlet-port callout moved off the bottom view (its frame touched the view); the plate's
+top-face leader shortened. Pass 2: that leader moved clear of the axis features. Pass 3: no further item could go
+without losing a requirement (each sheet: material, flag note, threads, tighter-than-standard tolerances); stopped.
+The user then asked for the views to be repositioned for best spacing until the iterations converged. View positions
+now sit in one table (`LAYOUT` in `drawings.py`) and every callout is placed relative to its view. Pass 1: views
+moved off the left edge (base and washer centred in the free area, plate detail and body detail placed in the right
+half). Pass 2: plate views raised into the empty top band, body detail E level with the main views, single-view
+sheets centred on their callout groups. Pass 3: body views moved right for an even left margin. Pass 4: no move
+larger than about 5 mm would improve the balance; stopped. No text overlaps on any sheet.

@@ -121,7 +121,7 @@ def tessellate(obj, tol=0.05, ang=0.3):
     return v, t
 
 
-def render_png(items, path, view="iso", size=(9, 6.5), dpi=150, title=None, tol=0.05, edges=False,
+def render_png(items, path, view="iso", size=(9, 6.5), dpi=150, title=None, tol=0.05, edges=False, scale_bar=True,
                light=(0.4, -0.6, 0.8), annotate=None, xlim=None, ylim=None):
     """items: list of (cq object, material or RGBA). Flat-shaded orthographic render with exact per-pixel occlusion
     (z-buffer renderer of assembly/zrender.py; the earlier depth-sorted painter render drew far faces over near
@@ -136,7 +136,7 @@ def render_png(items, path, view="iso", size=(9, 6.5), dpi=150, title=None, tol=
     labels = [(xyz, txt, (0, 0)) for xyz, txt in annotate] if annotate else None
     return Z.render(its, path, view=(tuple(eye), up), px=(int(size[0] * dpi), int(size[1] * dpi)), title=title,
                     labels=labels, bounds=bounds, margin=0.0 if bounds else 0.04, light=light, dpi=dpi,
-                    alpha_thresh=0.99)
+                    alpha_thresh=0.99, scale_bar=scale_bar)
 
 
 def shrink_pngs(directory):
