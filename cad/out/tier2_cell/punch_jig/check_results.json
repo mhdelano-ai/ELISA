@@ -1,0 +1,203 @@
+{
+ "checks": [
+  {
+   "check": "no interference between any two parts (21 solids, liner at its largest OD; the punches are checked below)",
+   "ok": true,
+   "value": "largest common volume 0.00e+00 mm3"
+  },
+  {
+   "check": "hole punch (SYNEO CR0350275N20R4) at the end of its stroke (nose on the bushing head) clears every part",
+   "ok": true,
+   "value": "none"
+  },
+  {
+   "check": "outside punch (SYNEO CR0650495N16R4) at the end of its stroke (nose on the bushing head) clears every part",
+   "ok": true,
+   "value": "none"
+  },
+  {
+   "check": "swing finger locked: lies over the bushing head (retains it)",
+   "ok": true,
+   "value": "overlap 0.57 mm radial, 0.1 above the head"
+  },
+  {
+   "check": "swing finger turned 90 degrees either way: the bushing lifts out freely",
+   "ok": true,
+   "value": "0.00e+00 mm3"
+  },
+  {
+   "check": "nose of the handle clears the finger's tip (radial)",
+   "ok": true,
+   "value": "0.40 mm"
+  },
+  {
+   "check": "tip depth into the backing at the stop stays in 0.1 to backing - 0.3 (sheet tolerance and the setting)",
+   "ok": true,
+   "value": "0.15-0.35 mm of 0.79"
+  },
+  {
+   "check": "hole punch (SYNEO CR0350275N20R4): tube 17.96 below the nose, 20.14 in the handle (pocket ends in the grip, >= 3 below its top)",
+   "ok": true,
+   "value": "pocket 20.14 mm"
+  },
+  {
+   "check": "hole punch (SYNEO CR0350275N20R4): shoulder carries the tube wall (push hole 0.706 <= bore + 0.02 < tube)",
+   "ok": true,
+   "value": "shoulder 0.092 mm"
+  },
+  {
+   "check": "hole punch (SYNEO CR0350275N20R4): push wire 0.6 passes the bore 0.686 with >= 0.05",
+   "ok": true,
+   "value": "0.086 mm"
+  },
+  {
+   "check": "hole punch (SYNEO CR0350275N20R4): bushing bore 0.0352 in on the nominal tube is in the SF-12 range .0135-.0980 in",
+   "ok": true,
+   "value": "0.8941 mm"
+  },
+  {
+   "check": "outside punch (SYNEO CR0650495N16R4): tube 17.96 below the nose, 20.14 in the handle (pocket ends in the grip, >= 3 below its top)",
+   "ok": true,
+   "value": "pocket 20.14 mm"
+  },
+  {
+   "check": "outside punch (SYNEO CR0650495N16R4): shoulder carries the tube wall (push hole 1.265 <= bore + 0.02 < tube)",
+   "ok": true,
+   "value": "shoulder 0.193 mm"
+  },
+  {
+   "check": "outside punch (SYNEO CR0650495N16R4): push wire 1.1 passes the bore 1.245 with >= 0.05",
+   "ok": true,
+   "value": "0.145 mm"
+  },
+  {
+   "check": "outside punch (SYNEO CR0650495N16R4): bushing bore 0.0652 in on the nominal tube is in the SF-12 range .0135-.0980 in",
+   "ok": true,
+   "value": "1.6561 mm"
+  },
+  {
+   "check": "liner bond gap (8.00 H7 hole on the L-20 OD 7.970-7.978) is a clearance of 0.02-0.06 diametral",
+   "ok": true,
+   "value": "0.022-0.044 mm"
+  },
+  {
+   "check": "wall between the liner hole and the lock insert >= 1.6 (ruthex minimum)",
+   "ok": true,
+   "value": "2.00 mm"
+  },
+  {
+   "check": "base: inserts >= 1.6 from the edge and from the pin holes",
+   "ok": true,
+   "value": "smallest 6.00 mm"
+  },
+  {
+   "check": "lock screw engages the plate insert 4 mm to the hole depth - 0.3",
+   "ok": true,
+   "value": "5.74 mm"
+  },
+  {
+   "check": "thumb screw engagement at the thinnest stack: >= 5.7 (whole insert) and <= hole depth - 0.3",
+   "ok": true,
+   "value": "6.66 mm"
+  },
+  {
+   "check": "thumb screw engagement at the thickest stack: >= 5.7 (whole insert) and <= hole depth - 0.3",
+   "ok": true,
+   "value": "6.46 mm"
+  },
+  {
+   "check": "hole-to-outside offset, root-sum-square <= 0.05 (T2C-004: within dia 0.10); acceptance rests on the measured washers (docs/36 section 5)",
+   "ok": true,
+   "value": "RSS 0.026, worst case 0.075 mm radial (incl. 0.01 sheet shift)"
+  },
+  {
+   "check": "washer wall at the worst-case offset >= 0.175 (docs/34 functional limit)",
+   "ok": true,
+   "value": "0.242 mm"
+  },
+  {
+   "check": "hole punch edge 0.762 within the drawing limits 0.65-0.85",
+   "ok": true,
+   "value": "+0.012 mm from nominal"
+  },
+  {
+   "check": "outside punch edge 1.397 within the drawing limits 1.30-1.50",
+   "ok": true,
+   "value": "-0.003 mm from nominal"
+  },
+  {
+   "check": "information: squeeze of the sheet under the foot at the largest screw force",
+   "ok": true,
+   "value": "12.0 um at 1600 N (20.7 MPa on 77 mm2, shape factor 6.2, E 5.5 MPa UNVERIFIED)"
+  },
+  {
+   "check": "friction under the foot at the smallest screw force: lateral >= 20 N, torque >= 50 N mm",
+   "ok": true,
+   "value": "60 N, 249 N mm at mu 0.3, 200 N (UNVERIFIED)"
+  },
+  {
+   "check": "the foot lies inside the screw pattern (no rocking line through the foot)",
+   "ok": true,
+   "value": "4 screws"
+  },
+  {
+   "check": "plate floats: at the thinnest stack the underside outside the relief clears the base by >= 0.4",
+   "ok": true,
+   "value": "0.94 mm"
+  },
+  {
+   "check": "relief over the strip clears the rails by >= 0.5 and lies over them",
+   "ok": true,
+   "value": "1.64 mm; rail outer edge 8.8"
+  },
+  {
+   "check": "strip slides under the relief (the plate rides on the strip: clearance = relief depth >= 0.5)",
+   "ok": true,
+   "value": "1.0 mm"
+  },
+  {
+   "check": "the foot lies wholly on the strip, inside the rails",
+   "ok": true,
+   "value": "foot r 5.50, strip half-width 7.0"
+  },
+  {
+   "check": "bushing head seats on the liner end (liner proud of the plate top by >= 0.2)",
+   "ok": true,
+   "value": "0.3 mm"
+  },
+  {
+   "check": "web between washers >= 1.0 at the pitch (outside + 0.2 for the punch bevel)",
+   "ok": true,
+   "value": "1.40 mm"
+  },
+  {
+   "check": "dowel engages the plate >= 3 mm at the thickest stack",
+   "ok": true,
+   "value": "4.86 mm"
+  },
+  {
+   "check": "pitch scale ticks on the hole positions, downstream of the plate",
+   "ok": true,
+   "value": "first tick x = 21.0, plate edge 20.0"
+  }
+ ],
+ "n_checks": 36,
+ "all_pass": true,
+ "numbers": {
+  "z_foot": 1.04,
+  "plate_t": 12.399999999999999,
+  "foot_d": 11.0,
+  "z_head_top": 18.502499999999998,
+  "protrusion": 17.9625,
+  "pocket_A": 20.137499999999996,
+  "pocket_B": 20.137499999999996,
+  "tip_depth": [
+   0.15000000000000002,
+   0.35
+  ],
+  "slip_bore_A_in": 0.0352,
+  "slip_bore_B_in": 0.06520000000000001,
+  "concentricity_rss": 0.025902849264125366,
+  "concentricity_worst": 0.07548
+ }
+}
