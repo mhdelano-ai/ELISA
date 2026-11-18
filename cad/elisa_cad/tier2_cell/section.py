@@ -94,7 +94,7 @@ def draw(path, bed_ul=0.019):
     a1.set_ylabel("z (mm), 0 = top face of the base")
 
     _draw(a2, bed_ul, detail=True)
-    a2.set_xlim(-8.2, 8.2)
+    a2.set_xlim(-9.2, 8.2)
     a2.set_ylim(-1.4, 6.4)
     a2.set_aspect("equal")
     a2.set_title("Detail: bed, retainer and thin layer (same section)", fontsize=11)
@@ -116,7 +116,7 @@ def draw(path, bed_ul=0.019):
         (f"collecting groove r {P.RING_R0}–{P.RING_R1}", (2.6, 0.25), (1.1, 0.75)),
         ("riser and cross channel\nin the plate", (-3.6, zb - 0.25), (-8.0, 1.3)),
         (f"riser ⌀{P.RISER_BODY_D} to the outlet port", (P.RISER_BODY_X, 4.4), (-8.0, 5.6)),
-        ("stop for the strip", (P.POCKET_X_END, -P.POCKET_DEPTH / 2), (-8.0, -0.9)),
+        ("stop for the strip", (P.POCKET_X_END, -P.POCKET_DEPTH / 2), (-9.0, -0.95)),
     ]
     for txt, xy, xyt in lab:
         a2.annotate(txt, xy, xyt, fontsize=8.5, va="center",

@@ -17,22 +17,27 @@ import math
 STRIP_L, STRIP_W = 27.5, 10.1          # [V docs/28 section 2.1]
 STRIP_T = 0.27                         # UNVERIFIED: PET 0.25 [V docs/28] + printed layers; measure with a micrometer
 WE_D = 3.0                             # [V docs/28]
-WE_FROM_FREE_END = 6.0                 # UNVERIFIED: centre of the working electrode from the end without pads
-PRINT_R_MAX = 3.3                      # UNVERIFIED: outer radius of the printed counter and reference electrodes;
-#                                        MicruX seals the same strip with an O-ring of 8 mm I.D. [V docs/28]
+WE_FROM_FREE_END = 8.26                # MicruX drawing "Thick-film based-electrode features" (user, 2026-11-18),
+#                                        measured to scale: 17.13 px/mm from the 10.1 mm width gives 27.50 mm length.
+#                                        Confirm with calipers (+-0.2 assumed)
+PRINT_R_MAX = 3.65                     # same drawing: outer radius of the printed counter (arc) and reference
+#                                        (sector) electrodes, 3.64 mm; inner radius of both 2.56-2.59 mm
+PADS_FROM_FREE_END = 21.78             # same drawing: end of the printed (red) area = start of the four contact pads
+#                                        (pads 5.7 mm long, 4 pads within +-4.8 mm of the axis)
 
 # ---- stack -----------------------------------------------------------------------------------------------
-X0, X1 = -17.0, 13.0                   # CHOICE: body, plate and base from x = -17 to +13 (the strip runs to +21.5)
+X0, X1 = -17.0, 12.0                   # CHOICE: body, plate and base from x = -17 to +12; the pads start at +13.5
 Y_HALF = 22.0                          # CHOICE: 44 mm across
 BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 12.0   # CHOICE
 EDGE_CHAMFER = 0.5
 
 # ---- base (316L) ------------------------------------------------------------------------------------------
 POCKET_W = STRIP_W + 0.2               # CHOICE: strip pocket, open at +x
-POCKET_DEPTH = 0.45                    # CHOICE: strip + shim + gap
+POCKET_DEPTH = 0.55                    # CHOICE: strip + shim + gap; deep enough for the ceramic strip (0.38) too
 POCKET_X_END = -(WE_FROM_FREE_END + 0.1)   # Derived: closed end of the pocket is the stop for the strip
 POCKET_RELIEF_D = 1.6                  # CHOICE: corner reliefs at the closed end
-SHIM_T = 0.08                          # CHOICE: shim stock under the strip (0.05 + 0.03); sets the gap
+SHIM_T = 0.18                          # CHOICE: shim stock under a PET strip (0.10 + 0.05 + 0.03); sets the gap.
+#                                        Ceramic strip (0.38 + print): 0.05
 
 GAP = POCKET_DEPTH - STRIP_T - SHIM_T  # Derived: 0.10 mm liquid layer over the electrode
 GAP_TOL = 0.05                         # Derived (docs/34 section 5.3): pocket, strip and shim tolerances

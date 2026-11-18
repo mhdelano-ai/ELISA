@@ -142,7 +142,7 @@ No other cell needs to be bought. The gap of the cell in hand is unmeasured (doc
 Nothing in docs/30 is changed; whether tier 1 takes the thin gap is the user's decision (docs/33 §8).
 
 **Tier-2 flow cell with the bed inside (2026-11-18, docs/34; desk work, not reviewed, nothing ordered):** a stack
-of three machined parts, 30 × 44 × 22.5 mm: PEEK body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
+of three machined parts, 29 × 44 × 22.5 mm: PEEK body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
 PEEK nozzle plate (retainer pocket, exit bore, lid of the thin layer, O-ring on the strip), 316L base (strip
 pocket; a shim sets the gap, 0.10 mm). Revision B: in the plate's pocket a washer punched from 0.25 mm FKM sheet
 presses screen and membrane against the flat body face around the bed bore (no 0.5 mm O-rings; body and plate
@@ -152,8 +152,9 @@ screen; non-porous 10–14 µm streptavidin polystyrene beads on the screen alon
 nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30; the retainer's conjugate uptake
 (2.3–11 mm², UNVERIFIED) moves it between 1.7 and 2.4. Working pressure about 1 bar at 80 µL/min; laid out for
 500 psi with a margin of 2.9 on the main screws, but the O-ring seal on a printed strip at 500 psi needs a proof
-test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Four strip
-dimensions are UNVERIFIED and have to be measured before ordering (docs/34 §5.4). docs/30 is not changed; the
+test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip dimensions
+now read off MicruX's to-scale drawing (electrode centre 8.26 mm from the free end, print to r 3.64 mm); the
+strip thickness is still to be measured and the rest confirmed with calipers before ordering (docs/34 §5.4). docs/30 is not changed; the
 choices for the user are in docs/34 §8.3.
 
 ## Recording bench results

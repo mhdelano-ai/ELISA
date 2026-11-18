@@ -198,3 +198,9 @@ cross-section are hard to get and asked whether 1 mm would do. The proposal had 
 punched from 0.25 mm FKM sheet, acting as a spring in a pocket of the nozzle plate; a 1 mm O-ring variant is
 compared in docs/34 §6.4. Changed: `cad/elisa_cad/tier2_cell/` (params, parts, section, build: 28 checks),
 `scripts/tier_round/tier2_cell.py` (washer force, lift-off check: 8 checks), docs/34, the project guide.
+
+Strip dimensions, same day. The user sent MicruX's drawing of the S1PE strip (image, no text). It is to scale;
+three of the four UNVERIFIED strip dimensions were measured on it (electrode centre 8.26 mm from the free end
+instead of 6.0; print to r = 3.64 instead of 3.3; pads from 21.78 mm). `params.py`, docs/34 §5.4 and the project
+guide were updated; the stack was shortened by 1 mm and the strip pocket deepened for ceramic strips.
+

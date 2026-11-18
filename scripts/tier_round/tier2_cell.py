@@ -143,7 +143,7 @@ def mechanics():
     le = 8.0 - P.PLATE_T                          # M2.5 x 8 flat-head screw: engagement in the body
     strip_out = 0.5 * math.pi * 2.5 * le * SHEAR  # N per M2.5 thread in PEEK
     per_m25 = (F_iface + F_or_iface) / 4.0
-    bearing = preload_m4 / (math.pi / 4.0 * (9.0 ** 2 - P.M4_CLEAR ** 2))   # under a 9 mm washer
+    bearing = preload_m4 / (math.pi / 4.0 * (8.0 ** 2 - P.M4_CLEAR ** 2))   # under an 8 mm washer (DIN 433)
     # body and plate as one beam across the strip pocket, strip force at mid-span
     I_beam = (P.X1 - P.X0) * P.BODY_T ** 3 / 12.0
     sag = F_strip * P.POCKET_W ** 3 / (48.0 * E * I_beam)

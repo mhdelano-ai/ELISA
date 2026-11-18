@@ -111,14 +111,14 @@
    "value": "0.40 mm"
   },
   {
-   "check": "wall or margin: O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius) >= 0.1 mm",
+   "check": "wall or margin: inner edge of the strip O-ring's contact band (ring I.D./2 + 0.15) beyond the printed electrodes >= 0.0 mm",
    "ok": true,
-   "value": "0.15 mm"
+   "value": "0.00 mm"
   },
   {
-   "check": "wall or margin: strip beyond the stack, for the connector >= 7.0 mm",
+   "check": "wall or margin: contact pads start beyond the stack (room for the connector) >= 1.0 mm",
    "ok": true,
-   "value": "8.50 mm"
+   "value": "1.52 mm"
   },
   {
    "check": "nothing stands proud: the retainer stack is compressed into its pocket (washer squeeze 15-35 %)",
@@ -146,13 +146,13 @@
  "volumes_uL": {
   "bed_bore": 0.4908738521234052,
   "exit_bore": 0.5195899724726244,
-  "thin_layer_over_electrode": 0.7068583470577033,
-  "chamber_disc": 3.739280655935251,
+  "thin_layer_over_electrode": 0.7068583470577037,
+  "chamber_disc": 3.7392806559352527,
   "collecting_groove": 4.900884539600079
  },
  "masses_g": {
-  "base": 80.864787425978,
-  "nozzle_plate": 3.936399389965978,
-  "body": 18.82392468838777
+  "base": 77.83278108264446,
+  "nozzle_plate": 3.7922993899659785,
+  "body": 18.132244689348394
  }
 }

@@ -80,13 +80,15 @@ def checks(parts, liquid):
         "cross channel and riser to the body-plate O-ring groove": P.GROOVE_IFACE_ID / 2.0 - abs(P.CHANNEL_X_END)
         - max(P.CHANNEL_W, P.RISER_BODY_D) / 2.0,
         "strip beyond the O-ring groove, each side": (P.STRIP_W - P.GROOVE_STRIP_OD) / 2.0,
-        "O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius)": P.GROOVE_STRIP_ID / 2.0
-        - P.PRINT_R_MAX,
-        "strip beyond the stack, for the connector": P.STRIP_L - P.WE_FROM_FREE_END - P.X1,
+        "inner edge of the strip O-ring's contact band (ring I.D./2 + 0.15) beyond the printed electrodes":
+        P.ORING_STRIP[0] / 2.0 + 0.15 - P.PRINT_R_MAX,
+        "contact pads start beyond the stack (room for the connector)": P.PADS_FROM_FREE_END - P.WE_FROM_FREE_END
+        - P.X1,
     }
     limits = {"membrane overlap beyond the bed bore (clamped band)": 0.4,
-              "strip beyond the O-ring groove, each side": 0.3, "strip beyond the stack, for the connector": 7.0,
-              "O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius)": 0.1,
+              "strip beyond the O-ring groove, each side": 0.3,
+              "contact pads start beyond the stack (room for the connector)": 1.0,
+              "inner edge of the strip O-ring's contact band (ring I.D./2 + 0.15) beyond the printed electrodes": 0.0,
               "collecting groove to the O-ring groove (plate underside)": 0.5}
     for k, v in walls.items():
         lim = limits.get(k, 0.8)

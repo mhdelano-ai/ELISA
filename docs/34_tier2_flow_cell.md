@@ -14,6 +14,14 @@ presses the membrane against the flat underside of the body around the bed bore;
 plate meet face to face and the plate stays flat. Sections 0, 3, 4, 5, 6.3, 7, 8 and 10 are revised; the model
 numbers changed by at most 0.1 pg/mL.
 
+**Strip dimensions from the vendor drawing (same day).** The user supplied MicruX's drawing "Thick-film
+based-electrode features". It is to scale: 17.13 px/mm from the 10.1 mm width gives 27.50 mm for the length,
+against 27.5 stated, and 2.8–2.9 mm for the 3 mm working electrode. Measured on it: working electrode centred on
+the width, its centre **8.26 mm** from the free end (6.0 had been assumed); printed counter and reference
+electrodes from r = 2.56 to **3.64 mm** (3.3 assumed); printed area ends and the four pads begin 21.78 mm from the
+free end. The strip stop moved, the stack was shortened to x = +12 so that the pads start 1.5 mm clear of it, and
+the strip pocket was deepened to 0.55 mm so that the ceramic strip (0.38 mm) fits as well (section 5.4).
+
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
 * CAD: `cad/elisa_cad/tier2_cell/` → `cad/out/tier2_cell/` (STEP files of the three custom parts and of the
@@ -43,7 +51,7 @@ Neither holds 2.8 µm beads safely. A sintered 0.5 µm frit does, but its inner 
 40 mm² the model LOD is 5.0 pg/mL. The design therefore uses a **track-etched membrane with 1 µm pores lying on
 the 2 µm screen**: the membrane retains, the screen carries it. The 10–14 µm beads need the screen alone.
 
-**The cell** is a stack of three machined parts, 30 × 44 × 22.5 mm (figure in section 4):
+**The cell** is a stack of three machined parts, 29 × 44 × 22.5 mm (figure in section 4):
 
 | Part | Material | What it carries |
 |---|---|---|
@@ -79,8 +87,8 @@ The gain is small (10 %) and comes from the shorter wall above the bed (3.8 mm²
 The cell is not a way to a lower LOD; it is a way to make tier 2 a rigid, repeatable part instead of a sleeved
 capillary. The largest unknown of the cell is the conjugate that the retainer takes up (section 6.1).
 
-**Four dimensions of the strip have to be measured before anything is ordered** (section 5.4); they are
-UNVERIFIED parameters of the model and the design follows them.
+**Before anything is ordered**, the strip's thickness has to be measured, and the dimensions read off MicruX's
+drawing confirmed with calipers (section 5.4).
 
 ## 1. What the request changes
 
@@ -228,9 +236,10 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 
 ### 4.3 The gap
 
-Gap = pocket depth − strip thickness − shim = 0.45 − 0.27 − 0.08 = **0.10 mm**. The strip thickness is not
-published (0.27 is PET 0.25 mm [V docs/28] plus an allowance for the print), so the pocket is made deep and the
-gap is set with shim stock under the strip. With ±0.02 on the pocket, an estimated ±0.02 on the strip and ±0.01
+Gap = pocket depth − strip thickness − shim = 0.55 − 0.27 − 0.18 = **0.10 mm**. The strip thickness is not
+published (0.27 is PET 0.25 mm [V docs/28 and the vendor drawing] plus an allowance for the print), so the pocket
+is made deep and the gap is set with shim stock under the strip: 0.18 mm (0.10 + 0.05 + 0.03) for a PET strip,
+about 0.05 mm for a ceramic strip (0.38 mm). With ±0.02 on the pocket, an estimated ±0.02 on the strip and ±0.01
 on the shim the gap is 0.10 ± 0.05 at worst.
 
 Why 0.10 and not the 0.05 of docs/33. For tier 2 the model LOD is 1.9 at 0.05, 0.10 and 0.20 mm alike; the gap
@@ -246,9 +255,9 @@ microvolts at nanoampere currents.
 
 | Part | File | Material | Size (mm); mass | Machining |
 |---|---|---|---|---|
-| Base | `base.step` | 316L stainless | 30 × 44 × 8; 81 g | one side: pocket, 4 threads, 2 reamed holes |
-| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 30 × 44 × 2.5; 4 g | two sides: grooves and countersinks below, retainer pocket and slot above |
-| Body | `body.step` | PEEK, natural, unfilled | 30 × 44 × 12; 19 g | three sides: port and holes from the top, groove and threads from below, port from one end |
+| Base | `base.step` | 316L stainless | 29 × 44 × 8; 78 g | one side: pocket, 4 threads, 2 reamed holes |
+| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 29 × 44 × 2.5; 4 g | two sides: grooves and countersinks below, retainer pocket and slot above |
+| Body | `body.step` | PEEK, natural, unfilled | 29 × 44 × 12; 18 g | three sides: port and holes from the top, groove and threads from below, port from one end |
 
 Why these materials. PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
 craze in the 10 % methanol used for storage; PMMA does (docs/28 §4). Unfilled, because glass or carbon fill
@@ -263,7 +272,7 @@ generated from the same parameters; its content:
 
 | Part | Call-outs |
 |---|---|
-| Base | 4 × M4×0.7 through. 2 × ⌀3 P7 × 6 deep for pressed ⌀3 m6 × 16 pins. Strip pocket 10.3 +0.05/0 wide, **depth 0.45 ±0.02**, floor flat within 0.02, Ra ≤ 0.8 µm. Top face flat within 0.02 |
+| Base | 4 × M4×0.7 through. 2 × ⌀3 P7 × 6 deep for pressed ⌀3 m6 × 16 pins. Strip pocket 10.3 +0.05/0 wide, **depth 0.55 ±0.02**, floor flat within 0.02, Ra ≤ 0.8 µm. Top face flat within 0.02 |
 | Nozzle plate | Underside flat within 0.02 and **Ra ≤ 0.4 µm inside ⌀9.3**. O-ring groove depth 0.65 ±0.03. Exit bore ⌀0.5 +0.03/0, both ends free of burr, within 0.05 of the dowel holes. **Retainer pocket in the top face ⌀1.65 +0.03/0, depth 0.27 ±0.01, floor flat, concentric with the exit bore within 0.03.** 2 × ⌀3 H7. 4 × ⌀2.7 with 90° countersink ⌀5.0 from the underside, heads below the face. Top face flat within 0.02 |
 | Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the fitting maker's port drawing (bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore ⌀0.5 +0.03/0 through the port floor, within 0.05 of the dowel holes, sharp and free of burr at the underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals there).** O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
 | All | everything else ISO 2768-m; edges broken 0.1–0.2 mm; no burrs in the liquid path; no bead blasting of sealing faces |
@@ -301,24 +310,29 @@ are not known.
 | Washer | FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A; biopsy punches 1.2 and 0.75 mm; one washer per bed | sheet thickness tolerance and punch sizes UNVERIFIED |
 | Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch (the same punch cuts the washer's outer edge if 1.2 mm cannot be had: the pocket leaves room) | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
-| Screws, pins | 4 × M4 × 20 socket head with washers; 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins; stainless | standard |
-| Shim | stainless shim stock 0.05 and 0.03 mm, cut 10 × 19 mm | standard |
+| Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins; stainless | standard |
+| Shim | stainless shim stock 0.10, 0.05 and 0.03 mm, cut 10 × 20 mm | standard |
 | Beads | Dynabeads M-280 Streptavidin 11205D | docs/07 |
 
-**Measure on a strip and its connector before ordering** (the values in brackets are the UNVERIFIED parameters
-the model uses; `params.py`):
+**Strip dimensions** (`params.py`). Items 2–4 were measured on MicruX's drawing "Thick-film based-electrode
+features" (supplied by the user; to scale, checked by its length, 27.50 mm against 27.5 stated). A drawing is not
+a measured part: confirm them with calipers on a strip in hand.
 
-| # | Dimension | Used for | Value taken |
-|---|---|---|---|
-| 1 | Thickness of the strip over the dielectric and over the working electrode | pocket depth, shim | 0.27 mm |
-| 2 | Centre of the working electrode from the end without contacts | position of the pocket stop | 6.0 mm |
-| 3 | Outer radius of the printed counter and reference electrodes | the 7 × 1 O-ring has to enclose them (groove inner wall at r = 3.45) and stay on the strip (groove outer wall 0.4 mm inside each edge) | 3.3 mm |
-| 4 | Length of strip the connector needs | the strip projects 8.5 mm beyond the stack | ≥ 7 mm |
+| # | Dimension | Used for | Value | Source |
+|---|---|---|---|---|
+| 1 | Thickness of the strip over the dielectric and over the working electrode | shim (the pocket now takes PET and ceramic) | 0.27 mm (PET 0.25 + print) | substrate [V]; print UNVERIFIED: **measure** |
+| 2 | Centre of the working electrode from the end without contacts | position of the pocket stop | **8.26 mm** (6.0 assumed before) | drawing |
+| 3 | Outer radius of the printed counter (arc) and reference (sector) electrodes | inner edge of the strip O-ring's contact | **3.64 mm** (3.3 assumed); inner radius 2.56 | drawing |
+| 4 | Where the pads begin | the stack must end before them | 21.78 mm from the free end; the stack ends 1.5 mm before them | drawing |
 
-MicruX seals the same strip with an O-ring of 8 mm inner diameter [V docs/28]. An 8 × 1 ring would need a groove
-wider than the strip, so MicruX's ring is thinner than 1 mm or seals at the very edge. If dimension 3 exceeds
-3.4 mm, the ring here sits on the outer part of the printed counter electrode; that part is then covered but the
-cell still works, or the ring is changed to 7.5 × 0.8 (a change of two numbers in `params.py`).
+What item 3 means for the strip seal. The 7 × 1 O-ring has its inner edge at r = 3.5; its contact band starts
+about 0.15 mm further out, at r ≈ 3.65, which is the outer rim of the printed counter and reference electrodes
+(margin 0.0 mm). With pressure inside, the ring is pushed to the outer wall of its groove (r = 4.65) and its contact
+moves out to about r = 3.85–4.55, clear of the print. At worst the ring lies on the outer 0.1 mm of the print,
+whose step (10–20 µm, UNVERIFIED) is small against the 0.25 mm the ring is squeezed. A larger ring has no room:
+the space between the print (r = 3.64) and the strip edge (r = 5.05) is 1.41 mm, and a 1 mm cord needs a groove
+about 1.2 mm wide plus play for the strip in its pocket. MicruX seals the same strip with an O-ring of 8 mm inner
+diameter [V docs/28], which on a 10.1 mm strip can only be a thinner cord.
 
 ## 6. Numbers
 
@@ -383,7 +397,7 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Force parting body and plate (the same, 14.3 mm) | 554 N |
 | Clamp force of the four M4 screws at 0.5 N·m; needed; margin | 2500 N; 854 N; 2.9 |
 | Each M2.5 if the plate screws alone held the body–plate joint; thread strip-out in PEEK; margin | 149 N; 1145 N; 7.7 |
-| Bearing stress under the M4 washers; margin to yield | 13 MPa; 9 |
+| Bearing stress under the M4 washers (8 mm); margin to yield | 17 MPa; 7 |
 | Sag of body and plate across the strip pocket | 0.3 µm |
 | Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
 | Thinnest drilled wall (inlet thread to riser) | 1.0 mm |
@@ -484,7 +498,7 @@ pressure in the cell is released through the bed when the flow stops.
 4. **Gap**: 0.10 mm (chosen) or 0.05 mm by a thicker shim?
 5. **Body material**: PEEK (chosen, opaque). A polished polyetherimide body would let the bed be seen from the
    side; its resistance to the pH 9.5 buffer over months was not checked.
-6. Should the four strip measurements of section 5.4 be taken now, so that the parts can be quoted?
+6. Can the strip's thickness be measured, and items 2–4 of section 5.4 checked with calipers, so that the parts can be quoted?
 7. Whether this cell replaces the capillary in docs/30 §4, and whether tests C-1 … C-6 enter the bench plan, is
    the user's decision. docs/30 and docs/06 are not changed.
 
