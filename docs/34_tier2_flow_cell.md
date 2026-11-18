@@ -48,6 +48,20 @@ top face is flat within 0.02 inside ⌀16; the base pocket floor is parallel to 
 user's port drawing); the M2.5 tapped holes have 6.0 mm of full thread; the washer drawing gives its thickness as
 0.25 ±0.05 and a process note. The tolerance table (section 5.2) is the current list.
 
+**Tightest tolerance ±0.03 mm (same day, at the user's request).** Nothing on the drawings is now tighter than
+±0.03 mm; geometric zones are at least 0.03. Dowel holes and slot ⌀3.00 +0.05/+0.01 → **⌀3.04 ±0.03** (3.01–3.07);
+retainer pocket ⌀1.65 +0.05/−0 × 0.27 ±0.025 → **⌀1.68 ±0.03 × 0.27 ±0.03**; base top face flat, base pocket floor
+parallel, plate top face and body underside flat: 0.02 → **0.03**. Nominals moved to the middle of the old limits so
+no part loosens by more than 0.02 mm; STEP files, checks (all pass) and `tier2_cell.md` were regenerated. Effects
+(Derived): the pin clearance on a 3 m6 pin is 0.002–0.068 mm instead of 0.002–0.048, so plate and body can sit up
+to about 0.02 mm further apart sideways and the worst-case sealing band around the bed bore narrows by that much
+more; the compressed washer fills about 84 % of the pocket instead of 87 %; the force pushing the retainer away at
+80 µL/min goes from 0.21 to 0.22 N (margin still > 2); a 0.03 mm flatness on each face of the body–plate joint
+allows a film up to about 0.03 mm at the worst, which would by-pass about 2 % of the stream (5 µm 0.01 %, 15 µm
+0.26 %, 25 µm 1.2 %, `tier2_cell.md` §5) — faces at their tolerance limit and both bowed the same way are unlikely,
+and a dimensional report on the first lot shows it. The gap is unaffected: the pocket depth is measured and the shim
+sets it. No LOD figure changes.
+
 **Screw torques for acetal (same day).** The 0.5 N·m of the M4 screws had been set for PEEK; on acetal it puts
 24 MPa under the 8 mm washers, enough for the plastic to creep and the clamp to relax. Now M4 0.25 N·m and M2.5
 0.05 N·m (none had been given), each keeping the stress on the acetal near 10 MPa. The mechanics of section 6.3
@@ -104,8 +118,8 @@ shown by calculation: that an O-ring seals on a printed strip at 500 psi.** That
 **Xometry.** All three custom parts are plain 3-axis milling. Every hole is ≥ 0.5 mm, the feature size Xometry
 recommends as its minimum [S], and no hole is deeper than 7.5 diameters. Dimensioned drawings (A3 PDF, one per
 part) are in `cad/out/tier2_cell/drawings/` with an ordering sheet. Everything is at Xometry's standard tolerance
-except the features listed in section 5.2, none tighter than ±0.025 mm (±0.001 in), the level Xometry quotes
-automatically [S]. No quote was obtained and no price is given.
+except the features listed in section 5.2, none tighter than ±0.03 mm (user's limit, 2026-11-18), looser than the
+±0.001 in (±0.025 mm) Xometry quotes automatically [S]. No quote was obtained and no price is given.
 
 **What the cell changes in the model** (pg/mL):
 
@@ -201,7 +215,7 @@ variant.
 
 ### 3.1 How the joint between bed bore and exit bore is sealed (Revision B)
 
-The retainer sits in a pocket ⌀1.65 × 0.27 mm (±0.025) in the top face of the nozzle plate, over the exit bore.
+The retainer sits in a pocket ⌀1.68 × 0.27 mm (both ±0.03) in the top face of the nozzle plate, over the exit bore.
 From the bottom:
 
 | Layer | Part | Thickness free → in place (mm) | Job |
@@ -210,14 +224,14 @@ From the bottom:
 | 2 | Screen 1/16 in, 2 µm (VICI 2SR1-10) | 0.075 | carries the membrane over the washer's hole |
 | 3 | Membrane ⌀1.5, 1 µm track-etched polycarbonate | 0.010 | retains the beads |
 
-The stack is 0.335 mm free and 0.27 mm in place. The pocket is made to ±0.025 (drawing T2C-002), measured,
+The stack is 0.335 mm free and 0.27 mm in place. The pocket is made to ±0.03 (drawing T2C-002), measured,
 and each washer is picked by its measured thickness so that the squeeze stays near 26 %. Its top, the membrane, is in the plane of the plate's top face,
 where it meets the flat underside of the body. What each path meets:
 
 | Path | What closes it |
 |---|---|
 | Beads from the bore, sideways over the membrane to its edge | the membrane pressed against the body face (Ra ≤ 0.4 µm there) over a band 0.5 mm wide around the bore, at about 2 MPa (0.9–3.0 MPa over the tolerances) |
-| Liquid from the screen's edge, between body and plate, to the cross channel | body and plate face to face, flat within 0.02 mm, clamped by the M2.5 and M4 screws; with nothing proud the film is set by the flatness of the faces. A 5 µm film passes 0.01 % of the stream, 15 µm 0.3 % (`tier2_cell.md` §5) |
+| Liquid from the screen's edge, between body and plate, to the cross channel | body and plate face to face, flat within 0.03 mm, clamped by the M2.5 and M4 screws; with nothing proud the film is set by the flatness of the faces. A 5 µm film passes 0.01 % of the stream, 15 µm 0.3 % (`tier2_cell.md` §5) |
 | Liquid to the outside | the 12 × 1 O-ring between body and plate, rated with the rest of the cell for 500 psi |
 
 Numbers (`tier2_cell.md` §4; rubber modulus 6 MPa and the shape-factor correction of Gent, UNVERIFIED):
@@ -363,29 +377,29 @@ broken [S]) unless a function needs more. Three design changes made that possibl
 |---|---|
 | Strip pocket depth measured at assembly and the gap set with the shim (section 4.3) | the base pocket depth, from ±0.02 to standard |
 | Second dowel hole in plate and body made a slot along the line between the pins | the pin spacing in all three parts, from a matched ±0.01 to standard |
-| Pins bonded into the base instead of pressed | the base pin holes, from a press fit (P7) to the same ⌀3.00 +0.04/−0 as the others |
+| Pins bonded into the base instead of pressed | the base pin holes, from a press fit (P7) to the same ⌀3.04 ±0.03 as the others |
 
 What remains tighter than standard, and why:
 
 | Part | Feature | Called out | Why |
 |---|---|---|---|
-| all | dowel hole (B) and slot (C) | ⌀3.00 +0.05/+0.01 | locate the three parts on ⌀3 m6 pins (bonded in the base, so the base holes need room for the compound) |
+| all | dowel hole (B) and slot (C) | ⌀3.04 ±0.03 | locate the three parts on ⌀3 m6 pins (bonded in the base, so the base holes need room for the compound) |
 | Plate, body | M2.5 clearance holes (plate) and tapped holes (body) | position ⌀0.3 to A\|B\|C | M2.5 in ⌀3.2 leaves 0.7 mm, less than two plastic parts at standard (1.42); the M4 holes are at standard with a ⌀5.5 clearance |
-| Base | top face (datum A) | flat 0.02 | the plate rests on it; sets the gap |
-| Base | pocket floor | parallel to A within 0.02 | carries the brittle ceramic strip; keeps the gap even across the electrode |
-| Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.65 +0.05/−0; position ⌀0.10 to A\|B\|C; edge break ≤ 0.05 at both ends of the bore | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm) |
-| Plate | retainer pocket depth | 0.27 ±0.025 | sets the washer's squeeze; the washer is picked by measured thickness to suit the measured depth (section 3.1) |
+| Base | top face (datum A) | flat 0.03 | the plate rests on it; sets the gap |
+| Base | pocket floor | parallel to A within 0.03 | carries the brittle ceramic strip; keeps the gap even across the electrode |
+| Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.68 ±0.03; position ⌀0.10 to A\|B\|C; edge break ≤ 0.05 at both ends of the bore | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm, 0.02 less with the ±0.03 pin holes) |
+| Plate | retainer pocket depth | 0.27 ±0.03 | sets the washer's squeeze; the washer is picked by measured thickness to suit the measured depth (section 3.1) |
 | Plate | strip O-ring groove; collecting groove | ⌀ ±0.05 and depth ±0.05; ⌀ ±0.10 and depth ±0.10 | O-ring gland; radial outflow |
 | Base, plate, body | all surfaces | Ra 1.6 all over (title block) | lid of the thin layer, O-ring seats, sealing faces; one call-out instead of a symbol on each |
-| Plate | top face inside ⌀16 | flat 0.02 | the body seals on it, face to face |
+| Plate | top face inside ⌀16 | flat 0.03 | the body seals on it, face to face |
 | Body | bed bore | ⌀0.50 ±0.05, position ⌀0.10 to A\|B\|C, edge break ≤ 0.05 at both ends | as for the exit bore |
-| Body | underside (datum A) | inside ⌀16 flat 0.02; inside ⌀3 Ra 0.4 | the membrane seals on the ⌀3 area, the 12 × 1 O-ring and the face-to-face joint on the ⌀16 area |
+| Body | underside (datum A) | inside ⌀16 flat 0.03; inside ⌀3 Ra 0.4 | the membrane seals on the ⌀3 area, the 12 × 1 O-ring and the face-to-face joint on the ⌀16 area |
 | Body | body–plate O-ring groove | ⌀ ±0.10, depth ±0.05 | O-ring gland |
 | Body | both 1/4-28 ports | values of the user's port drawing: bottom flat 0.05, Ra 0.8, corner R ≤ 0.18, full thread ≥ 7.11; added here: inlet thread position ⌀0.10 to A\|B\|C | the fitting seals on the port bottom; the tubing end must sit over the bed bore |
 | Washer (T2C-004) | outer and inner diameter; thickness; hole position | ⌀1.40 ±0.10 / ⌀0.75 ±0.10; 0.25 ±0.05 (sheet tolerance); ⌀0.10 to the outer edge (B) | wall ≥ 0.175 mm; washers are sorted by measured thickness at assembly |
 
-Nothing is tighter than ±0.025 mm. Outside ⌀16 the plate's flatness is left at standard: the 2.5 mm plate is
-clamped flat between the body and the base, whose top face is held to 0.02.
+Nothing is tighter than ±0.03 mm (the user's limit; geometric zones ≥ 0.03). Outside ⌀16 the plate's flatness is left at standard: the 2.5 mm plate is
+clamped flat between the body and the base, whose top face is held to 0.03.
 
 ### 5.3 What Xometry states (checked as far as its pages were reached)
 
@@ -398,7 +412,7 @@ clamped flat between the body and the base, whose top face is held to 0.02.
 | Micro machining | offered, with cutters below 0.010 in; PEEK listed among its plastics | [V], Xometry micro-machining page |
 
 The design uses 0.5 mm holes at up to 5 diameters and a 1.0 mm hole at 7.5. The tightest tolerances on the
-drawings are ±0.025 mm (retainer pocket depth) and +0.04/−0 (pin holes); whether Xometry quotes them instantly or
+drawings are ±0.03 mm (pin holes and slot, retainer pocket) and flatness 0.03 (sealing faces); whether Xometry quotes them instantly or
 after manual review was not tried. No quote was requested; price and lead time are not known.
 
 ### 5.4 Purchased parts, and what to measure first
@@ -428,7 +442,7 @@ against 27.5 stated). Item 1 is the user's.
 
 Ceramic is brittle. The strip carries the O-ring's 25 N and, at 500 psi, about 230 N of pressure, both pushing it
 onto the shim and the pocket floor; it is not bent as long as it lies flat on them. Hence the floor is specified
-flat within 0.02 mm, the shim is cut whole (no stacked offcuts under the electrode) and kept free of burrs, and the
+parallel to A within 0.03 mm, the shim is cut whole (no stacked offcuts under the electrode) and kept free of burrs, and the
 M4 screws are tightened evenly in a cross pattern.
 
 What item 3 means for the strip seal. The 7 × 1 O-ring has its inner edge at r = 3.5; its contact band starts
@@ -533,7 +547,7 @@ assortments, UNVERIFIED) can be the spring, in the same place:
 |---|---|---|
 | Screen | 1/16 in (2SR1-10) | 1/8 in (VICI 2SR2-10 [V], ⌀3.175 × 0.075): it has to cover the ring |
 | Membrane | ⌀1.5 | ⌀3.0 |
-| Pocket | ⌀1.65 × 0.27 | stepped: ⌀3.25 × 0.09 for screen and membrane, then a ring groove ⌀3.1 × 0.84 deep |
+| Pocket | ⌀1.68 × 0.27 | stepped: ⌀3.25 × 0.09 for screen and membrane, then a ring groove ⌀3.1 × 0.84 deep |
 | What fills the ring's bore | nothing (washer hole 0.08 µL) | a PEEK boss ⌀1.0 left standing in the groove, its top 0.095 below the face, the exit bore through it; without the boss the ring's bore adds 0.6 µL and 2.4 mm² of elastomer to the dead volume |
 | Thinnest wall | 1.0 mm | 0.25 mm (the boss around the 0.5 mm bore), below the 0.5 mm Xometry recommends |
 | Land between pocket and cross channel | 1.4 mm | 0.6 mm |

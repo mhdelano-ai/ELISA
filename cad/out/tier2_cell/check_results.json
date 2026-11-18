@@ -88,7 +88,7 @@
   {
    "check": "wall or margin: face seal between retainer pocket and cross channel >= 0.8 mm",
    "ok": true,
-   "value": "1.38 mm"
+   "value": "1.36 mm"
   },
   {
    "check": "wall or margin: membrane overlap beyond the bed bore (clamped band) >= 0.4 mm",
@@ -152,7 +152,7 @@
  },
  "masses_g": {
   "base": 77.65290833931101,
-  "nozzle_plate": 3.516326968356474,
-  "body": 16.65441928077303
+  "nozzle_plate": 3.5153759797173563,
+  "body": 16.650209320570248
  }
 }
