@@ -80,6 +80,9 @@ def cell_design(beads=M280, bore_d=None, retainer_mm2=None, h=None, membrane=Non
              **kw)
     d["cell"].update(R=P.CHAMBER_R * 1e-3, bore_radius=0.5 * P.EXIT_D * 1e-3, bore_length=P.EXIT_LENGTH * 1e-3)
     d["bed"]["bore_area"] = P.EXIT_WALL * 1e-6                               # exit bore, at the lid factor
+    # the hole of the elastomer washer below the screen is counted with the retainer, at the frit factor (an
+    # elastomer factor has no source; UNVERIFIED)
+    d["bed"]["extra_area"] = d["bed"]["extra_area"] + P.WASHER_WALL * 1e-6
     d["bed"]["upstream_area"] = math.pi * bore_d * L_free * 1e-6 + D.LINE_AREA   # bore above the bed + line
     d["name"] = name or f"cell, {beads['key']}, bore {bore_d} mm, retainer {retainer_mm2:.2g} mm2"
     d["_geom"] = dict(L_bed_mm=L_bed, L_free_mm=L_free, retainer_mm2=retainer_mm2, bore_d=bore_d,
@@ -148,10 +151,21 @@ def mechanics():
     F_fit = 0.3 / (0.2 * 0.00635)                 # N at 0.3 N m on 1/4-28 (finger tight, UNVERIFIED)
     Dfl = E * (P.INLET_FLOOR ** 3 + P.PLATE_T ** 3) / (12.0 * (1 - 0.38 ** 2))
     floor = F_fit * (0.5 * P.PORT_TAP_DRILL) ** 2 / (16.0 * math.pi * Dfl)
-    # pinch of the retainer: the plate bends by the amount the screen stands proud of its seat
-    proud = P.SCREEN_T - P.RETAINER_POCKET_DEPTH
+    # retainer: the washer is the spring that presses screen and membrane against the body face.
+    # Squeeze over the tolerances: pocket +-0.01, sheet +-0.02, membrane 6-15 um, screen +-0.005 (UNVERIFIED).
+    E_R = 6.0                                     # MPa, FKM 75 Shore A (UNVERIFIED)
+    A_w = A(P.WASHER_OD) - A(P.WASHER_ID)
+    S_w = A_w / (math.pi * (P.WASHER_OD + P.WASHER_ID) * P.WASHER_T)        # shape factor (Gent)
+    def washer_force(t, depth, mem, scr):
+        h = depth - mem - scr
+        e = max(1.0 - h / t, 0.0)
+        return E_R * (1.0 + 2.0 * S_w ** 2) * e * A_w, e
+    lo = washer_force(P.WASHER_T - 0.02, P.RET_POCKET_DEPTH + 0.01, 0.006, P.SCREEN_T - 0.005)
+    no = washer_force(P.WASHER_T, P.RET_POCKET_DEPTH, P.MEMBRANE_T, P.SCREEN_T)
+    hi = washer_force(P.WASHER_T + 0.02, P.RET_POCKET_DEPTH - 0.01, 0.015, P.SCREEN_T + 0.005)
+    A_clamp = A(P.MEMBRANE_DISC_D) - A(P.BED_D)                             # band where the membrane seals
     Dpl = E * P.PLATE_T ** 3 / (12.0 * (1 - 0.38 ** 2))
-    pinch_per_um = 16.0 * math.pi * Dpl * 1e-3 / (math.hypot(*P.M25_XY[0]) ** 2)   # N per um, clamped disc
+    plate_k = 16.0 * math.pi * Dpl * 1e-3 / (math.hypot(*P.M25_XY[0]) ** 2)   # N per um, clamped disc (soft bound)
     squeeze = lambda cs, gland: 1.0 - gland / cs
     return dict(
         p_MPa=p, F_strip_N=F_strip, F_iface_N=F_iface, F_oring_strip_N=F_or_strip, F_oring_iface_N=F_or_iface,
@@ -159,7 +173,9 @@ def mechanics():
         main_margin=4 * preload_m4 / need_main, m25_load_each_N=per_m25, m25_strip_out_N=strip_out,
         m25_margin=strip_out / per_m25, bearing_MPa=bearing, bearing_margin=COMP / bearing,
         sag_um=sag * 1e3, fitting_force_N=F_fit, floor_deflection_um=floor * 1e3,
-        screen_proud_um=proud * 1e3, pinch_N_per_um=pinch_per_um, pinch_N=pinch_per_um * proud * 1e3,
+        washer_squeeze=[lo[1], no[1], hi[1]], washer_force_N=[lo[0], no[0], hi[0]],
+        membrane_clamp_MPa=[f / A_clamp for f in (lo[0], no[0], hi[0])],
+        plate_bow_um=hi[0] / plate_k, pocket_area_mm2=A(P.RET_POCKET_D), washer_E_MPa=E_R,
         bed_force_N=p * A(P.BED_D),
         squeeze_strip=[squeeze(P.ORING_STRIP[1], P.GROOVE_STRIP_DEPTH + g)
                        for g in (P.GAP - P.GAP_TOL, P.GAP, P.GAP + P.GAP_TOL)],
@@ -171,8 +187,9 @@ def side_paths(ps):
     """Two secondary flow paths, as ratios of resistances (Derived; creeping flow).
 
     Symmetry: the liquid reaches the riser either straight across the thin layer or across the layer on the far
-    side and half-way round the collecting groove.  By-pass: with the screen proud of its seat by `film`, a film
-    of that height joins the retainer to the cross channel past the electrode (width taken as 2 mm)."""
+    side and half-way round the collecting groove.  By-pass: a film of height `film` between body and plate (set by
+    the flatness of the two faces; nothing stands proud) joins the edge of the retainer pocket to the cross channel
+    past the electrode (width taken as 2 mm)."""
     mu = float(ps.params["ma.fluid.viscosity"].value)
     R_gap = 6.0 * mu * math.log(P.RING_R0 / (0.5 * P.EXIT_D)) / (math.pi * (P.GAP * 1e-3) ** 3)
     w, h = (P.RING_R1 - P.RING_R0) * 1e-3, P.RING_DEPTH * 1e-3
@@ -181,7 +198,7 @@ def side_paths(ps):
     R_groove = 12.0 * mu * L_half / (a * b ** 3 * (1.0 - 0.63 * b / a)) / 2.0      # two half-rings in parallel
     hp = lambda d_mm, L_mm: 128.0 * mu * (L_mm * 1e-3) / (math.pi * (d_mm * 1e-3) ** 4)
     R_main = hp(P.EXIT_D, P.EXIT_LENGTH) + R_gap + hp(P.RISER_PLATE_D, P.PLATE_T - P.RING_DEPTH)
-    L_film = (abs(P.RISER_PLATE_X) - P.CHANNEL_W / 2.0 - P.RETAINER_POCKET_D / 2.0) * 1e-3
+    L_film = (abs(P.RISER_PLATE_X) - P.CHANNEL_W / 2.0 - P.RET_POCKET_D / 2.0) * 1e-3
     bypass = {}
     for film_um in (5, 15, 25, 45):
         R_film = 12.0 * mu * L_film / (2e-3 * (film_um * 1e-6) ** 3)
@@ -271,6 +288,10 @@ def main(argv=None):
     hyd = {b["key"]: hydraulics(ps, b, P.BED_D, b["d_p"] < 7e-6) for b in (M280, PS12)}
     hyd["M-280, bore 0.2 mm x 0.6 mm (docs/30)"] = hydraulics(ps, M280, 0.2, False)
     mech = mechanics()
+    # upper bound of the force that pushes the retainer stack off the body face: the pressure drop through bed,
+    # membrane and screen acting on the whole pocket area
+    mech["stack_push_N"] = {q: (r["bed"] + r["membrane"] + r["screen"]) * mech["pocket_area_mm2"] * 1e-6
+                            for q, r in hyd["M-280"].items()}
     geo = geometry_table()
     side = side_paths(ps)
     scan = scans(ps)
@@ -292,12 +313,13 @@ def main(argv=None):
                     return r
         return None
     ref = find(tiers)
+    checks_lift = mech["stack_push_N"][80.0] < 0.5 * mech["washer_force_N"][0]
     checks = [
         ("the unchanged tier 2 reproduces tiers.json (nominal LOD)", ref is not None
          and abs(res["ref"]["lod_nominal"] / ref["lod_nominal"] - 1) < 1e-6,
          f"{res['ref']['lod_nominal']:.6g} vs {ref['lod_nominal'] if ref else None}"),
         ("gap from the stack is 0.10 mm", abs(P.GAP - 0.10) < 1e-9, f"{P.GAP:.3f}"),
-        ("dead volume between retainer and electrode equals the 0.5 uL of docs/30 within 5 %",
+        ("dead volume between retainer and electrode (exit bore and washer hole) equals the 0.5 uL of docs/30 within 5 %",
          abs(P.EXIT_VOLUME_UL / 0.5 - 1) < 0.05, f"{P.EXIT_VOLUME_UL:.3f} uL"),
         ("total pressure drop of the cell at 200 uL/min is below a tenth of the rating (M-280)",
          hyd["M-280"][200.0]["total"] < 0.1 * P_RATED, f"{hyd['M-280'][200.0]['total'] / 1e5:.2f} bar"),
@@ -305,6 +327,8 @@ def main(argv=None):
          f"{mech['main_margin']:.1f}"),
         ("plate screws alone hold the body-plate joint at the rated pressure, margin at least 3",
          mech["m25_margin"] >= 3.0, f"{mech['m25_margin']:.1f}"),
+        ("the lowest washer force holds the retainer against the body face at 80 uL/min with a margin of 2",
+         checks_lift, f"{mech['stack_push_N'][80.0]:.2f} N vs {mech['washer_force_N'][0]:.2f} N"),
         ("O-ring squeeze on the strip stays within 15-35 % over the gap tolerance",
          all(0.15 <= s <= 0.35 for s in mech["squeeze_strip"]),
          ", ".join(f"{100 * s:.0f} %" for s in mech["squeeze_strip"])),
@@ -365,8 +389,14 @@ def main(argv=None):
           f"| Bearing stress under the M4 washers; margin to compressive yield | {m['bearing_MPa']:.0f} MPa; {m['bearing_margin']:.0f} |",
           f"| Sag of body and plate across the strip pocket | {m['sag_um']:.2f} µm |",
           f"| Deflection of the port floor under the inlet fitting ({m['fitting_force_N']:.0f} N) | {m['floor_deflection_um']:.1f} µm |",
-          f"| Screen stands proud of its seat by; plate stiffness; pinch force | {m['screen_proud_um']:.0f} µm; {m['pinch_N_per_um']:.1f} N/µm; {m['pinch_N']:.0f} N |",
+          "| Retainer washer squeeze, low / nominal / high tolerance | " + " / ".join(f"{100 * x:.0f} %" for x in m["washer_squeeze"]) + " |",
+          "| Washer force (E " + f"{m['washer_E_MPa']:.0f}" + " MPa, UNVERIFIED), low / nominal / high | " + " / ".join(f"{x:.2f} N" for x in m["washer_force_N"]) + " |",
+          "| Pressure on the membrane's sealing band, low / nominal / high | " + " / ".join(f"{x:.2f} MPa" for x in m["membrane_clamp_MPa"]) + " |",
+          f"| Bow of the plate under the highest washer force | {m['plate_bow_um']:.2f} µm |",
           f"| Force of the bed on the retainer if the whole 500 psi fell across the bed | {m['bed_force_N']:.2f} N |",
+          "| Force pushing the retainer stack away from the body face (pressure drop of bed, membrane and screen on the "
+          "whole pocket; upper bound), at " + " / ".join(f"{q:g}" for q in m["stack_push_N"]) + " µL/min | "
+          + " / ".join(f"{v:.2g} N" for v in m["stack_push_N"].values()) + " |",
           f"| O-ring squeeze on the strip at gap {P.GAP - P.GAP_TOL:.2f} / {P.GAP:.2f} / {P.GAP + P.GAP_TOL:.2f} mm | " + " / ".join(f"{100 * s:.0f} %" for s in m["squeeze_strip"]) + " |",
           f"| O-ring squeeze between body and plate | {100 * m['squeeze_iface']:.0f} % |", "",
           "## 5. Secondary flow paths", "", "| Quantity | Value |", "|---|---|",

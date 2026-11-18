@@ -88,7 +88,7 @@ python scripts/tier_round/run_tiers.py              # tier round: all designs, s
 python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
 python scripts/tier_round/cell_geometries.py        # docs/33: flow-cell geometries (~4 min; `--doc` prints its tables)
 python scripts/tier_round/tier2_cell.py             # docs/34: tier-2 cell with the bed inside: model, pressure, 500 psi (~1 min)
-(cd cad && python -m elisa_cad.tier2_cell.build)    # docs/34: STEP files, section, drawing notes, 24 checks (~1 min)
+(cd cad && python -m elisa_cad.tier2_cell.build)    # docs/34: STEP files, section, drawing notes, 28 checks (~1 min)
 python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
@@ -143,11 +143,13 @@ Nothing in docs/30 is changed; whether tier 1 takes the thin gap is the user's d
 
 **Tier-2 flow cell with the bed inside (2026-11-18, docs/34; desk work, not reviewed, nothing ordered):** a stack
 of three machined parts, 30 × 44 × 22.5 mm: PEEK body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
-PEEK nozzle plate (clamps the retainer, exit bore, lid of the thin layer, O-ring on the strip), 316L base (strip
-pocket; a shim sets the gap, 0.10 mm). Beads stay Dynabeads M-280, 1×10⁶; because catalogue stainless screens are
+PEEK nozzle plate (retainer pocket, exit bore, lid of the thin layer, O-ring on the strip), 316L base (strip
+pocket; a shim sets the gap, 0.10 mm). Revision B: in the plate's pocket a washer punched from 0.25 mm FKM sheet
+presses screen and membrane against the flat body face around the bed bore (no 0.5 mm O-rings; body and plate
+face to face; keep flows through the bed ≤ 80 µL/min). Beads stay Dynabeads M-280, 1×10⁶; because catalogue stainless screens are
 only nominally rated (1 µm screen absolute at 6–7 µm), the retainer is a 1 µm track-etched membrane on a 2 µm
 screen; non-porous 10–14 µm streptavidin polystyrene beads on the screen alone are the fallback. Model: 1.9 pg/mL
-nominal, median 7.8 [0.95–91] against 2.1 and 8.4 for the capillary of docs/30; the retainer's conjugate uptake
+nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30; the retainer's conjugate uptake
 (2.3–11 mm², UNVERIFIED) moves it between 1.7 and 2.4. Working pressure about 1 bar at 80 µL/min; laid out for
 500 psi with a margin of 2.9 on the main screws, but the O-ring seal on a printed strip at 500 psi needs a proof
 test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Four strip

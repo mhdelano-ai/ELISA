@@ -14,7 +14,7 @@ docs/19–22 modules, docs/23 integration; resolution table docs/24 §8). Python
 | `elisa_cad/dock_upper/` | DOCK UPPER (docs/20) | lid/head: pins, springs, yokes, cylinders, heater block, press pad, cam, latches, cover → `out/dock_upper/` |
 | `elisa_cad/dock_lower/` | DOCK LOWER (docs/21) | nest, anvil, cold zone, M_c units, M_d stage, electrode bay, tubes, latch brackets, hinge pedestals → `out/dock_lower/` |
 | `elisa_cad/dock_base/` | DOCK BASE (docs/22) | frame, deck, pumps, bottles, pneumatics, electronics, enclosure, tubing schedule → `out/dock_base/` |
-| `elisa_cad/tier2_cell/` | tier-2 flow cell (docs/34) | independent of the cartridge and of `interface.py`: `params.py` (its own single source of dimensions, also read by `scripts/tier_round/tier2_cell.py`), base, nozzle plate and body, labelled section, drawing notes, 24 checks → `out/tier2_cell/` (`python -m elisa_cad.tier2_cell.build`, about 1 min) |
+| `elisa_cad/tier2_cell/` | tier-2 flow cell (docs/34) | independent of the cartridge and of `interface.py`: `params.py` (its own single source of dimensions, also read by `scripts/tier_round/tier2_cell.py`), base, nozzle plate and body, labelled section, drawing notes, 28 checks → `out/tier2_cell/` (`python -m elisa_cad.tier2_cell.build`, about 1 min) |
 | `elisa_cad/assembly/` | integration (docs/23) | real card + all modules in dock coordinates, cross-module checks, z-buffer renders → `out/assembly/` |
 
 Each module package has `build.py` (entry point), its own parameters (`params.py` / `geom.py` / `profiles.py`), parts,

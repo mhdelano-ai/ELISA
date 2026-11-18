@@ -190,3 +190,11 @@ docs/34 §8.3.
 
 No agent was used and the result was not independently reviewed. `tierkit.py`, the designs, docs/26–31, docs/33
 and the deck are unchanged. What went wrong on the way is in docs/34 §10.
+
+Revision B of docs/34, same day. The user asked "How is the seal made between the bed bore and exit bore?"; the
+answer found that the first version's pinched screen had no defined force, held body and plate apart and bowed the
+plate. The user accepted a proposed fix ("Yes"); while it was being made they wrote that O-rings of 0.5 mm
+cross-section are hard to get and asked whether 1 mm would do. The proposal had already been replaced by a washer
+punched from 0.25 mm FKM sheet, acting as a spring in a pocket of the nozzle plate; a 1 mm O-ring variant is
+compared in docs/34 §6.4. Changed: `cad/elisa_cad/tier2_cell/` (params, parts, section, build: 28 checks),
+`scripts/tier_round/tier2_cell.py` (washer force, lift-off check: 8 checks), docs/34, the project guide.

@@ -59,6 +59,7 @@ def plate():
     b = _block(Z_PLATE, P.PLATE_T)
     tools = [
         _cyl(P.EXIT_D, P.PLATE_T),                                                            # exit bore
+        _cyl(P.RET_POCKET_D, P.RET_POCKET_DEPTH, 0, 0, P.PLATE_T - P.RET_POCKET_DEPTH),       # retainer pocket
         _ring(P.GROOVE_STRIP_ID, P.GROOVE_STRIP_OD, P.GROOVE_STRIP_DEPTH),                    # O-ring on the strip
         _ring(2 * P.RING_R0, 2 * P.RING_R1, P.RING_DEPTH),                                    # collecting groove
         _cyl(P.RISER_PLATE_D, P.PLATE_T, P.RISER_PLATE_X),                                    # riser
@@ -86,7 +87,6 @@ def body():
         _cyl(P.PORT_TAP_DRILL, P.PORT_DEPTH, 0, 0, Z_TOP - P.PORT_DEPTH),                     # inlet port 1/4-28
         _cyl(P.PORT_MAJOR_D, 0.6, 0, 0, Z_TOP - 0.6),                                         # thread relief
         _cyl(P.BED_D, P.INLET_FLOOR, 0, 0, Z_BODY),                                           # bed bore
-        _cyl(P.RETAINER_POCKET_D, P.RETAINER_POCKET_DEPTH, 0, 0, Z_BODY),                     # retainer seat
         _ring(P.GROOVE_IFACE_ID, P.GROOVE_IFACE_OD, P.GROOVE_IFACE_DEPTH, Z_BODY),            # O-ring to the plate
         _cyl(P.RISER_BODY_D, P.OUTLET_Z + P.OUTLET_THROUGH_D / 2.0, P.RISER_BODY_X, 0, Z_BODY),   # riser
         _xcyl(P.PORT_TAP_DRILL, P.X0, x_port_end, 0, zo),                                     # outlet port 1/4-28
@@ -134,12 +134,20 @@ def oring_iface():
     return _oring(P.ORING_IFACE, Z_BODY + P.GROOVE_IFACE_DEPTH / 2.0)
 
 
+Z_POCKET = P.PLATE_T - P.RET_POCKET_DEPTH        # floor of the retainer pocket
+
+
+def washer():
+    """Elastomer washer, drawn at its compressed height (its bulge is not drawn)."""
+    return _ring(P.WASHER_ID, P.WASHER_OD, P.WASHER_H, Z_POCKET)
+
+
 def screen():
-    return _cyl(P.SCREEN_D, P.RETAINER_POCKET_DEPTH - 0.012, 0, 0, Z_BODY)        # drawn at its seated height
+    return _cyl(P.SCREEN_D, P.SCREEN_T, 0, 0, Z_POCKET + P.WASHER_H)
 
 
 def membrane():
-    return _cyl(1.5, 0.010, 0, 0, Z_BODY + P.RETAINER_POCKET_DEPTH - 0.011)
+    return _cyl(P.MEMBRANE_DISC_D, P.MEMBRANE_T, 0, 0, Z_POCKET + P.WASHER_H + P.SCREEN_T)   # top = body face
 
 
 def screws():
@@ -158,7 +166,7 @@ def bed(volume_ul=0.019):
     """Packed bed in the bed bore, on the retainer (default: 1e6 beads of 2.8 um, 19 nL)."""
     import math
     L = volume_ul / (math.pi * P.BED_D ** 2 / 4.0)
-    return _cyl(P.BED_D, L, 0, 0, Z_BODY + P.RETAINER_POCKET_DEPTH)
+    return _cyl(P.BED_D, L, 0, 0, Z_BODY)
 
 
 def liquid():
@@ -167,8 +175,9 @@ def liquid():
     ch_len = P.RISER_PLATE_X - P.CHANNEL_X_END
     parts = [
         _cyl(P.BED_D, P.INLET_FLOOR, 0, 0, Z_BODY),
-        _cyl(P.RETAINER_POCKET_D, P.RETAINER_POCKET_DEPTH, 0, 0, Z_BODY),
-        _cyl(P.EXIT_D, P.PLATE_T),
+        _cyl(P.BED_D, P.RET_POCKET_DEPTH - P.WASHER_H, 0, 0, Z_POCKET + P.WASHER_H),      # through membrane and screen
+        _cyl(P.WASHER_ID, P.WASHER_H, 0, 0, Z_POCKET),                                       # hole of the washer
+        _cyl(P.EXIT_D, Z_POCKET),
         _cyl(P.GROOVE_STRIP_ID, P.GAP, 0, 0, -P.GAP),                                          # the thin layer
         _ring(2 * P.RING_R0, 2 * P.RING_R1, P.RING_DEPTH),
         _cyl(P.RISER_PLATE_D, P.PLATE_T, P.RISER_PLATE_X),

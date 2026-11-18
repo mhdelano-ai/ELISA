@@ -11,7 +11,7 @@
 | `check_tierkit.py` | 36 checks of the kit against analytic limits, an independent derivation and the audited model → `results/tier_round/check_tierkit.md` |
 | `crosscheck_model.py` | the kit's bed format run on the model's `B-bed-TL/alp_hqdp` inputs |
 | `cell_geometries.py` | follow-up (docs/33): other flow-cell geometries put into the unchanged designs of `run_tiers.py` — gap of the radial cell, cross-flow channel with and without walls upstream of the electrode, adjustable confined wall jet, free wall jet, porous flow-through electrode, ideal bound; own solver for product released from a channel wall upstream of the electrode, with checks → `results/tier_round/cell_geometries.md`, `cell_geometries.json` |
-| `tier2_cell.py` | follow-up (docs/34): the tier-2 flow cell with the bead bed inside the cell — dimensions read from `cad/elisa_cad/tier2_cell/params.py`; model cases (retainer area, bead size, bore, gap), pressure drop along the cell, forces and margins at 500 psi, secondary flow paths, 7 checks → `results/tier_round/tier2_cell.md`, `tier2_cell.json` |
+| `tier2_cell.py` | follow-up (docs/34): the tier-2 flow cell with the bead bed inside the cell — dimensions read from `cad/elisa_cad/tier2_cell/params.py`; model cases (retainer area, bead size, bore, gap), pressure drop along the cell, forces and margins at 500 psi, secondary flow paths, washer spring, 8 checks → `results/tier_round/tier2_cell.md`, `tier2_cell.json` |
 | `review_numbers.py`, `review_chemistry_calc.py`, `review_feasibility_calc.py`, `review2_numbers.py`, `review2_consistency.py` | the reviewers' own calculations behind `results/tier_round/review_*.md` and `review2_*.md` (record; written against the first version and against Revision B of the designs, docs/31) |
 
 ```bash

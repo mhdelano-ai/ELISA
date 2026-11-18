@@ -52,6 +52,14 @@ GROOVE_STRIP_ID, GROOVE_STRIP_OD, GROOVE_STRIP_DEPTH = 6.9, 9.3, 0.65   # Derive
 RING_R0, RING_R1, RING_DEPTH = 2.3, 2.9, 0.5       # CHOICE: collecting groove around the electrode
 RISER_PLATE_X, RISER_PLATE_D = -2.6, 0.6           # CHOICE: from the collecting groove up through the plate
 CHANNEL_X_END, CHANNEL_W, CHANNEL_DEPTH = -4.6, 0.8, 0.5   # CHOICE: slot in the top face of the plate
+# Retainer pocket in the top face of the plate (Revision B, docs/34 section 3.1): from the bottom, an elastomer
+# washer (the spring), the screen, the membrane.  The washer pushes screen and membrane up against the flat
+# underside of the body around the bed bore; nothing stands proud of the plate, so body and plate meet face to
+# face and the plate stays flat.
+RET_POCKET_D = 1.65                    # CHOICE: guides the 1/16 in screen
+RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.01: washer compressed + screen + membrane
+WASHER_OD, WASHER_ID, WASHER_T = 1.2, 0.75, 0.25   # CHOICE: punched from 0.25 mm FKM sheet (+-0.02, UNVERIFIED)
+#                                        with 1.2 and 0.75 mm biopsy punches (sizes UNVERIFIED)
 
 # ---- body (PEEK) -------------------------------------------------------------------------------------------
 BED_D = 0.5                            # CHOICE: bed bore = floor of the inlet port (0.3 as a variant, docs/34 6.3)
@@ -60,7 +68,6 @@ PORT_MAJOR_D, PORT_TAP_DRILL = 6.35, 5.5          # thread standard; tap drill f
 PORT_DEPTH = 9.5                       # UNVERIFIED: take the depth and the flat-bottom finish from the fitting
 #                                        maker's port drawing (IDEX "1/4-28 Standard Flat-Bottom Port")
 INLET_FLOOR = BODY_T - PORT_DEPTH      # Derived: 2.5 mm = length of the bed bore
-RETAINER_POCKET_D, RETAINER_POCKET_DEPTH = 1.65, 0.06   # CHOICE: seat of the 1/16 in screen in the body underside
 ORING_IFACE = (12.0, 1.0)              # CHOICE: body-to-plate O-ring
 GROOVE_IFACE_ID, GROOVE_IFACE_OD, GROOVE_IFACE_DEPTH = 11.9, 14.3, 0.75
 RISER_BODY_X, RISER_BODY_D = -4.6, 1.0
@@ -72,6 +79,7 @@ SCREEN_D, SCREEN_T = 1.5875, 0.075     # VICI 2SR1-10: 1/16 in, 2 um nominal, 0.
 MEMBRANE_T = 0.010                     # track-etched polycarbonate, 1 um pores; 6-15 um thick [S], taken as 10
 MEMBRANE_PORES_PER_MM2 = 2.0e5         # 2e7 per cm2 for 1 um pores [S]
 MEMBRANE_PORE_D = 1.0e-3
+MEMBRANE_DISC_D = 1.5                  # CHOICE: punched; lies on the screen inside the pocket
 
 # ---- derived quantities used by the model script ------------------------------------------------------------
 def area_circle(d):
@@ -79,7 +87,10 @@ def area_circle(d):
 
 
 BORE_AREA = area_circle(BED_D)                                  # mm2
-EXIT_LENGTH = PLATE_T                                           # the retainer seat is in the body
-EXIT_WALL = math.pi * EXIT_D * EXIT_LENGTH                      # mm2 between retainer and electrode
-EXIT_VOLUME_UL = area_circle(EXIT_D) * EXIT_LENGTH              # mm3 = uL
+WASHER_H = RET_POCKET_DEPTH - SCREEN_T - MEMBRANE_T              # compressed height of the washer (0.185)
+WASHER_SQUEEZE = 1.0 - WASHER_H / WASHER_T                      # 0.26 nominal
+EXIT_LENGTH = PLATE_T - RET_POCKET_DEPTH                        # exit bore from the pocket floor to the cell face
+EXIT_WALL = math.pi * EXIT_D * EXIT_LENGTH                      # mm2 of PEEK between retainer and electrode
+WASHER_WALL = math.pi * WASHER_ID * WASHER_H                    # mm2 of elastomer between retainer and electrode
+EXIT_VOLUME_UL = area_circle(EXIT_D) * EXIT_LENGTH + area_circle(WASHER_ID) * WASHER_H   # mm3 = uL
 CHAMBER_R = GROOVE_STRIP_ID / 2.0                               # liquid disc under the plate

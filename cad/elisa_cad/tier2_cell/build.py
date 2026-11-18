@@ -48,7 +48,7 @@ def checks(parts, liquid):
             worst = max(worst, v)
             if v > 1e-4:
                 add(f"no interference {a} / {b}", False, f"{v:.4f} mm3")
-    add("no interference between any two solid parts (10 parts; O-rings drawn at their compressed height)", worst <= 1e-4,
+    add("no interference between any two solid parts (11 parts; O-rings and washer drawn at their compressed height)", worst <= 1e-4,
         f"largest common volume {worst:.2e} mm3")
     add("the liquid is one connected solid from the inlet port floor to the outlet port floor",
         n_solids(liquid) == 1, f"{n_solids(liquid)} solid(s), {vol(liquid):.2f} mm3")
@@ -73,8 +73,10 @@ def checks(parts, liquid):
         "thin-layer land beyond the working electrode": P.RING_R0 - P.WE_D / 2.0,
         "plate under the cross channel, above the collecting groove": P.PLATE_T - P.CHANNEL_DEPTH - P.RING_DEPTH,
         "plate above the O-ring groove": P.PLATE_T - P.GROOVE_STRIP_DEPTH,
-        "face seal between retainer seat and cross channel": abs(P.RISER_PLATE_X) - P.CHANNEL_W / 2.0
-        - P.RETAINER_POCKET_D / 2.0,
+        "face seal between retainer pocket and cross channel": abs(P.RISER_PLATE_X) - P.CHANNEL_W / 2.0
+        - P.RET_POCKET_D / 2.0,
+        "membrane overlap beyond the bed bore (clamped band)": (P.MEMBRANE_DISC_D - P.BED_D) / 2.0,
+        "plate under the retainer pocket": P.PLATE_T - P.RET_POCKET_DEPTH,
         "cross channel and riser to the body-plate O-ring groove": P.GROOVE_IFACE_ID / 2.0 - abs(P.CHANNEL_X_END)
         - max(P.CHANNEL_W, P.RISER_BODY_D) / 2.0,
         "strip beyond the O-ring groove, each side": (P.STRIP_W - P.GROOVE_STRIP_OD) / 2.0,
@@ -82,12 +84,19 @@ def checks(parts, liquid):
         - P.PRINT_R_MAX,
         "strip beyond the stack, for the connector": P.STRIP_L - P.WE_FROM_FREE_END - P.X1,
     }
-    limits = {"strip beyond the O-ring groove, each side": 0.3, "strip beyond the stack, for the connector": 7.0,
+    limits = {"membrane overlap beyond the bed bore (clamped band)": 0.4,
+              "strip beyond the O-ring groove, each side": 0.3, "strip beyond the stack, for the connector": 7.0,
               "O-ring groove inner wall beyond the printed electrodes (UNVERIFIED radius)": 0.1,
               "collecting groove to the O-ring groove (plate underside)": 0.5}
     for k, v in walls.items():
         lim = limits.get(k, 0.8)
         add(f"wall or margin: {k} >= {lim} mm", v >= lim - 1e-9, f"{v:.2f} mm")
+    stack = P.WASHER_T + P.SCREEN_T + P.MEMBRANE_T
+    add("nothing stands proud: the retainer stack is compressed into its pocket (washer squeeze 15-35 %)",
+        0.15 <= P.WASHER_SQUEEZE <= 0.35, f"stack {stack:.3f} free, pocket {P.RET_POCKET_DEPTH:.3f}, squeeze "
+        f"{100 * P.WASHER_SQUEEZE:.0f} %")
+    add("membrane top lies in the plane of the plate top face (meets the body face)",
+        abs(P.RET_POCKET_DEPTH - P.WASHER_H - P.SCREEN_T - P.MEMBRANE_T) < 1e-9, "0")
     add("every drilled hole is at least 0.5 mm in diameter",
         min(P.EXIT_D, P.BED_D, P.RISER_PLATE_D, P.RISER_BODY_D, P.OUTLET_THROUGH_D) >= 0.5,
         f"smallest {min(P.EXIT_D, P.BED_D, P.RISER_PLATE_D, P.RISER_BODY_D, P.OUTLET_THROUGH_D)} mm")
@@ -108,14 +117,16 @@ def drawing_notes(masses):
          f"| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | Underside (cell face): flat within 0.02, "
          f"Ra ≤ 0.4 µm inside ⌀{P.GROOVE_STRIP_OD}; no tool marks across the O-ring groove floor. O-ring groove "
          f"⌀{P.GROOVE_STRIP_ID}/⌀{P.GROOVE_STRIP_OD}, depth {P.GROOVE_STRIP_DEPTH:.2f} ±0.03. Exit bore ⌀{P.EXIT_D} "
-         f"+0.03/0, both ends sharp and free of burr, within 0.05 of the dowel datum. 2 × ⌀{P.DOWEL_D} H7. "
+         f"+0.03/0, both ends sharp and free of burr, within 0.05 of the dowel datum. **Retainer pocket in the top face "
+         f"⌀{P.RET_POCKET_D} +0.03/0, depth {P.RET_POCKET_DEPTH:.2f} ±0.01, floor flat, concentric with the exit bore "
+         f"within 0.03.** 2 × ⌀{P.DOWEL_D} H7. "
          f"4 × ⌀{P.M25_CLEAR} with 90° countersink ⌀{P.M25_CSK_D} from the underside (heads below the face). "
          "Top face flat within 0.02, Ra ≤ 0.8 µm. |",
          f"| Body | `body.step` | PEEK, natural, unfilled | 2 × {P.PORT_THREAD}, flat-bottom ports to the fitting "
          f"maker's port drawing (depth {P.PORT_DEPTH} here; bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore "
-         f"⌀{P.BED_D} +0.03/0 through the port floor, concentric with the retainer seat within 0.05, no burr. "
-         f"Retainer seat ⌀{P.RETAINER_POCKET_D} +0.03/0, depth {P.RETAINER_POCKET_DEPTH:.2f} +0/−0.01. Underside flat "
-         f"within 0.02, Ra ≤ 0.8 µm. O-ring groove ⌀{P.GROOVE_IFACE_ID}/⌀{P.GROOVE_IFACE_OD}, depth "
+         f"⌀{P.BED_D} +0.03/0 through the port floor, within 0.05 of the dowel datum, sharp and free of burr at the "
+         f"underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals "
+         f"there)**, Ra ≤ 0.8 µm elsewhere. O-ring groove ⌀{P.GROOVE_IFACE_ID}/⌀{P.GROOVE_IFACE_OD}, depth "
          f"{P.GROOVE_IFACE_DEPTH:.2f} ±0.03. 4 × M2.5×0.45-6H, {P.M25_THREAD_DEPTH:.0f} deep. 2 × ⌀{P.DOWEL_D} H7. |",
          "", "| Part | Envelope (mm) | Mass (g) |", "|---|---|---|"]
     for nm, (env, m) in masses.items():
@@ -128,7 +139,8 @@ def main(argv=None):
     custom = {"base": (PT.base(), "steel"), "nozzle_plate": (PT.plate(), "PEEK"), "body": (PT.body(), "PEEK")}
     bought = {"strip": (PT.strip(), "PTFE"), "shim": (PT.shim(), "steel"),
               "oring_strip": (PT.oring_strip(), "elastomer"), "oring_interface": (PT.oring_iface(), "elastomer"),
-              "screen": (PT.screen(), "steel"), "membrane": (PT.membrane(), "PTFE")}
+              "washer": (PT.washer(), "elastomer"), "screen": (PT.screen(), "steel"),
+              "membrane": (PT.membrane(), "PTFE")}
     liquid = PT.liquid()
     for nm, (o, _m) in custom.items():
         C.export_step(o, OUT / f"{nm}.step")
@@ -142,7 +154,7 @@ def main(argv=None):
 
     solid = {"base": custom["base"][0], "plate": custom["nozzle_plate"][0], "body": custom["body"][0],
              "strip": bought["strip"][0], "shim": bought["shim"][0], "screen": bought["screen"][0],
-             "membrane": bought["membrane"][0], "oring_strip": bought["oring_strip"][0],
+             "membrane": bought["membrane"][0], "washer": bought["washer"][0], "oring_strip": bought["oring_strip"][0],
              "oring_interface": bought["oring_interface"][0], "dowel_0": PT.dowels()[0]}
     rows = checks(solid, liquid)
     dens = {"base": 8.0e-3, "nozzle_plate": 1.31e-3, "body": 1.31e-3}                # g/mm3
@@ -167,7 +179,7 @@ def main(argv=None):
         C.render_png(items, OUT / "assembly_iso.png", view="iso", title="Tier-2 flow cell (docs/34)")
         # exploded
         lift = {"base": 0, "shim": 4, "strip": 8, "working_electrode": 8, "oring_strip": 14, "nozzle_plate": 18,
-                "screen": 25, "membrane": 27, "bed": 27, "oring_interface": 29, "body": 34}
+                "washer": 23, "screen": 25, "membrane": 27, "bed": 30, "oring_interface": 29, "body": 34}
         ex = []
         for nm, o, m in everything:
             if nm == "liquid":

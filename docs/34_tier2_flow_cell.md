@@ -5,12 +5,21 @@ cell for tier 2. What type of beads? I'd like the bead bed to be part of the flo
 should handle 500 psi. Ideally all custom parts can be ordered from a place like Xometry." Written by the
 orchestrator without agents. **Desk work, not independently reviewed; nothing is ordered.**
 
+**Revision B (2026-11-18, same day): the joint between bed bore and exit bore.** In the first version the screen
+stood 15 µm proud of a seat in the body and the nozzle plate, drawn up by its screws, pinched it. That clamp had no
+defined force, held body and plate apart by a film that joined the retainer to the outlet channel, and bowed the
+plate into the thin layer. The retainer now sits in a pocket in the top face of the plate: an elastomer washer
+punched from 0.25 mm sheet at the bottom, the screen on it, the membrane on top. The washer is a spring that
+presses the membrane against the flat underside of the body around the bed bore; nothing stands proud, so body and
+plate meet face to face and the plate stays flat. Sections 0, 3, 4, 5, 6.3, 7, 8 and 10 are revised; the model
+numbers changed by at most 0.1 pg/mL.
+
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
 * CAD: `cad/elisa_cad/tier2_cell/` → `cad/out/tier2_cell/` (STEP files of the three custom parts and of the
-  assembly, renders, the section below, notes for the drawings, 24 checks, all pass).
+  assembly, renders, the section below, notes for the drawings, 28 checks, all pass).
 * Model, pressure drop, mechanics: `scripts/tier_round/tier2_cell.py` → `results/tier_round/tier2_cell.md`,
-  `.json` (7 checks, all pass; about 1 min). The assay is the unchanged tier 2 of docs/30; only the bed holder, the retainer,
+  `.json` (8 checks, all pass; about 1 min). The assay is the unchanged tier 2 of docs/30; only the bed holder, the retainer,
   the walls around the bed and the cell are replaced. `tierkit.py`, `designs.py`, `src/` and `params/` are not
   edited.
 
@@ -38,11 +47,11 @@ the 2 µm screen**: the membrane retains, the screen carries it. The 10–14 µm
 
 | Part | Material | What it carries |
 |---|---|---|
-| Body | PEEK | inlet port on top; the port floor is 2.5 mm thick and the **bed bore (0.5 mm) runs through it**, so the bed sits in the body; seat for the retainer in the underside; outlet port on the end face |
-| Nozzle plate | PEEK | clamps the retainer against the body; exit bore (0.5 mm) to the electrode; its underside is the lid of the thin layer, with the O-ring that seals on the strip and a collecting groove around the electrode |
+| Body | PEEK | inlet port on top; the port floor is 2.5 mm thick and the **bed bore (0.5 mm) runs through it**, so the bed sits in the body; its flat underside is the face the membrane seals against; outlet port on the end face |
+| Nozzle plate | PEEK | pocket in its top face for the retainer (washer, screen, membrane), which the washer presses against the body; exit bore (0.5 mm) to the electrode; its underside is the lid of the thin layer, with the O-ring that seals on the strip and a collecting groove around the electrode |
 | Base | 316L stainless | pocket that locates the MicruX strip and sets the gap (0.10 mm) with a shim |
 
-The bed is 2.6 mm above the working electrode with 0.49 µL between them, the same dead volume as docs/30. The
+The bed is 2.5 mm above the working electrode with 0.52 µL between them, the same dead volume as docs/30. The
 MicruX strips, their connector cable and the 1/4-28 fittings in hand are used as they are. There is no magnet in
 the cell, so the concern of docs/30 §4.2 (step 4) about the magnets of the MicruX add-on does not arise.
 
@@ -54,14 +63,14 @@ shown by calculation: that an O-ring seals on a printed strip at 500 psi.** That
 
 **Xometry.** All three custom parts are plain 3-axis milling. Every hole is ≥ 0.5 mm, the feature size Xometry
 recommends as its minimum [S], and no hole is deeper than 7.5 diameters. Two depths need a tolerance of ±0.02 mm
-or tighter (strip pocket, retainer seat); Xometry auto-quotes ±0.001 in (±0.025 mm) in PEEK and metals and
+or tighter (strip pocket, retainer pocket); Xometry auto-quotes ±0.001 in (±0.025 mm) in PEEK and metals and
 quotes tighter values after manual review [S]. No quote was obtained and no price is given.
 
 **What the cell changes in the model** (pg/mL):
 
 | | docs/30 tier 2 (capillary in the MicruX inlet bore) | This cell, M-280 | This cell, 10–14 µm beads |
 |---|---|---|---|
-| LOD nominal; median [5–95 %] | 2.1; 8.4 [1.0–100] | **1.9; 7.8 [0.95–91]** | 1.8; 7.3 [0.92–87] |
+| LOD nominal; median [5–95 %] | 2.1; 8.4 [1.0–100] | **1.9; 7.9 [0.96–93]** | 1.8; 7.4 [0.93–88] |
 | P(LOD ≤ 1) / P(≤ 10) | 0.05 / 0.54 | 0.06 / 0.57 | 0.06 / 0.58 |
 | Upper limit by the slope criterion | 1400 | 1400 | 1400 |
 | Pressure drop across the bed at 80 µL/min | 25 bar | 0.63 bar | 0.15 bar |
@@ -77,7 +86,7 @@ UNVERIFIED parameters of the model and the design follows them.
 
 | Request | Consequence |
 |---|---|
-| The bed is part of the cell | The bed bore is machined into the body, on the axis of the electrode. The retainer cannot be a frit in a capillary; it is a disc clamped between two parts of the cell |
+| The bed is part of the cell | The bed bore is machined into the body, on the axis of the electrode. The retainer cannot be a frit in a capillary; it is a stack held between two parts of the cell |
 | 500 psi | The MicruX add-on is PMMA, held by magnets, with no pressure rating (docs/28 §1.1). The new cell is PEEK on a steel base, bolted, with O-rings in grooves and a hard stop that sets the gap |
 | Custom parts from a service such as Xometry | No hole below 0.5 mm, no micro-drilling, no bonded or moulded part, no custom electrode. Everything else is a catalogue part |
 | "What type of beads?" | Section 2 |
@@ -148,10 +157,42 @@ The nominal value for the chosen case, 4.9 mm², is by coincidence the 5 mm² th
 retainer area grows with the bore area. That is the price of the 0.5 mm bore, and section 6.3 has the 0.3 mm
 variant.
 
-Mounting. The membrane (a 1.5 mm disc cut with a biopsy punch) and the screen lie in a seat 1.65 mm wide and
-0.06 mm deep in the underside of the body, membrane towards the bed. The screen stands 0.015 mm proud of the
-seat. The nozzle plate, drawn up by four M2.5 screws, bends by that amount and pinches the stack with about 20 N
-(Derived). Around the seat, body and plate lie face to face inside a 12 × 1 mm O-ring.
+### 3.1 How the joint between bed bore and exit bore is sealed (Revision B)
+
+The retainer sits in a pocket ⌀1.65 × 0.27 mm (±0.01) in the top face of the nozzle plate, over the exit bore.
+From the bottom:
+
+| Layer | Part | Thickness free → in place (mm) | Job |
+|---|---|---|---|
+| 1 | Washer ⌀1.2/⌀0.75, punched from 0.25 mm FKM sheet (two biopsy punches) | 0.25 → 0.185 (26 % squeeze) | the spring; its hole passes the liquid to the exit bore |
+| 2 | Screen 1/16 in, 2 µm (VICI 2SR1-10) | 0.075 | carries the membrane over the washer's hole |
+| 3 | Membrane ⌀1.5, 1 µm track-etched polycarbonate | 0.010 | retains the beads |
+
+The stack is 0.335 mm free and 0.27 mm in place. Its top, the membrane, is in the plane of the plate's top face,
+where it meets the flat underside of the body. What each path meets:
+
+| Path | What closes it |
+|---|---|
+| Beads from the bore, sideways over the membrane to its edge | the membrane pressed against the body face (Ra ≤ 0.4 µm there) over a band 0.5 mm wide around the bore, at about 1 MPa (0.4–1.4 MPa over the tolerances) |
+| Liquid from the screen's edge, between body and plate, to the cross channel | body and plate face to face, flat within 0.02 mm, clamped by the M2.5 and M4 screws; with nothing proud the film is set by the flatness of the faces. A 5 µm film passes 0.01 % of the stream, 15 µm 0.3 % (`tier2_cell.md` §5) |
+| Liquid to the outside | the 12 × 1 O-ring between body and plate, rated with the rest of the cell for 500 psi |
+
+Numbers (`tier2_cell.md` §4; rubber modulus 6 MPa and the shape-factor correction of Gent, UNVERIFIED):
+* Squeeze of the washer 26 % nominal; 11–39 % over the tolerances of pocket (±0.01), sheet (±0.02), membrane
+  (6–15 µm) and screen (±0.005). The low end is below the usual 15 % for a gasket: hold the pocket depth, or
+  pick washers from the thick end of the sheet.
+* Washer force 1.5 N (0.66–2.3 N). It bows the plate by at most 1.6 µm (the first version: up to 15 µm).
+* The flow pushes the stack away from the body face with the pressure drop through bed, membrane and screen. Taken
+  over the whole pocket this is 0.21 N at 80 µL/min, a third of the lowest washer force, and 0.53 N at 200 µL/min,
+  close to it. **Keep every step through the bed at ≤ 80 µL/min**, as docs/30 does; packing included.
+* At 500 psi with the outlet plugged the pressure is the same on both sides of the stack, so it does not load the
+  washer.
+
+Why not an O-ring here. An O-ring of 0.5 mm cross-section around the bore, pressing the membrane's rim, was the
+first idea (the conversation of 2026-11-18). Such O-rings are hard to get. An O-ring in the body face also needs a
+land inside it next to the bed bore, which either holds body and plate apart again or leaves a gap the beads
+spread into. A 1 mm cross-section works only as the spring under a 1/8 in screen, around a PEEK boss that carries
+the exit bore (section 6.4).
 
 Load on the retainer. The bed pushes on it with the pressure drop across the bed times the bore area: 0.012 N at
 80 µL/min, and 0.68 N if the full 500 psi fell across the bed (Derived). The screen carries that; the membrane
@@ -170,8 +211,8 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 |---|---|---|---|---|
 | 1 | Inlet port | 1/4-28 flat-bottom, in the top of the body, on the electrode axis | — | the 1/16 in transfer line butts on the port floor; no cavity between tube and bore |
 | 2 | **Bed bore** | ⌀0.5 × 2.5, the floor of the inlet port | 0.49 µL | the bed occupies the lowest 0.10 mm (M-280) or 0.41 mm (10–14 µm); the rest is 3.8 mm² of PEEK wall above the bed (docs/30: 13 mm² of capillary) |
-| 3 | Retainer | membrane on screen, section 3 | about 6 nL of pores | |
-| 4 | Exit bore | ⌀0.5 × 2.5, through the nozzle plate | 0.49 µL | 3.9 mm² of wall between bed and electrode (docs/30: 2.5 mm²); the volume is kept at 0.5 µL on purpose, section 6.1 |
+| 3 | Retainer | membrane on screen on washer, in a pocket in the plate, section 3.1 | about 6 nL of pores | |
+| 4 | Washer hole and exit bore | ⌀0.75 × 0.185 in the washer, then ⌀0.5 × 2.23 through the plate | 0.08 + 0.44 µL | 3.5 mm² of PEEK and 0.44 mm² of elastomer between bed and electrode (docs/30: 2.5 mm²); the elastomer is counted with the retainer at the frit factor (UNVERIFIED); the volume is kept at 0.5 µL on purpose, section 6.1 |
 | 5 | Thin layer | gap 0.10 over the strip, liquid disc ⌀6.9 inside the O-ring | 0.71 µL over the electrode, 3.7 µL in all | flat land of the plate out to r = 2.3; the 3 mm electrode ends at r = 1.5 |
 | 6 | Collecting groove | r = 2.3–2.9, 0.5 deep, in the plate underside | 4.9 µL | takes the liquid all round the electrode so that the outflow is radial, as the kit assumes. The sector opposite the riser carries 0.75 of the flow of the nearest one (`tier2_cell.md` §5) |
 | 7 | Riser, cross channel, riser | ⌀0.6 through the plate; slot 0.8 × 0.5 in the top face of the plate; ⌀1.0 in the body | — | the slot moves the liquid outward past the inlet port; it is closed by the body underside inside the 12 × 1 O-ring |
@@ -183,7 +224,7 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 |---|---|---|---|
 | Plate on strip | O-ring 7 × 1 in a groove ⌀6.9/⌀9.3 × 0.65 deep; 25 % squeeze at the nominal gap, 20–30 % over the gap tolerance | the plate rests on the base on both sides of the strip pocket | 4 × M4 × 20 through body and plate into the base, 0.5 N·m; 2 × ⌀3 dowel pins |
 | Body on plate | O-ring 12 × 1 in a groove ⌀11.9/⌀14.3 × 0.75 deep in the body | face to face | 4 × M2.5 × 8 countersunk, from the plate underside into the body, so that the retainer and the bed are not disturbed when the strip is changed |
-| Retainer | pinched between seat and plate | — | the same four M2.5 screws |
+| Retainer | membrane pressed against the body face by the washer | membrane top in the plane of the plate face | the washer (1.5 N); body and plate held by the same four M2.5 screws |
 
 ### 4.3 The gap
 
@@ -206,8 +247,8 @@ microvolts at nanoampere currents.
 | Part | File | Material | Size (mm); mass | Machining |
 |---|---|---|---|---|
 | Base | `base.step` | 316L stainless | 30 × 44 × 8; 81 g | one side: pocket, 4 threads, 2 reamed holes |
-| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 30 × 44 × 2.5; 4 g | two sides: grooves and countersinks below, slot above |
-| Body | `body.step` | PEEK, natural, unfilled | 30 × 44 × 12; 19 g | three sides: port and holes from the top, seat, groove and threads from below, port from one end |
+| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 30 × 44 × 2.5; 4 g | two sides: grooves and countersinks below, retainer pocket and slot above |
+| Body | `body.step` | PEEK, natural, unfilled | 30 × 44 × 12; 19 g | three sides: port and holes from the top, groove and threads from below, port from one end |
 
 Why these materials. PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
 craze in the 10 % methanol used for storage; PMMA does (docs/28 §4). Unfilled, because glass or carbon fill
@@ -223,17 +264,18 @@ generated from the same parameters; its content:
 | Part | Call-outs |
 |---|---|
 | Base | 4 × M4×0.7 through. 2 × ⌀3 P7 × 6 deep for pressed ⌀3 m6 × 16 pins. Strip pocket 10.3 +0.05/0 wide, **depth 0.45 ±0.02**, floor flat within 0.02, Ra ≤ 0.8 µm. Top face flat within 0.02 |
-| Nozzle plate | Underside flat within 0.02 and **Ra ≤ 0.4 µm inside ⌀9.3**. O-ring groove depth 0.65 ±0.03. Exit bore ⌀0.5 +0.03/0, both ends free of burr, within 0.05 of the dowel holes. 2 × ⌀3 H7. 4 × ⌀2.7 with 90° countersink ⌀5.0 from the underside, heads below the face. Top face flat within 0.02 |
-| Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the fitting maker's port drawing (bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore ⌀0.5 +0.03/0 through the port floor, concentric with the retainer seat within 0.05, no burr. **Retainer seat ⌀1.65 +0.03/0, depth 0.06 +0/−0.01.** Underside flat within 0.02. O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
+| Nozzle plate | Underside flat within 0.02 and **Ra ≤ 0.4 µm inside ⌀9.3**. O-ring groove depth 0.65 ±0.03. Exit bore ⌀0.5 +0.03/0, both ends free of burr, within 0.05 of the dowel holes. **Retainer pocket in the top face ⌀1.65 +0.03/0, depth 0.27 ±0.01, floor flat, concentric with the exit bore within 0.03.** 2 × ⌀3 H7. 4 × ⌀2.7 with 90° countersink ⌀5.0 from the underside, heads below the face. Top face flat within 0.02 |
+| Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the fitting maker's port drawing (bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore ⌀0.5 +0.03/0 through the port floor, within 0.05 of the dowel holes, sharp and free of burr at the underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals there).** O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
 | All | everything else ISO 2768-m; edges broken 0.1–0.2 mm; no burrs in the liquid path; no bead blasting of sealing faces |
 
 The port depth in the model (9.5 mm) is a placeholder, UNVERIFIED. IDEX publishes a drawing "1/4-28 Standard
 Flat-Bottom Port", but only against registration [V], and it was not obtained. The floor thickness (2.5 mm = the
 length of the bed bore) is the dimension to hold; the port depth follows from the body thickness.
 
-If the retainer seat is quoted too dear, 0.05 ±0.02 also works: the screen then stands 5–45 µm proud, and up to
-about 7 % of the stream may pass through the film between body and plate to the cross channel without crossing
-the electrode (`tier2_cell.md` §5: 0.3 % at 15 µm, 1.2 % at 25 µm, 6.7 % at 45 µm). That lowers signal and blank alike.
+If the pocket depth is quoted too dear at ±0.01, ±0.02 still works with washers chosen by thickness: the
+squeeze then spans 7–44 % with the sheet at ±0.02, and a micrometer reading of each washer brings it back into
+15–35 %. The pocket must never be shallower than the stack can be compressed into, or the membrane holds body and
+plate apart as in the first version.
 
 ### 5.3 What Xometry states (checked as far as its pages were reached)
 
@@ -256,7 +298,8 @@ are not known.
 | Electrode | MicruX ED-S1PE-C21 strip, 27.5 × 10.1 mm, 3 mm carbon working electrode, printed Ag/AgCl reference; ED-SPE-CABLE | docs/28 [V]; in hand |
 | Fittings | 1/4-28 flat-bottom, for 1/16 in tubing; the MicruX packs state 1000 psi for their ferrules (docs/28 R6 [V]); IDEX states 2000 psi for its flangeless nut with the P-200 ferrule [V, page of XP-235, a part now marked obsolete] | in hand |
 | Screen | VICI 2SR1-10, 1/16 in, 2 µm, 0.075 mm, pack of 10 | [V] |
-| Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch | [S]; thickness and pore density of the lot to be read from its certificate |
+| Washer | FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A; biopsy punches 1.2 and 0.75 mm; one washer per bed | sheet thickness tolerance and punch sizes UNVERIFIED |
+| Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch (the same punch cuts the washer's outer edge if 1.2 mm cannot be had: the pocket leaves room) | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
 | Screws, pins | 4 × M4 × 20 socket head with washers; 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins; stainless | standard |
 | Shim | stainless shim stock 0.05 and 0.03 mm, cut 10 × 19 mm | standard |
@@ -284,32 +327,32 @@ cell still works, or the ring is changed to 7.5 × 0.8 (a change of two numbers 
 | Case | Nominal | Median [5–95 %] | P(≤ 1) / P(≤ 10) | Upper limit |
 |---|---|---|---|---|
 | docs/30 tier 2 (capillary bed in the MicruX cell) | 2.1 | 8.4 [1.0–100] | 0.05 / 0.54 | 1400 |
-| **this cell, M-280, membrane on screen (4.9 mm²)** | **1.9** | 7.8 [0.95–91] | 0.06 / 0.57 | 1400 |
-| retainer 2.3 mm² (low estimate) | 1.7 | 6.9 [0.89–84] | 0.07 / 0.59 | 1400 |
+| **this cell, M-280, membrane on screen on washer (4.9 mm² + 0.44 mm² of washer)** | **1.9** | 7.9 [0.96–93] | 0.06 / 0.57 | 1400 |
+| retainer 2.3 mm² (low estimate) | 1.7 | 6.9 [0.89–84] | 0.06 / 0.59 | 1400 |
 | retainer 11 mm² (high estimate) | 2.4 | 9.6 [1.1–110] | 0.04 / 0.51 | 1400 |
 | retainer 40 mm² (a sintered 0.5 µm frit instead) | 5.0 | 17 [1.7–210] | 0.02 / 0.36 | 1400 |
-| bed bore 0.3 mm (variant body) | 1.6 | 6.5 [0.86–80] | 0.07 / 0.61 | 1400 |
-| 10–14 µm polystyrene beads, same area, screen alone | 1.8 | 7.3 [0.92–87] | 0.06 / 0.58 | 1400 |
-| the same, beads bind conjugate like tube-washed M-280 (factor 1) | 1.3 | 5.3 [0.73–61] | 0.09 / 0.67 | 1400 |
+| bed bore 0.3 mm (variant body) | 1.6 | 6.6 [0.86–80] | 0.07 / 0.61 | 1400 |
+| 10–14 µm polystyrene beads, same area, screen alone | 1.8 | 7.4 [0.93–88] | 0.06 / 0.58 | 1400 |
+| the same, beads bind conjugate like tube-washed M-280 (factor 1) | 1.4 | 5.4 [0.73–62] | 0.09 / 0.67 | 1400 |
 | the same, beads bind 10 times that (factor 10) | 3.3 | 13 [1.5–160] | 0.02 / 0.43 | 1400 |
-| M-280 behave as when washed in tubes (factor 1) | 1.4 | 5.7 [0.76–66] | 0.08 / 0.65 | 1400 |
-| exit bore of 0.15 µL instead of 0.49 µL | 1.9 | 7.9 [0.96–94] | 0.06 / 0.56 | 460 |
-| gap 0.05 mm; gap 0.20 mm | 1.9; 1.9 | 7.8; 7.8 | 0.06 / 0.57 | 1400 |
+| M-280 behave as when washed in tubes (factor 1) | 1.5 | 5.8 [0.76–68] | 0.08 / 0.64 | 1400 |
+| exit bore of 0.15 µL instead of 0.52 µL | 1.9 | 8.1 [0.97–95] | 0.06 / 0.56 | 460 |
+| gap 0.05 mm; gap 0.20 mm | 1.9; 1.9 | 7.9; 7.9 | 0.06 / 0.57 | 1400 |
 | the substrate's background does not decay | 2.0 | 11 [1.4–120] | 0.02 / 0.47 | 1400 |
 | only 1 % of the turnovers electroactive, read as specified | 9.3 | 23 [3.6–250] | 0.00 / 0.25 | 10⁵ |
-| the same, sweep at 20 µL/min for 22 s | 4.8 | 20 [2.9–220] | 0.00 / 0.31 | 3.4×10⁴ |
-| screened detection reagent and substrate lot (L6 + L7) | 1.3 | 5.4 [0.80–49] | 0.07 / 0.67 | 790 |
+| the same, sweep at 20 µL/min for 22 s | 4.9 | 20 [2.9–220] | 0.00 / 0.31 | 3.4×10⁴ |
+| screened detection reagent and substrate lot (L6 + L7) | 1.3 | 5.5 [0.82–50] | 0.07 / 0.67 | 790 |
 
 Reading.
 1. **The cell is worth about 10 % at nominal** (2.1 → 1.9). Of the blank's enzymes in the nominal case, 4.2×10⁴
-   sit on the beads and 8.2×10⁴ elsewhere (docs/30: 9.6×10⁴ elsewhere). The transfer line (24 mm²) is still the
+   sit on the beads and 8.4×10⁴ elsewhere (docs/30: 9.6×10⁴ elsewhere). The transfer line (24 mm²) is still the
    largest wall; it is outside the cell.
 2. **The retainer moves the result more than the cell does**: 1.7 to 2.4 over its estimated range.
 3. **The dead volume is kept at 0.5 µL on purpose.** A smaller volume between bed and electrode does not lower
    the LOD (1.9), and it lowers the upper limit from 1400 to 460 pg/mL, because the phosphate released with the
    product inhibits the enzyme in the smaller volume (docs/30 §2.4).
 4. **The gap does not matter at nominal**, as in docs/33. If only 1 % of the turnovers are electroactive, the
-   0.10 mm gap helps: 9.3 instead of the 13 of docs/30 as specified, and 4.8 with a faster sweep (docs/33: 7.4
+   0.10 mm gap helps: 9.3 instead of the 13 of docs/30 as specified, and 4.9 with a faster sweep (docs/33: 7.4
    for the 0.2 mm cell).
 5. With the cell and screened reagents the nominal LOD is 1.3; the criterion of 1 pg/mL is inside the range but
    not at the nominal, as for every design of docs/30.
@@ -343,7 +386,10 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Bearing stress under the M4 washers; margin to yield | 13 MPa; 9 |
 | Sag of body and plate across the strip pocket | 0.3 µm |
 | Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
-| Thinnest drilled wall (inlet thread to riser) | 0.93 mm |
+| Thinnest drilled wall (inlet thread to riser) | 1.0 mm |
+| Retainer washer: squeeze; force; pressure on the membrane's sealing band (low / nominal / high tolerance) | 11 / 26 / 39 %; 0.66 / 1.5 / 2.3 N; 0.4 / 1.0 / 1.4 MPa |
+| Bow of the plate under the washer | ≤ 1.6 µm |
+| Force of the flow pushing the stack off the body face, 80 / 200 µL/min (upper bound) | 0.21 / 0.53 N |
 
 PEEK properties are typical values for unfilled PEEK (modulus 3.6 GPa, shear strength 53 MPa, compressive yield
 118 MPa), UNVERIFIED; the O-ring load is taken as 1 N per mm of ring.
@@ -352,6 +398,25 @@ Not covered by these numbers, and to be shown by the proof test: the seal of a 7
 tracks of the strip, and extrusion of that O-ring into a gap of up to 0.15 mm at 34.5 bar (within common design
 charts as recalled, UNVERIFIED; a 90 Shore A ring is the remedy).
 
+### 6.4 The retainer with a 1 mm O-ring instead of the washer (not drawn)
+
+If an O-ring is preferred to a punched washer, a cross-section of 1 mm (sizes such as 1 × 1 mm are common in
+assortments, UNVERIFIED) can be the spring, in the same place:
+
+| | Washer (chosen) | O-ring 1 × 1 |
+|---|---|---|
+| Screen | 1/16 in (2SR1-10) | 1/8 in (VICI 2SR2-10 [V], ⌀3.175 × 0.075): it has to cover the ring |
+| Membrane | ⌀1.5 | ⌀3.0 |
+| Pocket | ⌀1.65 × 0.27 | stepped: ⌀3.25 × 0.09 for screen and membrane, then a ring groove ⌀3.1 × 0.84 deep |
+| What fills the ring's bore | nothing (washer hole 0.08 µL) | a PEEK boss ⌀1.0 left standing in the groove, its top 0.095 below the face, the exit bore through it; without the boss the ring's bore adds 0.6 µL and 2.4 mm² of elastomer to the dead volume |
+| Thinnest wall | 1.0 mm | 0.25 mm (the boss around the 0.5 mm bore), below the 0.5 mm Xometry recommends |
+| Land between pocket and cross channel | 1.4 mm | 0.6 mm |
+| Spring force; plate bow | 1.5 N; ≤ 1.6 µm | about 6 N (1 N per mm of ring, UNVERIFIED); about 4 µm |
+| Screen and membrane outside the flow, where conjugate collects | small | about 5 times more |
+
+It can be done, but every line favours the washer. If punching washers proves awkward, they can be bought as
+die-cut parts from a gasket cutter (not checked).
+
 **The 0.3 mm variant.** A second body with the last 0.6 mm of the bed bore at 0.3 mm (the rest stays 0.5 mm)
 cuts the retainer area to a third: 1.6 instead of 1.9 pg/mL, and a bed that can be checked by pressure. A 0.3 mm
 hole is below the feature size Xometry recommends and belongs to its micro-machining service. `BED_D` in
@@ -359,17 +424,19 @@ hole is below the feature size Xometry recommends and belongs to its micro-machi
 
 ## 7. Use
 
-1. **Assemble the bed unit once per bed.** Body upside down; membrane disc, then screen, into the seat; O-ring
-   12 × 1 into its groove; nozzle plate on, located by two loose pins; four M2.5 screws, evenly.
+1. **Assemble the bed unit once per bed.** Nozzle plate top face up: washer, then screen, then membrane into the
+   retainer pocket (tweezers; wet with assay buffer so they lie flat); O-ring 12 × 1 into the body's groove; body
+   on, located by two loose pins; four M2.5 screws from below, evenly. Check that the membrane top is level with
+   the plate face before the body goes on (it may stand up to 0.07 mm above it; the body pushes it down).
 2. **Pack.** Connect a packing line (1/16 in tube holding at least 25 µL) to the inlet port and push the bead
    suspension of docs/30 §4.2 (1.5 µL of coated M-280 in 20 µL of assay buffer) through at 20–50 µL/min, then
-   assay buffer at 80 µL/min for 1 min. The beads collect on the membrane at the bottom of the bore. Check by
+   assay buffer at 80 µL/min for 1 min. Never above 80 µL/min through the bed (section 3.1). The beads collect on the membrane at the bottom of the bore. Check by
    looking down the port bore with a stereo microscope; PEEK is opaque, so the bed cannot be seen from the side.
 3. **Mount.** Shim and a fresh strip into the base pocket against its stop, O-ring 7 × 1 into the plate, the bed
    unit onto the pins, four M4 screws to 0.5 N·m. Connect the transfer line and the cable.
 4. **Run** the unchanged step table of docs/30 §4.3, with its pre-run on the fresh bed and strip.
 5. **After the run.** Take the bed unit off and flush the beads out of the inlet port from the exit bore, or open
-   the four M2.5 screws and rinse. Fit a new membrane and screen. Body and plate are used again, so their walls
+   the four M2.5 screws and rinse. Fit a new washer, screen and membrane. Body and plate are used again, so their walls
    carry the conjugate of the run before; the pre-run of docs/30 measures what is left, and a cleaning step has
    to be found (test C-5).
 
@@ -386,7 +453,7 @@ pressure in the cell is released through the bed when the flow stops.
 | # | Test | Decides | Pass |
 |---|---|---|---|
 | C-1 | Proof test: blank strip, outlet plugged, pump at 10 µL/min with its pressure limit at 750 psi; hold 10 min at 500 psi; repeat on a printed strip | whether the strip seal holds 500 psi | no drop, no weeping |
-| C-2 | Retention: pack M-280 at 80 and 200 µL/min, collect the outflow on a magnet, inspect the strip | whether the membrane on the screen holds the beads | no beads downstream |
+| C-2 | Retention: pack M-280 at 80 µL/min, then run 200 µL/min to find the margin, collect the outflow on a magnet, inspect the strip | whether the membrane on the screen holds the beads | no beads downstream |
 | C-3 | Gap: the two electrochemical readings of docs/33 §6.2 (limiting current at 5 µL/min; charge in the stopped cell) | the gap as built | 0.05–0.15 mm |
 | C-4 | Empty cell with retainer, no beads, through conjugate, wash, substrate, stop and sweep (the empty arm of T2-1) | the conjugate on retainer and walls; the largest unknown of section 6.1 | walls and retainer ≤ 2 × beads (the criterion of T2-1) |
 | C-5 | The same sequence twice on one body and plate with a cleaning step between; candidates for the step are not chosen | carry-over of conjugate on the re-used parts | second pre-run within 10 % of the first |
@@ -401,6 +468,9 @@ pressure in the cell is released through the bed when the flow stops.
 * A bed 0.10 mm deep in a 0.5 mm bore is treated like the long bed of docs/30. The kit has no term for uneven
   packing or for flow that by-passes a shallow bed; test C-6 addresses it.
 * The radial outflow relies on the collecting groove; its 25 % asymmetry is not in the kit.
+* The washer's force rests on a rubber modulus and a shape-factor formula (UNVERIFIED), and its squeeze on the
+  tolerance of punched sheet. Test C-2 shows whether the membrane seals; a washer that has taken a set must be
+  replaced with every bed in any case.
 * No drawing in a drawing format exists yet. The STEP files and the call-outs of section 5.2 are what a quote
   needs; a dimensioned PDF has to be made before an order.
 * The thin-film chips (10 × 6 × 0.7 mm glass) would need another base and a smaller O-ring; not designed.
@@ -454,6 +524,10 @@ No price, lead time or stock status was taken from any of these.
   page then showed that those ratings are nominal, and the membrane was added. The first layouts kept the 0.2 mm
   bed of docs/30, which needs micro-drilling; the kit showed that the bore does not change capture, and every
   hole became 0.5 mm. A spigot on the body that reached down to the electrode, and a single body with a pressed-in
-  nozzle, were dropped for the three-part stack. In the first CAD build the O-rings were drawn round and cut into
+  nozzle, were dropped for the three-part stack. Revision B: asked how the bed bore and the exit bore are sealed,
+  the orchestrator found that the first version's pinched screen had no defined force, opened a film between body
+  and plate and bowed the plate; it proposed an O-ring of 0.5 mm cross-section around the bore. Working it out
+  showed that this needs a land beside the bore that brings the same problems back, and the user then pointed out
+  that 0.5 mm O-rings are hard to get. The washer in a pocket of the plate replaced both. In the first CAD build the O-rings were drawn round and cut into
   their neighbours (now drawn at their compressed height), and the body riser was 9.2 diameters deep (now 1.0 mm
   wide, 7.5 diameters).

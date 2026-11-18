@@ -60,17 +60,22 @@ def _draw(ax, bed_ul=0.019, detail=False):
                                                                                zb + P.GROOVE_IFACE_DEPTH / 2)):
         for s in (-1, 1):
             ax.add_patch(Circle((s * (d_i + cs) / 2, zc), cs / 2 * 0.72, facecolor=RUBBER, edgecolor="none", zorder=4))
-    # retainer and bed
-    z_seat = zb + P.RETAINER_POCKET_DEPTH
-    rect(-P.RETAINER_POCKET_D / 2, P.RETAINER_POCKET_D / 2, zb, z_seat, SCREEN, z=5)
-    rect(-0.75, 0.75, z_seat - 0.012, z_seat, MEMB, z=6)
+    # retainer pocket in the plate: washer, screen, membrane; then the bed in the body
+    zp = zb - P.RET_POCKET_DEPTH
+    rect(-P.RET_POCKET_D / 2, P.RET_POCKET_D / 2, zp, zb, VOID, z=4)
+    sym(P.WASHER_ID / 2, P.WASHER_OD / 2, zp, zp + P.WASHER_H, RUBBER, z=5)
+    rect(-P.WASHER_ID / 2, P.WASHER_ID / 2, zp, zp + P.WASHER_H, LIQ, z=5)
+    rect(-P.SCREEN_D / 2, P.SCREEN_D / 2, zp + P.WASHER_H, zp + P.WASHER_H + P.SCREEN_T, SCREEN, z=5)
+    rect(-P.MEMBRANE_DISC_D / 2, P.MEMBRANE_DISC_D / 2, zb - P.MEMBRANE_T, zb, MEMB, z=6)
+    z_seat = zb
     L_bed = bed_ul / (math.pi * P.BED_D ** 2 / 4)
     rect(-P.BED_D / 2, P.BED_D / 2, z_seat, z_seat + L_bed, BED, z=6)
     return zb, zt, zo, L_bed
 
 
 def draw(path, bed_ul=0.019):
-    fig, (a1, a2) = plt.subplots(2, 1, figsize=(11, 13.5), gridspec_kw=dict(height_ratios=[1.0, 1.25]))
+    fig, (a1, a2, a3) = plt.subplots(3, 1, figsize=(11, 19.5), gridspec_kw=dict(height_ratios=[1.0, 1.25, 0.8]))
+    zp = P.PLATE_T - P.RET_POCKET_DEPTH
     zb, zt, zo, L_bed = _draw(a1, bed_ul)
     a1.set_xlim(P.X0 - 9, P.STRIP_L - P.WE_FROM_FREE_END + 9)
     a1.set_ylim(-P.BASE_T - 4.5, zt + 5)
@@ -93,14 +98,17 @@ def draw(path, bed_ul=0.019):
     a2.set_ylim(-1.4, 6.4)
     a2.set_aspect("equal")
     a2.set_title("Detail: bed, retainer and thin layer (same section)", fontsize=11)
-    z_seat = zb + P.RETAINER_POCKET_DEPTH
+    z_seat = zb
+    zp = zb - P.RET_POCKET_DEPTH
     lab = [
         (f"bed bore ⌀{P.BED_D} × {P.INLET_FLOOR} in the port floor", (0.0, zb + 1.6), (2.4, 5.9)),
         (f"bed: 1×10⁶ beads of 2.8 µm = {L_bed:.2f} mm (drawn)", (0.1, z_seat + L_bed / 2), (2.4, 5.3)),
-        ("membrane, 1 µm pores, on a 2 µm screen\n(1/16 in × 0.075) in a seat ⌀"
-         f"{P.RETAINER_POCKET_D} × {P.RETAINER_POCKET_DEPTH}", (0.7, zb + 0.03), (2.4, 4.45)),
+        (f"membrane ⌀{P.MEMBRANE_DISC_D}, 1 µm pores, pressed against the body face\nby a 2 µm screen on an "
+         f"FKM washer ⌀{P.WASHER_OD}/⌀{P.WASHER_ID}\n(the spring), in a pocket ⌀{P.RET_POCKET_D} × "
+         f"{P.RET_POCKET_DEPTH} in the plate", (0.7, zp + 0.1), (2.4, 4.4)),
         (f"O-ring {P.ORING_IFACE[0]:.0f} × {P.ORING_IFACE[1]:.0f}, body to plate", (6.5, zb + 0.4), (4.2, 3.75)),
-        (f"exit bore ⌀{P.EXIT_D} × {P.PLATE_T} ({P.EXIT_VOLUME_UL:.2f} µL)", (0.2, 1.3), (1.1, 1.75)),
+        (f"exit bore ⌀{P.EXIT_D} × {P.EXIT_LENGTH:.2f}; with the washer hole {P.EXIT_VOLUME_UL:.2f} µL",
+         (0.2, 1.3), (1.1, 1.75)),
         (f"O-ring {P.ORING_STRIP[0]:.0f} × {P.ORING_STRIP[1]:.0f} on the strip", (4.05, 0.3), (5.0, 1.15)),
         (f"thin layer, gap {P.GAP:.2f}", (1.0, -P.GAP / 2), (3.4, -0.75)),
         (f"working electrode ⌀{P.WE_D:.0f}", (-0.6, -P.GAP - 0.02), (-2.4, -1.05)),
@@ -119,6 +127,28 @@ def draw(path, bed_ul=0.019):
                     zorder=9)
     a2.set_xlabel("x (mm)")
     a2.set_ylabel("z (mm)")
+
+    # third panel: the joint between bed bore and exit bore
+    _draw(a3, bed_ul, detail=True)
+    a3.set_xlim(-1.6, 1.6)
+    a3.set_ylim(zp - 0.35, zb + 0.35)
+    a3.set_aspect("equal")
+    a3.set_title("Joint between bed bore and exit bore (Revision B): the washer is the spring that presses screen "
+                 "and membrane\nagainst the flat underside of the body; body and plate meet face to face", fontsize=10)
+    for txt, xy, xyt in [
+        ("body (PEEK), underside flat, Ra ≤ 0.4", (-1.2, zb + 0.15), (-1.55, zb + 0.30)),
+        (f"bed in the ⌀{P.BED_D} bore", (0.0, zb + 0.06), (0.35, zb + 0.28)),
+        (f"membrane ⌀{P.MEMBRANE_DISC_D} × {P.MEMBRANE_T} (sealing band 0.5 wide)", (0.6, zb - 0.005), (0.5, zb + 0.2)),
+        (f"screen ⌀{P.SCREEN_D:.2f} × {P.SCREEN_T}", (0.7, zb - 0.05), (0.95, zb + 0.04)),
+        (f"washer ⌀{P.WASHER_OD}/⌀{P.WASHER_ID}, {P.WASHER_T} → {P.WASHER_H:.3f}", (0.5, zp + 0.09), (0.95, zp - 0.05)),
+        (f"pocket ⌀{P.RET_POCKET_D} × {P.RET_POCKET_DEPTH}", (0.8, zp + 0.01), (0.95, zp - 0.2)),
+        (f"exit bore ⌀{P.EXIT_D}", (0.0, zp - 0.2), (-1.0, zp - 0.25)),
+        ("nozzle plate (PEEK)", (-1.2, zp), (-1.55, zp + 0.1)),
+    ]:
+        a3.annotate(txt, xy, xyt, fontsize=8.5, va="center", arrowprops=dict(arrowstyle="-", lw=0.6, color="0.2"),
+                    zorder=10)
+    a3.set_xlabel("x (mm)")
+    a3.set_ylabel("z (mm)")
     fig.tight_layout()
     fig.savefig(path, dpi=140)
     plt.close(fig)

@@ -1,14 +1,14 @@
 {
  "checks": [
   {
-   "check": "no interference between any two solid parts (10 parts; O-rings drawn at their compressed height)",
+   "check": "no interference between any two solid parts (11 parts; O-rings and washer drawn at their compressed height)",
    "ok": true,
    "value": "largest common volume 0.00e+00 mm3"
   },
   {
    "check": "the liquid is one connected solid from the inlet port floor to the outlet port floor",
    "ok": true,
-   "value": "1 solid(s), 18.25 mm3"
+   "value": "1 solid(s), 18.18 mm3"
   },
   {
    "check": "the liquid does not cut into the base",
@@ -86,9 +86,19 @@
    "value": "1.85 mm"
   },
   {
-   "check": "wall or margin: face seal between retainer seat and cross channel >= 0.8 mm",
+   "check": "wall or margin: face seal between retainer pocket and cross channel >= 0.8 mm",
    "ok": true,
    "value": "1.38 mm"
+  },
+  {
+   "check": "wall or margin: membrane overlap beyond the bed bore (clamped band) >= 0.4 mm",
+   "ok": true,
+   "value": "0.50 mm"
+  },
+  {
+   "check": "wall or margin: plate under the retainer pocket >= 0.8 mm",
+   "ok": true,
+   "value": "2.23 mm"
   },
   {
    "check": "wall or margin: cross channel and riser to the body-plate O-ring groove >= 0.8 mm",
@@ -111,6 +121,16 @@
    "value": "8.50 mm"
   },
   {
+   "check": "nothing stands proud: the retainer stack is compressed into its pocket (washer squeeze 15-35 %)",
+   "ok": true,
+   "value": "stack 0.335 free, pocket 0.270, squeeze 26 %"
+  },
+  {
+   "check": "membrane top lies in the plane of the plate top face (meets the body face)",
+   "ok": true,
+   "value": "0"
+  },
+  {
    "check": "every drilled hole is at least 0.5 mm in diameter",
    "ok": true,
    "value": "smallest 0.5 mm"
@@ -122,17 +142,17 @@
   }
  ],
  "all_pass": true,
- "liquid_volume_uL": 18.254341817102258,
+ "liquid_volume_uL": 18.183233524358343,
  "volumes_uL": {
   "bed_bore": 0.4908738521234052,
-  "exit_bore": 0.4908738521234052,
+  "exit_bore": 0.5195899724726244,
   "thin_layer_over_electrode": 0.7068583470577033,
   "chamber_disc": 3.739280655935251,
   "collecting_groove": 4.900884539600079
  },
  "masses_g": {
   "base": 80.864787425978,
-  "nozzle_plate": 3.937086238920378,
-  "body": 18.823772056191363
+  "nozzle_plate": 3.936399389965978,
+  "body": 18.82392468838777
  }
 }
