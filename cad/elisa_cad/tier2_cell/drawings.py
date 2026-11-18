@@ -639,7 +639,7 @@ def sheet_plate():
         (7, "Top face inside ⌀16 around the axis: flat within 0.02."),
         (8, "Screw clearance holes and counterbores: " + SCREW_NOTE[13:]),
     ]
-    S = Sheet("T2C-002", "NOZZLE PLATE", PEEK_TB, "As machined", "2:1 (SECTION 10:1)", notes, flags,
+    S = Sheet("T2C-002", "NOZZLE PLATE", PEEK_TB, "As machined", "2:1 (DETAIL 10:1)", notes, flags,
               REVS, _mass(solid, 1.31e-3))
     top = View(S, "top", TV, K)
     top.draw(solid)
@@ -662,13 +662,18 @@ def sheet_plate():
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 8, "BOTTOM VIEW", size=FS_T, ha="center", weight="bold")
     S.text(BV[0], bot.p(0, P.Y_HALF, 0)[1] - 13, "part turned over about the horizontal axis", size=FS_S,
            ha="center")
-    # section A-A at the axis, 10:1
+    # section A-A, 2:1, projected under the top view; detail D of it at 10:1
+    sec = View(S, "front", (TV[0], 62), K)
+    sec.draw(solid, cut=("y", 0.0))
+    sec.centre_line((0, 0, -0.8), (0, 0, P.PLATE_T + 0.8))
+    S.detail_circle(sec.p(0, 0, P.PLATE_T / 2), 11.5, "D")
+    S.text(TV[0] + 54, sec.p(0, 0, P.PLATE_T / 2)[1], "SECTION A–A", size=FS_T, ha="center", weight="bold")
     kd = 10.0
     det = View(S, "front", (305, 126), kd)
     clip = cq.Workplane("XY").box(10.8, 60.0, 3.0, centered=False).translate((-5.4, -30, -0.2))
     det.draw(_shape(solid).intersect(_shape(clip)), cut=("y", 0.0))
     det.centre_line((0, 0, -0.7), (0, 0, P.PLATE_T + 0.7))
-    S.text(det.o[0], 79, "SECTION A–A, 10:1 (PARTIAL)", size=FS_T,
+    S.text(det.o[0], 79, "DETAIL D (SECTION A–A, 10:1)", size=FS_T,
            ha="center", weight="bold")
     # pocket: size, depth, position (frame attached under the dimension)
     q0, q1 = det.p(-rp / 2, 0, P.PLATE_T), det.p(rp / 2, 0, P.PLATE_T)

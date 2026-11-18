@@ -242,3 +242,7 @@ carry nothing but the tighter-than-standard tolerances and the threaded holes. R
 and cutting-method notes (including "not laser" for the FKM washer), datum and screw explanations, reasons in the
 flag texts, isometric views, masses, the washer's actual-size outline, the project name in the title. "SHARP" at
 the ends of the 0.5 mm bores became a tolerance (edge break 0.05 max). Notes are now material plus threads.
+The user then reported that section A–A on the plate drawing did not line up with the features. The 10:1 view
+had been labelled SECTION A–A but showed only ±5.4 mm about the axis, detached from the top view and without break
+lines. A full section A–A at 2:1 now sits under the top view, aligned with it as on the base and body sheets, and
+the 10:1 view is detail D of that section (geometry unchanged; checked against the model).

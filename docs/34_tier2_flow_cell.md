@@ -302,7 +302,7 @@ parameters as the STEP files, so the two cannot drift apart):
 | Part | Drawing | STEP | Views |
 |---|---|---|---|
 | Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A |
-| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom, partial section A–A (10:1) |
+| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom, section A–A (2:1, under the top view), detail D of it (10:1) |
 | Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (10:1) |
 | Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top and section at 20:1 |
 
