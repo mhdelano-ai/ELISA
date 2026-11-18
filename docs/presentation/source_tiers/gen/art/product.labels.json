@@ -1,0 +1,62 @@
+[
+ {
+  "key": "substrate",
+  "text": "hydroquinone diphosphate, the substrate",
+  "x": 80,
+  "y": 268,
+  "w": 300,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "mono",
+  "text": "monophosphate: what the enzyme makes first",
+  "x": 560,
+  "y": 268,
+  "w": 400,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "hq",
+  "text": "hydroquinone",
+  "x": 1180,
+  "y": 268,
+  "w": 220,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "fast",
+  "text": "one phosphate off per turnover",
+  "x": 295,
+  "y": 14,
+  "w": 400,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "slow",
+  "text": "the second phosphate comes off slowly",
+  "x": 795,
+  "y": 14,
+  "w": 460,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "electrode",
+  "text": "2 electrons at the electrode",
+  "x": 1404,
+  "y": 244,
+  "w": 192,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ }
+]

@@ -1,0 +1,7 @@
+[
+{"key":"lc","text":"Binary pump and fixed-loop autosampler","x":10,"y":310,"w":510,"align":"center","size":24,"weight":600},
+{"key":"cell","text":"Flow cell holding a printed electrode strip","x":530,"y":310,"w":600,"align":"center","size":24,"weight":600},
+{"key":"pstat","text":"Potentiostat, one channel","x":1200,"y":310,"w":360,"align":"center","size":24,"weight":600},
+{"key":"loop","text":"100 µL sample loop","x":456,"y":192,"w":180,"align":"left","size":24,"weight":400},
+{"key":"we","text":"working electrode, 3 mm","x":798,"y":22,"w":330,"align":"left","size":24,"weight":400}
+]

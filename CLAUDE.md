@@ -54,7 +54,8 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
   for interface geometry; packages `card`, `dock_upper`, `dock_lower`, `dock_base`, `assembly`); outputs (STEP, DXF,
   PNG, check results) in `cad/out/`. See `cad/README.md`.
 - `scripts/chip_round/` — the agents' working scripts and outputs behind docs/09–16 (record only; see its README).
-- `docs/presentation/` — summary slide decks (in silico phase; cartridge round) as standalone HTML, sources, `build.py`.
+- `docs/presentation/` — summary slide decks (in silico phase; cartridge round; tier round) as standalone HTML,
+  sources, `build.py`; the tier-round deck is generated from the model output (`source_tiers/gen/`).
 - `docs/06_bench_plan.md` — staged bench plan with gates; `docs/07_bill_of_materials.md` — BOM by stage.
 - `params/*.yaml` — model parameters (`chem.*`, `hw.*`, `ma.*`; schema in the file headers).
 - `src/elisa_sim/` — simulation package; `tests/` — its tests; `scripts/` — design scripts (`design_lib.py`).

@@ -1,0 +1,82 @@
+[
+ {
+  "key": "inlet_line",
+  "text": "inlet line from the autosampler",
+  "x": 150,
+  "y": 15,
+  "w": 208,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "bore",
+  "text": "inlet bore, 0.8 mm",
+  "x": 4,
+  "y": 185,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "conjugate",
+  "text": "conjugate sticks to these walls too (orange)",
+  "x": 4,
+  "y": 270,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "gap",
+  "text": "gap: 0.2 mm assumed (not to scale)",
+  "x": 4,
+  "y": 410,
+  "w": 156,
+  "align": "right",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "capture",
+  "text": "capture antibody on the gold working electrode",
+  "x": 190,
+  "y": 540,
+  "w": 410,
+  "align": "center",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "oring",
+  "text": "O-ring, 8 mm",
+  "x": 640,
+  "y": 382,
+  "w": 160,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "waste",
+  "text": "to waste",
+  "x": 650,
+  "y": 132,
+  "w": 140,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ },
+ {
+  "key": "strip",
+  "text": "printed strip",
+  "x": 640,
+  "y": 470,
+  "w": 160,
+  "align": "left",
+  "size": 24,
+  "weight": 400
+ }
+]

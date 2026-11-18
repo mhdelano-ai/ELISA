@@ -1,0 +1,23 @@
+<section id="reads" data-transition="fade">
+<p class="eyebrow">The read</p>
+<h2>Three ways to read the same product</h2>
+<div class="row" style="gap:46px">
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 1: steady current</h3>
+{{art:trace_t1}}
+<p class="small">Substrate flows at 200 µL/min. Signal: the current in a 60 s window, minus the mean of two reference windows without substrate.</p>
+</div>
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 2: stop, then sweep</h3>
+{{art:trace_t2}}
+<p class="small">Flow stops for 5 min and product collects around the bed. A 90 s sweep carries it over the electrode. Signal: the area of the peak.</p>
+</div>
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 3: closed, then opened</h3>
+{{art:trace_t3}}
+<p class="small">The valve closes the bed for 3 min while the cell stays in flow, so the peak sits on a flat baseline. Signal: its area.</p>
+</div>
+</div>
+<p class="small soft">In all three the potentiostat holds one electrode at the read potential from the pre-run to the end. The potential is never stepped: a step would charge about a thousand times the signal at the limit.</p>
+<aside>Sketches of the expected traces, not data. Source: docs/30 §3.1, §4.1, §5.1 and §1. Tier 1: reference window 30 s, substrate front 1.1 min, read 60 s, front back 1.1 min, reference window 30 s, all at one constant flow; the two reference windows are 3.7 min apart, and the same sequence on the fresh strip before the sample is subtracted. Tier 2: the baseline is the last 30 s of the stop; the trace of the same stop and sweep on the fresh bed and strip is subtracted, because the background steps up when fresh substrate arrives with the sweep. Tier 3: the baseline is the 30 s before the valve opens; no pre-run trace is subtracted. A potential step charges about 1 µC on a 3 mm printed electrode (an unverified estimate of 0.2–1 µC, docs/29 A.4), a thousand times the signal at the limit (docs/30 §1).</aside>
+</section>

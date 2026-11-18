@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELISA three-tier round</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+section {
+  background: #F6F3EC;
+  color: #14213D;
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  padding: 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  box-sizing: border-box;
+}
+h1 { font-family: 'Source Serif 4', Georgia, serif; font-size: 96px; font-weight: 600; line-height: 1.08; }
+h2 { font-family: 'Source Serif 4', Georgia, serif; font-size: 58px; font-weight: 600; line-height: 1.1; }
+h3 { font-size: 32px; font-weight: 600; line-height: 1.2; }
+p { font-size: 28px; line-height: 1.35; }
+
+.dark { background: #14213D; color: #F6F3EC; }
+.accent { background: #A8481A; color: #FFFDF8; }
+.eyebrow { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #A8481A; }
+.dark .eyebrow { color: #F0A36B; }
+.accent .eyebrow { color: #FFFDF8; }
+.soft { color: #4A5568; }
+.dark .soft { color: #BCC7DA; }
+.accent .soft { color: #FBE6D8; }
+.lead { font-size: 32px; line-height: 1.35; }
+.small { font-size: 24px; line-height: 1.35; }
+.strong { font-weight: 600; }
+.rust { color: #A8481A; }
+
+.row { display: flex; flex-direction: row; gap: 28px; }
+.col { display: flex; flex-direction: column; gap: 16px; }
+.grow { flex: 1; }
+.center { align-items: center; }
+.end { align-items: flex-end; }
+
+.card {
+  background: #FFFDF8;
+  color: #14213D;
+  border: 2px solid #D9D2C2;
+  border-radius: 16px;
+  padding: 26px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  box-sizing: border-box;
+}
+.card-dark { background: #1E2E52; color: #F6F3EC; border: 2px solid #3A4C78; }
+.card-accent { background: #BF5C2B; color: #FFFDF8; border: 2px solid #E39A6E; }
+.big { font-family: 'Source Serif 4', Georgia, serif; font-size: 68px; font-weight: 600; line-height: 1; color: #A8481A; }
+.blue { color: #1F5A96; }
+.dark .big { color: #F0A36B; }
+.accent .big { color: #FFFDF8; }
+.dark .card .big { color: #A8481A; }
+.dark .card .soft { color: #4A5568; }
+.dark .card-dark .soft { color: #BCC7DA; }
+
+.node {
+  background: #14213D;
+  color: #F6F3EC;
+  border-radius: 12px;
+  padding: 14px 10px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  box-sizing: border-box;
+}
+.node-o { background: #A8481A; }
+.node-l { background: #E3EBF5; color: #14213D; border: 2px solid #1F5A96; font-weight: 400; }
+.node-w { background: #FFFDF8; color: #14213D; border: 2px solid #D9D2C2; font-weight: 400; }
+.arr { width: 48px; height: 26px; background: #A8481A; flex: none; align-self: center; }
+.num {
+  width: 56px; height: 56px; line-height: 56px; border-radius: 28px; flex: none;
+  background: #14213D; color: #F6F3EC; font-size: 28px; font-weight: 600; text-align: center;
+}
+.num-o { background: #A8481A; }
+
+table { width: 100%; font-size: 24px; line-height: 1.3; color: #14213D; }
+.band { background: #ECE7DB; }
+
+/* a picture or chart: a box of fixed size, the drawing first, its words pinned over it */
+.host { position: relative; flex: none; box-sizing: border-box; }
+.plate { background: #FFFDF8; border: 2px solid #D9D2C2; border-radius: 16px; }
+.lab { position: absolute; font-size: 24px; line-height: 1.25; color: #14213D; }
+.tick { position: absolute; font-size: 24px; line-height: 1.25; color: #4A5568; }
+.key { width: 28px; height: 28px; border-radius: 6px; flex: none; }
+.keyline { width: 44px; height: 6px; border-radius: 3px; flex: none; }
+
+/* bars built from boxes; one line of text, centred by its line height */
+.seg { height: 64px; line-height: 64px; font-size: 24px; font-weight: 600; text-align: center; border-radius: 4px; flex: none; box-sizing: border-box; }
+.part { height: 60px; line-height: 60px; font-size: 24px; font-weight: 600; text-align: center; border-radius: 4px; flex: none; box-sizing: border-box; }
+.c-blue { background: #1F5A96; color: #FFFDF8; }
+.c-orange { background: #D9773F; color: #14213D; }
+.c-teal { background: #2A9D8F; color: #14213D; }
+.c-steel { background: #9AA5B8; color: #14213D; }
+.c-slate { background: #5E6B85; color: #FFFDF8; }
+.c-ink { background: #14213D; color: #FFFDF8; }
+.c-rust { background: #A8481A; color: #FFFDF8; }
+.c-sand { background: #D9D2C2; color: #14213D; }
+.sev-1 { background: #D98A58; color: #14213D; }
+.sev-2 { background: #B5521F; color: #FFFDF8; }
+.sev-3 { background: #6E2D0E; color: #FFFDF8; }
+
+/* heat grid: one hue, darker means a higher detection limit */
+.grid4 { display: grid; grid-template-columns: 620px 1fr 1fr 1fr 1fr; gap: 6px; }
+.cell { height: 54px; line-height: 54px; border-radius: 8px; font-size: 28px; font-weight: 600; text-align: center; box-sizing: border-box; }
+.h-1 { background: #F1D2BC; color: #14213D; }
+.h-2 { background: #E6A97F; color: #14213D; }
+.h-3 { background: #D9773F; color: #14213D; }
+.h-4 { background: #B5521F; color: #FFFDF8; }
+.h-5 { background: #7A3210; color: #FFFDF8; }
+.rowhead { height: 54px; line-height: 54px; font-size: 24px; }
+.colhead { font-size: 24px; line-height: 1.25; font-weight: 600; text-align: center; }
+
+.fix { flex: none; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.in { animation: rise 420ms ease-out both; animation-delay: calc(var(--i) * 120ms); }
+
+  x-shape { display: block; }
+  x-shape[kind=ellipse] { border-radius: 50%; }
+  x-shape[kind=arrow-right] { clip-path: polygon(0 30%, 60% 30%, 60% 0, 100% 50%, 60% 100%, 60% 70%, 0 70%); }
+  section hr { border: none; }
+  x-connector[x1] { display: none; }
+
+  html, body { margin: 0; height: 100%; background: #0b161e; overflow: hidden; }
+  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  section { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; box-sizing: border-box;
+             overflow: hidden; }
+  section:not(.current) { display: none !important; }
+  section *, section *::before, section *::after { box-sizing: border-box; }
+  section h1, section h2, section h3, section p { margin: 0; }
+  section aside { display: none; }
+  section table { border-collapse: collapse; width: 100%; }
+  section th, section td { padding: 0.35em 0.6em; border-bottom: 1px solid rgba(19, 35, 47, 0.18);
+                            vertical-align: top; text-align: left; }
+  x-connector { display: block; flex: none; height: 0; border-top-style: solid; position: relative; }
+  x-connector::after { content: ""; position: absolute; right: -2px; top: -9px; border-left: 12px solid currentColor;
+                        border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 16px; display: flex; gap: 16px;
+          justify-content: center; align-items: center; font: 14px Arial, sans-serif; color: #b9c7cf; }
+  #bar button { font: inherit; color: inherit; background: #13232f; border: 1px solid #44525c; border-radius: 6px;
+                 padding: 4px 12px; cursor: pointer; }
+  @media print {
+    html, body { overflow: visible; height: auto; background: none; }
+    #bar { display: none; }
+    #stage { position: static; transform: none !important; width: auto; height: auto; }
+    section, section:not(.current) { position: relative; display: flex !important; page-break-after: always; }
+    @page { size: 1920px 1080px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" class="dark" data-transition="fade">
+<p class="eyebrow">Automated electrochemical ELISA · working session of 17–18 November 2026</p>
+<h1>The lowest detection limit on the equipment in hand</h1>
+<p class="lead soft">Three assay designs for human IgG, two review rounds, and the two bench questions that come first.</p>
+<div class="grow"></div>
+<div class="host plate" style="width:1664px;height:364px">
+<svg style="position:absolute;left:30px;top:0px" width="1600" height="360" viewBox="0 0 1600 360" aria-label="A liquid-chromatography stack with pump and autosampler feeds a liquid line into a flow cell clamped on a printed electrode strip, which a cable connects to a potentiostat.">
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<rect x="56" y="58" width="346" height="14" rx="4" fill="#ECE7DB" stroke-width="3"/>
+<rect x="92" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="108" y="20" width="24" height="12" rx="3" fill="#1F5A96" stroke-width="2"/>
+<rect x="177" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="193" y="20" width="24" height="12" rx="3" fill="#D9773F" stroke-width="2"/>
+<rect x="262" y="32" width="56" height="26" rx="6" fill="#E3EBF5" stroke-width="3"/>
+<rect x="278" y="20" width="24" height="12" rx="3" fill="#2F8072" stroke-width="2"/>
+<rect x="30" y="72" width="400" height="104" rx="8" fill="#ECE7DB" stroke-width="3"/>
+<rect x="48" y="86" width="276" height="78" rx="5" fill="#FFFDF8" stroke-width="2"/>
+<rect x="64" y="96" width="244" height="58" rx="4" fill="#E3EBF5" stroke-width="2"/>
+<rect x="76" y="132" width="220" height="14" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<g stroke-width="2">
+<rect x="84" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="110" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="136" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="162" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="188" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="214" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="240" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+<rect x="266" y="106" width="16" height="26" rx="3" fill="#FFFDF8"/>
+</g>
+<g fill="#1F5A96" stroke-width="2">
+<rect x="84" y="100" width="16" height="8" rx="2"/><rect x="110" y="100" width="16" height="8" rx="2"/><rect x="136" y="100" width="16" height="8" rx="2"/><rect x="162" y="100" width="16" height="8" rx="2"/><rect x="188" y="100" width="16" height="8" rx="2"/><rect x="214" y="100" width="16" height="8" rx="2"/><rect x="240" y="100" width="16" height="8" rx="2"/><rect x="266" y="100" width="16" height="8" rx="2"/>
+</g>
+<rect x="336" y="86" width="80" height="78" rx="5" fill="#F6F3EC" stroke-width="2"/>
+</g>
+<g fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round">
+<circle cx="370" cy="125" r="22"/>
+<circle cx="376" cy="125" r="22"/>
+<path d="M398 125 L426 125"/>
+<path d="M430 125 L636 125"/>
+<path d="M352 125 L346 125"/>
+</g>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<rect x="30" y="180" width="400" height="105" rx="8" fill="#ECE7DB" stroke-width="3"/>
+<rect x="48" y="194" width="364" height="77" rx="5" fill="#FFFDF8" stroke-width="2"/>
+<circle cx="140" cy="232" r="26" fill="#9AA5B8" stroke-width="3"/>
+<circle cx="140" cy="232" r="10" fill="#5E6B85" stroke-width="2"/>
+<circle cx="250" cy="232" r="26" fill="#9AA5B8" stroke-width="3"/>
+<circle cx="250" cy="232" r="10" fill="#5E6B85" stroke-width="2"/>
+<circle cx="384" cy="212" r="8" fill="#2F8072" stroke-width="2"/>
+<path d="M330 244 L396 244 M330 256 L396 256" fill="none" stroke-width="2"/>
+<rect x="670" y="90" width="330" height="120" rx="14" fill="#FFFDF8" stroke-width="3"/>
+</g>
+<g fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M808 118 L822 110 L952 110"/>
+<path d="M790 145 L952 145"/>
+<path d="M826 164 L842 180 L952 180"/>
+</g>
+<path d="M802.2 122.9 A42 42 0 1 0 802.2 177.1" fill="none" stroke="#2B2F3A" stroke-width="10" stroke-linecap="round"/>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="770" cy="150" r="23" fill="#C9A227" stroke-width="2"/>
+<rect x="810" y="156" width="18" height="16" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="98" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="133" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="948" y="168" width="36" height="24" rx="3" fill="#9AA5B8" stroke-width="2"/>
+<rect x="650" y="85" width="240" height="130" rx="10" fill="#E3EBF5" fill-opacity="0.45" stroke-width="3"/>
+<rect x="636" y="115" width="14" height="20" rx="3" fill="#B9CCE3" stroke-width="2"/>
+<circle cx="668" cy="103" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="872" cy="103" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="668" cy="197" r="7" fill="#9AA5B8" stroke-width="2"/>
+<circle cx="872" cy="197" r="7" fill="#9AA5B8" stroke-width="2"/>
+</g>
+<path d="M700 215 L700 256" fill="none" stroke="#B9CCE3" stroke-width="4" stroke-linecap="round"/>
+<g stroke="#14213D" stroke-linejoin="round" stroke-linecap="round">
+<path d="M672 240 L676 284 L724 284 L728 240" fill="#F6F3EC" stroke-width="3"/>
+<path d="M675 266 L725 266" fill="none" stroke="#B9CCE3" stroke-width="4"/>
+<rect x="1230" y="65" width="300" height="170" rx="10" fill="#ECE7DB" stroke-width="3"/>
+<rect x="1248" y="82" width="264" height="136" rx="6" fill="#FFFDF8" stroke-width="2"/>
+<rect x="1266" y="96" width="160" height="50" rx="4" fill="#F6F3EC" stroke-width="2"/>
+<path d="M1276 134 C1306 134 1316 106 1336 106 C1356 106 1366 132 1416 132" fill="none" stroke="#2F8072" stroke-width="3"/>
+<circle cx="1478" cy="110" r="9" fill="#2F8072" stroke-width="2"/>
+<rect x="1450" y="164" width="44" height="26" rx="4" fill="#F6F3EC" stroke-width="2"/>
+<rect x="1252" y="235" width="30" height="8" rx="2" fill="#5E6B85" stroke-width="2"/>
+<rect x="1478" y="235" width="30" height="8" rx="2" fill="#5E6B85" stroke-width="2"/>
+<circle cx="1310" cy="182" r="24" fill="#9AA5B8" stroke-width="3"/>
+</g>
+<g fill="#14213D">
+<circle cx="1310" cy="172" r="3"/><circle cx="1301" cy="182" r="3"/><circle cx="1319" cy="182" r="3"/><circle cx="1310" cy="192" r="3"/>
+</g>
+<path d="M1286 182 C1180 182 1120 250 1060 230 C1030 220 1030 150 1010 146" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round"/>
+<rect x="966" y="94" width="40" height="102" rx="6" fill="#2B2F3A" fill-opacity="0.85" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/>
+<g fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round">
+<path d="M402 140 L452 196"/>
+<path d="M778 128 L792 62"/>
+</g>
+</svg>
+<p class="lab strong" style="left:40px;top:310px;width:510px;text-align:center">Binary pump and fixed-loop autosampler</p>
+<p class="lab strong" style="left:560px;top:310px;width:600px;text-align:center">Flow cell holding a printed electrode strip</p>
+<p class="lab strong" style="left:1230px;top:310px;width:360px;text-align:center">Potentiostat, one channel</p>
+<p class="lab" style="left:486px;top:192px;width:180px">100 µL sample loop</p>
+<p class="lab" style="left:828px;top:22px;width:330px">working electrode, 3 mm</p>
+</div>
+<aside>Summary of one working session, 17–18 November 2026. Every detection limit in this deck is a model prediction (docs/30 Revision C; calculation kit in scripts/tier_round), not a measurement. All drawings in this deck are schematic: not to scale, and not pictures of the actual instruments. The equipment in hand: a Waters ACQUITY I-Class binary pump with a fixed-loop autosampler (100 µL loop), a Gamry Reference 600+ potentiostat (one channel) and a MicruX flow cell for printed electrode strips; both versions of the cell are available (docs/26). The 3 mm working electrode is the MicruX printed strip (docs/28 §2.1).</aside>
+</section>
+<section id="request" data-transition="fade">
+<p class="eyebrow">The request</p>
+<h2>One request, and four answers that fixed the task</h2>
+<div class="row" style="gap:40px">
+<div class="card fix" style="width:700px;gap:18px">
+<p class="small strong rust">The request, 17 November</p>
+<p>“I have the following tools at my disposal: acquity i-class bsm with sm-fl (fixed loop); Gamry 600+; 10uL flow cell that can hold any micrux screen printed electrode. Design an assay that uses these items for the absolute best LOD of human IgG. Interview me if you need input.”</p>
+</div>
+<div class="col grow" style="gap:14px">
+<p class="small strong rust">The interview: four questions, four answers</p>
+<div class="card fix" style="padding:16px 26px;gap:4px"><p class="small soft">What may the assay add to the set-up?</p><p class="small strong">“Three different implementations with these categories.”</p></div>
+<div class="card fix" style="padding:16px 26px;gap:4px"><p class="small soft">How much hands-on work is acceptable?</p><p class="small strong">Unattended per sample; preparation at the bench beforehand is fine.</p></div>
+<div class="card fix" style="padding:16px 26px;gap:4px"><p class="small soft">Do the limits of 100 µL injected and 60 min still apply?</p><p class="small strong">Both still apply.</p></div>
+<div class="card fix" style="padding:16px 26px;gap:4px"><p class="small soft">Which flow cell and which electrodes?</p><p class="small strong">Both cells are available; use whichever gives the lower limit.</p></div>
+</div>
+</div>
+<p class="small soft">Carried over from the project: human IgG in buffer only; target 1 pg/mL; the detection limit is the mean blank plus three standard deviations of blanks, read through a calibration curve.</p>
+<aside>The request is quoted as typed. The four questions and answers are from the session record (docs/32 §2); the questions are shortened here; the first answer is quoted as typed, the other three are the options chosen. The categories of the first answer were: consumables only; passive in-line parts as well; anything. “Unattended per sample” means each determination runs without a manual step from injection to result; a fresh, pre-coated electrode or bed per determination is allowed, and no unattended queue is required (docs/26). The 100 µL limit is the injected volume; 60 min counts from injection to result. Project criteria: docs/00.</aside>
+</section>
+<section id="tiers" data-transition="fade">
+<p class="eyebrow">The task after the interview</p>
+<h2>Three tiers, by what may be added to the equipment</h2>
+<div class="row">
+<div class="card" style="gap:14px">
+<svg width="320" height="136" viewBox="0 0 320 136" aria-label="A printed strip; antibodies stand on its gold working electrode." style="display:block"><rect x="20" y="78" width="280" height="44" rx="8" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="92" y="70" width="136" height="12" rx="3" fill="#C9A227" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M110 68v-14M110 54l-9 -11M110 54l9 -11" fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round"/><path d="M135 68v-14M135 54l-9 -11M135 54l9 -11" fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round"/><path d="M160 68v-14M160 54l-9 -11M160 54l9 -11" fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round"/><path d="M185 68v-14M185 54l-9 -11M185 54l9 -11" fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round"/><path d="M210 68v-14M210 54l-9 -11M210 54l9 -11" fill="none" stroke="#5E6B85" stroke-width="4" stroke-linecap="round"/><path d="M160 8v26M160 34l-8 -10M160 34l8 -10" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<p class="small strong rust">Tier 1 · consumables only</p>
+<h3>Capture on the electrode itself</h3>
+<p class="small">The capture antibody sits on the gold working electrode of a printed strip, and the whole sample passes over it.</p>
+<p class="small soft">Added: strips, thiols, reagents, a restrictor and a narrow transfer line.</p>
+</div>
+<div class="card" style="gap:14px">
+<svg width="320" height="136" viewBox="0 0 320 136" aria-label="A capillary with a packed bed of beads ends just above the electrode of a printed strip." style="display:block"><rect x="20" y="96" width="280" height="30" rx="8" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="92" y="88" width="136" height="12" rx="3" fill="#2B2F3A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="138" y="4" width="44" height="72" rx="4" fill="#E3EBF5" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="146" cy="34" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="158" cy="34" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="170" cy="34" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="152" cy="44" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="164" cy="44" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="176" cy="44" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="146" cy="54" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="158" cy="54" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="170" cy="54" r="6" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><rect x="141" y="62" width="38" height="8" fill="#5E6B85" stroke="#14213D" stroke-width="1.5"/><path d="M160 76v8" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round"/></svg>
+<p class="small strong rust">Tier 2 · plus passive in-line parts</p>
+<h3>A bead bed at the cell inlet</h3>
+<p class="small">A million beads packed against a frit in a capillary whose tip ends 1 mm above the electrode.</p>
+<p class="small soft">Added: the same reagents on beads, a fritted capillary, a sleeve and a fitting.</p>
+</div>
+<div class="card" style="gap:14px">
+<svg width="320" height="136" viewBox="0 0 320 136" aria-label="A six-port valve with the bed of beads in its loop; its outlet leads to the electrode of a strip." style="display:block"><rect x="200" y="100" width="112" height="28" rx="8" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="226" y="92" width="60" height="12" rx="3" fill="#2B2F3A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M6 12H72V30M112 30V12H256V74" fill="none" stroke="#1F5A96" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M248 70L256 86L264 70Z" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><path d="M52 64H22V118H162V64H132" fill="none" stroke="#1F5A96" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="92" cy="64" r="52" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="132.0" cy="64.0" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="112.0" cy="29.4" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="72.0" cy="29.4" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="52.0" cy="64.0" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="72.0" cy="98.6" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="112.0" cy="98.6" r="7" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="50" y="106" width="84" height="24" rx="4" fill="#E3EBF5" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="60" cy="113" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="70" cy="113" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="80" cy="113" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="90" cy="113" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="100" cy="113" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="65" cy="121" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="75" cy="121" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="85" cy="121" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="95" cy="121" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="105" cy="121" r="5" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><rect x="116" y="109" width="8" height="18" fill="#5E6B85" stroke="#14213D" stroke-width="1.5"/></svg>
+<p class="small strong rust">Tier 3 · anything</p>
+<h3>The same bed in the loop of a valve</h3>
+<p class="small">One six-port valve closes the bed while product collects, and keeps conjugate-coated walls out of the read.</p>
+<p class="small soft">Added: one valve and its control from Python.</p>
+</div>
+</div>
+<p class="small soft">All three are the same sequential sandwich assay with the same reagents. They differ in where the IgG is captured and in what the read can exclude.</p>
+<aside>Tier definitions from the round brief (docs/26 §2) and the summary table of docs/30 §0. Tier 1 adds consumables only; tier 2 adds passive in-line parts; tier 3 may add anything. Tier 3 as designed uses one valve; a second valve and a second bed for a transfer of the immune complex are described and computed, but are conditional on a test of the transfer chemistry (see the transfer slide). The small pictures are schematic.</aside>
+</section>
+<section id="process" data-transition="fade">
+<p class="eyebrow">How the session ran</p>
+<h2>Design, review, revise, twice over</h2>
+<div class="row" style="gap:14px">
+<div class="col grow in" style="gap:10px;--i:0">
+<p class="node node-o">Interview</p>
+<p class="node node-w">4 questions to you</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:1">
+<p class="node">Groundwork</p>
+<p class="node node-l">Cells, electrodes</p>
+<p class="node node-l">Literature, 2 parts</p>
+<p class="node node-l">Pump and sampler</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:2">
+<p class="node">Kit and designs</p>
+<p class="node node-w">36 checks of the kit</p>
+<p class="node node-w">First version</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:3">
+<p class="node">Review 1</p>
+<p class="node node-l">Numbers</p>
+<p class="node node-l">Chemistry</p>
+<p class="node node-l">Feasibility</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:4">
+<p class="node">Revision B</p>
+<p class="node node-w">Kit and designs changed</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:5">
+<p class="node">Review 2</p>
+<p class="node node-l">Numbers</p>
+<p class="node node-l">Consistency</p>
+</div>
+<div class="col grow in" style="gap:10px;--i:6">
+<p class="node">Revision C</p>
+<p class="node node-w">Tables made from the model output</p>
+</div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#A8481A"></div><p class="small">your input</p>
+<div class="key" style="background:#14213D;margin-left:16px"></div><p class="small">phase</p>
+<div class="key" style="background:#E3EBF5;border:2px solid #1F5A96;box-sizing:border-box;margin-left:16px"></div><p class="small">independent agent task</p>
+<div class="key" style="background:#FFFDF8;border:2px solid #D9D2C2;box-sizing:border-box;margin-left:16px"></div><p class="small">work of the orchestrating session</p>
+</div>
+<div class="row">
+<div class="card"><p class="big blue">9</p><p class="small">agent tasks gave results: four for research, five for the two reviews</p></div>
+<div class="card"><p class="big blue">59</p><p class="small">review findings, 35 then 24, each traced to a change or an open question</p></div>
+<div class="card"><p class="big blue">7</p><p class="small">documents, docs/26 to docs/32, with the kit and its results</p></div>
+<div class="card"><p class="big blue">6</p><p class="small">agents lost to the usage limit at the start; research redone with four</p></div>
+</div>
+<aside>The agent tasks were independent and all ran on the Opus model after the first failure; each wrote only its own files. The reviewers had no part in writing the designs. The calculation kit has 36 checks and a cross-check against the project’s audited model. What went wrong on the way (docs/32 §4): a workflow runs at most two agents at a time on this machine; the first six research agents stopped after about 20 min on the account’s 5-hour usage limit and left only file skeletons; the kit’s first cross-check against the audited model was off by a factor of 2.8 until a loop-plug parameter was read; the session’s worker restarted during the last revision. Revision C answers the second review but was not reviewed again (docs/31 §4.3).</aside>
+</section>
+<section id="physics" data-transition="fade">
+<p class="eyebrow">What sets the limit</p>
+<h2>What sets the detection limit on this equipment</h2>
+<div class="row" style="gap:40px">
+<div class="col fix" style="width:904px;gap:14px">
+<div class="host plate" style="width:904px;height:480px">
+<svg style="position:absolute;left:0;top:0" width="900" height="476" viewBox="0 0 900 476" aria-label="Line chart. Product made on the electrode is collected in full at every flow. Product that arrives with the stream is collected less and less as the flow rises: 99 % at 1, 62 % at 5 and 6.1 % at 200 microlitres per minute."><path d="M120 372.0H850" stroke="#E4DFD3" stroke-width="2"/><path d="M120 304.0H850" stroke="#E4DFD3" stroke-width="2"/><path d="M120 236.0H850" stroke="#E4DFD3" stroke-width="2"/><path d="M120 168.0H850" stroke="#E4DFD3" stroke-width="2"/><path d="M120 100.0H850" stroke="#E4DFD3" stroke-width="2"/><path d="M120.0 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M215.5 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M341.7 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M437.2 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M532.8 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M659.0 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M754.5 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M850.0 372v8" stroke="#9AA5B8" stroke-width="2"/><path d="M120 372H850" stroke="#9AA5B8" stroke-width="2"/><path d="M120 100.0H850" stroke="#14213D" stroke-width="4" stroke-linecap="round"/><path d="M120.0 103.3 C123.0 103.7 132.2 104.6 138.3 105.6 C144.4 106.5 150.4 107.6 156.5 108.9 C162.5 110.2 168.7 111.7 174.8 113.4 C180.9 115.2 186.9 117.1 193.0 119.3 C199.1 121.4 205.2 123.8 211.2 126.4 C217.3 128.9 223.4 131.8 229.5 134.7 C235.6 137.7 241.6 140.9 247.7 144.2 C253.8 147.5 259.9 151.1 266.0 154.7 C272.1 158.2 278.2 162.0 284.2 165.8 C290.3 169.6 296.4 173.5 302.5 177.4 C308.6 181.3 314.7 185.3 320.7 189.2 C326.8 193.2 335.5 198.8 339.0 201.1 C342.5 203.3 338.7 200.9 341.7 202.8 C344.8 204.8 351.6 209.2 357.2 212.7 C362.9 216.3 369.4 220.4 375.5 224.1 C381.6 227.8 387.7 231.4 393.8 234.9 C399.8 238.4 405.9 241.9 412.0 245.2 C418.1 248.6 424.2 251.8 430.3 255.0 C436.3 258.1 442.4 261.1 448.5 264.1 C454.6 267.0 460.7 269.8 466.8 272.6 C472.8 275.3 478.9 277.9 485.0 280.4 C491.1 283.0 497.2 285.4 503.2 287.7 C509.3 290.1 515.4 292.3 521.5 294.5 C527.6 296.7 533.7 298.7 539.7 300.7 C545.8 302.7 551.9 304.6 558.0 306.5 C564.1 308.3 570.2 310.1 576.3 311.8 C582.3 313.5 588.4 315.1 594.5 316.7 C600.6 318.3 606.7 319.8 612.7 321.2 C618.8 322.6 624.9 324.0 631.0 325.4 C637.1 326.7 643.2 328.0 649.2 329.2 C655.3 330.4 661.4 331.6 667.5 332.7 C673.6 333.8 679.7 334.9 685.7 335.9 C691.8 337.0 697.9 337.9 704.0 338.9 C710.1 339.8 716.2 340.7 722.3 341.6 C728.3 342.5 734.4 343.3 740.5 344.1 C746.6 344.9 752.7 345.7 758.8 346.4 C764.8 347.2 770.9 347.9 777.0 348.5 C783.1 349.2 789.2 349.9 795.3 350.5 C801.3 351.1 807.4 351.7 813.5 352.3 C819.6 352.8 825.7 353.4 831.8 353.9 C837.8 354.4 847.0 355.2 850.0 355.4" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M850.0 282V339.4" stroke="#5E6B85" stroke-width="2"/><circle cx="341.7" cy="202.8" r="10" fill="#1F5A96" stroke="#FFFDF8" stroke-width="3"/><circle cx="850.0" cy="355.4" r="10" fill="#1F5A96" stroke="#FFFDF8" stroke-width="3"/></svg>
+<p class="lab strong" style="left:28px;top:16px;width:840px">Share of the product that the 3 mm electrode collects</p>
+<p class="lab" style="left:250px;top:62px;width:600px;text-align:right">made on the electrode itself: all of it, at any flow</p>
+<p class="tick" style="left:20px;top:357px;width:88px;text-align:right">0</p>
+<p class="tick" style="left:20px;top:289px;width:88px;text-align:right">25</p>
+<p class="tick" style="left:20px;top:221px;width:88px;text-align:right">50</p>
+<p class="tick" style="left:20px;top:153px;width:88px;text-align:right">75</p>
+<p class="tick" style="left:20px;top:85px;width:88px;text-align:right">100 %</p>
+<p class="tick" style="left:80px;top:384px;width:80px;text-align:center">1</p>
+<p class="tick" style="left:176px;top:384px;width:80px;text-align:center">2</p>
+<p class="tick" style="left:302px;top:384px;width:80px;text-align:center">5</p>
+<p class="tick" style="left:397px;top:384px;width:80px;text-align:center">10</p>
+<p class="tick" style="left:493px;top:384px;width:80px;text-align:center">20</p>
+<p class="tick" style="left:619px;top:384px;width:80px;text-align:center">50</p>
+<p class="tick" style="left:714px;top:384px;width:80px;text-align:center">100</p>
+<p class="tick" style="left:810px;top:384px;width:80px;text-align:center">200</p>
+<p class="tick" style="left:120px;top:422px;width:730px;text-align:center">flow through the cell, µL/min (log scale)</p>
+<p class="lab" style="left:364px;top:131px;width:484px">arriving with the stream: <b>62 %</b> at 5 µL/min, the sweep of tiers 2 and 3</p>
+<p class="lab" style="left:510px;top:214px;width:340px;text-align:right"><b>6.1 %</b> at 200 µL/min, the read of tier 1</p>
+</div>
+<div class="row center" style="gap:12px">
+<div class="keyline" style="background:#14213D"></div><p class="small">product made on the electrode</p>
+<div class="keyline" style="background:#1F5A96;margin-left:20px"></div><p class="small">product that arrives with the stream</p>
+</div>
+</div>
+<div class="col grow" style="gap:16px">
+<div class="card fix"><h3>The blank is stuck conjugate</h3><p class="small">It counts wherever its product can reach the electrode. Without a valve, the conjugate wets every wall from the injector to waste.</p></div>
+<div class="card fix"><p class="big">8.2 % or 66 %</p><p class="small">of the sample is captured: by a 3 mm electrode under a 0.2 mm gap, or by a bed of a million beads.</p></div>
+<div class="card fix"><p class="big">25–63 %</p><p class="small">of the label leaves between the conjugate step and the read. This is the largest single sensitivity of every tier.</p></div>
+</div>
+</div>
+<aside>Source: docs/30 §1, facts 1–6. The curve is the kit’s conversion of a stream that passes the 3 mm electrode of the strip cell under a 0.2 mm gap (the gap is not published; 0.2 mm is assumed): 99 % at 1 µL/min, 62 % at 5 µL/min, 6.1 % at 200 µL/min. Tier 1 therefore reads at a fast flow, where product from conjugate on upstream walls is mostly not collected while the product of the enzyme on the electrode is collected in full; tiers 2 and 3 sweep their plug slowly. Capture: the electrode takes 8.2 % of the sample at 2.86 µL/min; the bed (24 mm² of bead surface) takes 66 % at 3.4 µL/min. Label loss of 25–63 % is at the best estimate of the detection antibody’s off-rate (half-life 13 min). All values are model values.</aside>
+</section>
+<section id="assay" data-transition="fade">
+<p class="eyebrow">The assay</p>
+<h2>One sandwich assay, built three ways</h2>
+<div class="row" style="gap:48px">
+<div class="host" style="width:760px;height:560px">
+<svg style="position:absolute;left:0px;top:0px" width="760" height="560" viewBox="0 0 760 560" aria-label="Sandwich immunoassay cartoon: capture fragments on streptavidin stand on a gold surface, the middle one holds a human IgG that carries an enzyme-labelled detection fragment, the enzyme turns substrate into a product that is oxidised at the gold, and one conjugate stuck on the surface without analyte makes the blank."><defs><marker id="ai" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#14213D"/></marker><marker id="at" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#2F8072"/></marker><marker id="ai4" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#14213D"/></marker><marker id="as" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#5E6B85"/></marker></defs><line x1="163" y1="248" x2="286" y2="388" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="345" y1="276" x2="320" y2="52" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="470" y1="184" x2="470" y2="80" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="582" y1="125" x2="604" y2="124" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="592" y1="312" x2="604" y2="312" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="162" y1="440" x2="180" y2="440" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="180" y="470" width="420" height="50" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="180" y="458" width="420" height="12" fill="#C9A227" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M390,404 L390,346 M390,346 L345.7,289.3 M390,346 L434.3,289.3" fill="none" stroke="#14213D" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/><path d="M390,404 L390,346 M390,346 L345.7,289.3 M390,346 L434.3,289.3" fill="none" stroke="#1F5A96" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/><path d="M293,392.2 L270,432 L247,392.2" fill="none" stroke="#14213D" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/><path d="M293,392.2 L270,432 L247,392.2" fill="none" stroke="#5E6B85" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><rect x="257" y="432" width="26" height="26" rx="6" fill="#9AA5B8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M413,392.2 L390,432 L367,392.2" fill="none" stroke="#14213D" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/><path d="M413,392.2 L390,432 L367,392.2" fill="none" stroke="#5E6B85" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><rect x="377" y="432" width="26" height="26" rx="6" fill="#9AA5B8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M533,392.2 L510,432 L487,392.2" fill="none" stroke="#14213D" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/><path d="M533,392.2 L510,432 L487,392.2" fill="none" stroke="#5E6B85" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><rect x="497" y="432" width="26" height="26" rx="6" fill="#9AA5B8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M390,398 L390,346" fill="none" stroke="#14213D" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/><path d="M390,398 L390,346" fill="none" stroke="#1F5A96" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/><rect x="439.2" y="217" width="64" height="50" rx="23" ry="22" fill="#A8481A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="rotate(38 471.2 242)"/><path d="M411.5,284.1 L449.1,270.4 L444.9,310.2" fill="none" stroke="#14213D" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/><path d="M411.5,284.1 L449.1,270.4 L444.9,310.2" fill="none" stroke="#D9773F" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><rect x="184.4" y="399.1" width="64" height="50" rx="23" ry="22" fill="#A8481A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="rotate(170 216.4 424.1)"/><path d="M225.1,351.5 L210.1,388.6 L183.3,358.9" fill="none" stroke="#14213D" stroke-width="18" stroke-linejoin="round" stroke-linecap="round"/><path d="M225.1,351.5 L210.1,388.6 L183.3,358.9" fill="none" stroke="#D9773F" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><line x1="560" y1="105" x2="560" y2="97" stroke="#14213D" stroke-width="2"/><line x1="560" y1="145" x2="560" y2="153" stroke="#14213D" stroke-width="2"/><polygon points="560,105 577.3,115 577.3,135 560,145 542.7,135 542.7,115" fill="#FFFDF8" stroke="#2F8072" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="560" cy="95" r="8" fill="#D9773F" stroke="#14213D" stroke-width="2"/><circle cx="560" cy="155" r="8" fill="#D9773F" stroke="#14213D" stroke-width="2"/><path d="M541,160 C508,190 510,255 547,292" fill="none" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ai)"/><polygon points="570,292 587.3,302 587.3,322 570,332 552.7,322 552.7,302" fill="#2F8072" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="570" y1="338" x2="570" y2="424" stroke="#2F8072" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#at)"/><line x1="553" y1="438" x2="553" y2="456" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ai)"/><line x1="587" y1="438" x2="587" y2="456" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ai)"/></svg>
+<p class="lab" style="left:5px;top:138px;width:150px;text-align:right">capture antibody fragment on streptavidin</p>
+<p class="lab" style="left:30px;top:12px;width:300px">human IgG: the analyte</p>
+<p class="lab" style="left:380px;top:10px;width:375px">detection antibody carrying the enzyme (the conjugate)</p>
+<p class="lab" style="left:612px;top:108px;width:140px">substrate</p>
+<p class="lab" style="left:612px;top:252px;width:145px">product, oxidised at the electrode</p>
+<p class="lab" style="left:5px;top:330px;width:150px;text-align:right">conjugate stuck to the surface without analyte: this is the blank</p>
+</div>
+<div class="col grow" style="gap:18px">
+<div class="row center" style="gap:20px"><p class="num">1</p><p class="small grow"><b>Sample.</b> 100 µL passes the capture surface in 25 to 44 minutes.</p></div>
+<div class="row center" style="gap:20px"><p class="num">2</p><p class="small grow"><b>Conjugate.</b> After a wash, 100 µL of the enzyme-carrying detection antibody passes in 4 minutes.</p></div>
+<div class="row center" style="gap:20px"><p class="num">3</p><p class="small grow"><b>Substrate.</b> After a second wash, hydroquinone diphosphate at pH 9.5 reaches the enzyme.</p></div>
+<div class="row center" style="gap:20px"><p class="num">4</p><p class="small grow"><b>Read.</b> One electrode is held at +0.30 V; the current of the product is recorded and integrated.</p></div>
+<div class="row center" style="gap:20px"><p class="num num-o">5</p><p class="small grow"><b>Limit.</b> Mean blank plus three standard deviations of ten blanks, each on its own fresh strip or bed.</p></div>
+<div class="card fix" style="padding:18px 26px;gap:6px"><p class="small strong">The same reagents in every tier</p><p class="small soft">Biotinylated anti-Fc capture fragment on streptavidin; alkaline-phosphatase detection fragment; IgG-free albumin as blocker.</p></div>
+</div>
+</div>
+<aside>Source: docs/30 §0, §2.1–2.4. All three designs are sequential sandwich assays: sample, wash, conjugate, wash, substrate, read. Capture antibody: biotinylated goat F(ab′)₂ anti-human IgG, Fcγ-specific; detection: alkaline-phosphatase goat F(ab′)₂ anti-human IgG, F(ab′)₂-specific; streptavidin beads in tiers 2 and 3; substrate hydroquinone diphosphate (0.3 mM in tier 1, 1 mM in tiers 2 and 3). The read potential of +0.30 V against the strip’s printed reference is a starting value, to be set once per strip lot on a voltammogram of enzyme-generated product. The blank is conjugate that sticks without analyte; its spread from unit to unit is part of the limit. The drawing shows the tier-1 surface; in tiers 2 and 3 the same sandwich sits on beads.</aside>
+</section>
+<section id="tier1" data-transition="fade">
+<p class="eyebrow">Tier 1 · consumables only</p>
+<h2>Tier 1: capture on the electrode itself</h2>
+<div class="row" style="gap:48px">
+<div class="host" style="width:800px;height:600px">
+<svg style="position:absolute;left:0px;top:0px" width="800" height="600" viewBox="0 0 800 600" aria-label="Cross-section of a wall-jet flow cell on a printed strip: liquid runs down a central bore, spreads through a thin gap over a gold working electrode carrying capture antibodies, and leaves up an outlet to waste; conjugate coats the tube, bore and gap ceiling."><defs><marker id="ah" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#1F5A96"/></marker></defs><rect x="170" y="150" width="450" height="292" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="170" y="470" width="450" height="50" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="200" y="442" width="390" height="28" fill="#E3EBF5"/><rect x="359" y="150" width="72" height="292" fill="#E3EBF5"/><rect x="527" y="150" width="26" height="292" fill="#E3EBF5"/><path d="M540,152 L540,140 Q540,110 570,110 L780,110" fill="none" stroke="#14213D" stroke-width="30" stroke-linejoin="round" stroke-linecap="round"/><path d="M540,152 L540,140 Q540,110 570,110 L780,110" fill="none" stroke="#E3EBF5" stroke-width="24" stroke-linejoin="round" stroke-linecap="round"/><rect x="529" y="140" width="22" height="14" fill="#E3EBF5"/><line x1="359" y1="150" x2="359" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="431" y1="150" x2="431" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="527" y1="150" x2="527" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="553" y1="150" x2="553" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="170" y1="442" x2="359" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="431" y1="442" x2="527" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="553" y1="442" x2="620" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="195" y="470" width="70" height="12" fill="#2B2F3A" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="285" y="470" width="220" height="12" fill="#C9A227" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="525" y="470" width="70" height="12" fill="#9AA5B8" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="384" y="0" width="22" height="152" fill="#E3EBF5"/><line x1="385" y1="0" x2="385" y2="150" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="405" y1="0" x2="405" y2="150" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="388.5" y1="2" x2="388.5" y2="150" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="401.5" y1="2" x2="401.5" y2="150" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="362.5" y1="152" x2="362.5" y2="440" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="427.5" y1="152" x2="427.5" y2="440" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="218" y1="445.5" x2="359" y2="445.5" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="431" y1="445.5" x2="527" y2="445.5" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="553" y1="445.5" x2="572" y2="445.5" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="M296,470 L296,461 L289,450 M296,461 L303,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M321,470 L321,461 L314,450 M321,461 L328,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="321" cy="451" r="6" fill="#1F5A96" stroke="#14213D" stroke-width="2"/><path d="M346,470 L346,461 L339,450 M346,461 L353,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M371,470 L371,461 L364,450 M371,461 L378,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M396,470 L396,461 L389,450 M396,461 L403,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="396" cy="451" r="6" fill="#1F5A96" stroke="#14213D" stroke-width="2"/><path d="M421,470 L421,461 L414,450 M421,461 L428,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M446,470 L446,461 L439,450 M446,461 L453,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M471,470 L471,461 L464,450 M471,461 L478,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="471" cy="451" r="6" fill="#1F5A96" stroke="#14213D" stroke-width="2"/><path d="M496,470 L496,461 L489,450 M496,461 L503,450" fill="none" stroke="#5E6B85" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="200" cy="452" r="18" fill="#5E6B85" stroke="#14213D" stroke-width="3"/><circle cx="590" cy="452" r="18" fill="#5E6B85" stroke="#14213D" stroke-width="3"/><path d="M395,175 L395,425" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M286,456 L230,456" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M504,456 L540,456 L540,190" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><line x1="384" y1="45" x2="366" y2="45" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="365" y1="215" x2="168" y2="215" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="362.5" y1="330" x2="168" y2="330" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="250" y1="456" x2="168" y2="470" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="608" y1="444" x2="632" y2="412" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="612" y1="500" x2="632" y2="500" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="346" y1="484" x2="346" y2="532" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+<p class="lab" style="left:150px;top:15px;width:208px;text-align:right">inlet line from the autosampler</p>
+<p class="lab" style="left:4px;top:185px;width:156px;text-align:right">inlet bore, 0.8 mm</p>
+<p class="lab" style="left:4px;top:270px;width:156px;text-align:right">conjugate sticks to these walls too (orange)</p>
+<p class="lab" style="left:4px;top:410px;width:156px;text-align:right">gap: 0.2 mm assumed (not to scale)</p>
+<p class="lab" style="left:190px;top:540px;width:410px;text-align:center">capture antibody on the gold working electrode</p>
+<p class="lab" style="left:640px;top:382px;width:160px">O-ring, 8 mm</p>
+<p class="lab" style="left:650px;top:132px;width:140px">to waste</p>
+<p class="lab" style="left:640px;top:470px;width:160px">printed strip</p>
+</div>
+<div class="col grow" style="gap:14px">
+<div class="card fix" style="flex-direction:row;align-items:center;gap:28px"><p class="big fix">3.6 pg/mL</p><p class="small">nominal · median 16 [2.8–110] · 57.1 min from injection to result</p></div>
+<p class="small"><b>Capture.</b> The sample passes a 3 mm gold electrode at 2.86 µL/min for 44 min. The electrode carries the capture antibody on a thiol monolayer and streptavidin; 8.2 % of the IgG is captured.</p>
+<p class="small"><b>Read.</b> Substrate flows at 200 µL/min. The current of the enzyme on the electrode is read for 60 s, between two reference windows in the same buffer without substrate.</p>
+<p class="small"><b>Why fast.</b> Product from conjugate on the upstream walls is collected at only 6 %, the electrode’s own in full.</p>
+<p class="small"><b>What limits it.</b> Conjugate on the electrode itself, then baseline drift.</p>
+<p class="small"><b>Unproven.</b> Hydroquinone oxidation through the monolayer; the gap of the cell.</p>
+</div>
+</div>
+<aside>Source: docs/30 §3. Cell: MicruX strip cell with its flow add-on, a wall-jet cell with a 0.8 mm inlet bore and an 8 mm O-ring; the gap is not published and 0.2 mm is assumed (2.8 to 5.6 pg/mL for 0.1 to 0.5 mm). Electrode: printed gold strip, one per determination. 20 nM conjugate for 4 min. The signal is the read window minus the mean of the two reference windows, minus the same quantity from the identical sequence run on the fresh strip before the sample. The model puts printed gold with the monolayer at 3.6 pg/mL and printed carbon with adsorbed streptavidin at 11; if the coated gold delivers 30 % of the current the limit is 7.2. Printed carbon is the fallback, and the first tier-1 experiment compares the two. Median and range are over 2000 Monte Carlo draws; the range is the 5th to 95th percentile.</aside>
+</section>
+<section id="tier2" data-transition="fade">
+<p class="eyebrow">Tier 2 · plus passive in-line parts</p>
+<h2>Tier 2: a bead bed at the cell inlet</h2>
+<div class="row" style="gap:48px">
+<div class="host" style="width:800px;height:600px">
+<svg style="position:absolute;left:0px;top:0px" width="800" height="600" viewBox="0 0 800 600" aria-label="The same flow cell with a glass capillary in the bore holding a packed bead bed on a frit just above a carbon working electrode; conjugate coats the capillary walls above the bed and the frit."><defs><marker id="ah" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#1F5A96"/></marker></defs><rect x="170" y="150" width="450" height="292" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="170" y="470" width="450" height="50" fill="#ECE7DB" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="200" y="442" width="390" height="28" fill="#E3EBF5"/><rect x="359" y="150" width="72" height="292" fill="#E3EBF5"/><rect x="527" y="150" width="26" height="292" fill="#E3EBF5"/><path d="M540,152 L540,140 Q540,110 570,110 L780,110" fill="none" stroke="#14213D" stroke-width="30" stroke-linejoin="round" stroke-linecap="round"/><path d="M540,152 L540,140 Q540,110 570,110 L780,110" fill="none" stroke="#E3EBF5" stroke-width="24" stroke-linejoin="round" stroke-linecap="round"/><rect x="529" y="140" width="22" height="14" fill="#E3EBF5"/><line x1="359" y1="150" x2="359" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="431" y1="150" x2="431" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="527" y1="150" x2="527" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="553" y1="150" x2="553" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="170" y1="442" x2="359" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="431" y1="442" x2="527" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="553" y1="442" x2="620" y2="442" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="195" y="470" width="70" height="12" fill="#2B2F3A" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="285" y="470" width="220" height="12" fill="#2B2F3A" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="525" y="470" width="70" height="12" fill="#9AA5B8" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="359" y="150" width="16" height="180" fill="#ECE7DB" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="415" y="150" width="16" height="180" fill="#ECE7DB" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="375" y="0" width="12" height="400" fill="#E3EBF5" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="403" y="0" width="12" height="400" fill="#E3EBF5" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><rect x="388" y="0" width="14" height="316" fill="#E3EBF5"/><rect x="388" y="316" width="14" height="70" fill="#CFE5DF"/><line x1="375" y1="400" x2="415" y2="400" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="391" cy="321" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="399" cy="321" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="395" cy="327.8" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="391" cy="334.6" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="399" cy="334.6" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="395" cy="341.4" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="391" cy="348.2" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="399" cy="348.2" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="395" cy="355" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="391" cy="361.8" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="399" cy="361.8" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="395" cy="368.6" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="391" cy="375.4" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><circle cx="399" cy="375.4" r="4" fill="#8A5A3C" stroke="#14213D" stroke-width="1.5"/><rect x="387" y="386" width="16" height="14" fill="#5E6B85"/><rect x="386.5" y="383.5" width="17" height="17" fill="none" stroke="#D9773F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="389.5" y1="150" x2="389.5" y2="314" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="400.5" y1="150" x2="400.5" y2="314" stroke="#D9773F" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><line x1="387" y1="0" x2="387" y2="400" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="403" y1="0" x2="403" y2="400" stroke="#14213D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="200" cy="452" r="18" fill="#5E6B85" stroke="#14213D" stroke-width="3"/><circle cx="590" cy="452" r="18" fill="#5E6B85" stroke="#14213D" stroke-width="3"/><path d="M395,30 L395,130" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M395,408 L395,436" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M380,456 L300,456" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M410,456 L512,456" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><path d="M540,420 L540,190" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ah)"/><line x1="375" y1="40" x2="366" y2="40" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="366" y1="190" x2="168" y2="190" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="389.5" y1="260" x2="168" y2="285" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="380" y1="405" x2="168" y2="440" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="403" y1="340" x2="632" y2="290" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="403" y1="393" x2="632" y2="393" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="440" y1="482" x2="440" y2="532" stroke="#5E6B85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+<p class="lab" style="left:150px;top:15px;width:208px;text-align:right">capillary, 0.2 mm bore</p>
+<p class="lab" style="left:4px;top:175px;width:156px;text-align:right">sleeve</p>
+<p class="lab" style="left:4px;top:240px;width:156px;text-align:right">conjugate on the walls above the bed (orange)</p>
+<p class="lab" style="left:4px;top:395px;width:156px;text-align:right">tip 1 mm above the electrode</p>
+<p class="lab" style="left:640px;top:200px;width:160px">bed: 1 million beads of 2.8 µm, 0.6 mm long</p>
+<p class="lab" style="left:640px;top:378px;width:150px">frit</p>
+<p class="lab" style="left:650px;top:132px;width:140px">to waste</p>
+<p class="lab" style="left:170px;top:545px;width:450px;text-align:center">printed carbon working electrode</p>
+</div>
+<div class="col grow" style="gap:14px">
+<div class="card fix" style="flex-direction:row;align-items:center;gap:28px"><p class="big fix">2.1 pg/mL</p><p class="small">nominal · median 8.4 [1.0–100] · 56.7 min from injection to result</p></div>
+<p class="small"><b>Capture.</b> The sample passes a bed of a million streptavidin beads at 3.4 µL/min for 37 min. The bed is packed by hand against a frit in a capillary; 66 % of the IgG is captured.</p>
+<p class="small"><b>Read.</b> Substrate in, flow stopped for 5 min, then the product is swept over a printed carbon electrode in 90 s. The electrode converts 62 % of it.</p>
+<p class="small"><b>What limits it.</b> Conjugate on the walls above the bed (45 % of the blank) and on the frit (21 %), more than on the beads (31 %).</p>
+<p class="small"><b>Unproven.</b> A zero-flow step in the pump method; the wetted area of the frit; the fit of the sleeve in the inlet port.</p>
+</div>
+</div>
+<aside>Source: docs/30 §4. Bed: 1×10⁶ streptavidin beads of 2.8 µm carrying the biotinylated capture fragment, packed against a frit in a fused-silica capillary of 0.20 mm bore; 19 nL, 0.6 mm long, 24 mm² of bead surface. The capillary passes through the inlet port in a sleeve and ends 1 mm above a printed carbon strip; a fresh strip with every bed. 5 nM conjugate for 4 min. Read: 215 µL of substrate at 80 µL/min, 1 min at 5 µL/min, stop 5 min, sweep 90 s at 5 µL/min; the signal is the charge of the trace minus the trace of the same stop and sweep recorded on the fresh bed and strip. Model limits for a frit of 1, 5 and 20 mm²: 1.7, 2.1 and 3.4 pg/mL. If the pump cannot stop, a continuous read at 1 µL/min gives 2.8 (optimistic: the drift over the hour is not in the kit). Fritted capillary part numbers and the sleeve fit are unverified.</aside>
+</section>
+<section id="tier3" data-transition="fade">
+<p class="eyebrow">Tier 3 · anything</p>
+<h2>Tier 3: the same bed in the loop of a valve</h2>
+<div class="row" style="gap:40px">
+<div class="host" style="width:1000px;height:540px">
+<svg style="position:absolute;left:0px;top:0px" width="1000" height="540" viewBox="0 0 1000 540" aria-label="Two positions of a six-port valve with a packed bead bed in its loop: in position IN the stream runs through the bed, in position OUT the stream bypasses it and the bed is closed at both ends."><path d="M50 105 L195 105 L195 161.7" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M305 161.7 L305 105 L418 105" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M127 270 L60 270 L60 460 L165 460" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M335 460 L440 460 L440 270 L373 270" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="405" y="118" width="70" height="10" fill="#ECE7DB" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><rect x="418" y="92" width="44" height="26" fill="#E3EBF5" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/><rect x="165" y="445" width="170" height="30" rx="4" fill="#E3EBF5" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/><circle cx="170.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="179" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="187.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="196" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="204.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="213" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="221.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="230" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="238.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="247" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="255.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="264" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="272.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="281" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="174.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="183.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="191.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="200.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="208.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="217.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="225.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="234.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="242.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="251.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="259.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="268.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="276.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="170.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="179" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="187.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="196" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="204.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="213" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="221.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="230" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="238.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="247" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="255.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="264" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="272.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="281" cy="467.5" r="4" fill="#8A5A3C"/><rect x="285" y="447" width="12" height="26" fill="#5E6B85"/><circle cx="250" cy="270" r="110" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="250" cy="270" r="10" fill="#ECE7DB" stroke="#14213D" stroke-width="2"/><path d="M201.5 186 L210 200.7 A80 80 0 0 0 170 270 L153 270" fill="none" stroke="#B9CCE3" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path d="M201.5 186 L210 200.7 A80 80 0 0 0 170 270 L153 270" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M347 270 L330 270 A80 80 0 0 0 290 200.7 L298.5 186" fill="none" stroke="#B9CCE3" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path d="M347 270 L330 270 A80 80 0 0 0 290 200.7 L298.5 186" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M201.5 354 L210 339.3 A80 80 0 0 0 290 339.3 L298.5 354" fill="none" stroke="#9AA5B8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M188.5 376.5 L182.5 386.9" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M174.7 382.4 L190.3 391.4" fill="none" stroke="#14213D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M311.5 376.5 L317.5 386.9" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M309.7 391.4 L325.3 382.4" fill="none" stroke="#14213D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="195" cy="174.7" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="195" cy="174.7" r="5" fill="#1F5A96"/><circle cx="140" cy="270" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="140" cy="270" r="5" fill="#1F5A96"/><circle cx="195" cy="365.3" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="195" cy="365.3" r="5" fill="#9AA5B8"/><circle cx="305" cy="365.3" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="305" cy="365.3" r="5" fill="#9AA5B8"/><circle cx="360" cy="270" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="360" cy="270" r="5" fill="#1F5A96"/><circle cx="305" cy="174.7" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="305" cy="174.7" r="5" fill="#1F5A96"/><polygon points="136,105 114,114.3 114,95.7" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="195,143 185.7,121 204.4,121" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="305,121 314.4,143 295.6,143" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="381,105 359,114.3 359,95.7" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="175.7,238.7 178.4,217.1 193.1,225.6" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="314.3,221.3 331.6,234.4 316.9,242.9" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="60,381 50.6,359 69.3,359" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="126,460 104,469.4 104,450.6" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="396,460 374,469.4 374,450.6" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="440,359 449.4,381 430.6,381" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><path d="M550 105 L695 105 L695 161.7" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M805 161.7 L805 105 L918 105" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M627 270 L560 270 L560 460 L665 460" fill="none" stroke="#2F8072" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M835 460 L940 460 L940 270 L873 270" fill="none" stroke="#2F8072" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="905" y="118" width="70" height="10" fill="#ECE7DB" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><rect x="918" y="92" width="44" height="26" fill="#E3EBF5" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/><rect x="665" y="445" width="170" height="30" rx="4" fill="#CFE5DF" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/><circle cx="670.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="679" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="687.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="696" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="704.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="713" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="721.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="730" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="738.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="747" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="755.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="764" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="772.5" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="781" cy="452.5" r="4" fill="#8A5A3C"/><circle cx="674.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="683.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="691.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="700.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="708.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="717.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="725.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="734.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="742.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="751.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="759.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="768.2" cy="460" r="4" fill="#8A5A3C"/><circle cx="776.8" cy="460" r="4" fill="#8A5A3C"/><circle cx="670.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="679" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="687.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="696" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="704.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="713" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="721.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="730" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="738.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="747" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="755.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="764" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="772.5" cy="467.5" r="4" fill="#8A5A3C"/><circle cx="781" cy="467.5" r="4" fill="#8A5A3C"/><rect x="785" y="447" width="12" height="26" fill="#5E6B85"/><circle cx="750" cy="270" r="110" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="750" cy="270" r="10" fill="#ECE7DB" stroke="#14213D" stroke-width="2"/><path d="M701.5 186 L710 200.7 A80 80 0 0 1 790 200.7 L798.5 186" fill="none" stroke="#B9CCE3" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path d="M701.5 186 L710 200.7 A80 80 0 0 1 790 200.7 L798.5 186" fill="none" stroke="#1F5A96" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M653 270 L670 270 A80 80 0 0 0 710 339.3 L701.5 354" fill="none" stroke="#CFE5DF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path d="M653 270 L670 270 A80 80 0 0 0 710 339.3 L701.5 354" fill="none" stroke="#2F8072" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M798.5 354 L790 339.3 A80 80 0 0 0 830 270 L847 270" fill="none" stroke="#CFE5DF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><path d="M798.5 354 L790 339.3 A80 80 0 0 0 830 270 L847 270" fill="none" stroke="#2F8072" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M688.5 376.5 L682.5 386.9" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M674.7 382.4 L690.3 391.4" fill="none" stroke="#14213D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M811.5 376.5 L817.5 386.9" fill="none" stroke="#14213D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M809.7 391.4 L825.3 382.4" fill="none" stroke="#14213D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="695" cy="174.7" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="695" cy="174.7" r="5" fill="#1F5A96"/><circle cx="640" cy="270" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="640" cy="270" r="5" fill="#2F8072"/><circle cx="695" cy="365.3" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="695" cy="365.3" r="5" fill="#2F8072"/><circle cx="805" cy="365.3" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="805" cy="365.3" r="5" fill="#2F8072"/><circle cx="860" cy="270" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="860" cy="270" r="5" fill="#2F8072"/><circle cx="805" cy="174.7" r="13" fill="#FFFDF8" stroke="#14213D" stroke-width="3"/><circle cx="805" cy="174.7" r="5" fill="#1F5A96"/><polygon points="636,105 614,114.3 614,95.7" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="695,143 685.6,121 704.4,121" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="805,121 814.4,143 795.6,143" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="881,105 859,114.3 859,95.7" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><polygon points="760,190 740,198.5 740,181.5" fill="#1F5A96" stroke="#1F5A96" stroke-width="2" stroke-linejoin="round"/><path d="M500 70 L500 520" stroke="#D9D2C2" stroke-width="2" stroke-linecap="round"/><path d="M189 394 L199 405" fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M311 394 L301 405" fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<p class="lab strong" style="left:20px;top:12px;width:460px;text-align:center;font-size:28px">IN: stream passes through bed</p>
+<p class="lab strong" style="left:520px;top:12px;width:460px;text-align:center;font-size:28px">OUT: bed closed and bypassed</p>
+<p class="lab strong" style="left:145px;top:145px;width:30px;text-align:center">1</p>
+<p class="lab strong" style="left:85px;top:228px;width:30px;text-align:center">2</p>
+<p class="lab strong" style="left:135px;top:335px;width:30px;text-align:center">3</p>
+<p class="lab strong" style="left:335px;top:335px;width:30px;text-align:center">4</p>
+<p class="lab strong" style="left:385px;top:228px;width:30px;text-align:center">5</p>
+<p class="lab strong" style="left:325px;top:145px;width:30px;text-align:center">6</p>
+<p class="lab strong" style="left:645px;top:145px;width:30px;text-align:center">1</p>
+<p class="lab strong" style="left:585px;top:228px;width:30px;text-align:center">2</p>
+<p class="lab strong" style="left:635px;top:335px;width:30px;text-align:center">3</p>
+<p class="lab strong" style="left:835px;top:335px;width:30px;text-align:center">4</p>
+<p class="lab strong" style="left:885px;top:228px;width:30px;text-align:center">5</p>
+<p class="lab strong" style="left:825px;top:145px;width:30px;text-align:center">6</p>
+<p class="lab" style="left:40px;top:60px;width:280px">from the autosampler</p>
+<p class="lab" style="left:395px;top:134px;width:90px;text-align:center">to the cell</p>
+<p class="lab" style="left:895px;top:134px;width:90px;text-align:center">to the cell</p>
+<p class="lab" style="left:200px;top:392px;width:100px;text-align:center">plugged</p>
+<p class="lab" style="left:40px;top:496px;width:420px;text-align:center">bead bed and frit in the loop</p>
+<p class="lab" style="left:520px;top:496px;width:460px;text-align:center">product collects in the closed bed</p>
+</div>
+<div class="col grow" style="gap:14px">
+<div class="card fix" style="gap:8px"><p class="big">1.2 pg/mL</p><p class="small">nominal · median 5.1 [0.78–58] · 56.7 min · 68 % of the IgG captured</p></div>
+<p class="small"><b>Read.</b> The valve closes the bed for 3 min while substrate keeps flowing through the cell. Then it opens, and the product is swept over the electrode in 90 s.</p>
+<p class="small"><b>What the valve buys.</b> Walls upstream give a steady current, not part of the peak. The pump never stops.</p>
+<p class="small"><b>Conditional.</b> A second valve and bed for a transfer of the immune complex: 1.1 pg/mL, at a release nobody has measured.</p>
+</div>
+</div>
+<aside>Source: docs/30 §5. One 2-position 6-port valve between the autosampler and the cell: port 1 in, port 6 out, the bed between ports 2 and 5, ports 3 and 4 plugged. IN (1–2 and 5–6 connected): the stream passes through the bed, for sample, washes, conjugate, substrate and the read. OUT (1–6 connected): the bed is bypassed and closed at both ends, for the 3 min accumulation, with the pump at 5 µL/min through the bypass and the cell. Sample at 3.15 µL/min for 40 min; 5 nM conjugate. Only the bed, its frit and the loop of the valve (10 mm² taken; with 30 mm² the limit is 1.7) hold conjugate that counts in the read. The steady currents of the electrode and the upstream walls (about 12 and 13 pA) are removed by the baseline. The valve is driven by the project’s Python layer.</aside>
+</section>
+<section id="reads" data-transition="fade">
+<p class="eyebrow">The read</p>
+<h2>Three ways to read the same product</h2>
+<div class="row" style="gap:46px">
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 1: steady current</h3>
+<div class="host plate" style="width:524px;height:304px">
+<svg style="position:absolute;left:0px;top:0px" width="520" height="300" viewBox="0 0 520 300" aria-label="Sketch of current versus time in continuous flow: a flat reference level, a rise to a plateau read in the middle window, and a return to the reference level, with the signal as the height of the plateau above the reference."><rect x="80" y="60" width="50" height="190" fill="#ECE7DB"/><rect x="215" y="60" width="60" height="190" fill="#E3EBF5"/><rect x="370" y="60" width="50" height="190" fill="#ECE7DB"/><path d="M130 204 L370 204" fill="none" stroke="#5E6B85" stroke-width="2" stroke-dasharray="8 8"/><path d="M50 250 L50 36" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M50 26 L43.5 39 L56.5 39 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M50 250 L494 250" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M506 250 L493 243.5 L493 256.5 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M60 205 L140 205 C170 205 170 115 200 115 L290 115 C320 115 320 203 350 203 L495 203" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M245 212 L245 111" fill="none" stroke="#A8481A" stroke-width="3" stroke-linecap="round"/><path d="M245 204 L238.5 215 L251.5 215 Z" fill="#A8481A" stroke="#A8481A" stroke-width="2" stroke-linejoin="round"/><path d="M245 119 L238.5 108 L251.5 108 Z" fill="#A8481A" stroke="#A8481A" stroke-width="2" stroke-linejoin="round"/></svg>
+<p class="lab" style="left:58px;top:0px;width:120px">current</p>
+<p class="lab" style="left:424px;top:262px;width:80px;text-align:right">time</p>
+<p class="lab" style="left:40px;top:262px;width:130px;text-align:center">reference</p>
+<p class="lab" style="left:205px;top:262px;width:80px;text-align:center">read</p>
+<p class="lab" style="left:330px;top:262px;width:130px;text-align:center">reference</p>
+<p class="lab strong" style="left:195px;top:70px;width:100px;text-align:center">signal</p>
+</div>
+<p class="small">Substrate flows at 200 µL/min. Signal: the current in a 60 s window, minus the mean of two reference windows without substrate.</p>
+</div>
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 2: stop, then sweep</h3>
+<div class="host plate" style="width:524px;height:304px">
+<svg style="position:absolute;left:0px;top:0px" width="520" height="300" viewBox="0 0 520 300" aria-label="Sketch of current versus time with the flow stopped: the current decays to a flat baseline, then the swept product gives a sharp peak whose area above the carried-forward baseline is the signal."><rect x="80" y="36" width="250" height="16" fill="#9AA5B8"/><rect x="290" y="60" width="40" height="190" fill="#ECE7DB"/><path d="M330 215 C345 140 352 72 366 72 C392 72 410 180 470 198 L495 198 L495 215 Z" fill="#B9CCE3" opacity="0.6"/><path d="M330 215 L495 215" fill="none" stroke="#5E6B85" stroke-width="2" stroke-dasharray="8 8"/><path d="M50 250 L50 36" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M50 26 L43.5 39 L56.5 39 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M50 250 L494 250" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M506 250 L493 243.5 L493 256.5 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M80 150 C130 200 180 215 250 215 L330 215 C345 140 352 72 366 72 C392 72 410 180 470 198 L495 198" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M452 134 L446 200" fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round"/></svg>
+<p class="lab" style="left:58px;top:0px;width:120px">current</p>
+<p class="lab" style="left:424px;top:262px;width:80px;text-align:right">time</p>
+<p class="lab" style="left:80px;top:58px;width:200px">flow stopped</p>
+<p class="lab" style="left:214px;top:262px;width:110px;text-align:right">baseline</p>
+<p class="lab" style="left:336px;top:262px;width:80px">sweep</p>
+<p class="lab strong" style="left:414px;top:66px;width:104px">signal = area</p>
+</div>
+<p class="small">Flow stops for 5 min and product collects around the bed. A 90 s sweep carries it over the electrode. Signal: the area of the peak.</p>
+</div>
+<div class="col fix" style="width:524px;gap:14px">
+<h3>Tier 3: closed, then opened</h3>
+<div class="host plate" style="width:524px;height:304px">
+<svg style="position:absolute;left:0px;top:0px" width="520" height="300" viewBox="0 0 520 300" aria-label="Sketch of current versus time with the cell in steady flow: a flat baseline while the bed valve is closed, then a peak when the valve opens, whose area above the baseline is the signal."><rect x="150" y="36" width="180" height="16" fill="#2F8072"/><rect x="290" y="60" width="40" height="190" fill="#ECE7DB"/><path d="M330 200 C345 200 355 82 374 82 C400 82 420 190 484 200 L495 200 Z" fill="#B9CCE3" opacity="0.6"/><path d="M330 200 L495 200" fill="none" stroke="#5E6B85" stroke-width="2" stroke-dasharray="8 8"/><path d="M50 250 L50 36" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M50 26 L43.5 39 L56.5 39 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M50 250 L494 250" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round"/><path d="M506 250 L493 243.5 L493 256.5 Z" fill="#14213D" stroke="#14213D" stroke-width="2" stroke-linejoin="round"/><path d="M60 200 L330 200 C345 200 355 82 374 82 C400 82 420 190 484 200 L495 200" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M452 122 L446 192" fill="none" stroke="#5E6B85" stroke-width="2" stroke-linecap="round"/></svg>
+<p class="lab" style="left:58px;top:0px;width:120px">current</p>
+<p class="lab" style="left:424px;top:262px;width:80px;text-align:right">time</p>
+<p class="lab" style="left:150px;top:58px;width:180px">valve closed</p>
+<p class="lab" style="left:214px;top:262px;width:110px;text-align:right">baseline</p>
+<p class="lab" style="left:336px;top:4px;width:150px">valve opens</p>
+<p class="lab strong" style="left:414px;top:54px;width:104px">signal = area</p>
+</div>
+<p class="small">The valve closes the bed for 3 min while the cell stays in flow, so the peak sits on a flat baseline. Signal: its area.</p>
+</div>
+</div>
+<p class="small soft">In all three the potentiostat holds one electrode at the read potential from the pre-run to the end. The potential is never stepped: a step would charge about a thousand times the signal at the limit.</p>
+<aside>Sketches of the expected traces, not data. Source: docs/30 §3.1, §4.1, §5.1 and §1. Tier 1: reference window 30 s, substrate front 1.1 min, read 60 s, front back 1.1 min, reference window 30 s, all at one constant flow; the two reference windows are 3.7 min apart, and the same sequence on the fresh strip before the sample is subtracted. Tier 2: the baseline is the last 30 s of the stop; the trace of the same stop and sweep on the fresh bed and strip is subtracted, because the background steps up when fresh substrate arrives with the sweep. Tier 3: the baseline is the 30 s before the valve opens; no pre-run trace is subtracted. A potential step charges about 1 µC on a 3 mm printed electrode (an unverified estimate of 0.2–1 µC, docs/29 A.4), a thousand times the signal at the limit (docs/30 §1).</aside>
+</section>
+<section id="timeline" data-transition="fade">
+<p class="eyebrow">The hour</p>
+<h2>Every design finishes within the hour</h2>
+<div class="col" style="gap:12px;position:relative">
+<div class="row" style="gap:0"><div class="fix" style="width:260px"></div><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">0 min</p><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">10</p><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">20</p><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">30</p><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">40</p><p class="small soft fix" style="width:210px;border-left:3px solid #9AA5B8;padding-left:8px;box-sizing:border-box">50</p><p class="small strong fix" style="width:120px;padding-left:11px;box-sizing:border-box;color:#A8481A">60 min</p></div>
+<div class="row" style="gap:0;align-items:center"><div class="col fix" style="width:260px;gap:0"><p class="small strong">Tier 1</p><p class="small soft">57.1 min</p></div><div class="row" style="gap:2px"><p class="seg c-blue" style="width:943px">Sample over the electrode: 44 min at 2.86 µL/min</p><div class="seg c-steel" style="width:29px"></div><div class="seg c-orange" style="width:104px"></div><div class="seg c-steel" style="width:29px"></div><div class="seg c-rust" style="width:9px"></div><div class="seg c-slate" style="width:20px"></div><div class="seg c-rust" style="width:19px"></div><div class="seg c-steel" style="width:21px"></div><div class="seg c-rust" style="width:8px"></div></div></div>
+<div class="row" style="gap:0;align-items:center"><div class="col fix" style="width:260px;gap:0"><p class="small strong">Tier 2</p><p class="small soft">56.7 min</p></div><div class="row" style="gap:2px"><p class="seg c-blue" style="width:796px">Sample through the bead bed: 37 min at 3.4 µL/min</p><div class="seg c-steel" style="width:30px"></div><div class="seg c-orange" style="width:102px"></div><div class="seg c-steel" style="width:40px"></div><div class="seg c-slate" style="width:76px"></div><p class="seg c-teal" style="width:103px">Stop</p><div class="seg c-rust" style="width:29px"></div></div></div>
+<div class="row" style="gap:0;align-items:center"><div class="col fix" style="width:260px;gap:0"><p class="small strong">Tier 3, one valve</p><p class="small soft">56.7 min</p></div><div class="row" style="gap:2px"><p class="seg c-blue" style="width:859px">Sample through the bed: 40 min at 3.15 µL/min</p><div class="seg c-steel" style="width:29px"></div><div class="seg c-orange" style="width:104px"></div><div class="seg c-steel" style="width:40px"></div><div class="seg c-slate" style="width:54px"></div><div class="seg c-teal" style="width:61px"></div><div class="seg c-rust" style="width:29px"></div></div></div>
+<div class="row" style="gap:0;align-items:center"><div class="col fix" style="width:260px;gap:0"><p class="small strong">Tier 3, transfer</p><p class="small soft">58.2 min</p></div><div class="row" style="gap:2px"><p class="seg c-blue" style="width:544px">Sample: 25 min at 5 µL/min</p><div class="seg c-steel" style="width:30px"></div><div class="seg c-orange" style="width:102px"></div><div class="seg c-steel" style="width:40px"></div><p class="seg c-ink" style="width:261px">To bed 2</p><div class="seg c-slate" style="width:54px"></div><p class="seg c-teal" style="width:145px">Closed</p><div class="seg c-rust" style="width:30px"></div></div></div>
+<div style="position:absolute;left:1520px;top:0;width:3px;height:340px;background:#A8481A"></div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#1F5A96"></div><p class="small">Sample</p>
+<div class="key" style="background:#9AA5B8;margin-left:14px"></div><p class="small">Wash</p>
+<div class="key" style="background:#D9773F;margin-left:14px"></div><p class="small">Conjugate</p>
+<div class="key" style="background:#5E6B85;margin-left:14px"></div><p class="small">Substrate in</p>
+<div class="key" style="background:#2A9D8F;margin-left:14px"></div><p class="small">Product collects</p>
+<div class="key" style="background:#A8481A;margin-left:14px"></div><p class="small">Read and reference windows</p>
+<div class="key" style="background:#14213D;margin-left:14px"></div><p class="small">Transfer steps</p>
+</div>
+<div class="row">
+<div class="card"><p class="big">37–44 min</p><p class="small">is the sample passing the capture surface, at about 3 µL/min.</p></div>
+<div class="card"><p class="big">10–17 min</p><p class="small">of pre-run on the fresh strip or bed, not counted in the 60 minutes.</p></div>
+<div class="card"><p class="big">1.8–3.3 min</p><p class="small">of margin. With a slower autosampler, only the transfer variant runs over.</p></div>
+</div>
+<aside>Source: the step tables of docs/30 §3.3, §4.3, §5.2 and §5.3, drawn from the model output. Times from injection to result: tier 1 57.1 min, tier 2 56.7, tier 3 with one valve 56.7, with the transfer 58.2. One determination is two autosampler lines (sample, conjugate); the transfer has a third (eluent). Each line is taken as 1 min before its injection (0.25–2 min in the vendor material, unverified); at 2 min per line the totals are 59.2, 58.7, 58.7 and 61.2 min. The 37–44 min of sample loading are those of tiers 1, 2 and 3 with one valve; the transfer variant loads for 25 min at 5 µL/min to make room for its 12.5 min of transfer steps. Pre-run: 12 min (tier 1), 17 min (tier 2), 10 min (tier 3). Tier 1’s reference windows are the two short rust bars on either side of its read.</aside>
+</section>
+<section id="results" data-transition="fade">
+<p class="eyebrow">What the model predicts</p>
+<h2>Predicted limits: 3.6, 2.1 and 1.2 pg/mL</h2>
+<div class="row" style="gap:24px">
+<div class="col fix" style="width:290px;gap:0"><p class="small strong" style="height:48px"></p><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">Tier 1</p><p class="small soft">capture on the electrode</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">Tier 2</p><p class="small soft">bead bed at the cell inlet</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">Tier 3, one valve</p><p class="small soft">the bed in a valve loop</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">Tier 3 with transfer</p><p class="small soft">second bed, conditional</p></div></div>
+<div class="col fix" style="width:872px;gap:0"><p class="small strong" style="height:48px">Predicted detection limit, pg/mL (log scale)</p><div class="host" style="width:872px;height:424px">
+<svg style="position:absolute;left:0;top:0" width="872" height="424" viewBox="0 0 872 424" aria-label="Range chart on a logarithmic axis from 0.1 to 1000 pg/mL. Tier 1: nominal 3.6, median 16, 5 to 95 % of the draws 2.8 to 110. Tier 2: nominal 2.1, median 8.4, 5 to 95 % of the draws 1.0 to 100. Tier 3, one valve: nominal 1.2, median 5.1, 5 to 95 % of the draws 0.78 to 58. Tier 3 with transfer: nominal 1.1, median 5.8, 5 to 95 % of the draws 0.64 to 280. The target is 1 pg/mL."><path d="M0 92H872" stroke="#E4DFD3" stroke-width="2"/><path d="M0 184H872" stroke="#E4DFD3" stroke-width="2"/><path d="M0 276H872" stroke="#E4DFD3" stroke-width="2"/><path d="M20 0V368" stroke="#E4DFD3" stroke-width="2"/><path d="M420 0V368" stroke="#E4DFD3" stroke-width="2"/><path d="M620 0V368" stroke="#E4DFD3" stroke-width="2"/><path d="M820 0V368" stroke="#E4DFD3" stroke-width="2"/><path d="M0 368H872" stroke="#9AA5B8" stroke-width="2"/><path d="M220 0V376" stroke="#A8481A" stroke-width="4"/><rect x="308.7" y="44" width="323.3" height="24" rx="6" fill="#B9CCE3"/><rect x="458.2" y="34" width="6" height="44" rx="2" fill="#14213D"/><circle cx="331.6" cy="56" r="12" fill="#1F5A96" stroke="#F6F3EC" stroke-width="3"/><rect x="220.5" y="136" width="400.0" height="24" rx="6" fill="#B9CCE3"/><rect x="402.3" y="126" width="6" height="44" rx="2" fill="#14213D"/><circle cx="283.0" cy="148" r="12" fill="#1F5A96" stroke="#F6F3EC" stroke-width="3"/><rect x="198.4" y="228" width="374.2" height="24" rx="6" fill="#B9CCE3"/><rect x="358.1" y="218" width="6" height="44" rx="2" fill="#14213D"/><circle cx="239.3" cy="240" r="12" fill="#1F5A96" stroke="#F6F3EC" stroke-width="3"/><rect x="181.0" y="320" width="527.7" height="24" rx="6" fill="#B9CCE3"/><rect x="369.1" y="310" width="6" height="44" rx="2" fill="#14213D"/><circle cx="225.6" cy="332" r="12" fill="#1F5A96" stroke="#F6F3EC" stroke-width="3"/></svg>
+<p class="lab strong" style="left:8px;top:4px;width:200px;text-align:right;color:#A8481A">target: 1 pg/mL</p>
+<p class="lab strong" style="left:282px;top:6px;width:100px;text-align:center">3.6</p>
+<p class="lab strong" style="left:233px;top:98px;width:100px;text-align:center">2.1</p>
+<p class="lab strong" style="left:230px;top:190px;width:100px">1.2</p>
+<p class="lab strong" style="left:230px;top:282px;width:100px">1.1</p>
+<p class="tick" style="left:-30px;top:382px;width:100px;text-align:center">0.1</p>
+<p class="tick" style="left:170px;top:382px;width:100px;text-align:center">1</p>
+<p class="tick" style="left:370px;top:382px;width:100px;text-align:center">10</p>
+<p class="tick" style="left:570px;top:382px;width:100px;text-align:center">100</p>
+<p class="tick" style="left:770px;top:382px;width:100px;text-align:center">1000</p>
+</div></div>
+<div class="col fix" style="width:230px;gap:0"><p class="small strong" style="height:48px">Median [5–95 %]</p><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="small">16 [2.8–110]</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="small">8.4 [1.0–100]</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="small">5.1 [0.78–58]</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="small">5.8 [0.64–280]</p></div></div>
+<div class="col fix" style="width:200px;gap:0"><p class="small strong" style="height:48px">P(≤ 1 pg/mL)</p><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">0.00</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">0.05</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">0.09</p></div><div class="col fix" style="height:92px;gap:2px;justify-content:center"><p class="strong">0.12</p></div></div>
+</div>
+<div class="row center" style="gap:12px">
+<div class="key" style="background:#1F5A96;border-radius:14px"></div><p class="small">nominal: every parameter at its best estimate</p>
+<div class="fix" style="width:6px;height:30px;background:#14213D;border-radius:2px;margin-left:24px"></div><p class="small">median of 2000 draws</p>
+<div class="fix" style="width:56px;height:22px;background:#B9CCE3;border-radius:6px;margin-left:24px"></div><p class="small">5th to 95th percentile of the draws</p>
+</div>
+<p class="small soft">Each step down is small: the bed takes 66 % of the sample instead of 8.2 %, and a valve keeps conjugate-coated walls out of the read. Model predictions, not measurements.</p>
+<aside>Source: docs/30 §0 and results/tier_round/tiers.json. Nominal = all parameters at their best estimate. Median and range = Monte Carlo over the parameter bounds, n = 2000, seed 20261111; the 5–95 % interval is a scenario range, not a confidence interval. P = fraction of draws with a limit at or below 1 pg/mL. P at or below 10 pg/mL: 0.33, 0.54, 0.69 and 0.61. Geometry that is not published (cell gap, bore length, frit area, loop walls) is a design input and is not sampled, so the ranges are narrower than the full uncertainty. The transfer variant is at a released fraction of 0.35 (0.05–0.74), for which nothing is measured. The earlier design of the project (dosing pump, chamber and trap, docs/05) stands at nominal 0.60, median 3.5 pg/mL; its numbers and these are not on the same footing, and neither is shown to be better than the other.</aside>
+</section>
+<section id="statement" class="accent" data-transition="fade" style="justify-content:center">
+<p class="eyebrow">As specified</p>
+<h1>None of the three is predicted to reach 1 pg/mL</h1>
+<div class="row" style="padding-top:16px">
+<div class="card card-accent"><p class="big">0.00</p><p class="small">Tier 1: chance of a limit at or below 1 pg/mL</p></div>
+<div class="card card-accent"><p class="big">0.05</p><p class="small">Tier 2</p></div>
+<div class="card card-accent"><p class="big">0.09</p><p class="small">Tier 3 with one valve</p></div>
+<div class="card card-accent"><p class="big">0.23</p><p class="small">One valve, with screened reagents and the credit for a F(ab′)₂ conjugate</p></div>
+</div>
+<p class="lead">Judgement, not a model output: a first working version would probably show 10–100 pg/mL in tier 1, 3–30 in tier 2 and 2–20 in tier 3 with one valve. The model leaves out effects that are more likely to hurt than to help.</p>
+<aside>Source: docs/30 §0 and §6.4. The chances are fractions of the 2000 Monte Carlo draws; with the transfer the figure is 0.12, at a release nobody has measured. Screened reagents: a detection reagent screened to a half-life of at least 1 h and a substrate lot with 10⁻⁶ free hydroquinone; the credit for a F(ab′)₂ conjugate (it binds less non-specifically) is of unverified size. The ranges of 10–100, 3–30 and 2–20 pg/mL are the orchestrator’s judgement, not a model output. Not in the model: channelling in a hand-packed bed; drift of a printed reference electrode; the pump at 2–5 µL/min against a restrictor; protein on an electrode that every sample and conjugate passes; conjugate that builds up on the transfer line from run to run; bovine IgG in blockers; temperature; the true unit-to-unit spread of hand-made consumables.</aside>
+</section>
+<section id="limits" data-transition="fade">
+<p class="eyebrow">What limits each design</p>
+<h2>Most of the blank is conjugate stuck to surfaces</h2>
+<p class="small soft">Share of the variance of the blank that comes from conjugate stuck without analyte:</p>
+<div class="row">
+<div class="card" style="gap:6px"><p class="big">68 %</p><p class="small">Tier 1; drift is most of the rest</p></div>
+<div class="card" style="gap:6px"><p class="big">95 %</p><p class="small">Tier 2</p></div>
+<div class="card" style="gap:6px"><p class="big">93 %</p><p class="small">Tier 3, one valve</p></div>
+<div class="card" style="gap:6px"><p class="big">74 %</p><p class="small">Tier 3 with transfer</p></div>
+</div>
+<h3>Where the blank comes from</h3>
+<div class="col" style="gap:18px">
+<div class="row" style="gap:24px;align-items:center"><div class="col fix" style="width:300px;gap:0"><p class="strong">Tier 1</p><p class="small soft">by blank current</p></div><div class="row" style="gap:2px"><p class="part c-ink" style="width:909px">on the electrode 70 %</p><p class="part c-orange" style="width:282px">bore and line 22 %</p><p class="part c-sand" style="width:24px"></p><p class="part c-teal" style="width:77px">6 %</p></div></div>
+<div class="row" style="gap:24px;align-items:center"><div class="col fix" style="width:300px;gap:0"><p class="strong">Tier 2</p><p class="small soft">by enzymes of the blank</p></div><div class="row" style="gap:2px"><p class="part c-ink" style="width:396px">on the beads 31 %</p><p class="part c-slate" style="width:270px">on the frit 21 %</p><p class="part c-orange" style="width:587px">walls above the bed 45 %</p><p class="part c-sand" style="width:39px"></p></div></div>
+<div class="row" style="gap:24px;align-items:center"><div class="col fix" style="width:300px;gap:0"><p class="strong">Tier 3, one valve</p><p class="small soft">by enzymes of the blank</p></div><div class="row" style="gap:2px"><p class="part c-ink" style="width:620px">on the beads 48 %</p><p class="part c-slate" style="width:422px">on the frit 33 %</p><p class="part c-orange" style="width:252px">valve loop 20 %</p></div></div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#14213D"></div><p class="small">capture surface</p>
+<div class="key" style="background:#5E6B85;margin-left:16px"></div><p class="small">frit</p>
+<div class="key" style="background:#D9773F;margin-left:16px"></div><p class="small">other walls the conjugate wets</p>
+<div class="key" style="background:#D9D2C2;margin-left:16px"></div><p class="small">cell lid (tier 1), bore below the tip (tier 2)</p>
+<div class="key" style="background:#2A9D8F;margin-left:16px"></div><p class="small">the substrate’s own background</p>
+</div>
+<aside>Source: docs/30 §3.4, §4.4, §5.4 and §6.1, nominal case. Top row: share of the variance at the blank that comes from the unit-to-unit spread of non-specifically bound label; in tier 1 baseline drift is 28 %, in tiers 2 and 3 the electrode’s response is 4 %, with the transfer drift is 14 % and the substrate’s background 6 %. Bars: tier 1 by blank current (17 pA: about 12 pA from conjugate on the electrode, collected in full; 3.7 pA from conjugate on the inlet bore and transfer line, collected at 6 %; 1 pA from the substrate). Tiers 2 and 3 by enzymes of the blank: tier 2 has 4.2×10⁴ on the beads, 2.9×10⁴ on the frit, 0.4×10⁴ on the bore below the tip and 6.3×10⁴ on the capillary and line above the bed; tier 3 with one valve has 4.2×10⁴ on the beads, 2.9×10⁴ on the frit and 1.7×10⁴ on the loop walls. The valve removes the walls above the bed from the read: that is the step from tier 2 to tier 3. The frit’s wetted area (5 mm² taken) and the surface factors are unverified estimates.</aside>
+</section>
+<section id="review" data-transition="fade">
+<p class="eyebrow">Independent review</p>
+<h2>Two review rounds changed the designs twice</h2>
+<div class="col" style="gap:18px">
+<div class="row" style="gap:24px;align-items:center"><div class="col fix" style="width:330px;gap:0"><p class="strong">Round 1</p><p class="small soft">first version, three reviewers</p></div><div class="row" style="gap:2px"><p class="part sev-3" style="width:118px">4</p><p class="part sev-2" style="width:568px">19 significant</p><p class="part sev-1" style="width:358px">12 minor</p></div><p class="strong">35 findings</p></div>
+<div class="row" style="gap:24px;align-items:center"><div class="col fix" style="width:330px;gap:0"><p class="strong">Round 2</p><p class="small soft">Revision B, two reviewers</p></div><div class="row" style="gap:2px"><p class="part sev-2" style="width:328px">11 significant</p><p class="part sev-1" style="width:388px">13 minor</p></div><p class="strong">24 findings</p></div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#6E2D0E"></div><p class="small">blocking</p>
+<div class="key" style="background:#B5521F;margin-left:16px"></div><p class="small">significant</p>
+<div class="key" style="background:#D98A58;margin-left:16px"></div><p class="small">minor</p>
+</div>
+<div class="row">
+<div class="card" style="gap:10px">
+<h3>Round 1: four blocking faults</h3>
+<p class="small">Tier 1 had no reference window near its read, and ignored the conjugate on upstream walls.</p>
+<p class="small">No method set the loop offline, so the substrate would not have reached the cell.</p>
+<p class="small">The enzyme should make the monophosphate, not hydroquinone. This one stays open until tested.</p>
+</div>
+<div class="card" style="gap:10px">
+<h3>Round 2: numbers confirmed, gaps found</h3>
+<p class="small">The tier-1 read compared two different buffers.</p>
+<p class="small">Hydroquinone’s short half-life was applied to the product, but not to the substrate reservoir.</p>
+<p class="small">The transfer was still shown at a release nobody has measured, and its read bed was nearly full.</p>
+</div>
+</div>
+<p class="small soft">The order tier 3, tier 2, tier 1 held through every change. Revision C answers round 2 but was not reviewed again.</p>
+<aside>Source: docs/31. Round 1 reviewed the first version through three lenses: numbers and physics (13 findings), chemistry and bench realism (12), feasibility and consistency (10). Round 2 reviewed Revision B through two lenses: numbers and physics (10), and resolution, feasibility and consistency (14). In both rounds the numbers were faithful to the kit: recomputed independently within 1 % and within 1.4 %. What the kit had left out was physics that sets the blank. Round 1’s blocking findings: N1 (reference window), N2 (upstream walls), F1 (Loop Offline) and C1 (the product of the enzyme, blocking until tested); the first three are resolved, C1 cannot be resolved on paper. Round 2 rated no finding blocking and eleven significant, all resolved in Revision C. Two claims did not survive: that tier 3 is better than the project’s earlier design, and that the transfer is the tier-3 design.</aside>
+</section>
+<section id="revisions" data-transition="fade">
+<p class="eyebrow">What the reviews did to the numbers</p>
+<h2>The predictions moved with each review</h2>
+<div class="row" style="gap:32px">
+<div class="col fix" style="width:392px;gap:8px"><p class="strong">Tier 1</p><div class="host" style="width:392px;height:388px">
+<svg style="position:absolute;left:0;top:0" width="392" height="388" viewBox="0 0 392 388" aria-label="Tier 1: nominal detection limit in pg/mL, first version 3.1, Revision B 9.4, Revision C 3.6."><path d="M72 293.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 143.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 65.2H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 215.2H376" stroke="#A8481A" stroke-width="3"/><path d="M118 141.5 L222 69.2 L326 131.4" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="118" cy="141.5" r="11" fill="#7C9FCB" stroke="#F6F3EC" stroke-width="3"/><circle cx="222" cy="69.2" r="11" fill="#4877AF" stroke="#F6F3EC" stroke-width="3"/><circle cx="326" cy="131.4" r="11" fill="#173F6E" stroke="#F6F3EC" stroke-width="3"/></svg>
+<p class="lab strong" style="left:73px;top:159px;width:90px;text-align:center">3.1</p>
+<p class="lab strong" style="left:177px;top:21px;width:90px;text-align:center">9.4</p>
+<p class="lab strong" style="left:281px;top:149px;width:90px;text-align:center">3.6</p>
+<p class="tick" style="left:0px;top:279px;width:60px;text-align:right">0.3</p>
+<p class="tick" style="left:0px;top:200px;width:60px;text-align:right">1</p>
+<p class="tick" style="left:0px;top:129px;width:60px;text-align:right">3</p>
+<p class="tick" style="left:0px;top:50px;width:60px;text-align:right">10</p>
+<p class="tick" style="left:68px;top:340px;width:100px;text-align:center">first</p>
+<p class="tick" style="left:172px;top:340px;width:100px;text-align:center">B</p>
+<p class="tick" style="left:276px;top:340px;width:100px;text-align:center">C</p>
+</div><p class="small soft">redesigned twice</p></div>
+<div class="col fix" style="width:392px;gap:8px"><p class="strong">Tier 2</p><div class="host" style="width:392px;height:388px">
+<svg style="position:absolute;left:0;top:0" width="392" height="388" viewBox="0 0 392 388" aria-label="Tier 2: nominal detection limit in pg/mL, first version 0.75, Revision B 2.6, Revision C 2.1."><path d="M72 293.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 143.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 65.2H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 215.2H376" stroke="#A8481A" stroke-width="3"/><path d="M118 233.9 L222 152.9 L326 167.9" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="118" cy="233.9" r="11" fill="#7C9FCB" stroke="#F6F3EC" stroke-width="3"/><circle cx="222" cy="152.9" r="11" fill="#4877AF" stroke="#F6F3EC" stroke-width="3"/><circle cx="326" cy="167.9" r="11" fill="#173F6E" stroke="#F6F3EC" stroke-width="3"/></svg>
+<p class="lab strong" style="left:73px;top:252px;width:90px;text-align:center">0.75</p>
+<p class="lab strong" style="left:177px;top:105px;width:90px;text-align:center">2.6</p>
+<p class="lab strong" style="left:281px;top:186px;width:90px;text-align:center">2.1</p>
+<p class="tick" style="left:0px;top:279px;width:60px;text-align:right">0.3</p>
+<p class="tick" style="left:0px;top:200px;width:60px;text-align:right">1</p>
+<p class="tick" style="left:0px;top:129px;width:60px;text-align:right">3</p>
+<p class="tick" style="left:0px;top:50px;width:60px;text-align:right">10</p>
+<p class="tick" style="left:68px;top:340px;width:100px;text-align:center">first</p>
+<p class="tick" style="left:172px;top:340px;width:100px;text-align:center">B</p>
+<p class="tick" style="left:276px;top:340px;width:100px;text-align:center">C</p>
+</div><p class="small soft">same design, new blank terms</p></div>
+<div class="col fix" style="width:392px;gap:8px"><p class="strong">Tier 3, one valve</p><div class="host" style="width:392px;height:388px">
+<svg style="position:absolute;left:0;top:0" width="392" height="388" viewBox="0 0 392 388" aria-label="Tier 3, one valve: nominal detection limit in pg/mL, Revision B 1.5, Revision C 1.2."><path d="M72 293.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 143.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 65.2H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 215.2H376" stroke="#A8481A" stroke-width="3"/><path d="M222 188.7 L326 200.7" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="222" cy="188.7" r="11" fill="#4877AF" stroke="#F6F3EC" stroke-width="3"/><circle cx="326" cy="200.7" r="11" fill="#173F6E" stroke="#F6F3EC" stroke-width="3"/></svg>
+<p class="tick" style="left:62px;top:149px;width:112px;text-align:center">not computed</p>
+<p class="lab strong" style="left:177px;top:141px;width:90px;text-align:center">1.5</p>
+<p class="lab strong" style="left:281px;top:219px;width:90px;text-align:center">1.2</p>
+<p class="tick" style="left:0px;top:279px;width:60px;text-align:right">0.3</p>
+<p class="tick" style="left:0px;top:200px;width:60px;text-align:right">1</p>
+<p class="tick" style="left:0px;top:129px;width:60px;text-align:right">3</p>
+<p class="tick" style="left:0px;top:50px;width:60px;text-align:right">10</p>
+<p class="tick" style="left:68px;top:340px;width:100px;text-align:center">first</p>
+<p class="tick" style="left:172px;top:340px;width:100px;text-align:center">B</p>
+<p class="tick" style="left:276px;top:340px;width:100px;text-align:center">C</p>
+</div><p class="small soft">became the tier-3 design</p></div>
+<div class="col fix" style="width:392px;gap:8px"><p class="strong">Tier 3 with transfer</p><div class="host" style="width:392px;height:388px">
+<svg style="position:absolute;left:0;top:0" width="392" height="388" viewBox="0 0 392 388" aria-label="Tier 3 with transfer: nominal detection limit in pg/mL, first version 0.33, Revision B 0.62, Revision C 1.1."><path d="M72 293.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 143.6H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 65.2H376" stroke="#D9D2C2" stroke-width="2"/><path d="M72 215.2H376" stroke="#A8481A" stroke-width="3"/><path d="M118 287.4 L222 246.3 L326 211.0" fill="none" stroke="#14213D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="118" cy="287.4" r="11" fill="#7C9FCB" stroke="#F6F3EC" stroke-width="3"/><circle cx="222" cy="246.3" r="11" fill="#4877AF" stroke="#F6F3EC" stroke-width="3"/><circle cx="326" cy="211.0" r="11" fill="#173F6E" stroke="#F6F3EC" stroke-width="3"/></svg>
+<p class="lab strong" style="left:73px;top:305px;width:90px;text-align:center">0.33</p>
+<p class="lab strong" style="left:177px;top:264px;width:90px;text-align:center">0.62</p>
+<p class="lab strong" style="left:281px;top:163px;width:90px;text-align:center">1.1</p>
+<p class="tick" style="left:0px;top:279px;width:60px;text-align:right">0.3</p>
+<p class="tick" style="left:0px;top:200px;width:60px;text-align:right">1</p>
+<p class="tick" style="left:0px;top:129px;width:60px;text-align:right">3</p>
+<p class="tick" style="left:0px;top:50px;width:60px;text-align:right">10</p>
+<p class="tick" style="left:68px;top:340px;width:100px;text-align:center">first</p>
+<p class="tick" style="left:172px;top:340px;width:100px;text-align:center">B</p>
+<p class="tick" style="left:276px;top:340px;width:100px;text-align:center">C</p>
+</div><p class="small soft">release 0.7, 0.7, then 0.35</p></div>
+</div>
+<div class="row center" style="gap:10px">
+<div class="key" style="background:#7C9FCB;border-radius:14px"></div><p class="small">first version</p>
+<div class="key" style="background:#4877AF;border-radius:14px;margin-left:16px"></div><p class="small">Revision B</p>
+<div class="key" style="background:#173F6E;border-radius:14px;margin-left:16px"></div><p class="small">Revision C</p>
+<div class="keyline" style="background:#A8481A;margin-left:16px"></div><p class="small">1 pg/mL target</p>
+<p class="small soft" style="margin-left:16px">Nominal detection limit, pg/mL, log scale.</p>
+</div>
+<p class="small soft">First to B: the review added blank terms the kit had left out. B to C: one hydroquinone half-life for product and reservoir, a matched reference buffer in tier 1, and retuned operating points.</p>
+<aside>Source: docs/31 §2 and §5. Nominal limits, pg/mL. Tier 1: 3.1, then 9.4, then 3.6; it was redesigned twice (as first written it would have been 30–75). Tier 2: 0.75, 2.6, 2.1; it kept its design and took the new blank terms (walls above the bed, frit, packed-bed surface factor). Tier 3 with one valve was not computed in the first version: 1.5, then 1.2. Tier 3 with the transfer: 0.33 and 0.62 at a release of 0.7, then 1.1 at a release of 0.35 (0.05–0.74); at a release of 0.7 Revision C gives 0.53. The first-version and Revision-B figures are from the review record; the Revision-C figures are read from the model output. Medians moved likewise: tier 1 16, 35, 16; tier 2 3.0, 13, 8.4.</aside>
+</section>
+<section id="scenarios" data-transition="fade">
+<p class="eyebrow">Scenarios</p>
+<h2>Seven cases: what moves the predicted limit</h2>
+<div class="grid4">
+<p class="colhead"></p>
+<p class="colhead">Tier 1</p>
+<p class="colhead">Tier 2</p>
+<p class="colhead">Tier 3, one valve</p>
+<p class="colhead">Tier 3, transfer</p>
+<p class="rowhead">As specified</p>
+<p class="cell h-3">3.6</p>
+<p class="cell h-2">2.1</p>
+<p class="cell h-2">1.2</p>
+<p class="cell h-2">1.1</p>
+<p class="rowhead">Detection reagent and substrate lot screened</p>
+<p class="cell h-2">2.7</p>
+<p class="cell h-2">1.4</p>
+<p class="cell h-1">0.88</p>
+<p class="cell h-1">0.43</p>
+<p class="rowhead">Screened, plus credit for a F(ab′)₂ conjugate</p>
+<p class="cell h-2">1.9</p>
+<p class="cell h-1">0.70</p>
+<p class="cell h-1">0.46</p>
+<p class="cell h-1">0.26</p>
+<p class="rowhead">Substrate background does not decay</p>
+<p class="cell h-3">5.9</p>
+<p class="cell h-2">2.2</p>
+<p class="cell h-2">1.3</p>
+<p class="cell h-2">1.3</p>
+<p class="rowhead">Conjugate sticks 25 times more than assumed</p>
+<p class="cell h-4">76</p>
+<p class="cell h-4">57</p>
+<p class="cell h-4">36</p>
+<p class="cell h-4">27</p>
+<p class="rowhead">Substrate background of 10⁻³, no decay</p>
+<p class="cell h-5">390</p>
+<p class="cell h-4">67</p>
+<p class="cell h-4">27</p>
+<p class="cell h-4">58</p>
+<p class="rowhead">Only 1 % of the product is electroactive</p>
+<p class="cell h-5">200</p>
+<p class="cell h-4">13</p>
+<p class="cell h-4">20</p>
+<p class="cell h-4">42</p>
+</div>
+<div class="row center" style="gap:10px">
+<p class="small soft">Nominal limit, pg/mL:</p>
+<div class="key" style="background:#F1D2BC;margin-left:8px"></div><p class="small">up to 1</p>
+<div class="key" style="background:#E6A97F;margin-left:16px"></div><p class="small">1 to 3</p>
+<div class="key" style="background:#D9773F;margin-left:16px"></div><p class="small">3 to 10</p>
+<div class="key" style="background:#B5521F;margin-left:16px"></div><p class="small">10 to 100</p>
+<div class="key" style="background:#7A3210;margin-left:16px"></div><p class="small">above 100</p>
+</div>
+<p class="small soft">Two quantities decide: how much conjugate sticks, and what the substrate carries. The last row is the open question about the enzyme’s product; there tier 2 beats one valve, because its longer stop leaves more current.</p>
+<aside>Source: docs/30 §3.5, §4.5, §5.4 and §6.3; every figure is the nominal limit of results/tier_round/tiers.json. Screened: a detection reagent screened to a half-life of at least 1 h, and a substrate lot with 10⁻⁶ free hydroquinone. The credit for a F(ab′)₂ conjugate is of unverified size. “Does not decay”: the substrate’s oxidisable background stays at 10⁻⁵ of the substrate at the time of use, as the earlier model of the project assumed. 25 times more sticking and a background of 10⁻³ are the project’s scenarios S1 and S4a; the project decides on these two quantities by its G1 rule. With only 0.1 % of the product electroactive the figures are 2000, 120, 200 and 420. The transfer column is at a released fraction of 0.35. Chance of a limit at or below 1 pg/mL with screened reagents and the credit: 0.01, 0.15, 0.23 and 0.28.</aside>
+</section>
+<section id="transfer" data-transition="fade">
+<p class="eyebrow">Tier 3 · the conditional step</p>
+<h2>The transfer to a second bed waits for its own test</h2>
+<div class="row" style="gap:40px">
+<div class="col fix" style="width:1004px;gap:14px">
+<div class="host plate" style="width:1004px;height:516px">
+<svg style="position:absolute;left:0;top:0" width="1000" height="512" viewBox="0 0 1000 512" aria-label="Line chart of the nominal detection limit of the transfer design against the share of the complex released in 5 minutes. As specified it falls from 7.5 pg/mL at 5 % to 1.1 at 35 % and 0.53 at 70 %; with screened reagents it is 0.21 at 70 %. One valve without a transfer gives 1.2, and 0.88 with screened reagents; as specified, the transfer is better above a release of about 30 %."><rect x="154" y="60" width="462" height="360" fill="#F3EFE6"/><path d="M120 420.0H790" stroke="#E4DFD3" stroke-width="2"/><path d="M120 334.1H790" stroke="#E4DFD3" stroke-width="2"/><path d="M120 240.0H790" stroke="#E4DFD3" stroke-width="2"/><path d="M120 154.1H790" stroke="#E4DFD3" stroke-width="2"/><path d="M120 60.0H790" stroke="#E4DFD3" stroke-width="2"/><path d="M120 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M254 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M388 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M522 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M656 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M790 420v8" stroke="#9AA5B8" stroke-width="2"/><path d="M120 420H790" stroke="#9AA5B8" stroke-width="2"/><path d="M120 222.6H790" stroke="#1F5A96" stroke-width="2"/><path d="M120 249.8H790" stroke="#D9773F" stroke-width="2"/><path d="M153.5 82.9 C156.3 88.1 164.7 105.5 170.2 114.5 C175.8 123.6 181.4 130.4 187.0 137.0 C192.6 143.7 198.2 149.2 203.8 154.5 C209.3 159.8 214.9 164.3 220.5 168.7 C226.1 173.1 231.7 177.0 237.2 180.8 C242.8 184.5 248.4 187.9 254.0 191.2 C259.6 194.5 265.2 197.5 270.8 200.4 C276.3 203.3 281.9 206.0 287.5 208.7 C293.1 211.3 298.7 213.7 304.2 216.1 C309.8 218.5 315.4 220.7 321.0 222.9 C326.6 225.1 332.2 227.2 337.8 229.2 C343.3 231.2 348.9 233.1 354.5 235.0 C360.1 236.8 365.7 238.6 371.2 240.4 C376.8 242.1 382.4 243.8 388.0 245.4 C393.6 247.0 399.2 248.6 404.8 250.1 C410.3 251.7 415.9 253.2 421.5 254.6 C427.1 256.1 432.7 257.5 438.2 258.8 C443.8 260.2 449.4 261.5 455.0 262.8 C460.6 264.1 466.2 265.4 471.8 266.7 C477.3 267.9 482.9 269.1 488.5 270.3 C494.1 271.5 499.7 272.6 505.2 273.8 C510.8 274.9 516.4 276.0 522.0 277.1 C527.6 278.2 533.2 279.2 538.8 280.3 C544.3 281.3 549.9 282.3 555.5 283.3 C561.1 284.3 566.7 285.3 572.2 286.3 C577.8 287.2 583.4 288.2 589.0 289.1 C594.6 290.1 600.2 291.0 605.8 291.9 C611.3 292.8 616.9 293.6 622.5 294.5 C628.1 295.4 633.7 296.2 639.2 297.1 C644.8 297.9 650.4 298.7 656.0 299.6 C661.6 300.4 667.2 301.2 672.8 302.0 C678.3 302.7 683.9 303.5 689.5 304.3 C695.1 305.1 700.7 305.8 706.2 306.5 C711.8 307.3 717.4 308.0 723.0 308.7 C728.6 309.5 734.2 310.2 739.8 310.9 C745.3 311.6 753.7 312.6 756.5 313.0" fill="none" stroke="#1F5A96" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M153.5 154.5 C156.3 159.8 164.7 177.2 170.2 186.2 C175.8 195.2 181.4 202.0 187.0 208.7 C192.6 215.3 198.2 220.9 203.8 226.1 C209.3 231.4 214.9 236.0 220.5 240.4 C226.1 244.8 231.7 248.7 237.2 252.4 C242.8 256.2 248.4 259.6 254.0 262.9 C259.6 266.1 265.2 269.2 270.8 272.1 C276.3 275.0 281.9 277.7 287.5 280.3 C293.1 282.9 298.7 285.4 304.2 287.8 C309.8 290.1 315.4 292.4 321.0 294.6 C326.6 296.7 332.2 298.8 337.8 300.8 C343.3 302.8 348.9 304.8 354.5 306.6 C360.1 308.5 365.7 310.3 371.2 312.0 C376.8 313.7 382.4 315.4 388.0 317.0 C393.6 318.7 399.2 320.3 404.8 321.8 C410.3 323.3 415.9 324.8 421.5 326.3 C427.1 327.7 432.7 329.1 438.2 330.5 C443.8 331.9 449.4 333.2 455.0 334.5 C460.6 335.8 466.2 337.1 471.8 338.3 C477.3 339.5 482.9 340.8 488.5 341.9 C494.1 343.1 499.7 344.3 505.2 345.4 C510.8 346.5 516.4 347.7 522.0 348.7 C527.6 349.8 533.2 350.9 538.8 351.9 C544.3 353.0 549.9 354.0 555.5 355.0 C561.1 356.0 566.7 357.0 572.2 357.9 C577.8 358.9 583.4 359.8 589.0 360.8 C594.6 361.7 600.2 362.6 605.8 363.5 C611.3 364.4 616.9 365.3 622.5 366.2 C628.1 367.0 633.7 367.9 639.2 368.7 C644.8 369.6 650.4 370.4 656.0 371.2 C661.6 372.0 667.2 372.8 672.8 373.6 C678.3 374.4 683.9 375.2 689.5 375.9 C695.1 376.7 700.7 377.5 706.2 378.2 C711.8 378.9 717.4 379.7 723.0 380.4 C728.6 381.1 734.2 381.8 739.8 382.5 C745.3 383.2 753.7 384.3 756.5 384.6" fill="none" stroke="#D9773F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M320.3 222.6V420" stroke="#5E6B85" stroke-width="2"/><circle cx="354.5" cy="235.0" r="10" fill="#1F5A96" stroke="#FFFDF8" stroke-width="3"/><circle cx="589.0" cy="289.1" r="10" fill="#1F5A96" stroke="#FFFDF8" stroke-width="3"/><circle cx="589.0" cy="360.8" r="10" fill="#D9773F" stroke="#FFFDF8" stroke-width="3"/></svg>
+<p class="lab strong" style="left:28px;top:14px;width:700px">Detection limit of the transfer design, pg/mL (log scale)</p>
+<p class="tick" style="left:20px;top:405px;width:88px;text-align:right">0.1</p>
+<p class="tick" style="left:20px;top:319px;width:88px;text-align:right">0.3</p>
+<p class="tick" style="left:20px;top:225px;width:88px;text-align:right">1</p>
+<p class="tick" style="left:20px;top:139px;width:88px;text-align:right">3</p>
+<p class="tick" style="left:20px;top:45px;width:88px;text-align:right">10</p>
+<p class="tick" style="left:70px;top:438px;width:100px;text-align:center">0 %</p>
+<p class="tick" style="left:204px;top:438px;width:100px;text-align:center">20 %</p>
+<p class="tick" style="left:338px;top:438px;width:100px;text-align:center">40 %</p>
+<p class="tick" style="left:472px;top:438px;width:100px;text-align:center">60 %</p>
+<p class="tick" style="left:606px;top:438px;width:100px;text-align:center">80 %</p>
+<p class="tick" style="left:740px;top:438px;width:100px;text-align:center">100 %</p>
+<p class="tick" style="left:120px;top:472px;width:670px;text-align:center">share of the complex released in 5 min</p>
+<p class="tick" style="left:281px;top:66px;width:330px">range sampled: 5 % to 74 %; nothing is measured</p>
+<p class="lab" style="left:800px;top:193px;width:196px">one valve: <b>1.2</b></p>
+<p class="lab" style="left:800px;top:250px;width:196px">screened: <b>0.88</b></p>
+<p class="lab strong" style="left:320px;top:187px;width:70px;text-align:center">1.1</p>
+<p class="lab strong" style="left:503px;top:303px;width:76px;text-align:right">0.53</p>
+<p class="lab strong" style="left:559px;top:377px;width:90px">0.21</p>
+<p class="lab" style="left:330px;top:380px;width:220px">pays above ≈ 30 %</p>
+</div>
+<div class="row center" style="gap:12px">
+<div class="keyline" style="background:#1F5A96"></div><p class="small">reagents as specified</p>
+<div class="keyline" style="background:#D9773F;margin-left:20px"></div><p class="small">screened reagents</p>
+<div class="keyline" style="background:#5E6B85;height:2px;margin-left:20px"></div><p class="small">thin lines: one valve alone</p>
+</div>
+</div>
+<div class="col grow" style="gap:16px">
+<div class="card fix" style="gap:8px"><p class="big">1.1 or 1.2</p><p class="small">pg/mL with the transfer or with one valve alone, at the release of 35 % taken for the model.</p></div>
+<div class="card fix" style="gap:8px"><p class="big">0.53, then 0.21</p><p class="small">if 70 % is released in 5 min, and with screened reagents as well.</p></div>
+<div class="card fix" style="gap:8px"><p class="big">34</p><p class="small">at the pessimistic bounds: almost thirty times worse than one valve.</p></div>
+</div>
+</div>
+<aside>Source: docs/30 §5.3 and §5.4; the curves are computed with the round’s kit (nominal case, released fraction varied). The transfer releases the immune complex from the capture bed and re-captures it on a clean second bed in the loop of a second valve, leaving most of the stuck conjugate behind (the non-specific label that comes along is taken as ×0.1, 0.01–0.5). The released fraction is taken as 0.35 (0.05–0.74): no release rate at 5 min is known for any of the three routes considered (a cleavable link with a hapten tag, desthiobiotin displaced by biotin, dinitrophenyl first and streptavidin second). The label then waits 17 min from the end of the conjugate step to the accumulation (about 5 min with one valve); with the unscreened detection reagent 63 % of it is gone. Pessimistic bounds: release 0.05 and half of the non-specific label coming along. The test that decides (T3-3): release in 5 min for each route, first in tubes; pass at 50 % released and a blank reduced fivefold.</aside>
+</section>
+<section id="questions" data-transition="fade">
+<p class="eyebrow">Before anything is built</p>
+<h2>Two bench questions reach the whole project</h2>
+<div class="host" style="width:1600px;height:330px">
+<svg style="position:absolute;left:0px;top:0px" width="1600" height="330" viewBox="0 0 1600 330" aria-label="Reaction scheme: the enzyme removes one phosphate from hydroquinone diphosphate quickly, the second phosphate slowly, and the hydroquinone formed gives two electrons to a gold electrode."><defs><marker id="ai" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#14213D"/></marker><marker id="at" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#2F8072"/></marker><marker id="ai4" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#14213D"/></marker><marker id="as" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#5E6B85"/></marker></defs><line x1="230" y1="104" x2="230" y2="80" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="230" cy="62" r="18" fill="#D9773F" stroke="#14213D" stroke-width="3"/><line x1="230" y1="196" x2="230" y2="220" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="230" cy="238" r="18" fill="#D9773F" stroke="#14213D" stroke-width="3"/><polygon points="230,104 269.8,127 269.8,173 230,196 190.2,173 190.2,127" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="230" cy="150" r="26" fill="none" stroke="#14213D" stroke-width="2"/><line x1="760" y1="104" x2="760" y2="80" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="760" cy="62" r="18" fill="#D9773F" stroke="#14213D" stroke-width="3"/><line x1="760" y1="196" x2="760" y2="220" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="760" cy="230" r="10" fill="#2F8072" stroke="#14213D" stroke-width="3"/><polygon points="760,104 799.8,127 799.8,173 760,196 720.2,173 720.2,127" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="760" cy="150" r="26" fill="none" stroke="#14213D" stroke-width="2"/><line x1="1290" y1="104" x2="1290" y2="80" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="1290" cy="70" r="10" fill="#2F8072" stroke="#14213D" stroke-width="3"/><line x1="1290" y1="196" x2="1290" y2="220" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="1290" cy="230" r="10" fill="#2F8072" stroke="#14213D" stroke-width="3"/><polygon points="1290,104 1329.8,127 1329.8,173 1290,196 1250.2,173 1250.2,127" fill="#FFFDF8" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="1290" cy="150" r="26" fill="none" stroke="#14213D" stroke-width="2"/><line x1="340" y1="150" x2="644" y2="150" stroke="#14213D" stroke-width="4" stroke-linecap="butt" marker-end="url(#ai4)"/><rect x="447.0" y="68" width="96" height="56" rx="26" ry="24" fill="#A8481A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M473.0,153 Q475.0,203 497.0,206" fill="none" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ai)"/><circle cx="519.0" cy="207" r="14" fill="#D9773F" stroke="#14213D" stroke-width="3"/><line x1="870" y1="150" x2="1174" y2="150" stroke="#14213D" stroke-width="4" stroke-dasharray="14 12" stroke-linecap="butt" marker-end="url(#ai4)"/><rect x="977.0" y="68" width="96" height="56" rx="26" ry="24" fill="#A8481A" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M1003.0,153 Q1005.0,203 1027.0,206" fill="none" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#ai)"/><circle cx="1049.0" cy="207" r="14" fill="#D9773F" stroke="#14213D" stroke-width="3"/><line x1="1350" y1="150" x2="1470" y2="150" stroke="#14213D" stroke-width="4" stroke-linecap="butt" marker-end="url(#ai4)"/><rect x="1483" y="65" width="34" height="170" fill="#C9A227" stroke="#14213D" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="1489" y1="118" x2="1502" y2="118" stroke="#14213D" stroke-width="3" stroke-linecap="butt" marker-end="url(#ai)"/><line x1="1489" y1="182" x2="1502" y2="182" stroke="#14213D" stroke-width="3" stroke-linecap="butt" marker-end="url(#ai)"/></svg>
+<p class="lab" style="left:80px;top:268px;width:300px;text-align:center">hydroquinone diphosphate, the substrate</p>
+<p class="lab" style="left:560px;top:268px;width:400px;text-align:center">monophosphate: what the enzyme makes first</p>
+<p class="lab" style="left:1180px;top:268px;width:220px;text-align:center">hydroquinone</p>
+<p class="lab" style="left:295px;top:14px;width:400px;text-align:center">one phosphate off per turnover</p>
+<p class="lab" style="left:795px;top:14px;width:460px;text-align:center">the second phosphate comes off slowly</p>
+<p class="lab" style="left:1404px;top:244px;width:192px;text-align:center">2 electrons at the electrode</p>
+</div>
+<div class="row">
+<div class="card" style="gap:10px">
+<h3>1 · What does the enzyme make?</h3>
+<p class="small">Alkaline phosphatase removes one phosphate per turnover, so at picomolar enzyme the product should be the monophosphate. If that is not oxidised at the read potential, every predicted signal is 10² to 10⁵ too high.</p>
+</div>
+<div class="card" style="gap:10px">
+<h3>2 · How long does hydroquinone live at pH 9.5?</h3>
+<p class="small">The review estimated about 7 minutes (the model takes 10), not the 2 hours assumed so far. Then the free hydroquinone of the substrate lot is gone before use, and 10–21 % of the product is lost during a stop of 3 to 7 minutes.</p>
+</div>
+</div>
+<p class="small soft">Both are settled by half a day at the bench, without a flow system, and both apply to the project’s earlier designs as well.</p>
+<aside>Source: docs/30 §2.6; review findings C1, C5 and M2 (docs/31). Question 1: from hydroquinone diphosphate the enzyme releases the monophosphate, which has to bind again in competition with a thousandfold excess of diphosphate before hydroquinone appears; the hydroquinone-to-monophosphate ratio after the tier-2 stop is about 10⁻⁴ to 10⁻³ (derived by the chemistry reviewer). The papers behind the choice of substrate do not address the intermediate. If the monophosphate is oxidised at or near the hydroquinone potential, nothing changes. Model, if only 1 % of the turnovers give an electroactive product: 200, 13 and 20 pg/mL for tiers 1, 2 and 3. Question 2: half-lives of 111 h, 41 h and 0.84 h at pH 7, 8 and 9 extrapolate to about 7 min at pH 9.5 (a compilation; primary source not opened); the model takes 10 min (2 min to 2 h). The test: 1–10 pM conjugate in 1 mM substrate for 7 min, voltammogram against a hydroquinone standard; the mixture separated on the liquid chromatograph; 50 nM hydroquinone read over 12 min; the working substrate solution over 8 h.</aside>
+</section>
+<section id="plan" data-transition="fade">
+<p class="eyebrow">Recommendation</p>
+<h2>Bench order: the two questions first, then tier 2</h2>
+<div class="row">
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num num-o">1</p><h3>The two chemistry questions</h3></div><p class="small">Half a day, no flow system. They decide the substrate for these designs and the earlier ones.</p></div>
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num">2</p><h3>Instrument facts</h3></div><p class="small">Two days: steady low flow, a zero-flow step, the loop switching, the cell gap, time between sampler lines.</p></div>
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num">3</p><h3>Shared first experiments</h3></div><p class="small">Readout, free hydroquinone and conjugate sticking to beads, with the strip cell as the electrode.</p></div>
+</div>
+<div class="row">
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num">4</p><h3>Tier 2</h3></div><p class="small">Walls and frit against beads, the stop, breakthrough, bed-to-bed spread; then blanks and the limit.</p></div>
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num">5</p><h3>Tier 1 beside it, if wanted</h3></div><p class="small">The cheapest to try: its first experiments need only strips, thiols, streptavidin and conjugate.</p></div>
+<div class="card" style="gap:10px"><div class="row center" style="gap:16px"><p class="num">6</p><h3>Tier 3</h3></div><p class="small">One valve with the bed in its loop as soon as it can be had. The transfer only after its own test.</p></div>
+</div>
+<p class="small soft">Nothing is ordered. The round changes no gate, kill criterion or order of the bench plan; whether its experiments enter that plan is your decision.</p>
+<aside>Source: docs/30 §0 (recommendation) and §7 (bench order). Tier 2 uses the strip cell named in the request and reagents already in the bill of materials, and its bed is the bed of tier 3. By the model one valve is 1.7 times lower than tier 2 and needs no zero-flow step. Step 2 is the list of instrument checks in docs/27 §9: low flow against the restrictor, a zero-flow row in the pump method, Loop Offline and the composition front (with dye), the volume that passes after a flow step, the internal volume of pump A, the time between sampler lines, the cell gap and pressure at 200 µL/min, the loop draw, reference stability. Step 3 is Stage 1A of the bench plan (experiments E1.1, E1.2 and E1.3 of docs/06) plus one arm from the review: beads as supplied against beads re-blocked in IgG-free albumin; gate G1a is unchanged. Tier-2 experiments T2-1 to T2-5, tier-1 experiments T1-1 and T1-2, tier-3 experiments T3-1 and T3-3 are defined in docs/30 §3.6, §4.6 and §5.5.</aside>
+</section>
+<section id="open" class="dark" data-transition="fade">
+<p class="eyebrow">Open</p>
+<h2>Seven questions only you can answer</h2>
+<div class="row" style="gap:40px">
+<div class="col grow" style="gap:12px">
+<div class="row center" style="gap:18px"><p class="num num-o">1</p><p class="small grow">Which flow add-on and which electrodes are in hand? The part numbers are on the packs.</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">2</p><p class="small grow">Where does the “10 µL” of the cell come from?</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">3</p><p class="small grow">Does a pump method accept a row at zero flow? Is a restrictor installed, and which?</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">4</p><p class="small grow">Is the full-loop overfill set to twice the loop on this autosampler?</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">5</p><p class="small grow">Is there a UV detector and a reversed-phase column on the stack, for the product test?</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">6</p><p class="small grow">Does a fritted capillary count as a fitting? If so, the tier-2 design is also the best tier-1 design.</p></div>
+<div class="row center" style="gap:18px"><p class="num num-o">7</p><p class="small grow">Should the experiments, above all the two chemistry questions, enter the bench plan, and before or after gate G1a?</p></div>
+</div>
+<div class="card card-dark fix" style="width:600px;gap:8px;align-self:flex-start">
+<h3>Where everything is</h3>
+<p class="small"><b>docs/30</b> the three designs, step by step</p>
+<p class="small"><b>docs/31</b> both reviews and every finding</p>
+<p class="small"><b>docs/27</b> what pump and sampler can do</p>
+<p class="small"><b>docs/28</b> cells, electrodes and parts</p>
+<p class="small"><b>docs/29</b> the literature</p>
+<p class="small"><b>docs/26, 32</b> brief and session record</p>
+<p class="small"><b>scripts/tier_round</b> the calculation kit</p>
+<p class="small"><b>results/tier_round</b> model output and the five reviewer reports</p>
+</div>
+</div>
+<aside>Source: docs/30 §8 (questions only the user can answer; details in docs/27 §9 and docs/28 §8). On question 2: the model takes the gap of the strip cell as 0.2 mm, which fits 10 µL; the vendor states less than 5 µL, which would mean 0.1 mm or less. On question 4: the vendor’s default full-loop injection draws five loop volumes. On question 6: an in-line filter is a fitting; if a fritted capillary counts as one too, the electrode-capture design becomes the runner-up of tier 1. Choices the orchestrator made and you may overrule are listed in docs/30 §8 as well: gold rather than carbon in tier 1, the read at 200 µL/min, the bead size and operating point of tier 2, one valve as the tier-3 design, the restrictor, the cell gap, and one stability of hydroquinone for the whole liquid path. To re-run the numbers: python scripts/tier_round/run_tiers.py; to rebuild this deck: docs/presentation/README.md.</aside>
+</section>
+</div>
+<div id="bar"><button id="prev">&#8592; Back</button><span id="count"></span><button id="next">Next &#8594;</button></div>
+<script>
+  const stage = document.getElementById('stage');
+  const slides = Array.from(stage.querySelectorAll('section'));
+  let i = Math.max(0, parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1);
+  function fit() {
+    const s = Math.min(innerWidth / 1920, (innerHeight - 44) / 1080);
+    stage.style.transform = 'scale(' + s + ') translate(-50%, -50%)';
+    stage.style.marginTop = '-22px';
+  }
+  function show(n) {
+    i = Math.min(slides.length - 1, Math.max(0, n));
+    slides.forEach((el, k) => el.classList.toggle('current', k === i));
+    document.getElementById('count').textContent = (i + 1) + ' / ' + slides.length;
+    history.replaceState(null, '', '#slide-' + (i + 1));
+  }
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  addEventListener('resize', fit);
+  addEventListener('hashchange', () => {
+    const n = parseInt((location.hash.match(/slide-(\d+)/) || [])[1] || '1', 10) - 1;
+    if (n !== i) show(n);
+  });
+  fit();
+  show(i);
+
+  document.querySelectorAll('x-connector[x1]').forEach((c) => {
+    const g = (k) => +c.getAttribute(k), x1 = g('x1'), y1 = g('y1'), x2 = g('x2'), y2 = g('y2');
+    const col = c.style.color || '#14213D', w = parseFloat(c.style.borderWidth) || 2;
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    s.setAttribute('style', 'position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible');
+    let head = '';
+    if (c.getAttribute('head') !== 'none') {
+      const a = Math.atan2(y2 - y1, x2 - x1), L = w * 3.2;
+      const p = (d) => (x2 - L * Math.cos(a + d)) + ',' + (y2 - L * Math.sin(a + d));
+      head = '<polygon points="' + x2 + ',' + y2 + ' ' + p(0.45) + ' ' + p(-0.45) + '" fill="' + col + '"/>';
+    }
+    s.innerHTML = '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + col +
+      '" stroke-width="' + w + '"/>' + head;
+    c.replaceWith(s);
+  });
+</script>
+</body>
+</html>

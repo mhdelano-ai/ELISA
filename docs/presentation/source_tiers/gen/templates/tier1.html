@@ -1,0 +1,16 @@
+<section id="tier1" data-transition="fade">
+<p class="eyebrow">Tier 1 · consumables only</p>
+<h2>Tier 1: capture on the electrode itself</h2>
+<div class="row" style="gap:48px">
+{{art:cell_t1}}
+<div class="col grow" style="gap:14px">
+<div class="card fix" style="flex-direction:row;align-items:center;gap:28px"><p class="big fix">{{n:t1.nom}} pg/mL</p><p class="small">nominal · median {{n:t1.med}} [{{n:t1.p05}}–{{n:t1.p95}}] · {{n:t1.min}} min from injection to result</p></div>
+<p class="small"><b>Capture.</b> The sample passes a 3 mm gold electrode at 2.86 µL/min for 44 min. The electrode carries the capture antibody on a thiol monolayer and streptavidin; {{n:t1.cap}} % of the IgG is captured.</p>
+<p class="small"><b>Read.</b> Substrate flows at 200 µL/min. The current of the enzyme on the electrode is read for 60 s, between two reference windows in the same buffer without substrate.</p>
+<p class="small"><b>Why fast.</b> Product from conjugate on the upstream walls is collected at only 6 %, the electrode’s own in full.</p>
+<p class="small"><b>What limits it.</b> Conjugate on the electrode itself, then baseline drift.</p>
+<p class="small"><b>Unproven.</b> Hydroquinone oxidation through the monolayer; the gap of the cell.</p>
+</div>
+</div>
+<aside>Source: docs/30 §3. Cell: MicruX strip cell with its flow add-on, a wall-jet cell with a 0.8 mm inlet bore and an 8 mm O-ring; the gap is not published and 0.2 mm is assumed (2.8 to 5.6 pg/mL for 0.1 to 0.5 mm). Electrode: printed gold strip, one per determination. 20 nM conjugate for 4 min. The signal is the read window minus the mean of the two reference windows, minus the same quantity from the identical sequence run on the fresh strip before the sample. The model puts printed gold with the monolayer at 3.6 pg/mL and printed carbon with adsorbed streptavidin at 11; if the coated gold delivers 30 % of the current the limit is 7.2. Printed carbon is the fallback, and the first tier-1 experiment compares the two. Median and range are over 2000 Monte Carlo draws; the range is the 5th to 95th percentile.</aside>
+</section>

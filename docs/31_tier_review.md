@@ -38,12 +38,15 @@ output.
   not have reached the cell (F1); and at picomolar enzyme the product of hydroquinone diphosphate should be the
   monophosphate, not hydroquinone (C1, blocking until tested). N1, N2 and F1 are resolved. C1 cannot be resolved
   on paper.
-* Round 2 found no error in the numbers of Revision B and eight significant gaps: the tier-1 read compared two
+* Round 2 found no error in the numbers of Revision B and rated eleven findings significant (M1–M3, K1–K8;
+  section 4). Eight of them were gaps in the designs or the numbers: the tier-1 read compared two
   different buffers (M1); the short half-life of hydroquinone was applied to the product but not to the substrate
   reservoir (M2); the read bed of the transfer was nearly full of capture antibody (M3); the push of the transfer
   followed a flow step (K2); the current ranges clipped inside the calibration (K3); the transfer was still
   presented at a release nobody has measured (K7); parts of what docs/26 asks of every design were missing for
-  tier 3 (K4); and two numbers had no source in the repository (K8). All are resolved in Revision C.
+  tier 3 (K4); and two numbers had no source in the repository (K8). The other three were this document, which
+  did not exist yet (K1), the time margin of tier 2 (K5) and undefined steps of the transfer (K6). All eleven are
+  resolved in Revision C; for K6 the passage volume of the valve stays open.
 
 | | First version: nominal; median | Revision B | Revision C: nominal; median [5–95 %]; P(LOD ≤ 1 pg/mL) |
 |---|---|---|---|

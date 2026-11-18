@@ -1,0 +1,12 @@
+<section id="results" data-transition="fade">
+<p class="eyebrow">What the model predicts</p>
+<h2>Predicted limits: {{n:t1.nom}}, {{n:t2.nom}} and {{n:t3.nom}} pg/mL</h2>
+{{chart:lod}}
+<div class="row center" style="gap:12px">
+<div class="key" style="background:#1F5A96;border-radius:14px"></div><p class="small">nominal: every parameter at its best estimate</p>
+<div class="fix" style="width:6px;height:30px;background:#14213D;border-radius:2px;margin-left:24px"></div><p class="small">median of 2000 draws</p>
+<div class="fix" style="width:56px;height:22px;background:#B9CCE3;border-radius:6px;margin-left:24px"></div><p class="small">5th to 95th percentile of the draws</p>
+</div>
+<p class="small soft">Each step down is small: the bed takes {{n:t2.cap}} % of the sample instead of {{n:t1.cap}} %, and a valve keeps conjugate-coated walls out of the read. Model predictions, not measurements.</p>
+<aside>Source: docs/30 §0 and results/tier_round/tiers.json. Nominal = all parameters at their best estimate. Median and range = Monte Carlo over the parameter bounds, n = 2000, seed 20261111; the 5–95 % interval is a scenario range, not a confidence interval. P = fraction of draws with a limit at or below 1 pg/mL. P at or below 10 pg/mL: 0.33, 0.54, 0.69 and 0.61. Geometry that is not published (cell gap, bore length, frit area, loop walls) is a design input and is not sampled, so the ranges are narrower than the full uncertainty. The transfer variant is at a released fraction of 0.35 (0.05–0.74), for which nothing is measured. The earlier design of the project (dosing pump, chamber and trap, docs/05) stands at nominal 0.60, median 3.5 pg/mL; its numbers and these are not on the same footing, and neither is shown to be better than the other.</aside>
+</section>
