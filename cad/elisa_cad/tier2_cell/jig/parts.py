@@ -40,8 +40,8 @@ def _dowel_tools(z0, h):
 
 # ---- printed parts -------------------------------------------------------------------------------------------------
 def base():
-    """J-001: flat top (datum), two guide rails for the strip, two pressed pins (holes reamed 3.0), four M3 heat-set
-    inserts, a pitch scale on the hole positions downstream of the head plate."""
+    """J-001: flat top (datum), two guide rails for the strip, two pressed pins (holes reamed 2.95), four M3 heat-set
+    inserts, two parking bosses for the idle bushing, a pitch scale on the hole positions downstream of the plate."""
     hx, hy = J.BASE_X / 2.0, J.BASE_Y / 2.0
     b = _box(-hx, hx, -hy, hy, -J.BASE_T, 0.0).edges("|Z").fillet(3.0)
     y_in = J.STRIP_W / 2.0 + J.RAIL_GAP / 2.0

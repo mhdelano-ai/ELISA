@@ -22,6 +22,10 @@ Revision D (review round 3, review_jig_r3.md): bonding procedure with paste epox
 its real range (stops on a thumb head near 75 deg) [R3-4]; finger preloaded by an O-ring, gap 0.05 [R3-5]; shoulder
 screw head 7 x 3, thread 7 (Ganter GN 35215) [R3-7]; stock sheet +-0.08, ring lead-in chamfer modelled, parking bosses
 [R3-8, R3-10].
+Revision E (review round 4, review_jig_r4.md): bonding steps where the plate only moves down over the liner
+(docs/36 section 2.4) [R4-1]; nose faced in a separate bushing holder [R4-2]; parking bosses 5.5 high [R4-3]; finger
+faced to 2.5 and the shoulder stack checked at the shoulder's lower limit [R4-5]; liner hole 8.10 for an epoxy bond
+gap of about 0.12 (location comes from the bushing, not from the hole) [R4-6].
 
 Units mm.  Coordinates: origin on the punch axis, z = 0 on the top face of the base (the datum on which the
 backing strip and the sheet lie); +x is the feed direction of the strip, y across it, z up.
@@ -94,7 +98,10 @@ FACE_MATCH = 0.02                      # CHOICE: the two bushing faces agree wit
 SLIP_BORE_CLEAR = 0.0002 * IN          # CHOICE: bore ordered = measured tube outside + 0.0002 in [R1-7]
 SLIP_BORE_TOL = (0.0001 * IN, 0.0004 * IN)
 SLIP_RUNOUT = 0.005                    # UNVERIFIED: bore to body, radial (concentricity not stated by Carr Lane)
-LINER_HOLE_D = 8.00                    # CHOICE: printed 7.8, reamed 8.00 H7 (0/+0.015); bond gap 0.022-0.045 [R1-2]
+LINER_HOLE_D = 8.10                    # CHOICE: printed 7.8, drilled or reamed 8.10 (+0.02) on a drill press; epoxy
+#                                        bond gap 0.12-0.15 diametral; the liner's axis comes from the bushing on
+#                                        flat 2 at bonding, not from this hole [R4-6]
+LINER_HOLE_TOL = 0.02
 BODY_HOLE_D = 5.2                      # CHOICE: below the liner the bushing body passes through the plate (printed,
 #                                        drilled 5.2): the printed foot ring presses the sheet from r 2.6 outwards
 LEDGE_GAP = 1.4                        # CHOICE: below the liner's bottom: room for the liner to float at bonding,
@@ -127,7 +134,7 @@ FINGER_PLAY_DESIGN = 0.1               # CHOICE: a finger offset of this much to
 BACKING_T, BACKING_T_TOL = 0.79, 0.05  # HDPE sheet 1/32 in +-0.002 in, McMaster 8619K561 [J-src 5]; the punch ends in it
 STRIP_W = 14.0                         # CHOICE: FKM and backing cut to strips 14 wide; the FKM taped to the backing at
 #                                        its leading end, the two fed together [R2-10]
-STRIP_L = 100.0                        # CHOICE: about 30 washers per strip at the pitch below
+STRIP_L = 100.0                        # CHOICE: about 25 washers per strip at the pitch below [R4-4]
 PITCH = 3.0                            # CHOICE: washer spacing along the strip (web 1.6 between outsides)
 TIP_INTO_BACKING = 0.25                # CHOICE: nominal stop: tip 0.25 into the 0.79 backing
 STOP_SET_TOL = 0.05                    # CHOICE: each handle's nose is faced against ITS bushing to +-0.05
@@ -139,7 +146,7 @@ RAIL_W, RAIL_H = 1.5, 0.30             # CHOICE: printed rails on the base top; 
 SCALE_X0, SCALE_X1, SCALE_TICK = 21.0, 39.0, (0.4, 1.2, 0.3)   # CHOICE: ticks on the hole positions; long tick at 30;
 #                                        load the strip with its leading end on the tick at 21 [R2-14]
 PARK_XY = [(-32.0, 14.0), (-32.0, -14.0)]   # CHOICE: parking holes for the idle bushing (body down) [R2-12]
-PARK_D, PARK_BOSS_D, PARK_BOSS_H = 5.3, 10.0, 4.5   # CHOICE: on a boss, deep enough that the bushing hangs on its
+PARK_D, PARK_BOSS_D, PARK_BOSS_H = 5.3, 10.0, 5.5   # CHOICE: on a boss, deep enough that the bushing hangs on its
 #                                        head and its ground face touches nothing [R3-10]
 
 # ---- head plate (printed, same process as the base) ---------------------------------------------------------------
@@ -201,7 +208,7 @@ def head_top_range():
     return nom - d, nom + d
 
 
-PARK_DEPTH = BODY_L + 0.5 - PARK_BOSS_H          # hole below the base top (the boss adds PARK_BOSS_H)
+PARK_DEPTH = BODY_L + 1.5 - PARK_BOSS_H          # hole below the base top (the boss adds PARK_BOSS_H) [R4-3]
 
 
 def facing_range():

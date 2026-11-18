@@ -94,7 +94,7 @@ def checks(solids):
     lo_h, hi_h = J.head_top_range()
     add("finger height is set at assembly: spacer printed high enough to be faced for the highest head, and the "
         "shoulder leaves room for the shims at the lowest", J.SPACER_H + J.FINGER_SET_ALLOW >= hi_h + J.FINGER_GAP
-        and J.SHOULDER_L + 0.25 - (hi_h + J.FINGER_GAP) - J.FINGER_T - J.ORING_H >= 0.0
+        and J.SHOULDER_L - (hi_h + J.FINGER_GAP) - (J.FINGER_T + 0.05) - J.ORING_H >= 0.0
         and lo_h + J.FINGER_GAP > 1.0,
         f"head top {lo_h:.2f}-{hi_h:.2f} above the plate; spacer printed {J.SPACER_H + J.FINGER_SET_ALLOW:.2f}, faced "
         f"to {lo_h + J.FINGER_GAP:.2f}-{hi_h + J.FINGER_GAP:.2f}; shims above {J.SHIMS_ABOVE:.2f} nominal")
@@ -137,9 +137,9 @@ def checks(solids):
             0.0135 <= b / J.IN <= 0.0980, f"{b:.4f} mm")
     # liner and inserts
     gap = (J.LINER_HOLE_D - (J.LINER_OD_NOM + J.LINER_OD_TOL[1]),
-           J.LINER_HOLE_D + 0.015 - (J.LINER_OD_NOM + J.LINER_OD_TOL[0]))
-    add("liner bond gap (8.00 H7 hole on the L-20 OD 7.970-7.978) is a clearance of 0.02-0.06 diametral",
-        0.02 <= gap[0] and gap[1] <= 0.06, f"{gap[0]:.3f}-{gap[1]:.3f} mm")
+           J.LINER_HOLE_D + J.LINER_HOLE_TOL - (J.LINER_OD_NOM + J.LINER_OD_TOL[0]))
+    add("liner epoxy bond gap (8.10 hole on the L-20 OD 7.970-7.978) is 0.05-0.20 diametral [R4-6]",
+        0.05 <= gap[0] and gap[1] <= 0.20, f"{gap[0]:.3f}-{gap[1]:.3f} mm")
     lw = J.LOCK_R - J.LINER_HOLE_D / 2.0 - J.INSERT_HOLE_D / 2.0
     add(f"wall between the liner hole and the shoulder-screw insert >= {J.INSERT_WALL} (ruthex minimum)", lw >= J.INSERT_WALL,
         f"{lw:.2f} mm")
@@ -151,6 +151,9 @@ def checks(solids):
         f"smallest {min(walls):.2f} mm")
     add("shoulder screw: M3 thread fits the plate's insert hole (<= depth - 0.3) and engages >= 4",
         4.0 <= J.SHOULDER_THREAD <= J.INSERT_HOLE_DEPTH - 0.3, f"{J.SHOULDER_THREAD} mm in {J.INSERT_HOLE_DEPTH}")
+    park = J.PARK_DEPTH + J.PARK_BOSS_H - (J.BODY_L + J.BODY_L_TOL)
+    add("parking hole: the longest bushing hangs on its head with >= 0.8 under its face (printed hole bottom)",
+        park >= 0.8 and J.BASE_T - J.PARK_DEPTH >= 1.0, f"{park:.2f} mm under the face, floor {J.BASE_T - J.PARK_DEPTH:.2f}")
     add("parking holes for the idle bushing clear the plate, the screws and the rails",
         all(abs(x) - J.PARK_D / 2 >= J.PLATE_X / 2 + 2 and abs(y) - J.PARK_D / 2 >= J.STRIP_W / 2 + J.RAIL_GAP / 2
             + J.RAIL_W + 1 and all(math.hypot(x - sx, y - sy) >= J.SLIP_HEAD_D / 2 + J.THUMB_HEAD_D / 2 + 1
@@ -282,7 +285,7 @@ def main(argv=None):
                     det.append((c, m))
             except Exception:
                 pass
-        C.render_png(det, OUT / "section_detail.png", view="front", title="Section y = 0: foot, bushing face, sheet, tip",
+        C.render_png(det, OUT / "section_detail.png", view="front", title="Section y = 0: foot, bushing face, sheet",
                      size=(9, 4.5), xlim=(-7, 7), ylim=(-1.0, 6.0))
         C.render_png([(plate, "PEEK")], OUT / "head_plate_underside.png", view="bottom", title="Head plate, underside")
         C.render_png([(base, "PEEK")], OUT / "base_top.png", view="top", title="Base, top")
