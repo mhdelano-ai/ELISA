@@ -1,6 +1,6 @@
 # 36 — A punching jig for the tier-2 retainer washer
 
-Status: desk work, 2026-11-18, Revision E (after review rounds 1–4, §7). Follow-up to docs/34 (tier-2 flow
+Status: desk work, 2026-11-18, Revision F (after review rounds 1–5, §7; converged in round 5). Follow-up to docs/34 (tier-2 flow
 cell): the retainer washer T2C-004 (⌀1.40 ±0.10 / ⌀0.75 ±0.10 × 0.25 ±0.05 FKM, hole concentric within ⌀0.10) is
 too small for an online gasket cutter; the user asked for a printable jig to punch it in the lab, with the punches
 sourced, iterated with an independent reviewer until converged. Nothing is ordered; docs/34 is not changed.
@@ -72,10 +72,10 @@ Membrane discs (⌀1.5): Rapid-Core 1.5 pressed freehand through the membrane on
 | Part | File | Size (mm) | Features |
 |---|---|---|---|
 | J-001 base | `J-001_base.step/.stl` | 80 × 48 × 10 | flat top = datum; two rails 1.5 × 0.30 high, 14.6 apart, guide the strip; 2 × ⌀3 holes at (0, ±17) for pressed pins (print 2.8, ream 2.95, press; or bond); 4 × M3 heat-set inserts at (±15, ±16), hole ⌀4.0 × 7.5 deep; 2 parking bosses ⌀10 × 5.5 at (−32, ±14) with ⌀5.3 holes 14.2 deep (drill to depth), so the idle bushing hangs on its head and its ground face stays 1.1 clear of the bottom [R3-10, R4-3]; pitch scale ticks at x = 21, 24 … 39 |
-| J-002 head plate | `J-002_head_plate.step/.stl` | 40 × 40 × 11.9 | liner hole printed 7.8, drilled or reamed **8.10** on a drill press, depth set from the foot face: ledge 1.78 ±0.1 above it [R3-3]; epoxy gap 0.12–0.15 (the liner's axis comes from the bushing at bonding, not from this hole) [R4-6]; below it ⌀5.2 drilled in the same set-up, for the bushing body; foot ⌀11; relief 20 wide × 1.0 deep over the strip except the foot; round hole at (0, 17) and slot at (0, −17) reamed 3.0 and lapped to a slide fit (3.02–3.04); 4 × ⌀3.4 for the thumb screws; M3 insert for the shoulder screw at (0, 9.5): 3.5 wall to the liner hole |
+| J-002 head plate | `J-002_head_plate.step/.stl` | 40 × 40 × 11.9 | liner hole printed 7.8, drilled or reamed **8.10** on a drill press, depth set from the foot face: ledge 1.78 ±0.1 above it, measured at the full-diameter corner (a twist drill leaves a conical ledge, which is harmless; a reamer or flat-bottom drill leaves a flat one) [R3-3, R5-4]; epoxy gap 0.12–0.15 (the liner's axis comes from the bushing at bonding, not from this hole) [R4-6]; below it ⌀5.2 drilled in the same set-up, for the bushing body; foot ⌀11; relief 20 wide × 1.0 deep over the strip except the foot; round hole at (0, 17) and slot at (0, −17) reamed 3.0 and lapped to a slide fit (3.02–3.04); 4 × ⌀3.4 for the thumb screws; M3 insert for the shoulder screw at (0, 9.5): 3.5 wall to the liner hole |
 | J-003 handle A, B | `J-003_handle_A/B.step/.stl` (as printed) | nose ⌀5 × 10 (printed 11.2) + grip ⌀16 × 22 | pocket for the tube drilled (drill press or lathe, from a printed pilot) to tube + 0.03, 20.14 deep from the faced nose, so the tube is located by the shoulder at its end; push-wire hole = tube bore + 0.02 (0.706 / 1.265) through the grip; tube bonded with epoxy (a waxed wire through tube and push hole while it cures); 17.96 protruding below the faced nose |
 | J-004 spacer | `J-004_spacer.step/.stl` (as printed) | ⌀8 / ⌀4.1 × 6.81 printed, faced to about 5.61 | under the finger on the shoulder; faced at assembly so that the finger lies 0.05 above the thicker bushing head |
-| J-005 ring finger | `J-005_finger.step/.stl` | 2.5 thick; boss ⌀8, hole reamed 4 H8; arm 5 wide; ring r 3.2–4.8 | the ring lies over the bushing head and bears on its whole rim (head r 3.57–4.37 over ±1/64 in); 0.3 lead-in chamfer under the ring's outer edge (modelled); the bushing lifts out from a swing of 60°; the finger stops on a thumb-screw head near 75° (with DIN 464 heads; with low heads it swings further, also free) [R3-4] |
+| J-005 ring finger | `J-005_finger.step/.stl` | 2.5 thick (print it about 2.7 thick, e.g. scaled in z, and face to 2.5 [R5-5]); boss ⌀8, hole reamed 4 H8; arm 5 wide; ring r 3.2–4.8 | the ring lies over the bushing head and bears on its whole rim (head r 3.57–4.37 over ±1/64 in); 0.3 lead-in chamfer under the ring's outer edge (modelled); the bushing lifts out from a swing of 60°; the finger stops on a thumb-screw head near 75° (with DIN 464 heads; with low heads it swings further, also free) [R3-4] |
 | Assembly | `J-000_assembly.step` | | stroke 2: outside punch at its stop |
 | Slip bushings (fit checks) | `slip_bushing_A_hole.step`, `slip_bushing_B_outside.step` | | as ordered (head recesses not modelled; the ring does not depend on them) |
 
@@ -130,13 +130,16 @@ liner is 1.3–7.6 µm radial, and an anaerobic retaining compound would wick in
    on the head.
 4. Once the liner carries epoxy, the plate may only move **down** over it: the epoxy's drag (about 0.5 N) is twenty
    times the liner's weight, so a plate lifted through it carries the liner off the head [R4-1]. Support the plate on
-   three compliant pads (modelling clay) so that, lowered over the liner foot up, its foot stands 0.3–0.5 above the
+   three compliant pads (modelling clay; set their height with a caliper before the epoxy goes on) so that, lowered
+   over the liner foot up, its foot stands 0.3–0.5 above the
    bushing face. Lay flat 2 (PTFE film) on the foot and press or weight it down until it also rests on the bushing
    face: the plate moves down over the liner and the head stops the liner. Check from the side that no light shows
    between the liner's end and the head.
-5. Turn the bushing a few degrees every few minutes until the epoxy gels (this changes neither its seat nor its
-   axis). Then lift the plate, with the gelled liner, off the bushing; clean the bushing and the flats; lower the
-   plate back over the bushing on flat 1, put flat 2 back, and let the epoxy cure.
+5. Turn the bushing a few degrees every few minutes, with tweezers on the rim of its head in the gap between flat 1
+   and the plate, until the epoxy gels (judge by a bead left on the mixing card; turning changes neither the
+   bushing's seat nor its axis). Trim the epoxy scraped up at the hole's mouth beside the bushing seat [R5-2]. Then
+   lift the plate, with the gelled liner, off the bushing; clean the bushing and the flats; lower the plate back over
+   the bushing on flat 1, put flat 2 back, press it down again, repeat the side check, and let the epoxy cure [R5-3].
 6. After curing: both bushings drop in and turn freely; each face is flush with the foot (straightedge and a 0.02
    feeler).
 
@@ -162,7 +165,9 @@ protrusion − sheet − (body + head): the backing's thickness cancels. The nos
 punches in a scrap strip cut through with the tip 0.2–0.3 into the backing. One method [R4-2]: away from the jig,
 hold the handle's own bushing in a separate block (a ⌀4.77 reamed hole in a scrap print, or a spare L-20-6 liner
 bonded into one), lay a pierced abrasive disc on the bushing head, run the tube in the bushing and turn the handle
-(the bushing keeps the face square); measure against the head with a feeler; then clean the bushing and the tube
+(the bushing keeps the face square). The facing block is thinner than the bushing body, so the tube's tip stands
+out below the bushing face: face until that protrusion (depth gauge or microscope) equals the measured sheet
+thickness + 0.25 ±0.05, which puts the tip 0.25 into the backing in the jig [R5-1]; confirm with test punches; then clean the bushing and the tube
 (solvent and air, or ultrasonic) before they go back into the jig, which must never see grit. The facing needed is
 0.11–2.29 mm over the tolerances (head top, pocket depth ±0.2, tube length), so it never has to add material [R2-5].
 Mark handle A with bushing A and handle B with bushing B: the depth is set per pair. The stock sheet's ±0.08 remains:
@@ -252,6 +257,7 @@ rails and the strip, the foot lies on the strip and presses it from the bushing 
 | 2 | `results/tier_round/review_jig_r2.md` | 4 MAJOR, 5 MINOR, 5 NOTE; R1-1, R1-13 partly resolved; not converged | Revision C: bushing tolerances ±1/64 in in the model and the checks (R2-9); liner L-20-6 bonded with the longer bushing's face flush with the foot, faces matched or lapped (R2-1); finger height set by a faced spacer and shim rings, lead-in chamfer (R2-2); ring finger on the whole rim, recesses anywhere (R2-3); pivot at 9.5, boss 1.0 from the largest head with the play (R2-4); nose printed 1.2 long and faced, facing method (R2-5); pockets drilled from pilots, bond carries the load, waxed wire (R2-6); ISO 7379 shoulder screw, finger reamed 4 H8, shims for the play (R2-7); plate pin holes a slide fit, base press (R2-8); tolerance cases in the checks, 42 checks (R2-9); backing taped to the FKM and fed with it (R2-10); renders re-run (R2-11); BOM, parking holes, A/B marks, PTFE film (R2-12); scale start (R2-14); debris, tweezers (R2-15) |
 | 3 | `results/tier_round/review_jig_r3.md` | 1 MAJOR, 5 MINOR, 4 NOTE; round 2 resolved except the stale renders; not converged | Revision D: liner bonding with paste epoxy on the middle third, released locator turned while it gels (R3-1); inverted two-flat bonding set-up (R3-2); chucking reamer, ledge from the foot face, LEDGE_GAP 1.4 with the print tolerance in the check (R3-3); finger swing checked over 60–74° and at its stop on the thumb head (R3-4); O-ring preload, gap 0.05, rise stated (R3-5); lap ≤ 0.05 else grind (R3-6); Ganter GN 35215 head 7 × 3, thread 7, light torque, finger 2.5 thick (R3-7); face-flush check labelled a procedure, stock sheet ±0.08 in the checks, ring chamfer modelled (R3-8); nose faced in its own bushing (R3-9); parking bosses (R3-10); detail render cropped to its window and all renders regenerated (R2-11) |
 | 4 | `results/tier_round/review_jig_r4.md` | 1 MAJOR, 1 MINOR, 4 NOTE; round 3 resolved except N2 and N9 (partly); not converged | Revision E: bonding steps rewritten so the plate only moves down over the epoxied liner, compliant pads, plate lifted off the bushing at gel (R4-1); one nose-facing method, in a separate bushing block, parts cleaned before the jig (R4-2); parking bosses 5.5, holes 14.2 deep, check added (R4-3); editorial fixes, detail render title (R4-4); finger faced to 2.5, shoulder stack checked at 10.00 with the finger at 2.55 (R4-5); liner hole 8.10 for an epoxy gap of 0.12–0.15 (R4-6); 45 checks |
+| 5 | `results/tier_round/review_jig_r5.md` | 0 MAJOR, 1 MINOR, 4 NOTE; round 4 and round-3 N2, N9 resolved; **converged** | Revision F (text only): measurable facing target, tip protrusion below the bushing face in the facing block = sheet + 0.25 (R5-1); trim scraped epoxy at the mouth (R5-2); pad height, turning the bushing, re-pressing flat 2, gel point (R5-3); ledge depth at the full-diameter corner (R5-4); finger printed 2.7 and faced (R5-5) |
 
 ## 8. Open questions and choices the user may overrule
 
