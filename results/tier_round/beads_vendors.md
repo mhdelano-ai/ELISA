@@ -172,3 +172,11 @@ nanomag, Turbobeads).
 - R24 Cheng Y et al., ACS Sens 11:696, doi:10.1021/acssensors.5c03653 [V abstract, PubMed]
 - Not opened (403/503/JS): thermofisher.com product pages 65305/65601/65001; agilent.com store; cytiva.com product page;
   neb.com S1421; sigmaaldrich/merckmillipore Sera-Mag article; fishersci; amsbio MagSi-STA PDF; Spherotech STN-21.
+
+## Addendum (review rounds 2–3, 2026-11-18)
+
+| Vendor / product (cat. no.) | Ø, CV | Surface | Capacity | Stock | Tag |
+|---|---|---|---|---|---|
+| Vector Laboratories **MagnaLINK Streptavidin Magnetic Beads 2.8 µm** (M-1003), https://vectorlabs.com/products/magnalink-streptavidin-mag-beads-2-8-m/ | 2.8 ± 0.2 µm, < 5 % CV | hydrophilic polymer encapsulation, no exposed iron; covalent streptavidin layer | free biotin ≥ 10 (elsewhere ≥ 12) nmol/mg; biotinylated IgG 750 pmol/mg (113 µg/mg) against 0.90 nmol/mg and 10 µg/mg for an unnamed "similar 2.8 µm bead" | 1 % solids (10 mg/mL) in nuclease-free water + 0.05 % azide, no BSA stated; $369 (unit size not stated) | [V] reviewers 2, 3 |
+| Luminex/Diasorin **MagPlex-Avidin** | 6.5 µm, CV < 5 % [S] | deglycosylated avidin on carboxylated magnetic microspheres [V] | not checked | — | reviewers 1, 2 |
+| Polysciences **ProMag HP Streptavidin** (25508); ProMag 3 Series Streptavidin (86056) | ~3 µm | "A unique surface means low nonspecific binding in protein-based systems" (HP) | not stated | — | [V] / [S] reviewer 2 |

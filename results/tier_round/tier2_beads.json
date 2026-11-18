@@ -633,6 +633,7 @@
      0.5,
      1.0
     ],
+    "load": 0.7,
     "status": "catalogue, drop-in"
    },
    "scan": [
@@ -640,7 +641,7 @@
      "mult": 0.25,
      "n_beads": 266349.83617573703,
      "ok": true,
-     "lod": 4.358676183782913,
+     "lod": 4.284893898215706,
      "push_N": 0.11290822490439976,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.023327567373183523,
@@ -650,7 +651,7 @@
      "mult": 0.35,
      "n_beads": 372889.7706460319,
      "ok": true,
-     "lod": 3.4333752964986437,
+     "lod": 3.355158694249281,
      "push_N": 0.12686459007338938,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.03265859432245692,
@@ -660,7 +661,7 @@
      "mult": 0.5,
      "n_beads": 532699.6723514741,
      "ok": true,
-     "lod": 2.7692009668375337,
+     "lod": 2.683959949936002,
      "push_N": 0.14779913782687382,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.046655134746367045,
@@ -670,7 +671,7 @@
      "mult": 0.75,
      "n_beads": 799049.5085272111,
      "ok": true,
-     "lod": 2.3079517761577972,
+     "lod": 2.2102176886678278,
      "push_N": 0.18269005074934788,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.06998270211955056,
@@ -680,7 +681,7 @@
      "mult": 1.0,
      "n_beads": 1065399.3447029481,
      "ok": true,
-     "lod": 2.1323475211524276,
+     "lod": 2.021267316342565,
      "push_N": 0.217580963671822,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.09331026949273409,
@@ -690,7 +691,7 @@
      "mult": 1.5,
      "n_beads": 1598099.0170544223,
      "ok": true,
-     "lod": 2.0745162492441813,
+     "lod": 1.933979998945965,
      "push_N": 0.2873627895167701,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.13996540423910112,
@@ -700,7 +701,7 @@
      "mult": 2.0,
      "n_beads": 2130798.6894058962,
      "ok": true,
-     "lod": 2.1698993353716047,
+     "lod": 1.9969035310615764,
      "push_N": 0.35714461536171827,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.18662053898546818,
@@ -710,7 +711,7 @@
      "mult": 3.0,
      "n_beads": 3196198.0341088446,
      "ok": true,
-     "lod": 2.5236884900726673,
+     "lod": 2.2790300908137056,
      "push_N": 0.49670826705161447,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.27993080847820223,
@@ -720,7 +721,7 @@
      "mult": 4.0,
      "n_beads": 4261597.3788117925,
      "ok": true,
-     "lod": 2.958610029914756,
+     "lod": 2.63725508661858,
      "push_N": 0.6362719187415108,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.37324107797093636,
@@ -730,7 +731,7 @@
      "mult": 6.0,
      "n_beads": 6392396.068217689,
      "ok": false,
-     "lod": 3.8937856787428107,
+     "lod": 3.4124538980781605,
      "push_N": 0.9153992221213032,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.5598616169564045,
@@ -740,7 +741,7 @@
      "mult": 8.0,
      "n_beads": 8523194.757623585,
      "ok": false,
-     "lod": 4.850230150800488,
+     "lod": 4.205629582995533,
      "push_N": 1.194526525501096,
      "limit_N": 0.6867597519482659,
      "L_bed_mm": 0.7464821559418727,
@@ -752,18 +753,18 @@
     "mult": 1.5,
     "n_beads": 1598099.0170544223,
     "ok": true,
-    "lod": 2.0745162492441813,
+    "lod": 1.933979998945965,
     "push_N": 0.2873627895167701,
     "limit_N": 0.6867597519482659,
     "L_bed_mm": 0.13996540423910112,
     "dp_bed_80_bar": 0.9790521230811038
    },
    "at_ref": {
-    "lod_nominal": 2.1323475211524276,
-    "lod_median": 8.032705914113954,
-    "lod_p05": 0.9840887422785979,
-    "lod_p95": 94.34643191048639,
-    "p_lod_le_target": 0.0515,
+    "lod_nominal": 2.021267316342565,
+    "lod_median": 7.723673717691302,
+    "lod_p05": 0.9538962191108401,
+    "lod_p95": 90.15556607296712,
+    "p_lod_le_target": 0.055,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -832,15 +833,15 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.363,
+    "p_better_than_m280": 0.5625,
     "same_keys": true
    },
    "at_best": {
-    "lod_nominal": 2.0745162492441813,
-    "lod_median": 7.566614224956178,
-    "lod_p05": 0.9684724451882242,
-    "lod_p95": 85.08064210678376,
-    "p_lod_le_target": 0.0545,
+    "lod_nominal": 1.933979998945965,
+    "lod_median": 7.08125576140339,
+    "lod_p05": 0.9300686529678273,
+    "lod_p95": 80.0848851034171,
+    "p_lod_le_target": 0.06,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -909,9 +910,9 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.6555,
+    "p_better_than_m280": 0.793,
     "same_keys": true,
-    "p_better_than_m280_same_area": 0.4755
+    "p_better_than_m280_same_area": 0.6755
    },
    "phi_scan": {
     "0.0": {
@@ -920,11 +921,11 @@
     },
     "0.5": {
      "best_mult": 1.5,
-     "lod": 2.0745162492441813
+     "lod": 1.933979998945965
     },
     "0.8": {
      "best_mult": 1.5,
-     "lod": 2.1307617621452883
+     "lod": 1.9058863846281335
     }
    }
   },
@@ -2617,10 +2618,10 @@
    },
    "at_ref": {
     "lod_nominal": 2.8435059033105357,
-    "lod_median": 12.445893791811875,
-    "lod_p05": 1.1094187251493677,
-    "lod_p95": 196.05088919788304,
-    "p_lod_le_target": 0.0375,
+    "lod_median": 13.031239531802743,
+    "lod_p05": 1.1592588329683577,
+    "lod_p95": 202.9211809624395,
+    "p_lod_le_target": 0.0335,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -2689,15 +2690,15 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.159,
+    "p_better_than_m280": 0.1265,
     "same_keys": true
    },
    "at_best": {
     "lod_nominal": 1.8217248706693265,
-    "lod_median": 6.416751529471196,
-    "lod_p05": 0.8003126599529693,
-    "lod_p95": 80.39749928633356,
-    "p_lod_le_target": 0.073,
+    "lod_median": 7.400233685177608,
+    "lod_p05": 0.9173710617933609,
+    "lod_p95": 93.51276355712818,
+    "p_lod_le_target": 0.0595,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -2766,9 +2767,9 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.792,
+    "p_better_than_m280": 0.6025,
     "same_keys": true,
-    "p_better_than_m280_same_area": 0.786
+    "p_better_than_m280_same_area": 0.718
    },
    "phi_scan": {
     "0.0": {
@@ -2928,10 +2929,10 @@
    },
    "at_ref": {
     "lod_nominal": 2.7029181508833022,
-    "lod_median": 13.289254419386168,
-    "lod_p05": 1.2842631291104287,
-    "lod_p95": 194.42357033065574,
-    "p_lod_le_target": 0.031,
+    "lod_median": 15.36175365768504,
+    "lod_p05": 1.4489480459655737,
+    "lod_p95": 227.7424009157473,
+    "p_lod_le_target": 0.027,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -3000,15 +3001,15 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.0435,
+    "p_better_than_m280": 0.01,
     "same_keys": true
    },
    "at_best": {
     "lod_nominal": 2.3855369091109524,
-    "lod_median": 10.991419343182093,
-    "lod_p05": 1.1929916322453638,
-    "lod_p95": 151.64461631715753,
-    "p_lod_le_target": 0.039,
+    "lod_median": 13.276664399247169,
+    "lod_p05": 1.3451148187676607,
+    "lod_p95": 186.86725492599098,
+    "p_lod_le_target": 0.0305,
     "keys": [
      "chem.analyte.diffusion_coefficient",
      "chem.analyte.molar_mass",
@@ -3077,9 +3078,9 @@
      "tr.nsb.surface_factor_printed_electrode",
      "tr.nsb.unit_to_unit_cv_bed"
     ],
-    "p_better_than_m280": 0.134,
+    "p_better_than_m280": 0.0405,
     "same_keys": true,
-    "p_better_than_m280_same_area": 0.185
+    "p_better_than_m280_same_area": 0.0695
    },
    "phi_scan": {
     "0.0": {
@@ -4002,7 +4003,8 @@
    "best_mult": 2.0,
    "lod_nominal": 2.448401088264686,
    "lod_median": 10.112799912263368,
-   "p_better": 0.1045
+   "p_better": 0.1045,
+   "same_keys": true
   },
   {
    "label": "the same, LodeStars Carboxyl",
@@ -4010,7 +4012,8 @@
    "best_mult": 2.0,
    "lod_nominal": 2.8457142241892313,
    "lod_median": 12.39878820658315,
-   "p_better": 0.0025
+   "p_better": 0.0025,
+   "same_keys": true
   },
   {
    "label": "PEG-COOH 10 \u00b5m with the sites of M-280 (covalent as good as oriented)",
@@ -4018,31 +4021,35 @@
    "best_mult": 1.0,
    "lod_nominal": 1.6181868735466938,
    "lod_median": 6.576691329560579,
-   "p_better": 0.9765
+   "p_better": 0.9765,
+   "same_keys": true
   },
   {
    "label": "MagnaLINK coated with 3 \u00d7 the antibody (30 \u00b5g/mg), sites 2 (0.7\u20133)",
    "key": "magnalink",
    "best_mult": 0.5,
    "lod_nominal": 1.8957575397996567,
-   "lod_median": 9.887144906029722,
-   "p_better": 0.0455
+   "lod_median": 7.572407487291669,
+   "p_better": 0.559,
+   "same_keys": true
   },
   {
    "label": "the same, all of it active: sites 3",
    "key": "magnalink",
    "best_mult": 0.5,
    "lod_nominal": 1.6928064452368525,
-   "lod_median": 8.682660722611626,
-   "p_better": 0.276
+   "lod_median": 6.782791308295204,
+   "p_better": 0.9455,
+   "same_keys": true
   },
   {
    "label": "the same, the extra antibody inaccessible: sites 1",
    "key": "magnalink",
    "best_mult": 0.75,
    "lod_nominal": 2.4536103982881245,
-   "lod_median": 14.763793395535668,
-   "p_better": 0.0
+   "lod_median": 10.313748860326928,
+   "p_better": 0.011,
+   "same_keys": true
   },
   {
    "label": "the same with sites 3, capture-layer NSB not scaling with the load",
@@ -4050,7 +4057,8 @@
    "best_mult": 0.5,
    "lod_nominal": 1.4042076803737829,
    "lod_median": 5.717604079112531,
-   "p_better": 0.9995
+   "p_better": 0.9995,
+   "same_keys": true
   },
   {
    "label": "MagnaLINK as docs/30, its 3D polymer surface 3 \u00d7 M-280",
@@ -4058,7 +4066,8 @@
    "best_mult": 0.75,
    "lod_nominal": 2.5078085406591795,
    "lod_median": 11.76596571247008,
-   "p_better": 0.002
+   "p_better": 0.002,
+   "same_keys": true
   },
   {
    "label": "brush with the capture layer per area of M-280 (load 1)",
@@ -4066,7 +4075,17 @@
    "best_mult": 3.0,
    "lod_nominal": 2.523258250569869,
    "lod_median": 10.006702240134189,
-   "p_better": 0.1865
+   "p_better": 0.1865,
+   "same_keys": true
+  },
+  {
+   "label": "brush with the sites and load of M-280 (antibody fully active in the brush)",
+   "key": "brush",
+   "best_mult": 1.5,
+   "lod_nominal": 1.654425687583471,
+   "lod_median": 6.052946943899089,
+   "p_better": 0.9875,
+   "same_keys": true
   }
  ],
  "checks": [
@@ -4081,7 +4100,12 @@
    "value": ""
   },
   {
-   "check": "no chosen best amount sits at an edge of the scan that is still allowed",
+   "check": "no chosen best amount (candidates and variants) sits at the low edge of the scan",
+   "ok": true,
+   "value": ""
+  },
+  {
+   "check": "the reference bed of the paired Monte Carlo is M-280's for every bead (load and rel 1)",
    "ok": true,
    "value": ""
   }

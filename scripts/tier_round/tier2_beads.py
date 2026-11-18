@@ -12,9 +12,11 @@ Each candidate is the docs/34 cell (`tier2_cell.cell_design`) with three bead pr
     section 3) and are drawn independently of the kit's parameters, so that P(bead beats M-280) comes from paired
     draws;
   * the active capture sites per unit area: biotinylated F(ab')2 on streptavidin (the kit's
-    `tr.capture.site_factor_streptavidin_biotin`, 1 [0.4-1]), covalent random coupling
-    (1 / chem.antibodies.oriented_vs_random_capacity_gain = 1/3 [1/10-1/1.5], Peluso2003) or a bead-specific
-    value (UNVERIFIED).
+    `tr.capture.site_factor_streptavidin_biotin`, 1 [0.4-1]), covalent random coupling (0.7 [0.3-1], UNVERIFIED
+    judgement; 1/3 from chem.antibodies.oriented_vs_random_capacity_gain and 1 as sensitivity) or a
+    bead-specific value (UNVERIFIED);
+  * `load`, the capture antibody per area relative to M-280 coated as docs/30: the capture-layer share of the
+    NSB scales with it (covalent beads keep load 1: the inactive antibody is still there).
 Then the bead amount is optimised (nominal LOD) within two limits from docs/34: the retainer washer must still hold
 the stack at 80 uL/min with a margin of 2 (the check of tier2_cell.py), and the bed must fit the bed bore (0.5 mm wide, 2.5 mm long).
 
@@ -59,7 +61,7 @@ CANDIDATES = [
     dict(key="m270sa", label="Dynabeads M-270 Streptavidin (65305)", d_um=2.8,
          rel=(0.8, 0.4, 2.0), sites=None, status="catalogue, drop-in"),
     dict(key="lodesa", label="Agilent LodeStars 2.7 µm Streptavidin (PL6727-1001)", d_um=2.7,
-         rel=(0.8, 0.4, 2.0), sites=(0.7, 0.5, 1.0), status="catalogue, drop-in"),
+         rel=(0.8, 0.4, 2.0), sites=(0.7, 0.5, 1.0), load=0.7, status="catalogue, drop-in"),
     dict(key="magnalink", label="Vector MagnaLINK Streptavidin 2.8 µm (M-1003), coated as docs/30 (10 µg/mg)",
          d_um=2.8, rel=(0.8, 0.4, 3.0), sites=None, status="catalogue [V vendor page, review round 2]"),
     dict(key="magplex", label="Luminex MagPlex-Avidin 6.5 µm (deglycosylated avidin)", d_um=6.5,
@@ -124,7 +126,7 @@ def paired_mc(c, mult, ps, n):
     and independent draws of the capture-layer share and of the bead's relative factor, applied to the sampled
     packed-bed factor.  M-280 (rel = 1) gets exactly the kit's sampling."""
     design = T.cell_design(beads_dict(c, mult))
-    base = pset(ps, dict(c, rel=(1.0, 1.0, 1.0)))                 # packed-bed factor of M-280, candidate sites
+    base = pset(ps, dict(c, rel=(1.0, 1.0, 1.0), load=1.0))       # packed-bed factor of M-280, candidate sites
     probe = base.copy()
     probe.accessed = set()
     nom = tk.evaluate_bed(design, pset(ps, c))
@@ -225,6 +227,8 @@ def main(argv=None):
          dict(sites=(3.0, 1.0, 3.0), load=1.0)),
         ("MagnaLINK as docs/30, its 3D polymer surface 3 × M-280", "magnalink", dict(rel=(3.0, 1.0, 10.0))),
         ("brush with the capture layer per area of M-280 (load 1)", "brush", dict(load=1.0)),
+        ("brush with the sites and load of M-280 (antibody fully active in the brush)", "brush",
+         dict(sites=(1.0, 0.4, 1.0), load=1.0)),
     ]
     variants = []
     for label, key, ov in VARIANTS:
@@ -232,7 +236,8 @@ def main(argv=None):
         rows, best = scan(c, PHI[0])
         mc = paired_mc(c, best["mult"], ps, n)
         variants.append(dict(label=label, key=key, best_mult=best["mult"], lod_nominal=best["lod"],
-                             lod_median=mc["lod_median"], p_better=float(np.mean(mc["_lod"] < ref["_lod"]))))
+                             lod_median=mc["lod_median"], p_better=float(np.mean(mc["_lod"] < ref["_lod"])),
+                             same_keys=mc["keys"] == ref["keys"]))
 
     # the ceiling of the bead lever: no NSB on the beads at all (M-280 geometry and sites)
     ceil, cbest = scan(CANDIDATES[0], 0.0, zero=True)
@@ -260,8 +265,12 @@ def main(argv=None):
          f"{ref['lod_nominal']:.4g} / {ref['lod_median']:.4g} vs {t34['lod_nominal']:.4g} / {t34['lod_median']:.4g}"),
         ("every candidate is sampled on the same parameter keys as M-280 (paired draws)",
          all(r[t]["same_keys"] for r in res.values() for t in ("at_ref", "at_best")), ""),
-        ("no chosen best amount sits at an edge of the scan that is still allowed",
-         all(r["best_mult"] not in (MULTS[0],) for r in res.values()), ""),
+        ("no chosen best amount (candidates and variants) sits at the low edge of the scan",
+         all(r["best_mult"] != MULTS[0] for r in res.values()) and all(v["best_mult"] != MULTS[0] for v in variants), ""),
+        ("the reference bed of the paired Monte Carlo is M-280's for every bead (load and rel 1)",
+         all(abs(float(pset(ps, dict(c, rel=(1.0, 1.0, 1.0), load=1.0)).params[PB].value)
+                 - float(ps.params[PB].value)) < 1e-12 for c in CANDIDATES)
+         and all(v["same_keys"] for v in variants), ""),
     ]
 
     # ---- report -----------------------------------------------------------------------------------------------

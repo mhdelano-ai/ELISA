@@ -1,13 +1,13 @@
 # 35 — Alternative capture beads for the tier-2 cell
 
-Status: desk work, 2026-11-18, Revision C (after review rounds 1 and 2, §7). Follow-up to docs/34 (tier-2 flow cell with
+Status: desk work, 2026-11-18, Revision D (after review rounds 1–3, §7). Follow-up to docs/34 (tier-2 flow cell with
 the bed inside). Question from the user: which bead gives the lowest LOD, most likely through the lowest
 non-specific binding (NSB) of the conjugate; iterate with an independent reviewer until the answer stops changing.
 Nothing is ordered; docs/30 and docs/34 are not changed. Numbers from `scripts/tier_round/tier2_beads.py` →
 `results/tier_round/tier2_beads.md` (Monte Carlo n = 2000, paired draws). Desk research behind §2–3:
 `results/tier_round/beads_vendors.md` (vendors, about 20 products, references R1–R24) and
 `results/tier_round/beads_nsb_evidence.md` (published NSB evidence, tables a–e). Review reports:
-`results/tier_round/review_beads_r1.md`, `review_beads_r2.md` and following.
+`results/tier_round/review_beads_r1.md` to `review_beads_r4.md`.
 Tags: [V] read this session in the cited page or full text (by the research agents or the reviewer); [S] secondary
 (search summary, distributor page, abstract only); UNVERIFIED not checked or a judgement; Derived computed here.
 
@@ -15,14 +15,14 @@ Tags: [V] read this session in the cited page or full text (by the research agen
 
 **The bead is a small lever in this cell, and no bead reaches 1 pg/mL. Keep M-280 Streptavidin as built; put three
 challengers beside it in one blank-bed test, after the two substrate questions of docs/30 §2.6.** Four beads form a
-cluster at a nominal 1.8 pg/mL against 1.9 for M-280 (§4), with medians 6.4–8.0 against 7.9:
+cluster at a nominal 1.8 pg/mL against 1.9 for M-280 (§4), with medians 7.0–8.0 against 7.9:
 
 | Bead | Nominal; median | P(LOD below M-280's) | Change to docs/34 |
 |---|---|---|---|
 | Dynabeads M-270 Streptavidin (65305) | 1.8; 7.8 | 0.66 | none (drop-in) |
 | Vector MagnaLINK Streptavidin 2.8 µm (M-1003), coated as docs/30 | 1.8; 8.0 | 0.54 | none (drop-in) |
 | micromod micromer-M PEG-COOH 10 µm (08-56-104), F(ab')₂ coupled covalently, 1.5 × the bead area | 1.8; 7.0 | 0.83 (0.65 against M-280 at the same area) | covalent coupling; screen alone holds the beads (no membrane) |
-| POEGMA or carboxybetaine brush grafted on M-270 Amine, 4 × the area | 1.8; 6.4 | 0.79 | a chemistry project; bed Δp 2.5 bar at 80 µL/min |
+| POEGMA or carboxybetaine brush grafted on M-270 Amine, 4 × the area | 1.8; 7.4 | 0.60 (0.72 at the same area) | a chemistry project; bed Δp 2.5 bar at 80 µL/min |
 
 The P values restate judged inputs more than they measure anything: for M-270, 0.66 is close to the judged chance
 that its surface is cleaner than M-280's (0.67). None of the four is worth a change on paper.
@@ -40,10 +40,12 @@ beads brings NSB back. The ranking of the covalent and low-fouling beads therefo
 covalent coupling keeps: at 0.7 of the streptavidin–biotin layer (Revision C, judgement) the PEG bead is in the
 cluster; at 1/3 (Revision B) it falls to 2.4; at 1 it leads with 1.6, median 6.6 (§4 sensitivity).
 
-**The largest upside on paper** is MagnaLINK coated with three times the antibody (the vendor states 113 µg
-biotinylated IgG per mg against ≈ 10 for Dynabeads [V vendor page, review round 2]): 1.4 pg/mL, median 5.7 — but
-only if all the extra antibody is active and the capture-layer NSB does not grow with it. If it grows with the load
-the gain is gone (1.7–2.5). The bench test can check both.
+**The largest upside on paper** is MagnaLINK coated with three times the antibody, at half the beads (the vendor
+states 113 µg biotinylated IgG per mg against ≈ 10 for Dynabeads [V vendor page, review round 2]). If the
+capture-layer NSB grows with the antibody load: nominal 1.9, median 7.6, P 0.56 with 2 × the active sites, and 1.7,
+median 6.8, P 0.95 if all the extra antibody is active; if it does not grow with the load, 1.4, median 5.7. If the
+extra antibody is inaccessible it is worse (2.5). That makes it the challenger with the widest range, both ways;
+the bench test can check it.
 
 **Corrections to docs/34 §0 and §3.** M-280 is not "the surface on which the project's non-specific rate is
 defined". `chem.nsb.nsb_effective_rate_constant` comes from Rissin et al. 2010, who used 2.7 µm carboxyl magnetic
@@ -130,7 +132,7 @@ with M-280 on the same draws of everything else; P(< M-280) in §4 is the share 
 |---|---|---|
 | M-280 Streptavidin (re-blocked in BSA) | 1 | anchor |
 | M-270 Streptavidin, LodeStars Streptavidin and Carboxyl, M-270 Epoxy, MagPlex-Avidin | 0.8 (0.4–2) | hydrophilic base, but BSA on every bead in the protocol |
-| MagnaLINK | 0.8 (0.4–3) | hydrophilic polymer; the upper end allows a 3D layer that takes up conjugate |
+| MagnaLINK | 0.8 (0.4–3) | hydrophilic polymer; 11 × the biotin-IgG capacity per mg at the same size means a 3D streptavidin layer, mostly free streptavidin when coated at 10 µg/mg; the upper end allows that layer to take up conjugate |
 | micromod PEG-COOH | 0.5 (0.15–1.5) | PEG of unknown length, not a brush |
 | Brush (POEGMA, carboxybetaine) | 0.25 (0.05–1) | flat-surface and bead evidence above; floor not known |
 | Polystyrene streptavidin (Spherotech, micromod), silica | 1.3 (0.7–7) | no vendor surface finish, blocked in BSA |
@@ -141,10 +143,10 @@ Active capture sites (relative to the oriented monolayer of `chem.surfaces`):
 |---|---|---|
 | biotin-F(ab')₂ on M-280 or M-270 streptavidin | kit: 1 (0.4–1) | `tr.capture.site_factor_streptavidin_biotin`; equal capacity per area [V R1] |
 | MagnaLINK coated as docs/30 | kit: 1 (0.4–1) | the coating step offers 10 µg antibody per mg, as for M-280 |
-| LodeStars Streptavidin | 0.7 (0.5–1) | brochure minimum 5 µg/mg (store page now > 3.6 [S]) against ≈ 10 for Dynabeads, similar area per mg (UNVERIFIED) |
+| LodeStars Streptavidin | 0.7 (0.5–1); load 0.7 | brochure minimum 5 µg/mg (store page now > 3.6 [S]) against ≈ 10 for Dynabeads, similar area per mg (UNVERIFIED); less antibody also means less capture layer |
 | MagPlex-Avidin, Spherotech, silica | 0.7 (0.3 or 0.1–1) | capacity not published |
 | micromod Streptavidin 10 µm | 0.4 (0.1–0.8) | about a tenth of a streptavidin monolayer (Derived) |
-| covalent F(ab')₂ (LodeStars Carboxyl, M-270 Epoxy, PEG-COOH) | 0.7 (0.3–1) | judgement. Revision B used 1/3 from `chem.antibodies.oriented_vs_random_capacity_gain` (Peluso 2003), but both arms of that paper are on streptavidin (site-specific against random biotinylation) [V abstract, reviewer 2], and the project's biotin-SP F(ab')₂ is the random arm; no source compares covalent coupling with it. 1/3 and 1 are run as sensitivity |
+| covalent F(ab')₂ (LodeStars Carboxyl, M-270 Epoxy, PEG-COOH) | 0.7 (0.3–1) | judgement. Revision B used 1/3 from `chem.antibodies.oriented_vs_random_capacity_gain` (Peluso 2003), but both arms of that paper are on streptavidin (site-specific against random biotinylation) [V abstract, reviewer 2], and the project's biotin-SP F(ab')₂ is the random arm; no source compares covalent coupling with it. 1/3 and 1 are run as sensitivity. Covalent beads keep load 1: the inactive antibody is still on the bead |
 | brush, antibody entangled | 0.3 (0.05–1) | loading falls with brush thickness (Hu 2024 [V]) |
 
 Not in the model, stated here: the physical part of the packed-bed factor may fall for 10–14 µm beads (wider
@@ -165,14 +167,14 @@ limit-bound).
 | **M-270 Streptavidin** | **1.8; 7.8 [0.95–89]; 0.06; 0.66** | 1× (1.0×10⁶) | same |
 | **MagnaLINK Streptavidin, coated as docs/30** | **1.8; 8.0 [0.98–93]; 0.05; 0.54** | 1× (1.0×10⁶) | same |
 | **micromod PEG-COOH 10 µm, covalent** | 1.9; 7.8 [0.92–95]; 0.06; 0.48 | 1.5× (1.2×10⁵) | **1.8; 7.0 [0.90–84]; 0.06; 0.83; 0.65** |
-| **Brush on M-270 Amine** | 2.8; 12 [1.1–200]; 0.04; 0.16 | 4× (4.0×10⁶) | **1.8; 6.4 [0.80–80]; 0.07; 0.79; 0.79** |
-| LodeStars 2.7 Streptavidin | 2.1; 8.0 [0.98–94]; 0.05; 0.36 | 1.5× (1.6×10⁶) | 2.1; 7.6 [0.97–85]; 0.05; 0.66; 0.48 |
+| **Brush on M-270 Amine** | 2.8; 13 [1.2–200]; 0.03; 0.13 | 4× (4.0×10⁶) | **1.8; 7.4 [0.92–94]; 0.06; 0.60; 0.72** |
+| LodeStars 2.7 Streptavidin | 2.0; 7.7 [0.95–90]; 0.06; 0.56 | 1.5× (1.6×10⁶) | 1.9; 7.1 [0.93–80]; 0.06; 0.79; 0.68 |
 | MagPlex-Avidin 6.5 µm | 2.1; 9.1 [1.1–110]; 0.04; 0.08 | 1.5× (2.8×10⁵) | 2.1; 8.4 [1.0–100]; 0.05; 0.30; 0.18 |
 | LodeStars 2.7 Carboxyl, covalent | 2.1; 9.1 [1.1–110]; 0.04; 0.09 | 1.5× (1.6×10⁶) | 2.1; 8.4 [1.0–100]; 0.05; 0.30; 0.18 |
 | M-270 Epoxy, covalent | 2.1; 9.1 [1.1–110]; 0.04; 0.09 | 1.5× (1.5×10⁶) | 2.1; 8.4 [1.0–100]; 0.05; 0.30; 0.18 |
 | Spherotech SVP-100-4 | 2.2; 14 [1.3–210]; 0.03; 0.02 | 1.5× (8.1×10⁴) | 2.2; 13 [1.3–190]; 0.03; 0.04; 0.03 |
 | Silica 5 µm | 2.3; 14 [1.4–210]; 0.03; 0.00 | 1.5× (4.7×10⁵) | 2.3; 13 [1.4–190]; 0.03; 0.01; 0.00 |
-| micromod Streptavidin 10 µm | 2.7; 13 [1.3–190]; 0.03; 0.04 | 2× (1.6×10⁵) | 2.4; 11 [1.2–150]; 0.04; 0.13; 0.18 |
+| micromod Streptavidin 10 µm | 2.7; 15 [1.4–230]; 0.03; 0.01 | 2× (1.6×10⁵) | 2.4; 13 [1.3–190]; 0.03; 0.04; 0.07 |
 | Bead surface with no NSB, capture layer kept | 1.6 | 1.5× | 1.5 |
 | No NSB on the beads at all | 1.3 | 4× (edge of the allowed amounts) | 1.0 |
 
@@ -186,29 +188,34 @@ Sensitivity (φ = 0.5 unless stated; best amount; `tier2_beads.md` §3, §3a):
 | φ = 0.8 | M-270, MagnaLINK, PEG-COOH, brush 1.9; M-280 1.9 (nominal) |
 | covalent sites 1/3 (Revision B): PEG-COOH; LodeStars Carboxyl | 2.4; 10; 0.10 — 2.8; 12; 0.00 |
 | covalent sites 1 (as good as streptavidin–biotin): PEG-COOH | 1.6; 6.6; 0.98 |
-| MagnaLINK, 3 × antibody, sites 2 (0.7–3), capture-layer NSB × 3 | 1.9; 9.9; 0.05 |
-| the same, sites 3 | 1.7; 8.7; 0.28 |
-| the same, sites 1 (extra antibody inaccessible) | 2.5; 15; 0.00 |
+| MagnaLINK, 3 × antibody, half the beads, sites 2 (0.7–3), capture-layer NSB × 3 | 1.9; 7.6; 0.56 |
+| the same, sites 3 | 1.7; 6.8; 0.95 |
+| the same, sites 1 (extra antibody inaccessible) | 2.5; 10; 0.01 |
 | the same, sites 3, capture-layer NSB not growing with the load | **1.4; 5.7; 1.00** |
 | MagnaLINK as docs/30, its surface 3 × M-280 (3D layer takes up conjugate) | 2.5; 12; 0.00 |
 | brush with the capture layer per area of M-280 (load 1) | 2.5; 10; 0.19 |
+| brush with the sites and load of M-280 (antibody fully active in the brush) | 1.7; 6.1; 0.99 |
 
 ## 5. Ranking and what would change it
 
 1. **Cluster at 1.8 pg/mL**: M-270 Streptavidin and MagnaLINK (drop-ins), micromod PEG-COOH 10 µm (covalent),
    brush (development). Within the uncertainty of each other and of M-280; their order depends on judged inputs.
-2. **M-280 Streptavidin** (current, 1.9) and LodeStars 2.7 Streptavidin (2.1 at the brochure loading).
+2. **M-280 Streptavidin** (current, 1.9), LodeStars 2.7 Streptavidin (1.9 at 1.5 × the beads) and MagnaLINK with
+   3 × the antibody (1.4–2.5, the widest range).
 3. Everything else 2.1–2.4, mainly through fewer active capture sites or an unfinished polystyrene surface.
 
 What would turn the ranking, in the order a bench test can find it: (a) the capture fraction of covalent F(ab')₂
 on PEG-COOH beads (at 1 of the streptavidin layer the PEG bead leads, 1.6); (b) whether MagnaLINK's extra capacity
-is active and whether capture-layer NSB grows with antibody load (1.4 at best, 2.5 at worst); (c) φ — if the capture
+is active and whether capture-layer NSB grows with antibody load (1.4 at best, 2.5 at worst); (c) the active sites of an
+antibody entangled in a brush (with the sites of M-280 the brush gives 1.7, median 6.1); (d) φ — if the capture
 layer carries most of the bead NSB, no bead surface matters. Nothing on the list closes the gap to 1 pg/mL alone.
 
 **Bench test (extends T2-1 of docs/30 and C-2 of docs/34; informational, not a gate; after the two substrate
-questions C1 and C5 of docs/30 §2.6, without which no blank is meaningful).** Decide in advance: M-280 stays unless a
-challenger lowers the blank by at least 1.5 × (n = 5 per arm resolves about 1.8 × the run-to-run CV, two-sided,
-80 % power; Derived by reviewer 2) without losing capture.
+questions C1 and C5 of docs/30 §2.6, without which no blank is meaningful).** Decide in advance on an LOD proxy, not on the blank:
+for each capture bead, 3 × the blank SD divided by the net signal of the 1 pg/mL standard. M-280 stays unless a
+challenger lowers that proxy by at least 1.3 × (resolvable at n = 5 per arm, reviewer 3, Derived). The blank alone
+cannot decide: the beads carry a third of it, so even a bead with no NSB lowers it by only 1.5 ×, and MagnaLINK's
+gain would come from capture, not from the blank.
 
 - Arms: M-280, M-270 Streptavidin, MagnaLINK (coated as docs/30, and with 3 × the antibody at half the beads),
   micromod PEG-COOH 10 µm with covalent F(ab')₂ (screen alone).
@@ -219,8 +226,13 @@ challenger lowers the blank by at least 1.5 × (n = 5 per arm resolves about 1.8
 - The docs/34 blank sequence (no analyte), n ≥ 5 per arm, arm order randomised in the one cell, a fresh retainer
   per run (the retainer carries a quarter of the blank). An empty-retainer run gives the share of the blank that is
   not on the beads.
-- A 1 pg/mL standard on each capture bead gives its capture fraction (this is what decides covalent coupling and
-  MagnaLINK's extra capacity).
+- A 1 pg/mL standard on each capture bead gives its capture fraction and the LOD proxy (this is what decides
+  covalent coupling and MagnaLINK's extra capacity).
+- Size: 5 bead arms × 3 preparations, 2 BSA-free arms, the empty retainer and the standards, n = 5 each: about 90
+  runs of about 1 h in one cell (UNVERIFIED time). To shorten it, run the non-immune and quenched preparations only
+  for M-280 and for the best challenger.
+- The micromod PEG-COOH 10 µm bead is cited from a 2010 data sheet; whether it can still be ordered is
+  UNVERIFIED (ask micromod) before it enters the test.
 
 ## 6. Open points
 
@@ -236,6 +248,7 @@ challenger lowers the blank by at least 1.5 × (n = 5 per arm resolves about 1.8
 | Draft (Rev A) | — | Recommended switching to M-270 Streptavidin; brush second (1.5 pg/mL) | — |
 | 1 | not converged: 3 major, 10 minor (`review_beads_r1.md`) | M1 capture-layer NSB treated as removable by the bead; brush site factor unsupported. M2 the protocol's BSA cancels the vendor's case for M-270; bench test could not show it. M3 Hu (not Lin) 2024, its immobilisation and test; Rissin's SuperBlock over-tagged. Minor: C1 retainer, LodeStars loading, inconsistent site factors, existing covalent parameter, anchor, "2.5 mm bore", Chen 2009 comparator, tags, MagPlex missed, unmodelled physics | All applied (Rev B): φ added and sampled; paired comparison; covalent sites from Peluso 2003; bead-specific sites; brush entangled 0.3; M-270 rel 0.8 (0.4–2); recommendation changed to keep M-280; BSA-free test arm; C1 not modelled; MagPlex added; citations corrected; physics not modelled listed in §3 |
 | 2 | not converged: 2 major, 6 minor (`review_beads_r2.md`); model code confirmed correct, every number matched | M1 Peluso 2003 misapplied (both arms on streptavidin), the covalent penalty unsupported. M2 a catalogue bead missed: MagnaLINK 2.8 µm, 113 µg biotin-IgG/mg. Minor: P(< M-280) of M-270 restates the prior; best-amount rows compared with M-280 at 1×; capture-layer NSB should scale with antibody load; bench test cannot resolve a few per cent and its φ control is confounded; ceiling limit-bound; LodeStars capacity now > 3.6 µg/mg | All applied (Rev C): covalent sites 0.7 (0.3–1) as judgement with 1/3 and 1 as sensitivity; MagnaLINK added with its high-load variants; `load` term; P against M-280 at the same area; bench test rewritten (decision rule, non-immune and quenched controls, randomised order, fresh retainers, after C1/C5); ProMag and Mono Mag listed. The summary changed from "keep M-280, M-270 the only bead ahead" to "a cluster of four at 1.8, keep M-280, test three challengers" |
+| 3 | not converged: 2 major, 7 minor (`review_beads_r3.md`); every number in §0/§4 matched; MagnaLINK and micromod claims checked [V] | MJ1 the paired Monte Carlo applied `load` twice (medians and P wrong for brush, micromod SA, MagnaLINK high-load; nominal right). MJ2 the bench decision rule (≥ 1.5 × lower blank) could not fire on the predicted effects and was blind to capture gains. Minor: LodeStars load; brush site sensitivity; stale text; MagnaLINK URL and vendor note; micromod availability; test size; edge check for variants | All applied (Rev D): reference bed with load 1, check added; rerun; decision on an LOD proxy at 1.3 ×; LodeStars load 0.7; brush and covalent statements; test size and shortening; sources. Recommendation unchanged; MagnaLINK at high load now the widest-range challenger (P 0.56–0.95 instead of 0.05–0.28) |
 
 ## 8. Sources
 
@@ -253,7 +266,7 @@ it is Hu J). The ones used above:
 | R10 | micromod data sheets (2010 copies) | [V] |
 | R16, R18 | Spherotech SVP-100-4; Bangs CS01002 | [V]; [S] |
 | MagPlex | Diasorin/Luminex MagPlex and MagPlex-Avidin product sheet (via search, reviewer round 1) | [S]; avidin [V] reviewer 2 |
-| MagnaLINK | Vector Laboratories MagnaLINK Streptavidin Magnetic Beads M-1003, vectorlabs.com product page | [V] reviewer 2 |
+| MagnaLINK | Vector Laboratories MagnaLINK Streptavidin Magnetic Beads M-1003, https://vectorlabs.com/products/magnalink-streptavidin-mag-beads-2-8-m/ (capacity compared with an unnamed "similar 2.8 µm bead"; free biotin given as ≥ 10 and ≥ 12 nmol/mg in two places; covalent streptavidin layer) | [V] reviewers 2 and 3 |
 | ProMag | Polysciences ProMag HP Streptavidin 25508 product page; ProMag 3 Streptavidin 86056 | [V]; [S] (reviewer 2) |
 | Peluso 2003 (abstract) | Peluso P et al., Anal Biochem 312:113 (2003), PubMed 12531195 | [V] abstract, reviewer 2 |
 | a1 | Trømborg et al., Dynal poster on MyOne beads (Thermo document) | [V] |
