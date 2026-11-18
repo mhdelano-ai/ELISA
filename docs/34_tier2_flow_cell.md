@@ -301,19 +301,23 @@ parameters as the STEP files, so the two cannot drift apart):
 
 | Part | Drawing | STEP | Views |
 |---|---|---|---|
-| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A, isometric |
-| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom (cell face), section A–A at the axis (10:1), two isometrics |
-| Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (port bottom and bed bore, 10:1), isometric |
-| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top and section at 20:1, isometric, actual-size outline |
+| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A |
+| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom, partial section A–A (10:1) |
+| Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (10:1) |
+| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top and section at 20:1 |
 
-At the user's request the drawings dimension **only what the model cannot carry**: features toleranced tighter
-than standard (each flagged), surface finish, threads, datums with the basic dimensions that locate the bores from
-datum B, and edge conditions. All other geometry is defined by the STEP file of the same drawing number and
-revision at the general tolerances, which note 2 and the title block of each sheet state.
+At the user's request the drawings carry **only the features toleranced tighter than standard and the threaded
+holes**: each such feature is flagged (finer finishes and the 0.05 mm edge break at the ends of the 0.5 mm bores
+included), with the datums and basic dimensions its tolerance needs. All other geometry is defined by the STEP file
+of the same drawing number and revision at the standard tolerance stated in the title block. A second request
+removed every note on how to make, clean or pack the parts (left to the supplier), the reasons in the flag texts,
+the isometric views, the part masses and the washer's actual-size outline; the notes are now the material and the
+threads only.
 
 Each sheet carries what Xometry's drawing guidance asks for [V, its "technical drawing best practices" page]: a
 title block with material specification, finish, scale, units, projection and a default-tolerance block; notes at
-the top left; a revision table at the top right; sheet number; an isometric view; threads with series, class and
+the top left; a revision table at the top right; sheet number; an isometric view (removed at the user's request:
+the STEP file shows the part); threads with series, class and
 depth; tighter-than-standard tolerances called out and flagged (triangular flags) for inspection.
 `ORDERING.md` beside the drawings lists what to upload and select for each part.
 
@@ -334,13 +338,13 @@ What remains tighter than standard, and why:
 | all | screw holes (M4 in the base, M2.5 clearance and counterbores in the plate, M2.5 tapped and M4 clearance in the body) | position ⌀0.3 to A\|B\|C | the screws must pass through three parts located on the pins; M4 clearance ⌀4.8 |
 | Base | top face (datum A) | flat 0.02 | the plate rests on it; sets the gap |
 | Base | pocket floor | parallel to A within 0.02, Ra 1.6 | carries the brittle ceramic strip; keeps the gap even across the electrode |
-| Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.65 +0.05/−0; position ⌀0.10 to A\|B\|C; edges sharp | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm) |
+| Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.65 +0.05/−0; position ⌀0.10 to A\|B\|C; edge break ≤ 0.05 at both ends of the bore | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm) |
 | Plate | retainer pocket depth | 0.27 ±0.025 | sets the washer's squeeze; the washer is picked by measured thickness to suit the measured depth (section 3.1) |
 | Plate | strip O-ring groove; collecting groove | ⌀ ±0.05 and depth ±0.05; ⌀ ±0.10 and depth ±0.10 | O-ring gland; radial outflow |
 | Plate | riser position | 2.6 ±0.10 from the axis | must stay inside the 0.6 mm collecting groove |
 | Plate | cell face inside ⌀9.3, groove floors | Ra 1.6 | lid of the thin layer, O-ring seat |
 | Plate | top face inside ⌀16 | flat 0.02 | the body seals on it, face to face |
-| Body | bed bore | ⌀0.50 ±0.05, position ⌀0.10 to A\|B\|C, both ends sharp | as for the exit bore |
+| Body | bed bore | ⌀0.50 ±0.05, position ⌀0.10 to A\|B\|C, edge break ≤ 0.05 at both ends | as for the exit bore |
 | Body | underside (datum A) | flat 0.05; inside ⌀16 flat 0.02 and Ra 1.6; inside ⌀3 Ra 0.4 | the membrane seals on the ⌀3 area, the 12 × 1 O-ring and the face-to-face joint on the ⌀16 area |
 | Body | body–plate O-ring groove | ⌀ ±0.10, depth ±0.05 | O-ring gland |
 | Body | both 1/4-28 ports | values of the user's port drawing: bottom flat 0.05, Ra 0.8, corner R ≤ 0.18, full thread ≥ 7.11; added here: bottom perpendicular to the thread axis within 0.05, inlet thread position ⌀0.10 to A\|B\|C | the fitting seals on the port bottom; the tubing end must sit over the bed bore |

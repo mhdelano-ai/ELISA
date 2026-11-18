@@ -237,3 +237,8 @@ note wording; flags per dimension; larger fonts. Not applied: an ASTM D2000 line
 be checked) and a cosmetic M4 thread display. docs/34 §5.2 table, §5.4, ORDERING.md and the project guide updated;
 build (28 checks), drawings (no overlaps), `tier2_cell.py`, `check_tierkit.py` (36/36) and `doc_tables.py --check`
 re-run.
+The user then asked that notes describing how to make the parts be removed (left to Xometry) and that the drawings
+carry nothing but the tighter-than-standard tolerances and the threaded holes. Removed: cleaning, packing, process
+and cutting-method notes (including "not laser" for the FKM washer), datum and screw explanations, reasons in the
+flag texts, isometric views, masses, the washer's actual-size outline, the project name in the title. "SHARP" at
+the ends of the 0.5 mm bores became a tolerance (edge break 0.05 max). Notes are now material plus threads.
