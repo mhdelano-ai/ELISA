@@ -53,7 +53,7 @@ Neither holds 2.8 µm beads safely. A sintered 0.5 µm frit does, but its inner 
 40 mm² the model LOD is 5.0 pg/mL. The design therefore uses a **track-etched membrane with 1 µm pores lying on
 the 2 µm screen**: the membrane retains, the screen carries it. The 10–14 µm beads need the screen alone.
 
-**The cell** is a stack of three machined parts, 29 × 44 × 22.5 mm (figure in section 4):
+**The cell** is a stack of three machined parts, 29 × 44 × 21.9 mm (figure in section 4):
 
 | Part | Material | What it carries |
 |---|---|---|
@@ -90,8 +90,8 @@ The cell is not a way to a lower LOD; it is a way to make tier 2 a rigid, repeat
 capillary. The largest unknown of the cell is the conjugate that the retainer takes up (section 6.1).
 
 **Strip dimensions are settled**: ceramic strips, 380 µm (stated by the user), positions from MicruX's drawing,
-which the user confirmed is accurate (section 5.4). What still has to be fixed before an order is the port depth
-of the fitting maker's drawing and a dimensioned drawing for each part (section 8.2).
+which the user confirmed is accurate (section 5.4). What still has to be made before an order is a dimensioned
+drawing for each part (section 8.2).
 
 ## 1. What the request changes
 
@@ -260,7 +260,7 @@ microvolts at nanoampere currents.
 |---|---|---|---|---|
 | Base | `base.step` | 316L stainless | 29 × 44 × 8; 78 g | one side: pocket, 4 threads, 2 reamed holes |
 | Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | 29 × 44 × 2.5; 4 g | two sides: grooves and countersinks below, retainer pocket and slot above |
-| Body | `body.step` | PEEK, natural, unfilled | 29 × 44 × 12; 18 g | three sides: port and holes from the top, groove and threads from below, port from one end |
+| Body | `body.step` | PEEK, natural, unfilled | 29 × 44 × 11.4; 17 g | three sides: port and holes from the top, groove and threads from below, port from one end |
 
 Why these materials. PEEK is the usual wetted polymer of HPLC, takes a thread for the fittings and does not
 craze in the 10 % methanol used for storage; PMMA does (docs/28 §4). Unfilled, because glass or carbon fill
@@ -277,12 +277,13 @@ generated from the same parameters; its content:
 |---|---|
 | Base | 4 × M4×0.7 through. 2 × ⌀3 P7 × 6 deep for pressed ⌀3 m6 × 16 pins. Strip pocket 10.3 +0.05/0 wide, **depth 0.55 ±0.02**, floor flat within 0.02, Ra ≤ 0.8 µm. Top face flat within 0.02 |
 | Nozzle plate | Underside flat within 0.02 and **Ra ≤ 0.4 µm inside ⌀9.3**. O-ring groove depth 0.65 ±0.03. Exit bore ⌀0.5 +0.03/0, both ends free of burr, within 0.05 of the dowel holes. **Retainer pocket in the top face ⌀1.65 +0.03/0, depth 0.27 ±0.01, floor flat, concentric with the exit bore within 0.03.** 2 × ⌀3 H7. 4 × ⌀2.7 with 90° countersink ⌀5.0 from the underside, heads below the face. Top face flat within 0.02 |
-| Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the fitting maker's port drawing (bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore ⌀0.5 +0.03/0 through the port floor, within 0.05 of the dowel holes, sharp and free of burr at the underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals there).** O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
+| Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the port drawing supplied by the user: **depth 8.89 (0.350 in), at least 7.11 (0.28 in) of full thread, chamfer ⌀6.86 (0.27 in) × 90°, bottom flat within 0.05 (0.002 in), Ra ≤ 0.8 µm (32 µin), corner radius ≤ 0.18 (0.007 in)**, square to the thread. Bed bore ⌀0.5 +0.03/0 through the port floor, within 0.05 of the dowel holes, sharp and free of burr at the underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals there).** O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
 | All | everything else ISO 2768-m; edges broken 0.1–0.2 mm; no burrs in the liquid path; no bead blasting of sealing faces |
 
-The port depth in the model (9.5 mm) is a placeholder, UNVERIFIED. IDEX publishes a drawing "1/4-28 Standard
-Flat-Bottom Port", but only against registration [V], and it was not obtained. The floor thickness (2.5 mm = the
-length of the bed bore) is the dimension to hold; the port depth follows from the body thickness.
+The ports follow a 1/4-28 flat-bottom port drawing the user supplied (2026-11-18; the inch values are converted
+above). Its bottom is the sealing face of the fitting, hence the flatness and finish. With the port 8.89 mm deep
+the body is 11.39 mm thick, so that the port floor, which is the length of the bed bore, stays at 2.5 mm. The
+outlet port on the end face is drilled to the same drawing.
 
 If the pocket depth is quoted too dear at ±0.01, ±0.02 still works with washers chosen by thickness: the
 squeeze then spans 7–44 % with the sheet at ±0.02, and a micrometer reading of each washer brings it back into
@@ -406,7 +407,7 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Clamp force of the four M4 screws at 0.5 N·m; needed; margin | 2500 N; 854 N; 2.9 |
 | Each M2.5 if the plate screws alone held the body–plate joint; thread strip-out in PEEK; margin | 149 N; 1145 N; 7.7 |
 | Bearing stress under the M4 washers (8 mm); margin to yield | 17 MPa; 7 |
-| Sag of body and plate across the strip pocket | 0.3 µm |
+| Sag of body and plate across the strip pocket | 0.4 µm |
 | Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
 | Thinnest drilled wall (inlet thread to riser) | 1.0 mm |
 | Retainer washer: squeeze; force; pressure on the membrane's sealing band (low / nominal / high tolerance) | 11 / 26 / 39 %; 0.66 / 1.5 / 2.3 N; 0.4 / 1.0 / 1.4 MPa |
@@ -525,7 +526,7 @@ Opened or searched in this session:
 | Xometry-depth | Xometry Europe design page, https://xometry.eu/en/?p=1161 | [S] | hole depth |
 | Xometry-micro | https://www.xometry.com/capabilities/cnc-machining-service/micro-machining-service/ | [V] | cutters below 0.010 in; PEEK listed |
 | IDEX-XP235 | https://www.idex-hs.com/store/product-detail/flangeless_fitting_short_peek_1_4_28_flat_bottom_for_1_16_od_natural_single/xp-235 | [V] | 2000 psi with the P-200 ferrule; part obsolete |
-| IDEX-ports | https://idex-hs.com/resources/tools-drawings/standard-port-drawings | [V] | a 1/4-28 flat-bottom port drawing exists; not obtained |
+| IDEX-ports | https://idex-hs.com/resources/tools-drawings/standard-port-drawings | [V] | a 1/4-28 flat-bottom port drawing exists behind registration; the port dimensions used are from the drawing the user supplied |
 | Thermo-M270 | Thermo Fisher and Fisher product pages for Dynabeads M-270 and M-280 Streptavidin (e.g. https://www.thermofisher.com/order/catalog/product/65305) | [S] | surface chemistry of the two beads |
 | Spherotech | https://spherotech.com/coa_pol_par.htm and the catalogue PDF of coated polystyrene particles | [S] | SVP-100-4, 10.0–14.0 µm, 0.5 % w/v |
 | Sterlitech | https://www.sterlitech.com/hydrophilic-polycarbonate-membrane-filters ; FAQ on PCTE membranes | [S] | PCT1013100; thickness 6–15 µm; PVP coating |

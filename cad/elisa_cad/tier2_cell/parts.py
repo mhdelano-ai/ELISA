@@ -85,12 +85,17 @@ def body():
     x_port_end = P.X0 + P.PORT_DEPTH
     tools = [
         _cyl(P.PORT_TAP_DRILL, P.PORT_DEPTH, 0, 0, Z_TOP - P.PORT_DEPTH),                     # inlet port 1/4-28
-        _cyl(P.PORT_MAJOR_D, 0.6, 0, 0, Z_TOP - 0.6),                                         # thread relief
+        cq.Workplane("XY").add(cq.Solid.makeCone(P.PORT_TAP_DRILL / 2.0, P.PORT_CHAMFER_D / 2.0,
+                                                 (P.PORT_CHAMFER_D - P.PORT_TAP_DRILL) / 2.0,
+                                                 cq.Vector(0, 0, Z_TOP - (P.PORT_CHAMFER_D - P.PORT_TAP_DRILL) / 2.0),
+                                                 cq.Vector(0, 0, 1))),                       # 90 deg chamfer
         _cyl(P.BED_D, P.INLET_FLOOR, 0, 0, Z_BODY),                                           # bed bore
         _ring(P.GROOVE_IFACE_ID, P.GROOVE_IFACE_OD, P.GROOVE_IFACE_DEPTH, Z_BODY),            # O-ring to the plate
         _cyl(P.RISER_BODY_D, P.OUTLET_Z + P.OUTLET_THROUGH_D / 2.0, P.RISER_BODY_X, 0, Z_BODY),   # riser
         _xcyl(P.PORT_TAP_DRILL, P.X0, x_port_end, 0, zo),                                     # outlet port 1/4-28
-        _xcyl(P.PORT_MAJOR_D, P.X0, P.X0 + 0.6, 0, zo),
+        cq.Workplane("XY").add(cq.Solid.makeCone(P.PORT_CHAMFER_D / 2.0, P.PORT_TAP_DRILL / 2.0,
+                                                 (P.PORT_CHAMFER_D - P.PORT_TAP_DRILL) / 2.0,
+                                                 cq.Vector(P.X0, 0, zo), cq.Vector(1, 0, 0))),
         _xcyl(P.OUTLET_THROUGH_D, x_port_end, P.RISER_BODY_X, 0, zo),                         # to the riser
     ]
     tools += [_cyl(P.M4_CLEAR, P.BODY_T, x, y, Z_BODY) for x, y in P.M4_XY]

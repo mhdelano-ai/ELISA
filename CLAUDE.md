@@ -142,7 +142,7 @@ No other cell needs to be bought. The gap of the cell in hand is unmeasured (doc
 Nothing in docs/30 is changed; whether tier 1 takes the thin gap is the user's decision (docs/33 §8).
 
 **Tier-2 flow cell with the bed inside (2026-11-18, docs/34; desk work, not reviewed, nothing ordered):** a stack
-of three machined parts, 29 × 44 × 22.5 mm: PEEK body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
+of three machined parts, 29 × 44 × 21.9 mm: PEEK body (inlet port whose 2.5 mm floor carries the 0.5 mm bed bore),
 PEEK nozzle plate (retainer pocket, exit bore, lid of the thin layer, O-ring on the strip), 316L base (strip
 pocket; a shim sets the gap, 0.10 mm). Revision B: in the plate's pocket a washer punched from 0.25 mm FKM sheet
 presses screen and membrane against the flat body face around the bed bore (no 0.5 mm O-rings; body and plate

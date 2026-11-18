@@ -8,7 +8,7 @@
   {
    "check": "the liquid is one connected solid from the inlet port floor to the outlet port floor",
    "ok": true,
-   "value": "1 solid(s), 18.18 mm3"
+   "value": "1 solid(s), 18.49 mm3"
   },
   {
    "check": "the liquid does not cut into the base",
@@ -38,7 +38,7 @@
   {
    "check": "liquid reaches the floor of the outlet port",
    "ok": true,
-   "value": "x min -7.500"
+   "value": "x min -8.110"
   },
   {
    "check": "wall or margin: inlet thread to body riser >= 0.8 mm",
@@ -63,7 +63,7 @@
   {
    "check": "wall or margin: outlet thread to the body top >= 0.8 mm",
    "ok": true,
-   "value": "1.83 mm"
+   "value": "1.22 mm"
   },
   {
    "check": "wall or margin: collecting groove to the O-ring groove (plate underside) >= 0.5 mm",
@@ -142,7 +142,7 @@
   }
  ],
  "all_pass": true,
- "liquid_volume_uL": 18.183233524358343,
+ "liquid_volume_uL": 18.489852871083983,
  "volumes_uL": {
   "bed_bore": 0.4908738521234052,
   "exit_bore": 0.5195899724726244,
@@ -153,6 +153,6 @@
  "masses_g": {
   "base": 77.83278108264446,
   "nozzle_plate": 3.7922993899659785,
-  "body": 18.132244689348394
+  "body": 17.209383416249256
  }
 }

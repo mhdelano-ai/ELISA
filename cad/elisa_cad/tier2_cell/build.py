@@ -125,7 +125,10 @@ def drawing_notes(masses):
          f"4 × ⌀{P.M25_CLEAR} with 90° countersink ⌀{P.M25_CSK_D} from the underside (heads below the face). "
          "Top face flat within 0.02, Ra ≤ 0.8 µm. |",
          f"| Body | `body.step` | PEEK, natural, unfilled | 2 × {P.PORT_THREAD}, flat-bottom ports to the fitting "
-         f"maker's port drawing (depth {P.PORT_DEPTH} here; bottom flat, Ra ≤ 0.8 µm, square to the thread). Bed bore "
+         f"port drawing supplied by the user: depth {P.PORT_DEPTH} (0.350 in), at least {P.PORT_FULL_THREAD} (0.28 in) "
+         f"of full thread, chamfer ⌀{P.PORT_CHAMFER_D} × 90°, bottom flat within {P.PORT_BOTTOM_FLAT} (0.002 in), "
+         f"Ra ≤ {P.PORT_BOTTOM_RA} µm (32 µin), corner radius ≤ {P.PORT_CORNER_R} (0.007 in), square to the thread. "
+         f"Bed bore "
          f"⌀{P.BED_D} +0.03/0 through the port floor, within 0.05 of the dowel datum, sharp and free of burr at the "
          f"underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals "
          f"there)**, Ra ≤ 0.8 µm elsewhere. O-ring groove ⌀{P.GROOVE_IFACE_ID}/⌀{P.GROOVE_IFACE_OD}, depth "

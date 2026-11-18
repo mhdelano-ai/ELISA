@@ -205,3 +205,7 @@ instead of 6.0; print to r = 3.64 instead of 3.3; pads from 21.78 mm). `params.p
 guide were updated; the stack was shortened by 1 mm and the strip pocket deepened for ceramic strips.
 The user then stated: ceramic strips, 380 µm, and the drawing is accurate. Strip thickness 0.38 mm and shim
 0.07 mm entered; the caliper caveats were removed.
+The user then sent a 1/4-28 flat-bottom port drawing (image): depth 0.350 in, 0.28 in minimum full thread, 0.27 in
+x 90° chamfer, bottom flat within 0.002 in, 32 µin, corner radius ≤ 0.007 in. Entered for both ports; the body is
+now 11.39 mm thick so that the 2.5 mm port floor (the bed bore) is kept.
+

@@ -29,7 +29,7 @@ PADS_FROM_FREE_END = 21.78             # same drawing: end of the printed (red) 
 # ---- stack -----------------------------------------------------------------------------------------------
 X0, X1 = -17.0, 12.0                   # CHOICE: body, plate and base from x = -17 to +12; the pads start at +13.5
 Y_HALF = 22.0                          # CHOICE: 44 mm across
-BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 12.0   # CHOICE
+BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 11.39  # CHOICE; the body = port depth 8.89 + port floor 2.5
 EDGE_CHAMFER = 0.5
 
 # ---- base (316L) ------------------------------------------------------------------------------------------
@@ -71,8 +71,13 @@ WASHER_OD, WASHER_ID, WASHER_T = 1.2, 0.75, 0.25   # CHOICE: punched from 0.25 m
 BED_D = 0.5                            # CHOICE: bed bore = floor of the inlet port (0.3 as a variant, docs/34 6.3)
 PORT_THREAD = "1/4-28 UNF-2B"
 PORT_MAJOR_D, PORT_TAP_DRILL = 6.35, 5.5          # thread standard; tap drill for 1/4-28 (No. 3, 5.41 mm) rounded
-PORT_DEPTH = 9.5                       # UNVERIFIED: take the depth and the flat-bottom finish from the fitting
-#                                        maker's port drawing (IDEX "1/4-28 Standard Flat-Bottom Port")
+# 1/4-28 flat-bottom port: drawing supplied by the user (2026-11-18), inch values converted
+PORT_DEPTH = 8.89                      # 0.350 in, face to the flat bottom
+PORT_FULL_THREAD = 7.11                # 0.28 in minimum full thread, from the face
+PORT_CHAMFER_D = 6.86                  # 0.27 in x 90 deg chamfer at the face
+PORT_BOTTOM_FLAT = 0.05                # 0.002 in: the bottom is the sealing surface
+PORT_BOTTOM_RA = 0.8                   # 32 uin
+PORT_CORNER_R = 0.18                   # 0.007 in maximum corner radius at the bottom
 INLET_FLOOR = BODY_T - PORT_DEPTH      # Derived: 2.5 mm = length of the bed bore
 ORING_IFACE = (12.0, 1.0)              # CHOICE: body-to-plate O-ring
 GROOVE_IFACE_ID, GROOVE_IFACE_OD, GROOVE_IFACE_DEPTH = 11.9, 14.3, 0.75
