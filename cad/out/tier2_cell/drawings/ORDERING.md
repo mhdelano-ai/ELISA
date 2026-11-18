@@ -1,15 +1,15 @@
 # Tier-2 flow cell — ordering the three machined parts (e.g. from Xometry)
 
-Generated drawings, revision A, 2026-11-18. Design and reasons: `docs/34_tier2_flow_cell.md` (sections 5.1–5.2).
+Generated drawings, version 2 (REV 2 in the title blocks; `_v2` in every file name), 2026-11-18. Design and reasons: `docs/34_tier2_flow_cell.md` (sections 5.1–5.2).
 **Check the drawings before ordering**: they were generated from the CAD model and checked by eye only; the title
 blocks have no checker's or approver's name.
 
 | Part | Upload (3D) | Upload (drawing) | Material to select | Quantity suggested |
 |---|---|---|---|---|
-| T2C-001 Base | `T2C-001_base_revA.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
-| T2C-002 Nozzle plate | `T2C-002_nozzle_plate_revA.step` | `T2C-002_nozzle_plate.pdf` | Acetal copolymer (POM-C), natural; not Delrin (homopolymer) | 3 (one per bed unit, docs/34 §7) |
-| T2C-003 Body | `T2C-003_body_revA.step` | `T2C-003_body.pdf` | Acetal copolymer (POM-C), natural | 3 |
-| T2C-004 Washer (cut gasket) | `T2C-004_washer_revA.step` + `T2C-004_washer.dxf` / `T2C-004_washer_sheet.dxf` | `T2C-004_washer.pdf` | FKM sheet 0.25 mm, 70–75 Shore A | 100 (one per bed) |
+| T2C-001 Base | `T2C-001_base_v2.step` | `T2C-001_base_v2.pdf` | Stainless steel 316L | 1 |
+| T2C-002 Nozzle plate | `T2C-002_nozzle_plate_v2.step` | `T2C-002_nozzle_plate_v2.pdf` | Acetal copolymer (POM-C), natural; not Delrin (homopolymer) | 3 (one per bed unit, docs/34 §7) |
+| T2C-003 Body | `T2C-003_body_v2.step` | `T2C-003_body_v2.pdf` | Acetal copolymer (POM-C), natural | 3 |
+| T2C-004 Washer (cut gasket) | `T2C-004_washer_v2.step` + `T2C-004_washer_v2.dxf` / `T2C-004_washer_sheet_v2.dxf` | `T2C-004_washer_v2.pdf` | FKM sheet 0.25 mm, 70–75 Shore A | 100 (one per bed) |
 
 Plate and body were PEEK until 2026-11-18; acetal copolymer is cheaper and machines as well. PEEK, unfilled,
 natural stays the fallback (docs/34 §5.4): quoting both is a quick way to see the price difference.

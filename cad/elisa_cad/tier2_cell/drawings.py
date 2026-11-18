@@ -39,7 +39,7 @@ from . import parts as PT  # noqa: E402
 OUT = C.out_dir("tier2_cell") / "drawings"
 OUT.mkdir(parents=True, exist_ok=True)
 DATE = "2026-11-18"
-REV = "A"
+REV = str(P.VERSION)
 W, H = 420.0, 297.0                      # A3 landscape, mm
 LW_PART, LW_THIN = 0.5, 0.18             # line widths in points
 FS, FS_S, FS_T = 7.5, 6.8, 10.0          # font sizes (pt): dimensions, small text, titles (cap height ~1.7 mm)
@@ -521,7 +521,7 @@ class Sheet:
     def save(self, stem):
         self.fig.canvas.draw()
         self.overlaps = self.check_overlaps(stem)
-        pdf, png = OUT / f"{stem}.pdf", OUT / f"{stem}.png"
+        pdf, png = OUT / P.vname(f"{stem}.pdf"), OUT / P.vname(f"{stem}.png")
         self.fig.savefig(pdf)
         self.fig.savefig(png, dpi=110)
         plt.close(self.fig)
@@ -532,7 +532,8 @@ class Sheet:
 PEEK = "Acetal copolymer (POM-C), natural, not homopolymer"   # plate and body; PEEK is the fallback (docs/34 §5.4)
 PEEK_TB = PEEK
 SS = "Stainless steel 316L"
-REVS = [["A", DATE, "First issue", "generated"]]
+REVS = [["1", DATE, "First issue", "generated"],
+        ["2", DATE, "Tightest tolerance ±0.03 mm; version in file names", "generated"]]
 
 
 def _iso_png(solid, mat, name):
@@ -793,13 +794,13 @@ def main():
     # the STEP files a quote needs, named after their drawings (written by build.py from the same solids)
     for src, dst in (("base", "T2C-001_base"), ("nozzle_plate", "T2C-002_nozzle_plate"), ("body", "T2C-003_body"),
                      ("washer", "T2C-004_washer")):
-        f = OUT.parent / f"{src}.step"
+        f = OUT.parent / P.vname(f"{src}.step")
         if f.exists():
-            shutil.copyfile(f, OUT / f"{dst}_rev{REV}.step")
+            shutil.copyfile(f, OUT / P.vname(f"{dst}.step"))
     for src, dst in (("washer.dxf", "T2C-004_washer.dxf"), ("washer_sheet.dxf", "T2C-004_washer_sheet.dxf")):
-        f = OUT.parent / src
+        f = OUT.parent / P.vname(src)
         if f.exists():
-            shutil.copyfile(f, OUT / dst)
+            shutil.copyfile(f, OUT / P.vname(dst))
     for f in Path(OUT).glob("_iso_*.png"):
         f.unlink()
     for pdf, png in out:

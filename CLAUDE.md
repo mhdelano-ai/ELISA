@@ -160,7 +160,8 @@ nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30
 test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip settled
 by the user: ceramic S1PE strips, 0.38 mm (shim 0.07 mm); positions from MicruX's drawing, confirmed accurate
 (electrode centre 8.26 mm from the free end, print to r 3.64 mm; docs/34 §5.4). docs/30 is not changed; the
-choices for the user are in docs/34 §8.3. Dimensioned drawings for ordering (Xometry), mostly at standard
+choices for the user are in docs/34 §8.3. Every tier-2 CAD output file ends in `_v<N>` (`VERSION` in `params.py`, now 2 = the ±0.03 mm set; REV on the
+drawings). Dimensioned drawings for ordering (Xometry), mostly at standard
 tolerance (none tighter than ±0.03 mm since 2026-11-18, at the user's request): `cad/out/tier2_cell/drawings/` with `ORDERING.md`; tolerance policy in
 docs/34 §5.2 (strip pocket at standard tolerance, gap set by a measured shim; second pin hole a slot). The
 retainer washer is a cut gasket, T2C-004 (⌀1.4/⌀0.75 × 0.25 FKM; STEP and DXF cut files). The four drawings were
