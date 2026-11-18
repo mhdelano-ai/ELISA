@@ -32,6 +32,13 @@ def _xcyl(d, x_from, x_to, y, z):
     return cq.Workplane("YZ").circle(d / 2.0).extrude(x_to - x_from).translate((x_from, y, z))
 
 
+def _dowel_holes(z0, t):
+    """Round hole for the first pin (datum B), slot along y for the second (datum C)."""
+    (xb, yb), (xc, yc) = P.DOWEL_XY
+    slot = cq.Workplane("XY").slot2D(P.DOWEL_SLOT_L, P.DOWEL_D, angle=90).extrude(t).translate((xc, yc, z0))
+    return [_cyl(P.DOWEL_D, t, xb, yb, z0), slot]
+
+
 def _cut_all(body, tools):
     for t in tools:
         body = body.cut(t)
@@ -69,7 +76,7 @@ def plate():
         .translate(((P.RISER_PLATE_X + P.CHANNEL_X_END) / 2.0, 0, P.PLATE_T - P.CHANNEL_DEPTH))
     tools.append(slot)
     tools += [_cyl(P.M4_CLEAR, P.PLATE_T, x, y) for x, y in P.M4_XY]
-    tools += [_cyl(P.DOWEL_D, P.PLATE_T, x, y) for x, y in P.DOWEL_XY]
+    tools += _dowel_holes(0.0, P.PLATE_T)
     for x, y in P.M25_XY:                                                                     # M2.5 flat heads
         tools.append(_cyl(P.M25_CLEAR, P.PLATE_T, x, y))
         h = (P.M25_CSK_D - P.M25_CLEAR) / 2.0                                                 # 90 degree countersink
@@ -99,7 +106,7 @@ def body():
         _xcyl(P.OUTLET_THROUGH_D, x_port_end, P.RISER_BODY_X, 0, zo),                         # to the riser
     ]
     tools += [_cyl(P.M4_CLEAR, P.BODY_T, x, y, Z_BODY) for x, y in P.M4_XY]
-    tools += [_cyl(P.DOWEL_D, P.BODY_T, x, y, Z_BODY) for x, y in P.DOWEL_XY]
+    tools += _dowel_holes(Z_BODY, P.BODY_T)
     tools += [_cyl(P.M25_TAP_DRILL, P.M25_THREAD_DEPTH, x, y, Z_BODY) for x, y in P.M25_XY]  # M2.5 x 0.45
     return _cut_all(b, tools)
 

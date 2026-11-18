@@ -1,0 +1,32 @@
+# Tier-2 flow cell — ordering the three machined parts (e.g. from Xometry)
+
+Generated drawings, revision A, 2026-11-18. Design and reasons: `docs/34_tier2_flow_cell.md` (sections 5.1–5.2).
+**Check the drawings before ordering**: they were generated from the CAD model and checked by eye only; the title
+blocks have no checker's or approver's name.
+
+| Part | Upload (3D) | Upload (drawing) | Material to select | Quantity suggested |
+|---|---|---|---|---|
+| T2C-001 Base | `../base.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
+| T2C-002 Nozzle plate | `../nozzle_plate.step` | `T2C-002_nozzle_plate.pdf` | PEEK, unfilled, natural | 3 (one per bed unit, docs/34 §7) |
+| T2C-003 Body | `../body.step` | `T2C-003_body.pdf` | PEEK, unfilled, natural | 3 |
+
+For each part in the quote:
+* **Tolerance**: standard, *with drawing*. The drawing lists every tighter feature under "FLAGGED FEATURES";
+  none is tighter than ±0.025 mm (±0.001 in). Say in the notes field: "Tolerances per attached drawing; flagged
+  features to be inspected."
+* **Threads**: yes. Base 4 × M4×0.7-6H through; body 4 × M2.5×0.45-6H blind (5.5 full thread) and 2 × 1/4-28
+  UNF-2B flat-bottom ports (note 7 of T2C-003). Threads are modelled as tap-drill holes in the STEP files.
+* **Finish**: as machined (Ra 3.2 µm / 125 µin) except the surfaces marked Ra 1.6 (63 µin) or Ra 0.8 (32 µin)
+  on the drawings. No bead blast, no anodising, no marking on the parts.
+* **Inspection**: standard, plus the flagged features. A dimensional report for the flagged features is worth
+  requesting for the first lot.
+* **Supply the port drawing**: T2C-003 refers to the 1/4-28 flat-bottom port drawing (depth 0.350 in, full thread
+  0.28 in minimum, bottom flat within 0.002 in at 32 µin, corner radius ≤ 0.007 in, chamfer ⌀0.27 in × 90°). Its
+  values are written out in note 7, so the drawing itself is optional.
+
+Not machined (buy separately; docs/34 §5.4): MicruX ceramic strips, O-rings 7 × 1 and 12 × 1, ⌀3 m6 × 16 dowel
+pins and retaining compound, M4 × 20 and M2.5 × 8 screws, shim stock, FKM sheet 0.25 mm, VICI 2SR1-10 screens,
+1 µm track-etched membrane, biopsy punches.
+
+At assembly: measure the base pocket depth and cut the shim stack to depth − 0.38 − 0.10 mm; measure the plate's
+retainer pocket depth and pick washers by thickness (docs/34 §3.1, §4.3, §7).

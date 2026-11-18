@@ -89,6 +89,7 @@ python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against 
 python scripts/tier_round/cell_geometries.py        # docs/33: flow-cell geometries (~4 min; `--doc` prints its tables)
 python scripts/tier_round/tier2_cell.py             # docs/34: tier-2 cell with the bed inside: model, pressure, 500 psi (~1 min)
 (cd cad && python -m elisa_cad.tier2_cell.build)    # docs/34: STEP files, section, drawing notes, 28 checks (~1 min)
+(cd cad && python -m elisa_cad.tier2_cell.drawings) # docs/34: dimensioned A3 drawings T2C-001..003 (PDF + PNG, ~15 s)
 python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
@@ -155,7 +156,9 @@ nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30
 test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip settled
 by the user: ceramic S1PE strips, 0.38 mm (shim 0.07 mm); positions from MicruX's drawing, confirmed accurate
 (electrode centre 8.26 mm from the free end, print to r 3.64 mm; docs/34 §5.4). docs/30 is not changed; the
-choices for the user are in docs/34 §8.3.
+choices for the user are in docs/34 §8.3. Dimensioned drawings for ordering (Xometry), mostly at standard
+tolerance (none tighter than ±0.025 mm): `cad/out/tier2_cell/drawings/` with `ORDERING.md`; tolerance policy in
+docs/34 §5.2 (strip pocket at standard tolerance, gap set by a measured shim; second pin hole a slot).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

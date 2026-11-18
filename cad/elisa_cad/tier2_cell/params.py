@@ -29,25 +29,28 @@ PADS_FROM_FREE_END = 21.78             # same drawing: end of the printed (red) 
 # ---- stack -----------------------------------------------------------------------------------------------
 X0, X1 = -17.0, 12.0                   # CHOICE: body, plate and base from x = -17 to +12; the pads start at +13.5
 Y_HALF = 22.0                          # CHOICE: 44 mm across
-BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 11.39  # CHOICE; the body = port depth 8.89 + port floor 2.5
+BASE_T, PLATE_T, BODY_T = 8.0, 2.5, 11.4   # CHOICE; the body = port depth 8.89 + port floor about 2.5
 EDGE_CHAMFER = 0.5
 
 # ---- base (316L) ------------------------------------------------------------------------------------------
 POCKET_W = STRIP_W + 0.2               # CHOICE: strip pocket, open at +x
-POCKET_DEPTH = 0.55                    # CHOICE: strip + shim + gap; deep enough for the ceramic strip (0.38) too
+POCKET_DEPTH = 0.65                    # CHOICE, standard tolerance (+-0.13): measured at assembly, the shim sets
+#                                        the gap (drawing T2C-001, docs/34 section 5.2)
 POCKET_X_END = -(WE_FROM_FREE_END + 0.1)   # Derived: closed end of the pocket is the stop for the strip
 POCKET_RELIEF_D = 1.6                  # CHOICE: corner reliefs at the closed end
-SHIM_T = 0.07                          # CHOICE: shim stock under the ceramic strip (0.05 + 0.02); sets the gap.
-#                                        A PET strip (0.25 + print) would take about 0.18
+SHIM_T = 0.17                          # CHOICE: shim under the ceramic strip at the nominal pocket depth
+#                                        (= measured depth - 0.38 - 0.10; 0.04-0.30 over the pocket tolerance)
 
 GAP = POCKET_DEPTH - STRIP_T - SHIM_T  # Derived: 0.10 mm liquid layer over the electrode
-GAP_TOL = 0.05                         # Derived (docs/34 section 5.3): pocket, strip and shim tolerances
+GAP_TOL = 0.03                         # Derived: depth measured to +-0.01, strip +-0.02, shim +-0.005 (UNVERIFIED)
 
 # ---- fasteners and pins -----------------------------------------------------------------------------------
 M4_XY = [(-12.0, -16.0), (-12.0, 16.0), (8.0, -16.0), (8.0, 16.0)]   # CHOICE: main screws, into the base
 M4_CLEAR, M4_TAP_DRILL, M4_HEAD_D = 4.3, 3.3, 7.0
 DOWEL_XY = [(-2.0, -16.0), (-2.0, 16.0)]                              # CHOICE: 3 mm pins, pressed into the base
-DOWEL_D = 3.0
+DOWEL_D = 3.0                          # pin 3 m6; holes 3.00 +0.04/0 in all three parts (pins bonded into the base)
+DOWEL_SLOT_L = 3.6                     # CHOICE: plate and body take the second pin in a slot along y, so that the pin
+#                                        spacing needs only the standard tolerance (one round hole + one slot)
 M25_XY = [(-12.0, -7.0), (-12.0, 7.0), (8.0, -7.0), (8.0, 7.0)]      # CHOICE: plate to body, heads in the plate
 M25_CLEAR, M25_TAP_DRILL, M25_CSK_D, M25_THREAD_DEPTH = 2.7, 2.05, 5.0, 7.0
 
@@ -70,7 +73,7 @@ WASHER_OD, WASHER_ID, WASHER_T = 1.2, 0.75, 0.25   # CHOICE: punched from 0.25 m
 # ---- body (PEEK) -------------------------------------------------------------------------------------------
 BED_D = 0.5                            # CHOICE: bed bore = floor of the inlet port (0.3 as a variant, docs/34 6.3)
 PORT_THREAD = "1/4-28 UNF-2B"
-PORT_MAJOR_D, PORT_TAP_DRILL = 6.35, 5.5          # thread standard; tap drill for 1/4-28 (No. 3, 5.41 mm) rounded
+PORT_MAJOR_D, PORT_TAP_DRILL = 6.35, 5.41         # thread standard; tap drill No. 3 (0.213 in) for 1/4-28
 # 1/4-28 flat-bottom port: drawing supplied by the user (2026-11-18), inch values converted
 PORT_DEPTH = 8.89                      # 0.350 in, face to the flat bottom
 PORT_FULL_THREAD = 7.11                # 0.28 in minimum full thread, from the face

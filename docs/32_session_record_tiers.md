@@ -208,4 +208,9 @@ The user then stated: ceramic strips, 380 µm, and the drawing is accurate. Stri
 The user then sent a 1/4-28 flat-bottom port drawing (image): depth 0.350 in, 0.28 in minimum full thread, 0.27 in
 x 90° chamfer, bottom flat within 0.002 in, 32 µin, corner radius ≤ 0.007 in. Entered for both ports; the body is
 now 11.39 mm thick so that the 2.5 mm port floor (the bed bore) is kept.
+The user then asked for dimensioned drawings of the three parts meeting Xometry's drawing requirements, with as
+many standard tolerances as possible. Xometry's drawing guidance and manufacturing standard were read
+(docs/34 §5.2). Design changes to relax tolerances: strip pocket 0.65 mm at standard tolerance with a measured
+shim, second pin hole a slot, pins bonded, body 11.4 mm. New: `cad/elisa_cad/tier2_cell/drawings.py` →
+`cad/out/tier2_cell/drawings/` (three A3 PDFs, previews, `ORDERING.md`). Checked by eye only; no checker named.
 

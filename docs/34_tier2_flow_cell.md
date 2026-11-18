@@ -24,6 +24,11 @@ the strip pocket was deepened to 0.55 mm so that the ceramic strip (0.38 mm) fit
 then confirmed that the drawing is accurate and that the cell will use the **ceramic strips, 380 µm thick**; the
 shim is 0.07 mm (0.05 + 0.02).
 
+**Drawings (same day).** Dimensioned drawings of the three parts were made for ordering from Xometry, with as many
+standard tolerances as possible (section 5.2). To get there the strip pocket became 0.65 mm deep at standard
+tolerance, measured at assembly with the gap set by the shim (section 4.3); the second dowel hole in plate and
+body became a slot; the dowel pins are bonded into the base; the body is 11.4 mm thick.
+
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
 * CAD: `cad/elisa_cad/tier2_cell/` → `cad/out/tier2_cell/` (STEP files of the three custom parts and of the
@@ -72,9 +77,10 @@ and 2.5 bar at 200 µL/min (docs/30: 25 bar across the bed at 80 µL/min, becaus
 shown by calculation: that an O-ring seals on a printed strip at 500 psi.** That needs a proof test (section 8).
 
 **Xometry.** All three custom parts are plain 3-axis milling. Every hole is ≥ 0.5 mm, the feature size Xometry
-recommends as its minimum [S], and no hole is deeper than 7.5 diameters. Two depths need a tolerance of ±0.02 mm
-or tighter (strip pocket, retainer pocket); Xometry auto-quotes ±0.001 in (±0.025 mm) in PEEK and metals and
-quotes tighter values after manual review [S]. No quote was obtained and no price is given.
+recommends as its minimum [S], and no hole is deeper than 7.5 diameters. Dimensioned drawings (A3 PDF, one per
+part) are in `cad/out/tier2_cell/drawings/` with an ordering sheet. Everything is at Xometry's standard tolerance
+except the features listed in section 5.2, none tighter than ±0.025 mm (±0.001 in), the level Xometry quotes
+automatically [S]. No quote was obtained and no price is given.
 
 **What the cell changes in the model** (pg/mL):
 
@@ -170,7 +176,7 @@ variant.
 
 ### 3.1 How the joint between bed bore and exit bore is sealed (Revision B)
 
-The retainer sits in a pocket ⌀1.65 × 0.27 mm (±0.01) in the top face of the nozzle plate, over the exit bore.
+The retainer sits in a pocket ⌀1.65 × 0.27 mm (±0.025) in the top face of the nozzle plate, over the exit bore.
 From the bottom:
 
 | Layer | Part | Thickness free → in place (mm) | Job |
@@ -179,7 +185,8 @@ From the bottom:
 | 2 | Screen 1/16 in, 2 µm (VICI 2SR1-10) | 0.075 | carries the membrane over the washer's hole |
 | 3 | Membrane ⌀1.5, 1 µm track-etched polycarbonate | 0.010 | retains the beads |
 
-The stack is 0.335 mm free and 0.27 mm in place. Its top, the membrane, is in the plane of the plate's top face,
+The stack is 0.335 mm free and 0.27 mm in place. The pocket is made to ±0.025 (drawing T2C-002), measured,
+and each washer is picked by its measured thickness so that the squeeze stays near 26 %. Its top, the membrane, is in the plane of the plate's top face,
 where it meets the flat underside of the body. What each path meets:
 
 | Path | What closes it |
@@ -189,9 +196,9 @@ where it meets the flat underside of the body. What each path meets:
 | Liquid to the outside | the 12 × 1 O-ring between body and plate, rated with the rest of the cell for 500 psi |
 
 Numbers (`tier2_cell.md` §4; rubber modulus 6 MPa and the shape-factor correction of Gent, UNVERIFIED):
-* Squeeze of the washer 26 % nominal; 11–39 % over the tolerances of pocket (±0.01), sheet (±0.02), membrane
-  (6–15 µm) and screen (±0.005). The low end is below the usual 15 % for a gasket: hold the pocket depth, or
-  pick washers from the thick end of the sheet.
+* Squeeze of the washer 26 % nominal; 11–39 % for a pocket within ±0.01 of the washer chosen for it, a sheet
+  at ±0.02, membranes of 6–15 µm and the screen at ±0.005. The low end is below the usual 15 % for a gasket:
+  pick washers from the thick end of the sheet for a deep pocket.
 * Washer force 1.5 N (0.66–2.3 N). It bows the plate by at most 1.6 µm (the first version: up to 15 µm).
 * The flow pushes the stack away from the body face with the pressure drop through bed, membrane and screen. Taken
   over the whole pocket this is 0.21 N at 80 µL/min, a third of the lowest washer force, and 0.53 N at 200 µL/min,
@@ -239,11 +246,11 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 
 ### 4.3 The gap
 
-Gap = pocket depth − strip thickness − shim = 0.55 − 0.38 − 0.07 = **0.10 mm**, for the ceramic strip of
-380 µm (stated by the user) with shim stock 0.05 + 0.02 under it. The pocket also takes a PET strip with about
-0.18 mm of shim. The gap is set with the shim rather than the pocket, so that a strip lot of another thickness
-needs only another shim. With ±0.02 on the pocket, an estimated ±0.02 on the strip and ±0.01
-on the shim the gap is 0.10 ± 0.05 at worst.
+Gap = pocket depth − strip thickness − shim = **0.10 mm**. The pocket is 0.65 mm deep at the standard
+tolerance (±0.13); its depth is measured once per base with a depth micrometer, and the shim under the ceramic
+strip (380 µm, stated by the user) is chosen as depth − 0.38 − 0.10: 0.17 mm at the nominal depth, 0.04–0.30 mm
+over the tolerance. A strip lot of another thickness, or a PET strip, needs only another shim. With the depth
+measured to ±0.01, the strip at an estimated ±0.02 and the shim at ±0.005 the gap is 0.10 ± 0.03.
 
 Why 0.10 and not the 0.05 of docs/33. For tier 2 the model LOD is 1.9 at 0.05, 0.10 and 0.20 mm alike; the gap
 matters only if the signal is weak (section 6.1). A printed strip is not known to be flat to 0.05 mm. A thicker
@@ -268,27 +275,51 @@ would put fibres at the bore edges and carbon-filled PEEK conducts. The base is 
 keeps threads and flatness and tolerates spilled chloride buffer. Xometry lists PEEK for machining [V, its
 micro-machining page]; that it stocks 316L was not checked on a page of its own.
 
-### 5.2 What the drawings must say
+### 5.2 Drawings and tolerance policy
 
-The STEP files carry nominal geometry, with threads as tap-drill holes. `cad/out/tier2_cell/drawing_notes.md` is
-generated from the same parameters; its content:
+**Drawings** (A3, third-angle, mm; generated by `python -m elisa_cad.tier2_cell.drawings` from the same solids and
+parameters as the STEP files, so the two cannot drift apart):
 
-| Part | Call-outs |
+| Part | Drawing | STEP | Views |
+|---|---|---|---|
+| Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `base.step` | top, sections A–A and B–B, detail C (pocket, 10:1), isometric |
+| Nozzle plate | `T2C-002_nozzle_plate.pdf` | `nozzle_plate.step` | top, bottom, section A–A, detail D (section at the axis, 10:1), two isometrics |
+| Body | `T2C-003_body.pdf` | `body.step` | top, bottom, section A–A, detail E (port bottom and bed bore, 10:1), isometric |
+
+Each sheet carries what Xometry's drawing guidance asks for [V, its "technical drawing best practices" page]: a
+title block with material specification, finish, scale, units, projection and a default-tolerance block; notes at
+the top left; a revision table at the top right; sheet number; an isometric view; threads with series, class and
+depth; tighter-than-standard tolerances called out and flagged (triangular flags) for inspection.
+`ORDERING.md` beside the drawings lists what to upload and select for each part.
+
+**Tolerance policy.** Everything is at Xometry's standard (±0.13 mm metals, ±0.25 mm plastics, Ra 3.2, edges
+broken [S]) unless a function needs more. Three design changes made that possible:
+
+| Change | What it relaxed |
 |---|---|
-| Base | 4 × M4×0.7 through. 2 × ⌀3 P7 × 6 deep for pressed ⌀3 m6 × 16 pins. Strip pocket 10.3 +0.05/0 wide, **depth 0.55 ±0.02**, floor flat within 0.02, Ra ≤ 0.8 µm. Top face flat within 0.02 |
-| Nozzle plate | Underside flat within 0.02 and **Ra ≤ 0.4 µm inside ⌀9.3**. O-ring groove depth 0.65 ±0.03. Exit bore ⌀0.5 +0.03/0, both ends free of burr, within 0.05 of the dowel holes. **Retainer pocket in the top face ⌀1.65 +0.03/0, depth 0.27 ±0.01, floor flat, concentric with the exit bore within 0.03.** 2 × ⌀3 H7. 4 × ⌀2.7 with 90° countersink ⌀5.0 from the underside, heads below the face. Top face flat within 0.02 |
-| Body | 2 × 1/4-28 UNF-2B flat-bottom ports to the port drawing supplied by the user: **depth 8.89 (0.350 in), at least 7.11 (0.28 in) of full thread, chamfer ⌀6.86 (0.27 in) × 90°, bottom flat within 0.05 (0.002 in), Ra ≤ 0.8 µm (32 µin), corner radius ≤ 0.18 (0.007 in)**, square to the thread. Bed bore ⌀0.5 +0.03/0 through the port floor, within 0.05 of the dowel holes, sharp and free of burr at the underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals there).** O-ring groove depth 0.75 ±0.03. 4 × M2.5×0.45, 7 deep. 2 × ⌀3 H7 |
-| All | everything else ISO 2768-m; edges broken 0.1–0.2 mm; no burrs in the liquid path; no bead blasting of sealing faces |
+| Strip pocket depth measured at assembly and the gap set with the shim (section 4.3) | the base pocket depth, from ±0.02 to standard |
+| Second dowel hole in plate and body made a slot along the line between the pins | the pin spacing in all three parts, from a matched ±0.01 to standard |
+| Pins bonded into the base instead of pressed | the base pin holes, from a press fit (P7) to the same ⌀3.00 +0.04/−0 as the others |
 
-The ports follow a 1/4-28 flat-bottom port drawing the user supplied (2026-11-18; the inch values are converted
-above). Its bottom is the sealing face of the fitting, hence the flatness and finish. With the port 8.89 mm deep
-the body is 11.39 mm thick, so that the port floor, which is the length of the bed bore, stays at 2.5 mm. The
-outlet port on the end face is drilled to the same drawing.
+What remains tighter than standard, and why:
 
-If the pocket depth is quoted too dear at ±0.01, ±0.02 still works with washers chosen by thickness: the
-squeeze then spans 7–44 % with the sheet at ±0.02, and a micrometer reading of each washer brings it back into
-15–35 %. The pocket must never be shallower than the stack can be compressed into, or the membrane holds body and
-plate apart as in the first version.
+| Part | Feature | Called out | Why |
+|---|---|---|---|
+| all | dowel hole (B) and slot (C) | ⌀3.00 +0.04/−0 | locate the three parts on ⌀3 m6 pins |
+| Base | top face (datum A) | flat 0.02 | the plate rests on it; sets the gap |
+| Base | pocket floor | flat 0.02, Ra 1.6 | carries the brittle ceramic strip |
+| Plate | exit bore, retainer pocket | ⌀0.50 ±0.05; ⌀1.65 +0.05/−0; position ⌀0.10 to A\|B\|C; edges sharp | the membrane's sealing band around the bed bore must survive the offsets of both parts (worst case it narrows from 0.5 to about 0.3 mm) |
+| Plate | retainer pocket depth | 0.27 ±0.025 | sets the washer's squeeze; the washer is picked by measured thickness to suit the measured depth (section 3.1) |
+| Plate | strip O-ring groove; collecting groove | ⌀ ±0.05 and depth ±0.05; ⌀ ±0.10 and depth ±0.10 | O-ring gland; radial outflow |
+| Plate | riser position | 2.6 ±0.10 from the axis | must stay inside the 0.6 mm collecting groove |
+| Plate | cell face inside ⌀9.3, groove floors | Ra 1.6 | lid of the thin layer, O-ring seat |
+| Body | bed bore | ⌀0.50 ±0.05, position ⌀0.10 to A\|B\|C, sharp at the underside | as for the exit bore |
+| Body | underside (datum A) | flat 0.05, Ra 1.6 inside ⌀16 | the membrane and the 12 × 1 O-ring seal on it |
+| Body | body–plate O-ring groove | ⌀ ±0.10, depth ±0.05 | O-ring gland |
+| Body | both 1/4-28 ports | per the supplied port drawing: bottom flat 0.05, Ra 0.8, corner R ≤ 0.18, full thread ≥ 7.11 | the fitting seals on the port bottom |
+
+Nothing is tighter than ±0.025 mm. Plate flatness is left at standard: the 2.5 mm plate is clamped flat between
+the body and the base, whose top face is held to 0.02.
 
 ### 5.3 What Xometry states (checked as far as its pages were reached)
 
@@ -300,9 +331,9 @@ plate apart as in the first version.
 | Hole depth | 4 diameters standard, up to 10 achievable | [S] |
 | Micro machining | offered, with cutters below 0.010 in; PEEK listed among its plastics | [V], Xometry micro-machining page |
 
-The design uses 0.5 mm holes at up to 5 diameters and a 1.0 mm hole at 7.5. The tolerances in bold in
-section 5.2 are at or below ±0.025 mm and may go to manual review. No quote was requested; price and lead time
-are not known.
+The design uses 0.5 mm holes at up to 5 diameters and a 1.0 mm hole at 7.5. The tightest tolerances on the
+drawings are ±0.025 mm (retainer pocket depth) and +0.04/−0 (pin holes); whether Xometry quotes them instantly or
+after manual review was not tried. No quote was requested; price and lead time are not known.
 
 ### 5.4 Purchased parts, and what to measure first
 
@@ -314,8 +345,8 @@ are not known.
 | Washer | FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A; biopsy punches 1.2 and 0.75 mm; one washer per bed | sheet thickness tolerance and punch sizes UNVERIFIED |
 | Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch (the same punch cuts the washer's outer edge if 1.2 mm cannot be had: the pocket leaves room) | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
-| Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins; stainless | standard |
-| Shim | stainless shim stock 0.05 and 0.02 mm (0.01 and 0.03 to trim the gap), cut 10 × 20 mm | standard |
+| Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins, bonded into the base with a retaining compound; stainless | standard |
+| Shim | stainless shim stock 0.01, 0.02, 0.05 and 0.10 mm, cut 10 × 20 mm, stacked to depth − 0.38 − 0.10 (0.17 at the nominal pocket depth) | standard |
 | Beads | Dynabeads M-280 Streptavidin 11205D | docs/07 |
 
 **Strip dimensions** (`params.py`). Items 2–4 were measured on MicruX's drawing "Thick-film based-electrode
@@ -455,7 +486,8 @@ hole is below the feature size Xometry recommends and belongs to its micro-machi
    suspension of docs/30 §4.2 (1.5 µL of coated M-280 in 20 µL of assay buffer) through at 20–50 µL/min, then
    assay buffer at 80 µL/min for 1 min. Never above 80 µL/min through the bed (section 3.1). The beads collect on the membrane at the bottom of the bore. Check by
    looking down the port bore with a stereo microscope; PEEK is opaque, so the bed cannot be seen from the side.
-3. **Mount.** Shim and a fresh strip into the base pocket against its stop, O-ring 7 × 1 into the plate, the bed
+3. **Mount.** Once per base: measure the pocket depth with a depth micrometer and cut the shim stack to
+   depth − 0.38 − 0.10. Shim and a fresh strip into the base pocket against its stop, O-ring 7 × 1 into the plate, the bed
    unit onto the pins, four M4 screws to 0.5 N·m. Connect the transfer line and the cable.
 4. **Run** the unchanged step table of docs/30 §4.3, with its pre-run on the fresh bed and strip.
 5. **After the run.** Take the bed unit off and flush the beads out of the inlet port from the exit bore, or open
@@ -494,8 +526,8 @@ pressure in the cell is released through the bed when the flow stops.
 * The washer's force rests on a rubber modulus and a shape-factor formula (UNVERIFIED), and its squeeze on the
   tolerance of punched sheet. Test C-2 shows whether the membrane seals; a washer that has taken a set must be
   replaced with every bed in any case.
-* No drawing in a drawing format exists yet. The STEP files and the call-outs of section 5.2 are what a quote
-  needs; a dimensioned PDF has to be made before an order.
+* The drawings are generated and were checked by eye against the model only; they carry no checker's or
+  approver's name. A person should check them before an order.
 * The thin-film chips (10 × 6 × 0.7 mm glass) would need another base and a smaller O-ring; not designed.
 
 ### 8.3 Choices the user may overrule, and questions

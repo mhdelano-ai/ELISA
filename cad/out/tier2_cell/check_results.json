@@ -63,7 +63,7 @@
   {
    "check": "wall or margin: outlet thread to the body top >= 0.8 mm",
    "ok": true,
-   "value": "1.22 mm"
+   "value": "1.23 mm"
   },
   {
    "check": "wall or margin: collecting groove to the O-ring groove (plate underside) >= 0.5 mm",
@@ -142,17 +142,17 @@
   }
  ],
  "all_pass": true,
- "liquid_volume_uL": 18.489852871083983,
+ "liquid_volume_uL": 18.491816368474346,
  "volumes_uL": {
-  "bed_bore": 0.4908738521234052,
+  "bed_bore": 0.49283734753189873,
   "exit_bore": 0.5195899724726244,
-  "thin_layer_over_electrode": 0.7068583470577037,
-  "chamber_disc": 3.7392806559352527,
+  "thin_layer_over_electrode": 0.7068583470577035,
+  "chamber_disc": 3.739280655935252,
   "collecting_groove": 4.900884539600079
  },
  "masses_g": {
-  "base": 77.83278108264446,
-  "nozzle_plate": 3.7922993899659785,
-  "body": 17.209383416249256
+  "base": 77.663495539311,
+  "nozzle_plate": 3.7864043899659796,
+  "body": 17.214805512861478
  }
 }

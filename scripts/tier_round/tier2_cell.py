@@ -152,7 +152,9 @@ def mechanics():
     Dfl = E * (P.INLET_FLOOR ** 3 + P.PLATE_T ** 3) / (12.0 * (1 - 0.38 ** 2))
     floor = F_fit * (0.5 * P.PORT_TAP_DRILL) ** 2 / (16.0 * math.pi * Dfl)
     # retainer: the washer is the spring that presses screen and membrane against the body face.
-    # Squeeze over the tolerances: pocket +-0.01, sheet +-0.02, membrane 6-15 um, screen +-0.005 (UNVERIFIED).
+    # Squeeze over the tolerances after selection: the pocket is made to +-0.025 (drawing T2C-002), measured, and
+    # washers are picked by measured thickness so that pocket - washer is within +-0.01; the remaining spread is
+    # that +-0.01, the sheet's +-0.02 inside a pick, membrane 6-15 um, screen +-0.005 (UNVERIFIED).
     E_R = 6.0                                     # MPa, FKM 75 Shore A (UNVERIFIED)
     A_w = A(P.WASHER_OD) - A(P.WASHER_ID)
     S_w = A_w / (math.pi * (P.WASHER_OD + P.WASHER_ID) * P.WASHER_T)        # shape factor (Gent)

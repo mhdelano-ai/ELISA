@@ -109,35 +109,19 @@ def checks(parts, liquid):
 
 
 def drawing_notes(masses):
-    L = ["# Tier-2 flow cell — notes for the machining drawings (generated; text of docs/34 section 5.2)", "",
-         "STEP files carry the nominal geometry. Threads are modelled as tap-drill holes. Everything not listed: "
-         "ISO 2768-m, edges broken 0.1–0.2 mm, no burrs in the liquid path.", "",
-         "| Part | File | Material | Features that need a call-out |", "|---|---|---|---|",
-         f"| Base | `base.step` | 316L stainless | 4 × M4×0.7-6H through. 2 × ⌀{P.DOWEL_D} P7 × 6 deep (press fit "
-         f"for ⌀3 m6 × 16 pins). Strip pocket {P.POCKET_W:.1f} +0.05/0 wide, depth {P.POCKET_DEPTH:.2f} ±0.02, floor "
-         "flat within 0.02 and Ra ≤ 0.8 µm. Top face flat within 0.02. |",
-         f"| Nozzle plate | `nozzle_plate.step` | PEEK, natural, unfilled | Underside (cell face): flat within 0.02, "
-         f"Ra ≤ 0.4 µm inside ⌀{P.GROOVE_STRIP_OD}; no tool marks across the O-ring groove floor. O-ring groove "
-         f"⌀{P.GROOVE_STRIP_ID}/⌀{P.GROOVE_STRIP_OD}, depth {P.GROOVE_STRIP_DEPTH:.2f} ±0.03. Exit bore ⌀{P.EXIT_D} "
-         f"+0.03/0, both ends sharp and free of burr, within 0.05 of the dowel datum. **Retainer pocket in the top face "
-         f"⌀{P.RET_POCKET_D} +0.03/0, depth {P.RET_POCKET_DEPTH:.2f} ±0.01, floor flat, concentric with the exit bore "
-         f"within 0.03.** 2 × ⌀{P.DOWEL_D} H7. "
-         f"4 × ⌀{P.M25_CLEAR} with 90° countersink ⌀{P.M25_CSK_D} from the underside (heads below the face). "
-         "Top face flat within 0.02, Ra ≤ 0.8 µm. |",
-         f"| Body | `body.step` | PEEK, natural, unfilled | 2 × {P.PORT_THREAD}, flat-bottom ports to the fitting "
-         f"port drawing supplied by the user: depth {P.PORT_DEPTH} (0.350 in), at least {P.PORT_FULL_THREAD} (0.28 in) "
-         f"of full thread, chamfer ⌀{P.PORT_CHAMFER_D} × 90°, bottom flat within {P.PORT_BOTTOM_FLAT} (0.002 in), "
-         f"Ra ≤ {P.PORT_BOTTOM_RA} µm (32 µin), corner radius ≤ {P.PORT_CORNER_R} (0.007 in), square to the thread. "
-         f"Bed bore "
-         f"⌀{P.BED_D} +0.03/0 through the port floor, within 0.05 of the dowel datum, sharp and free of burr at the "
-         f"underside. **Underside flat within 0.02; Ra ≤ 0.4 µm inside ⌀3 around the bed bore (the membrane seals "
-         f"there)**, Ra ≤ 0.8 µm elsewhere. O-ring groove ⌀{P.GROOVE_IFACE_ID}/⌀{P.GROOVE_IFACE_OD}, depth "
-         f"{P.GROOVE_IFACE_DEPTH:.2f} ±0.03. 4 × M2.5×0.45-6H, {P.M25_THREAD_DEPTH:.0f} deep. 2 × ⌀{P.DOWEL_D} H7. |",
-         "", "| Part | Envelope (mm) | Mass (g) |", "|---|---|---|"]
+    """Index of the drawings; the call-outs themselves are on the drawings (drawings.py)."""
+    L = ["# Tier-2 flow cell — machining drawings (index; generated)", "",
+         "The dimensioned drawings are `out/tier2_cell/drawings/T2C-00x_*.pdf`, made by "
+         "`python -m elisa_cad.tier2_cell.drawings` from the same solids and parameters as the STEP files. "
+         "Upload each STEP with its PDF. Ordering notes: `out/tier2_cell/drawings/ORDERING.md`; "
+         "tolerance policy: docs/34 section 5.2.", "",
+         "| Part | Drawing | STEP | Envelope (mm) | Mass (g) |", "|---|---|---|---|---|"]
+    files = {"base": ("T2C-001_base.pdf", "base.step"), "nozzle_plate": ("T2C-002_nozzle_plate.pdf",
+                                                                          "nozzle_plate.step"),
+             "body": ("T2C-003_body.pdf", "body.step")}
     for nm, (env, m) in masses.items():
-        L.append(f"| {nm} | {env} | {m:.0f} |")
+        L.append(f"| {nm} | `drawings/{files[nm][0]}` | `{files[nm][1]}` | {env} | {m:.0f} |")
     return "\n".join(L) + "\n"
-
 
 def main(argv=None):
     fast = "--fast" in (argv or sys.argv[1:])
