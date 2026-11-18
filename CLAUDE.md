@@ -47,6 +47,9 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
   capability map of the Waters stack without added hardware and instrument checks (27, Revision C), MicruX cells,
   electrodes and parts (28), literature (29), **the implementations (30, Revision C)**, the two review rounds and
   the resolution of every finding (31), session record (32).
+- `docs/33_flow_cell_geometries.md` — follow-up to the tier round: other flow-cell geometries put into the designs
+  of docs/30, and the pick (radial thin-layer cell, gap about 50 µm). Calculations in
+  `scripts/tier_round/cell_geometries.py`; not independently reviewed.
 - `scripts/tier_round/` — calculation kit and designs behind docs/30 (`README.md` there; `tierkit.py`,
   `designs.py`, `run_tiers.py`, `tier_params.yaml` with the `tr.*` parameters of the round); outputs and the five
   reviewer reports in `results/tier_round/`. The kit imports `elisa_sim` and edits nothing in `src/` or `params/`.
@@ -80,6 +83,7 @@ python -m elisa_cad.card.build         # card (~1 min); likewise dock_upper, doc
 python scripts/tier_round/check_tierkit.py          # tier round: 36 checks of the kit (~1 min)
 python scripts/tier_round/run_tiers.py              # tier round: all designs, scenarios, alternatives (~2 min)
 python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
+python scripts/tier_round/cell_geometries.py        # docs/33: flow-cell geometries (~4 min; `--doc` prints its tables)
 python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
@@ -122,6 +126,15 @@ kill criterion or order of docs/06 is changed; whether the round's experiments e
 decision (docs/30 §8, with the other open questions). Revision C answers the second review pass but was not
 reviewed again (docs/31 §4.3). A 21-slide summary of the round is `docs/presentation/tier_round.html` (charts and
 headline figures generated from `tiers.json`; checked twice by independent agents, docs/32 §7).
+
+**Flow-cell geometries (2026-11-18, docs/33; desk work, not reviewed):** the cell shape is not where the LOD is.
+The pick is the shape in hand, a radial thin-layer cell (inlet bore centred over the 3 mm electrode), with the gap
+at about 50 µm (25–100 µm) instead of the 0.2 mm that docs/30 takes: tier 1 nominal 3.6 → 2.3 pg/mL (median
+16 → 12; no gain if the substrate background persists), tiers 2 and 3 unchanged at nominal (2.1, 1.2) but 2–4
+times lower if the signal is weak (1 % electroactive, with a faster sweep). A cross-flow channel is equal at equal
+gap only if the electrode is the first surface; a large-gap wall jet and a porous flow-through electrode are worse.
+No other cell needs to be bought. The gap of the cell in hand is unmeasured (docs/27 §9 item 4; docs/33 §6.2).
+Nothing in docs/30 is changed; whether tier 1 takes the thin gap is the user's decision (docs/33 §8).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

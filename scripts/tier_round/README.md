@@ -10,6 +10,7 @@
 | `earlier_designs_halflife.py` | the designs of docs/05 in the audited model with the hydroquinone half-life of this round → `results/tier_round/earlier_designs_halflife.md` |
 | `check_tierkit.py` | 36 checks of the kit against analytic limits, an independent derivation and the audited model → `results/tier_round/check_tierkit.md` |
 | `crosscheck_model.py` | the kit's bed format run on the model's `B-bed-TL/alp_hqdp` inputs |
+| `cell_geometries.py` | follow-up (docs/33): other flow-cell geometries put into the unchanged designs of `run_tiers.py` — gap of the radial cell, cross-flow channel with and without walls upstream of the electrode, adjustable confined wall jet, free wall jet, porous flow-through electrode, ideal bound; own solver for product released from a channel wall upstream of the electrode, with checks → `results/tier_round/cell_geometries.md`, `cell_geometries.json` |
 | `review_numbers.py`, `review_chemistry_calc.py`, `review_feasibility_calc.py`, `review2_numbers.py`, `review2_consistency.py` | the reviewers' own calculations behind `results/tier_round/review_*.md` and `review2_*.md` (record; written against the first version and against Revision B of the designs, docs/31) |
 
 ```bash
@@ -17,6 +18,7 @@ pip install -e .                                   # the model package (elisa_si
 python scripts/tier_round/check_tierkit.py         # 36 of 36 checks pass; exits non-zero otherwise (about 1 min)
 python scripts/tier_round/run_tiers.py             # Monte Carlo n = 2000, seed 20261111 (about 2 min)
 python scripts/tier_round/doc_tables.py --check    # the tables of docs/30 against tiers.json
+python scripts/tier_round/cell_geometries.py       # docs/33: flow-cell geometries (about 4 min; --doc prints its tables)
 ```
 
 The kit imports `elisa_sim` and changes nothing in `src/` or `params/`. Design choices (geometry, flows, times,
