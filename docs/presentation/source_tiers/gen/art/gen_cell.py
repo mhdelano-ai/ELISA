@@ -2,7 +2,7 @@ import json, os
 ART = os.path.dirname(os.path.abspath(__file__))
 INK = '#14213D'; CARD = '#FFFDF8'; SAND = '#ECE7DB'; STEEL = '#9AA5B8'; SLATE = '#5E6B85'
 BLUE = '#1F5A96'; PBLUE = '#E3EBF5'; ORANGE = '#D9773F'; GOLD = '#C9A227'; CARBON = '#2B2F3A'
-PTEAL = '#CFE5DF'; BEAD = '#8A5A3C'
+PTEAL = '#CFE5DF'; BEAD = '#8A5A3C'; GLASS = '#C3CBD8'
 J = 'stroke-linejoin="round" stroke-linecap="round"'
 
 
@@ -131,7 +131,7 @@ def t2():
     # sleeve
     o.append(rect(359, 150, 16, 250, SAND, INK, 2)); o.append(rect(415, 150, 16, 250, SAND, INK, 2))
     # capillary walls
-    o.append(rect(375, 0, 12, 400, PBLUE, INK, 2)); o.append(rect(403, 0, 12, 400, PBLUE, INK, 2))
+    o.append(rect(375, 0, 12, 400, GLASS, INK, 2)); o.append(rect(403, 0, 12, 400, GLASS, INK, 2))
     # lumen
     o.append(rect(388, 0, 14, 316, PBLUE))
     o.append(rect(388, 316, 14, 70, PTEAL))
@@ -160,7 +160,7 @@ def t2():
     o.append(leader(366, 175, 168, 175))     # sleeve
     o.append(leader(388, 352, 168, 262))     # bed
     o.append(leader(387, 393, 168, 372))     # frit
-    o.append(leader(380, 405, 168, 440))     # tip
+    o.append(leader(380, 405, 168, 424))     # tip; clear of the O-ring
     o.append(leader(440, 482, 440, 532))     # WE
     labels = [
         dict(key='capillary', text='capillary, 0.2 mm bore', x=150, y=15, w=208, align='right'),

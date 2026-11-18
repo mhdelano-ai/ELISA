@@ -203,17 +203,17 @@ def pict(kind):
             f'<circle cx="{92 + 40 * math.cos(math.radians(a)):.1f}" cy="{64 - 40 * math.sin(math.radians(a)):.1f}" '
             f'r="7" fill="{CARD}" {o}/>' for a in (0, 60, 120, 180, 240, 300))
         line = f'fill="none" stroke="{BLUE}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"'
-        body = (f'<rect x="200" y="100" width="112" height="28" rx="8" fill="{SAND}" {o}/>'
-                f'<rect x="226" y="92" width="60" height="12" rx="3" fill="#2B2F3A" {o}/>'
-                f'<path d="M6 12H72V30M112 30V12H256V74" {line}/>'
-                f'<path d="M248 70L256 86L264 70Z" fill="{BLUE}" stroke="{BLUE}" stroke-width="2" '
+        body = (f'<rect x="200" y="112" width="112" height="28" rx="8" fill="{SAND}" {o}/>'
+                f'<rect x="226" y="104" width="60" height="12" rx="3" fill="#2B2F3A" {o}/>'
+                f'<path d="M6 12H72V30M112 30V12H256V86" {line}/>'
+                f'<path d="M248 82L256 98L264 82Z" fill="{BLUE}" stroke="{BLUE}" stroke-width="2" '
                 f'stroke-linejoin="round"/>'
-                f'<path d="M52 64H22V118H162V64H132" {line}/>'
+                f'<path d="M52 64H22V136H162V64H132" {line}/>'
                 f'<circle cx="92" cy="64" r="52" fill="{CARD}" {o}/>' + ports
-                + f'<rect x="50" y="106" width="84" height="24" rx="4" fill="{PALEBLUE}" {o}/>'
-                + beads(60, 113, 5, 2, 5)
-                + f'<rect x="116" y="109" width="8" height="18" fill="{SLATE}" stroke="{INK}" stroke-width="1.5"/>')
-    return (f'<svg width="320" height="136" viewBox="0 0 320 136" aria-label="{label}" style="display:block">'
+                + f'<rect x="50" y="124" width="84" height="24" rx="4" fill="{PALEBLUE}" {o}/>'
+                + beads(60, 131, 5, 2, 5)
+                + f'<rect x="116" y="127" width="8" height="18" fill="{SLATE}" stroke="{INK}" stroke-width="1.5"/>')
+    return (f'<svg width="320" height="152" viewBox="0 0 320 152" aria-label="{label}" style="display:block">'
             f"{body}</svg>")
 
 

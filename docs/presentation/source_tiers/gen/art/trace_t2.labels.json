@@ -12,9 +12,9 @@
  {
   "key": "time",
   "text": "time",
-  "x": 424,
-  "y": 262,
-  "w": 80,
+  "x": 436,
+  "y": 216,
+  "w": 70,
   "align": "right",
   "size": 24,
   "weight": 400
@@ -32,17 +32,17 @@
  {
   "key": "baseline",
   "text": "baseline",
-  "x": 214,
+  "x": 250,
   "y": 262,
-  "w": 110,
-  "align": "right",
+  "w": 120,
+  "align": "center",
   "size": 24,
   "weight": 400
  },
  {
   "key": "sweep",
   "text": "sweep",
-  "x": 336,
+  "x": 376,
   "y": 262,
   "w": 80,
   "align": "left",

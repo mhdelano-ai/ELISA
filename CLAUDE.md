@@ -80,6 +80,7 @@ python -m elisa_cad.card.build         # card (~1 min); likewise dock_upper, doc
 python scripts/tier_round/check_tierkit.py          # tier round: 36 checks of the kit (~1 min)
 python scripts/tier_round/run_tiers.py              # tier round: all designs, scenarios, alternatives (~2 min)
 python scripts/tier_round/doc_tables.py --check     # tables of docs/30 against results/tier_round/tiers.json
+python docs/presentation/source_tiers/gen/make_slides.py && python docs/presentation/build.py   # tier-round deck
 ```
 The Gamry worker must run in Gamry's own 32-bit Python 3.7 (ToolkitPy); the orchestrator in Python ≥ 3.10.
 
@@ -119,7 +120,8 @@ phosphatase should turn hydroquinone diphosphate into the monophosphate, not hyd
 the two questions first, then tier 2, with one valve as soon as it can be had. Nothing is ordered; no gate,
 kill criterion or order of docs/06 is changed; whether the round's experiments enter the bench plan is the user's
 decision (docs/30 §8, with the other open questions). Revision C answers the second review pass but was not
-reviewed again (docs/31 §4.3).
+reviewed again (docs/31 §4.3). A 21-slide summary of the round is `docs/presentation/tier_round.html` (charts and
+headline figures generated from `tiers.json`; checked twice by independent agents, docs/32 §7).
 
 ## Recording bench results
 Put raw data and the filled CSV templates in `bench/<stage>_<experiment>_<date>/` (templates in

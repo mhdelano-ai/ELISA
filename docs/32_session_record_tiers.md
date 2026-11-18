@@ -3,7 +3,7 @@
 A record of how docs/26–31, `scripts/tier_round/` and `results/tier_round/` came about: what the user asked, every
 question put to the user and the answer, which task did what, what went wrong on the way, and where each output is.
 It contains no new technical claims. The designs and their numbers are in docs/30; the findings of the review and
-what was done about each are in docs/31.
+what was done about each are in docs/31. Section 7 records the summary deck that was made afterwards.
 
 ## 1. The request
 
@@ -86,7 +86,10 @@ All agents that produced a result ran on the Opus model. They wrote only their o
 | d8db228 | the three reviewer reports |
 | 0578dfc | Revision B of the kit, designs, results, docs/30 and docs/27 |
 | eda7031 | the two second-pass reports; the final revision of the kit and its results |
-| the commit that adds this record | docs/30 Revision C, docs/27 Revision C, docs/31, docs/32, CLAUDE.md, README of the kit |
+| the commit that adds this record (ae7e472) | docs/30 Revision C, docs/27 Revision C, docs/31, docs/32, CLAUDE.md, README of the kit |
+| 8731ced | summary deck, first complete version: sources, generator, standalone file; docs/31 §2 corrected (round 2 rated eleven findings significant, not eight) |
+| 6708c67 | the deck after its first independent check |
+| the commit that adds section 7 | the deck after its second check; section 7; CLAUDE.md |
 
 No pull request was opened.
 
@@ -102,3 +105,54 @@ No pull request was opened.
 | What the reviewers found and what was done | docs/31 |
 | How the numbers are computed and how to re-run them | `scripts/tier_round/README.md`; docs/30 §9 |
 | What the user is asked to decide | docs/30 §8 |
+| The round in 21 slides | `docs/presentation/tier_round.html` (section 7) |
+
+## 7. The summary deck (added 2026-11-18)
+
+After the round the user asked: "Summarize this session with a visual html deck. Include charts and diagrams with
+representative images." The deck is `docs/presentation/tier_round.html` (21 slides in one self-contained file);
+its sources and its generator are in `docs/presentation/source_tiers/` (see `docs/presentation/README.md`). It is
+also published as a private slide deck in the user's account. It contains no new technical claim: its numbers are
+those of docs/30 Revision C.
+
+| Step | Done by | Output |
+|---|---|---|
+| Slide texts and layout; charts and headline figures generated from `tiers.json`; three small tier pictures; the two curves and the split of the blank that the model output does not hold | orchestrator | `source_tiers/gen/templates/`, `make_slides.py`, `chart_extra.py`, `chart_extra.json` |
+| Nine schematic drawings (equipment, two cell cross-sections, the valve in both positions, the sandwich, the product scheme, three trace sketches), each rendered and checked by its author | five agent tasks | `source_tiers/gen/art/` |
+| First check of the deck, five lenses: facts of slides 1–11 and of slides 12–21 against docs/30–32 and `tiers.json`; slide format and charts; pictures; narrative. The findings of the first four were each challenged by a second agent | nine agent tasks | 22 challenged findings (17 confirmed, 4 partly, 1 refuted) and 15 narrative findings |
+| Changes after the first check | orchestrator | commit 6708c67 |
+| Second check, of the revised deck: the changed statements against the sources; every rendered slide; each finding challenged by a second agent | four agent tasks | 6 findings, all confirmed; none on a number or a statement of fact |
+| Changes after the second check | orchestrator | the commit that adds this section |
+
+All agents ran on the Opus model, wrote only their own files and did not commit.
+
+What the first check found. No number on a slide or in a chart disagreed with docs/30 or `tiers.json`. Two things
+were wrong: a note that called the 17 min the label waits in the transfer an extra wait (it is the whole wait; with
+one valve it is about 5 min), and the small tier-3 picture, which did not show the bed in a closed loop. The tier-2
+cross-section showed liquid beside the capillary where the design has a sleeve. The rest: statements stronger
+than their source (a half-life "found" where it was extrapolated, judgement ranges not marked as judgement, an
+answer marked verbatim that the record does not quote, a charge figure without its "unverified"), a transfer chart
+without the fair comparison for screened reagents, leaders that crossed parts or ended on nothing, unlabelled
+colours, internal lever names on the slides, the headline limits not marked as predictions on the design slides,
+and a slide order that used the transfer before explaining it.
+
+What was changed: the tier-2 cross-section (sleeve down to the capillary tip; labels moved so that no leader
+crosses the outlet), a dimension mark for the cell gap, the cell symbol of the valve drawing, the small tier-3
+picture, the tier-1 trace sketch, labels for phosphate and hydroxyl on the product scheme; a second reference line
+on the transfer chart (one valve with screened reagents, 0.88); "Predicted limit" and the meaning of median and
+range on each design slide; the judgement ranges marked as judgement; plain-word names for the scenarios; a card
+with the eight choices the user may overrule (docs/30 §8); what went wrong on the way; the earlier design of the
+project beside the results; the transfer slide moved to follow tier 3; a title of the timeline slide that no
+longer contradicts its own card; a no-break space between each number and its unit. The one refuted finding
+(caption contrast of 4.3:1 on one slide; the reference pages state no minimum) was changed all the same.
+
+What the second check found. Every changed statement and every recomputed value agreed with docs/30–32,
+`tiers.json` and `chart_extra.json`, and no slide contradicted another. Six points of presentation were confirmed
+and changed: the process slide showed eight agent boxes beside the figure 9 (the literature work was two tasks);
+the glass walls of the capillary were drawn in the colour of the liquid; a leader touched an O-ring; the small
+tier-3 picture had the bed against the valve body; axis and window labels of the trace sketches ran together; the
+legend mark of the transfer chart did not match its lines. The state after these six changes was checked by the
+orchestrator only (generator checks, rendering, the standalone file opened in a browser with and without the web
+fonts), not by a further agent.
+
+What the deck does not have: photographs. The pictures are schematic drawings made for it.

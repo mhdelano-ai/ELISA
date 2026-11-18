@@ -38,7 +38,7 @@ def L(key, text, x, y, w, align="left", weight=400):
     return {"key": key, "text": text, "x": x, "y": y, "w": w, "align": align, "size": 24, "weight": weight}
 
 
-common = [L("current", "current", 58, 0, 120), L("time", "time", 424, 262, 80, "right")]
+common = [L("current", "current", 58, 0, 120), L("time", "time", 436, 216, 70, "right")]
 
 # ---- t1
 t1d = "M60 205 L140 205 C170 205 170 115 200 115 L290 115 C320 115 320 203 350 203 L495 203"
@@ -59,8 +59,8 @@ area2 = (f'<path d="M330 215 C345 140 352 72 366 72 C392 72 410 180 470 198 L495
 body = (f'<rect x="80" y="36" width="250" height="16" fill="{STEEL}"/>' + band(290, 330, SAND) + area2
         + dashed(330, 495, 215) + axes() + trace(t2d) + leader(452, 134, 446, 200))
 svg("trace_t2", "Sketch of current versus time with the flow stopped: the current decays to a flat baseline, then the swept product gives a sharp peak whose area above the carried-forward baseline is the signal.",
-    body, common + [L("stopped", "flow stopped", 80, 58, 200), L("baseline", "baseline", 214, 262, 110, "right"),
-                    L("sweep", "sweep", 336, 262, 80), L("signal", "signal = area", 414, 66, 104, "left", 600)])
+    body, common + [L("stopped", "flow stopped", 80, 58, 200), L("baseline", "baseline", 250, 262, 120, "center"),
+                    L("sweep", "sweep", 376, 262, 80), L("signal", "signal = area", 414, 66, 104, "left", 600)])
 
 # ---- t3
 t3d = "M60 200 L330 200 C345 200 355 82 374 82 C400 82 420 190 484 200 L495 200"
@@ -69,5 +69,5 @@ area3 = (f'<path d="M330 200 C345 200 355 82 374 82 C400 82 420 190 484 200 L495
 body = (f'<rect x="150" y="36" width="180" height="16" fill="{TEAL}"/>' + band(290, 330, SAND) + area3
         + dashed(330, 495, 200) + axes() + trace(t3d) + leader(452, 122, 446, 192))
 svg("trace_t3", "Sketch of current versus time with the cell in steady flow: a flat baseline while the bed valve is closed, then a peak when the valve opens, whose area above the baseline is the signal.",
-    body, common + [L("closed", "valve closed", 150, 58, 180), L("baseline", "baseline", 214, 262, 110, "right"),
+    body, common + [L("closed", "valve closed", 150, 58, 180), L("baseline", "baseline", 250, 262, 120, "center"),
                     L("opens", "valve opens", 336, 4, 150), L("signal", "signal = area", 414, 54, 104, "left", 600)])
