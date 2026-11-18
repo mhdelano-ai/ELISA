@@ -221,4 +221,8 @@ clipped to the merged cut faces), the third-angle symbol (was drawn in first-ang
 dimensions for the position tolerances, datum symbols of features of size moved onto their size callouts, a
 duplicate datum A removed, the renderer's scale bar removed from the reference isometrics (option added to
 `assembly/zrender.py` and `common.render_png`, default unchanged).
+The user then asked for the CAD of the cut gasket and an independent review of the drawings. The washer became
+T2C-004 (STEP, DXF cut files, drawing); its outer diameter went from 1.2 to 1.4 mm so that the ring wall cannot
+fall below 0.175 mm at the tolerance limits (washer force 3.2 N nominal, plate bow ≤ 3.3 µm, lift-off margin 2.6
+at 200 µL/min; `tier2_cell.py` re-run, all checks pass).
 

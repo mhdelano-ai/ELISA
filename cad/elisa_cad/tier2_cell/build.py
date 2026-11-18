@@ -123,6 +123,28 @@ def drawing_notes(masses):
         L.append(f"| {nm} | `drawings/{files[nm][0]}` | `{files[nm][1]}` | {env} | {m:.0f} |")
     return "\n".join(L) + "\n"
 
+def write_washer_dxf():
+    """Cut files of the washer (T2C-004): one part, and a nested sheet of WASHER_ARRAY parts. Layer CUT holds the
+    cut contours (circles, mm); layer SHEET the blank outline (not cut, reference)."""
+    import ezdxf
+    for name, (nx, ny) in (("washer.dxf", (1, 1)), ("washer_sheet.dxf", P.WASHER_ARRAY)):
+        doc = ezdxf.new("R2010")
+        doc.units = ezdxf.units.MM
+        doc.layers.add("CUT", color=1)
+        doc.layers.add("SHEET", color=8)
+        msp = doc.modelspace()
+        pitch = P.WASHER_PITCH
+        for i in range(nx):
+            for j in range(ny):
+                c = ((i + 0.5) * pitch, (j + 0.5) * pitch)
+                msp.add_circle(c, P.WASHER_ID / 2.0, dxfattribs={"layer": "CUT"})     # inner contour first
+                msp.add_circle(c, P.WASHER_OD / 2.0, dxfattribs={"layer": "CUT"})
+        if (nx, ny) != (1, 1):
+            msp.add_lwpolyline([(0, 0), (nx * pitch, 0), (nx * pitch, ny * pitch), (0, ny * pitch)], close=True,
+                               dxfattribs={"layer": "SHEET"})
+        doc.saveas(OUT / name)
+
+
 def main(argv=None):
     fast = "--fast" in (argv or sys.argv[1:])
     custom = {"base": (PT.base(), "steel"), "nozzle_plate": (PT.plate(), "PEEK"), "body": (PT.body(), "PEEK")}
@@ -133,6 +155,8 @@ def main(argv=None):
     liquid = PT.liquid()
     for nm, (o, _m) in custom.items():
         C.export_step(o, OUT / f"{nm}.step")
+    C.export_step(PT.washer_free(), OUT / "washer.step")
+    write_washer_dxf()
     everything = [(nm, o, m) for nm, (o, m) in {**custom, **bought}.items()]
     everything += [(f"screw_M4_{i}", s, "steel") for i, s in enumerate(PT.screws())]
     everything += [(f"dowel_{i}", s, "steel") for i, s in enumerate(PT.dowels())]

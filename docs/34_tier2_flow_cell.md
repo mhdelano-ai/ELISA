@@ -29,6 +29,13 @@ standard tolerances as possible (section 5.2). To get there the strip pocket bec
 tolerance, measured at assembly with the gap set by the shim (section 4.3); the second dowel hole in plate and
 body became a slot; the dowel pins are bonded into the base; the body is 11.4 mm thick.
 
+**Cut gasket (same day).** The washer of the retainer stack became a part with its own drawing, T2C-004, a STEP
+file and DXF cut files (one part, and 100 nested at 3 mm pitch). Its outer diameter went from 1.2 to 1.4 mm: at
+1.2 the ring wall was 0.225 mm nominal and could fall to about 0.075 mm at the tolerance limits, too fragile to
+cut or handle; at 1.4 it is 0.325 mm (at least 0.175 mm). The screen (⌀1.59) still covers it and the compressed
+ring fills about 87 % of the free area of its ⌀1.65 pocket (Derived). The spring force doubles (3.2 N nominal),
+which widens the margin against lift-off.
+
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
 * CAD: `cad/elisa_cad/tier2_cell/` → `cad/out/tier2_cell/` (STEP files of the three custom parts and of the
@@ -181,7 +188,7 @@ From the bottom:
 
 | Layer | Part | Thickness free → in place (mm) | Job |
 |---|---|---|---|
-| 1 | Washer ⌀1.2/⌀0.75, punched from 0.25 mm FKM sheet (two biopsy punches) | 0.25 → 0.185 (26 % squeeze) | the spring; its hole passes the liquid to the exit bore |
+| 1 | Washer ⌀1.4/⌀0.75, cut from 0.25 mm FKM sheet (drawing T2C-004) | 0.25 → 0.185 (26 % squeeze) | the spring; its hole passes the liquid to the exit bore |
 | 2 | Screen 1/16 in, 2 µm (VICI 2SR1-10) | 0.075 | carries the membrane over the washer's hole |
 | 3 | Membrane ⌀1.5, 1 µm track-etched polycarbonate | 0.010 | retains the beads |
 
@@ -191,7 +198,7 @@ where it meets the flat underside of the body. What each path meets:
 
 | Path | What closes it |
 |---|---|
-| Beads from the bore, sideways over the membrane to its edge | the membrane pressed against the body face (Ra ≤ 0.4 µm there) over a band 0.5 mm wide around the bore, at about 1 MPa (0.4–1.4 MPa over the tolerances) |
+| Beads from the bore, sideways over the membrane to its edge | the membrane pressed against the body face (Ra ≤ 0.4 µm there) over a band 0.5 mm wide around the bore, at about 2 MPa (0.9–3.0 MPa over the tolerances) |
 | Liquid from the screen's edge, between body and plate, to the cross channel | body and plate face to face, flat within 0.02 mm, clamped by the M2.5 and M4 screws; with nothing proud the film is set by the flatness of the faces. A 5 µm film passes 0.01 % of the stream, 15 µm 0.3 % (`tier2_cell.md` §5) |
 | Liquid to the outside | the 12 × 1 O-ring between body and plate, rated with the rest of the cell for 500 psi |
 
@@ -199,10 +206,10 @@ Numbers (`tier2_cell.md` §4; rubber modulus 6 MPa and the shape-factor correcti
 * Squeeze of the washer 26 % nominal; 11–39 % for a pocket within ±0.01 of the washer chosen for it, a sheet
   at ±0.02, membranes of 6–15 µm and the screen at ±0.005. The low end is below the usual 15 % for a gasket:
   pick washers from the thick end of the sheet for a deep pocket.
-* Washer force 1.5 N (0.66–2.3 N). It bows the plate by at most 1.6 µm (the first version: up to 15 µm).
+* Washer force 3.2 N (1.4–4.7 N). It bows the plate by at most 3.3 µm (the first version: up to 15 µm).
 * The flow pushes the stack away from the body face with the pressure drop through bed, membrane and screen. Taken
-  over the whole pocket this is 0.21 N at 80 µL/min, a third of the lowest washer force, and 0.53 N at 200 µL/min,
-  close to it. **Keep every step through the bed at ≤ 80 µL/min**, as docs/30 does; packing included.
+  over the whole pocket this is 0.21 N at 80 µL/min, a sixth of the lowest washer force, and 0.53 N at
+  200 µL/min, still under half of it. Every step of docs/30 through the bed stays at ≤ 80 µL/min, packing included.
 * At 500 psi with the outlet plugged the pressure is the same on both sides of the stack, so it does not load the
   washer.
 
@@ -242,7 +249,7 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 |---|---|---|---|
 | Plate on strip | O-ring 7 × 1 in a groove ⌀6.9/⌀9.3 × 0.65 deep; 25 % squeeze at the nominal gap, 20–30 % over the gap tolerance | the plate rests on the base on both sides of the strip pocket | 4 × M4 × 20 through body and plate into the base, 0.5 N·m; 2 × ⌀3 dowel pins |
 | Body on plate | O-ring 12 × 1 in a groove ⌀11.9/⌀14.3 × 0.75 deep in the body | face to face | 4 × M2.5 × 8 countersunk, from the plate underside into the body, so that the retainer and the bed are not disturbed when the strip is changed |
-| Retainer | membrane pressed against the body face by the washer | membrane top in the plane of the plate face | the washer (1.5 N); body and plate held by the same four M2.5 screws |
+| Retainer | membrane pressed against the body face by the washer | membrane top in the plane of the plate face | the washer (3.2 N); body and plate held by the same four M2.5 screws |
 
 ### 4.3 The gap
 
@@ -285,6 +292,7 @@ parameters as the STEP files, so the two cannot drift apart):
 | Base | `cad/out/tier2_cell/drawings/T2C-001_base.pdf` | `T2C-001_base_revA.step` | top, section A–A, isometric |
 | Nozzle plate | `T2C-002_nozzle_plate.pdf` | `T2C-002_nozzle_plate_revA.step` | top, bottom (cell face), section A–A at the axis (10:1), two isometrics |
 | Body | `T2C-003_body.pdf` | `T2C-003_body_revA.step` | top, bottom, section A–A, detail E (port bottom and bed bore, 10:1), isometric |
+| Washer (cut gasket) | `T2C-004_washer.pdf` | `T2C-004_washer_revA.step`; cut files `T2C-004_washer.dxf`, `T2C-004_washer_sheet.dxf` (100 parts) | top and section at 20:1, isometric, actual-size outline |
 
 At the user's request the drawings dimension **only what the model cannot carry**: features toleranced tighter
 than standard (each flagged), surface finish, threads, datums with the basic dimensions that locate the bores from
@@ -347,7 +355,7 @@ after manual review was not tried. No quote was requested; price and lead time a
 | Electrode | MicruX ED-S1PE-C21C strip (ceramic, 0.38 mm), 27.5 × 10.1 mm, 3 mm carbon working electrode, printed Ag/AgCl reference; ED-SPE-CABLE | docs/28 [V]; in hand |
 | Fittings | 1/4-28 flat-bottom, for 1/16 in tubing; the MicruX packs state 1000 psi for their ferrules (docs/28 R6 [V]); IDEX states 2000 psi for its flangeless nut with the P-200 ferrule [V, page of XP-235, a part now marked obsolete] | in hand |
 | Screen | VICI 2SR1-10, 1/16 in, 2 µm, 0.075 mm, pack of 10 | [V] |
-| Washer | FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A; biopsy punches 1.2 and 0.75 mm; one washer per bed | sheet thickness tolerance and punch sizes UNVERIFIED |
+| Washer | drawing T2C-004: cut gasket ⌀1.4/⌀0.75 from FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A, laser, waterjet or die cut from the DXF; one washer per bed (or punched in the lab with 1.4 and 0.75 mm biopsy punches) | sheet thickness tolerance and punch sizes UNVERIFIED |
 | Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch (the same punch cuts the washer's outer edge if 1.2 mm cannot be had: the pocket leaves room) | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
 | Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins, bonded into the base with a retaining compound; stainless | standard |
@@ -446,8 +454,8 @@ Bores, gap and outlet path together stay below 0.001 bar. The membrane and scree
 | Sag of body and plate across the strip pocket | 0.4 µm |
 | Deflection of the port floor when the inlet fitting is tightened | 3 µm (3 % of the gap) |
 | Thinnest drilled wall (inlet thread to riser) | 1.0 mm |
-| Retainer washer: squeeze; force; pressure on the membrane's sealing band (low / nominal / high tolerance) | 11 / 26 / 39 %; 0.66 / 1.5 / 2.3 N; 0.4 / 1.0 / 1.4 MPa |
-| Bow of the plate under the washer | ≤ 1.6 µm |
+| Retainer washer: squeeze; force; pressure on the membrane's sealing band (low / nominal / high tolerance) | 11 / 26 / 39 %; 1.4 / 3.2 / 4.7 N; 0.9 / 2.0 / 3.0 MPa |
+| Bow of the plate under the washer | ≤ 3.3 µm |
 | Force of the flow pushing the stack off the body face, 80 / 200 µL/min (upper bound) | 0.21 / 0.53 N |
 
 PEEK properties are typical values for unfilled PEEK (modulus 3.6 GPa, shear strength 53 MPa, compressive yield
@@ -470,7 +478,7 @@ assortments, UNVERIFIED) can be the spring, in the same place:
 | What fills the ring's bore | nothing (washer hole 0.08 µL) | a PEEK boss ⌀1.0 left standing in the groove, its top 0.095 below the face, the exit bore through it; without the boss the ring's bore adds 0.6 µL and 2.4 mm² of elastomer to the dead volume |
 | Thinnest wall | 1.0 mm | 0.25 mm (the boss around the 0.5 mm bore), below the 0.5 mm Xometry recommends |
 | Land between pocket and cross channel | 1.4 mm | 0.6 mm |
-| Spring force; plate bow | 1.5 N; ≤ 1.6 µm | about 6 N (1 N per mm of ring, UNVERIFIED); about 4 µm |
+| Spring force; plate bow | 3.2 N; ≤ 3.3 µm | about 6 N (1 N per mm of ring, UNVERIFIED); about 4 µm |
 | Screen and membrane outside the flow, where conjugate collects | small | about 5 times more |
 
 It can be done, but every line favours the washer. If punching washers proves awkward, they can be bought as

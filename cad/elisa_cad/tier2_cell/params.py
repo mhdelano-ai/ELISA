@@ -67,8 +67,12 @@ CHANNEL_X_END, CHANNEL_W, CHANNEL_DEPTH = -4.6, 0.8, 0.5   # CHOICE: slot in the
 # face and the plate stays flat.
 RET_POCKET_D = 1.65                    # CHOICE: guides the 1/16 in screen
 RET_POCKET_DEPTH = 0.27                # CHOICE, +-0.01: washer compressed + screen + membrane
-WASHER_OD, WASHER_ID, WASHER_T = 1.2, 0.75, 0.25   # CHOICE: punched from 0.25 mm FKM sheet (+-0.02, UNVERIFIED)
-#                                        with 1.2 and 0.75 mm biopsy punches (sizes UNVERIFIED)
+WASHER_OD, WASHER_ID, WASHER_T = 1.4, 0.75, 0.25   # CHOICE: cut from 0.25 mm FKM sheet (+-0.02, UNVERIFIED);
+#                                        OD 1.4 (was 1.2): ring wall >= 0.175 mm at the tolerance limits
+#                                        a cut gasket, drawing T2C-004 (or punched with 1.2 / 0.75 mm biopsy punches)
+WASHER_D_TOL = 0.10                    # CHOICE: on both diameters (functional limits: ID 0.5-1.4, OD < 1.6)
+WASHER_T_TOL = 0.025                   # sheet tolerance asked for; washers are picked by measured thickness anyway
+WASHER_PITCH, WASHER_ARRAY = 3.0, (10, 10)   # CHOICE: nesting of the cut file (100 washers in 30 x 30 mm)
 
 # ---- body (PEEK) -------------------------------------------------------------------------------------------
 BED_D = 0.5                            # CHOICE: bed bore = floor of the inlet port (0.3 as a variant, docs/34 6.3)

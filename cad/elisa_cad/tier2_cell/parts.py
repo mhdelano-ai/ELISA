@@ -149,6 +149,11 @@ def oring_iface():
 Z_POCKET = P.PLATE_T - P.RET_POCKET_DEPTH        # floor of the retainer pocket
 
 
+def washer_free():
+    """The washer as cut (free thickness), at the origin: the part of drawing T2C-004."""
+    return _ring(P.WASHER_ID, P.WASHER_OD, P.WASHER_T, 0.0)
+
+
 def washer():
     """Elastomer washer, drawn at its compressed height (its bulge is not drawn)."""
     return _ring(P.WASHER_ID, P.WASHER_OD, P.WASHER_H, Z_POCKET)

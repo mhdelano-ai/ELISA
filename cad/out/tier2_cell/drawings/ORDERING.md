@@ -9,6 +9,7 @@ blocks have no checker's or approver's name.
 | T2C-001 Base | `T2C-001_base_revA.step` | `T2C-001_base.pdf` | Stainless steel 316L | 1 |
 | T2C-002 Nozzle plate | `T2C-002_nozzle_plate_revA.step` | `T2C-002_nozzle_plate.pdf` | PEEK, unfilled, natural | 3 (one per bed unit, docs/34 §7) |
 | T2C-003 Body | `T2C-003_body_revA.step` | `T2C-003_body.pdf` | PEEK, unfilled, natural | 3 |
+| T2C-004 Washer (cut gasket) | `T2C-004_washer_revA.step` + `T2C-004_washer.dxf` / `T2C-004_washer_sheet.dxf` | `T2C-004_washer.pdf` | FKM sheet 0.25 mm, 70–75 Shore A | 100 (one per bed) |
 
 For each part in the quote:
 * **Tolerance**: standard, *with drawing*. The drawings dimension only what the model cannot carry: the
@@ -26,9 +27,12 @@ For each part in the quote:
   0.28 in minimum, bottom flat within 0.002 in at 32 µin, corner radius ≤ 0.007 in, chamfer ⌀0.27 in × 90°). Its
   values are written out in note 7, so the drawing itself is optional.
 
+The washer is a cut-rubber part: a CNC shop may not take it. A gasket cutter (laser, waterjet or die) works
+from the DXF; whether Xometry offers rubber-sheet cutting was not checked.
+
 Not machined (buy separately; docs/34 §5.4): MicruX ceramic strips, O-rings 7 × 1 and 12 × 1, ⌀3 m6 × 16 dowel
-pins and retaining compound, M4 × 20 and M2.5 × 8 screws, shim stock, FKM sheet 0.25 mm, VICI 2SR1-10 screens,
-1 µm track-etched membrane, biopsy punches.
+pins and retaining compound, M4 × 20 and M2.5 × 8 screws, shim stock, VICI 2SR1-10 screens, 1 µm track-etched
+membrane.
 
 At assembly: measure the base pocket depth and cut the shim stack to depth − 0.38 − 0.10 mm; measure the plate's
 retainer pocket depth and pick washers by thickness (docs/34 §3.1, §4.3, §7).

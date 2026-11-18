@@ -205,7 +205,8 @@ class View:
 
 
 class Sheet:
-    def __init__(self, number, title, material, finish, scale, notes, flags, revs, mass_g):
+    def __init__(self, number, title, material, finish, scale, notes, flags, revs, mass_g, general=None):
+        self.general = general
         self.fig = plt.figure(figsize=(W / 25.4, H / 25.4))
         self.ax = self.fig.add_axes([0, 0, 1, 1])
         self.ax.set_xlim(0, W)
@@ -268,15 +269,15 @@ class Sheet:
                  (20, "SIZE", "A3", 7.0), (45, "SCALE", scale, 6.5), (28, "PROJECTION", "", 6.5)]),
             (8, [(110, "MATERIAL", material, 6.4), (80, "FINISH", finish, 6.4)]),
             (8, [(60, "UNITS", "MILLIMETRES (mm)", 6.5), (45, "PROJECTION", "THIRD ANGLE", 6.5),
-                 (40, "MASS (CALC.)", f"{mass_g:.0f} g", 6.5), (45, "DATE", DATE, 6.5)]),
+                 (40, "MASS (CALC.)", f"{mass_g:.0f} g" if mass_g >= 1 else f"{mass_g * 1000:.2g} mg", 6.5), (45, "DATE", DATE, 6.5)]),
             (8, [(95, "DRAWN", "generated: elisa_cad.tier2_cell.drawings", 5.8), (47.5, "CHECKED", "", 6),
                  (47.5, "APPROVED", "", 6)]),
-            (19, [(190, "UNLESS OTHERWISE SPECIFIED",
+            (19, [(190, "UNLESS OTHERWISE SPECIFIED", self.general or (
                    "Dimensions in mm.  Features not dimensioned here are defined by the 3D model (STEP, same\n"
                    "drawing number and revision) at the general tolerances of the Xometry manufacturing standard\n"
                    "(ISO 2768): ±0.13 mm (±0.005 in) metals, ±0.25 mm (±0.010 in) plastics; angles ±1°.\n"
                    "Surface finish Ra 3.2 µm (125 µin) as machined.  Break sharp edges 0.1–0.3 mm except where\n"
-                   "marked SHARP.  Do not scale the drawing.", 5.4)]),
+                   "marked SHARP.  Do not scale the drawing."), 5.4)]),
         ]
         y = 10 + sum(r[0] for r in rows)
         self.tb_top = y
@@ -800,14 +801,80 @@ def sheet_body():
     return S.save("T2C-003_body")
 
 
+# ---- T2C-004 washer (cut gasket) ------------------------------------------------------------------------------------
+FKM = "FKM (fluoroelastomer) sheet, 0.25 mm, 70–75 Shore A, unfilled or carbon-black filled, no surface coating"
+
+
+def sheet_washer():
+    solid = PT.washer_free()
+    tD, tT = P.WASHER_D_TOL, P.WASHER_T_TOL
+    notes = [f"MATERIAL: {FKM}.\nEPDM of the same hardness is an acceptable alternative if stated on the order."] \
+        + [COMMON[0], COMMON[1]] + [
+        "Cut by laser, waterjet or steel-rule / punch die from the sheet. Cut files: T2C-004_washer.dxf (one part)\n"
+        f"and T2C-004_washer_sheet.dxf ({P.WASHER_ARRAY[0] * P.WASHER_ARRAY[1]} parts nested at {P.WASHER_PITCH:g} mm "
+        "pitch; layer CUT = cut contours, layer SHEET =\nreference outline). Cut the inner contour first.",
+        "Cut edges clean and square to the faces: no flash, no tear-out, no charring or melt bead. Both faces as\n"
+        "supplied on the sheet: no release agent, talc, powder or adhesive liner residue.",
+        "Supply loose, counted, in a clean bag; state on the label the measured thickness of the sheet lot\n"
+        "(the parts are sorted by thickness at assembly, docs/34 §3.1).",
+    ]
+    flags = [
+        (1, f"Outer ⌀{P.WASHER_OD:.2f} ±{tD:.2f} and hole ⌀{P.WASHER_ID:.2f} ±{tD:.2f}, hole concentric with the outer edge "
+            f"within ⌀0.10."),
+        (2, f"Thickness {P.WASHER_T:.2f} ±{tT:.3f} (sheet tolerance); report the measured thickness of the lot."),
+    ]
+    general = ("Dimensions in mm.  Dimensions shown are toleranced as shown; the outline is also defined by the\n"
+               "STEP model and the DXF cut files of the same drawing number and revision.\n"
+               "Faces as supplied on the sheet.  Cut edges per note 5: do not break or chamfer them.\n"
+               "Do not scale the drawing.")
+    S = Sheet("T2C-004", "WASHER (CUT GASKET)", "FKM sheet 0.25 mm, 70–75 Shore A", "As cut, clean", "20:1",
+              notes, flags, REVS_WASHER, _mass(solid, 1.85e-3), general=general)
+    k = 20.0
+    top = View(S, "top", (95, 150), k)
+    top.draw(solid)
+    top.centre_mark(0, 0, 0, r=P.WASHER_OD / 2, ext=3.0)
+    ro, ri = P.WASHER_OD / 2 * k, P.WASHER_ID / 2 * k
+    c = np.array(top.o)
+    to = (c[0] + 34, c[1] + 26)
+    S.leader(c + ro * np.array([0.71, 0.71]), to, f"⌀{P.WASHER_OD:.2f} ±{tD:.2f}", size=FS, flag=1)
+    S.datum((to[0] - 2.0, to[1]), "B", direction=(0, 1), length=2.5)
+    ti = (c[0] + 34, c[1] - 26)
+    x0, x1 = S.leader(c + ri * np.array([0.71, -0.71]), ti, f"⌀{P.WASHER_ID:.2f} ±{tD:.2f} THRU", size=FS, flag=1)
+    S.frame(x0, ti[1] - 6.0, "pos", ["⌀0.10", "B"])
+    S.cut_marks(top.p(-P.WASHER_OD / 2 - 0.25, 0, 0), top.p(P.WASHER_OD / 2 + 0.25, 0, 0), "A", (0, 1))
+    S.text(top.o[0], top.p(0, -P.WASHER_OD / 2, 0)[1] - 18, "TOP VIEW (20:1)", size=FS_T, ha="center",
+           weight="bold")
+    front = View(S, "front", (95, 72), k)
+    front.draw(solid, cut=("y", 0.0))
+    S.dim(front.p(P.WASHER_OD / 2, 0, 0), front.p(P.WASHER_OD / 2, 0, P.WASHER_T),
+          front.p(P.WASHER_OD / 2, 0, 0)[0] + 9, f"{P.WASHER_T:.2f} ±{tT:.3f}", axis="y", side=-1, size=FS,
+          outside_text=None)
+    S.flag(front.p(P.WASHER_OD / 2, 0, 0)[0] + 18, front.p(0, 0, P.WASHER_T / 2)[1], 2)
+    S.text(front.o[0], front.p(0, 0, 0)[1] - 12, "SECTION A–A (20:1)", size=FS_T, ha="center", weight="bold")
+    S.image(_iso_png(solid, "elastomer", "washer"), (205, 120, 290, 185))
+    S.text(247, 116, "ISOMETRIC (reference only)", size=FS_S, ha="center")
+    S.text(247, 104, f"Actual size: ⌀{P.WASHER_OD:g} × {P.WASHER_T:g} mm", size=FS_S, ha="center")
+    S.ax.add_patch(Circle((247, 98), P.WASHER_OD / 2, fill=False, lw=0.3, zorder=4))
+    S.ax.add_patch(Circle((247, 98), P.WASHER_ID / 2, fill=False, lw=0.3, zorder=4))
+    return S.save("T2C-004_washer")
+
+
+REVS_WASHER = [["A", DATE, "First issue (docs/34 Revision B: washer of the retainer stack)", "generated"]]
+
+
 def main():
     import shutil
-    out = [sheet_base(), sheet_plate(), sheet_body()]
+    out = [sheet_base(), sheet_plate(), sheet_body(), sheet_washer()]
     # the STEP files a quote needs, named after their drawings (written by build.py from the same solids)
-    for src, dst in (("base", "T2C-001_base"), ("nozzle_plate", "T2C-002_nozzle_plate"), ("body", "T2C-003_body")):
+    for src, dst in (("base", "T2C-001_base"), ("nozzle_plate", "T2C-002_nozzle_plate"), ("body", "T2C-003_body"),
+                     ("washer", "T2C-004_washer")):
         f = OUT.parent / f"{src}.step"
         if f.exists():
             shutil.copyfile(f, OUT / f"{dst}_rev{REV}.step")
+    for src, dst in (("washer.dxf", "T2C-004_washer.dxf"), ("washer_sheet.dxf", "T2C-004_washer_sheet.dxf")):
+        f = OUT.parent / src
+        if f.exists():
+            shutil.copyfile(f, OUT / dst)
     for f in Path(OUT).glob("_iso_*.png"):
         f.unlink()
     for pdf, png in out:

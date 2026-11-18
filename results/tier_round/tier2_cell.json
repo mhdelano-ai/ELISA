@@ -877,16 +877,16 @@
    0.38888888888888895
   ],
   "washer_force_N": [
-   0.6567651399800207,
-   1.5105598219540477,
-   2.259384349076567
+   1.3735195038965318,
+   3.159094858962023,
+   4.725141883062855
   ],
   "membrane_clamp_MPa": [
-   0.4181096739130435,
-   0.9616522500000001,
-   1.4383687500000002
+   0.8744096739130434,
+   2.01114225,
+   3.0081187499999995
   ],
-  "plate_bow_um": 1.58345988255,
+  "plate_bow_um": 3.3115537045499988,
   "pocket_area_mm2": 2.138246499849553,
   "washer_E_MPa": 6.0,
   "bed_force_N": 0.6768914801332738,
@@ -1119,7 +1119,7 @@
   {
    "check": "the lowest washer force holds the retainer against the body face at 80 uL/min with a margin of 2",
    "ok": true,
-   "value": "0.21 N vs 0.66 N"
+   "value": "0.21 N vs 1.37 N"
   },
   {
    "check": "O-ring squeeze on the strip stays within 15-35 % over the gap tolerance",
@@ -1250,11 +1250,18 @@
   "STRIP_L": 27.5,
   "STRIP_T": 0.38,
   "STRIP_W": 10.1,
+  "WASHER_ARRAY": [
+   10,
+   10
+  ],
+  "WASHER_D_TOL": 0.1,
   "WASHER_H": 0.185,
   "WASHER_ID": 0.75,
-  "WASHER_OD": 1.2,
+  "WASHER_OD": 1.4,
+  "WASHER_PITCH": 3.0,
   "WASHER_SQUEEZE": 0.26,
   "WASHER_T": 0.25,
+  "WASHER_T_TOL": 0.025,
   "WASHER_WALL": 0.4358959806855838,
   "WE_D": 3.0,
   "WE_FROM_FREE_END": 8.26,
