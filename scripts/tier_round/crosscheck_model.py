@@ -24,6 +24,7 @@ def bed_against_model():
     neutral = {
         "tr.nsb.unit_to_unit_cv_bed": 0.0,                      # the model has no unit-to-unit NSB term
         "tr.noise.drift_area_exponent": 0.0,                    # the model does not scale drift with area
+        "tr.detection.reservoir_background_decays": 0,          # the model keeps the reservoir impurity
         "tr.noise.thinfilm_sensor_to_sensor_cv": ps.params["ma.noise.electrode_sensitivity_cv_nonfouling"].value,
         "chem.regeneration.residual_label_carryover_fraction": 0.0,   # fresh bed: nothing survives regeneration
     }

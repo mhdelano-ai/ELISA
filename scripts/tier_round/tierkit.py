@@ -446,6 +446,22 @@ def _chem(p, chem):
     return out
 
 
+def _free_product(p, ch):
+    """Free (electroactive) product in the working substrate solution at the time of use, mol/m^3:
+    (what is left of the lot's impurity, hydrolysis product formed in the reservoir).
+
+    With tr.detection.reservoir_background_decays = 1 the product half-life at pH 9.5 holds in the reservoir as
+    it does in the bed: the impurity decays over the reservoir age and the hydrolysis product stands at
+    k_hyd S0 (1 - exp(-k t)) / k.  With 0 the impurity is free_product_impurity x S0 at the time of use and the
+    hydrolysis product is k_hyd S0 t (audited model, docs/03)."""
+    age = p("ma.timing.substrate_reservoir_age", "s")
+    decays = bool(np.all(np.asarray(p("tr.detection.reservoir_background_decays", "boolean")) > 0.5))
+    if decays:
+        f = np.exp(-ch["k_dec"] * age)
+        return ch["imp"] * ch["S0"] * f, ch["k_hyd"] * ch["S0"] * (1.0 - f) / ch["k_dec"]
+    return ch["imp"] * ch["S0"], ch["k_hyd"] * ch["S0"] * age
+
+
 def _noise(design, p, area, stopped, T_read, noise_factor=1.0, T_span=None):
     """Current noise and drift.  T_span: time between the centres of the two reference windows that bracket the
     read (default: the read window itself, as in the model).  The unremoved drift current is taken as
@@ -569,7 +585,8 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
                   R (radius of the liquid layer = O-ring inner radius), bore_radius, bore_length (inlet bore above
                   the electrode; radial only), w_channel (channel only), lid_factor_key (NSB factor of the lid)
       electrode : kind ('printed' | 'thinfilm'), area, we_factor_key (NSB factor of the electrode surface),
-                  floor_factor_key (NSB factor of the floor around it)
+                  floor_factor_key (NSB factor of the floor around it), collection_key (optional: parameter with
+                  the fraction of the transport-limited current a coated electrode delivers)
       capture   : site_factor_key (parameter: active capture sites relative to an oriented monolayer),
                   ring_width (m; capture coating also on the floor ring a < r < a + ring_width; 0 = electrode only)
       sample    : Q_uL_min, t_load_min, V_transit_uL, mode ('flow' | 'stop_go'), dwell_s (stop_go)
@@ -662,8 +679,8 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     ch = _chem(p, chem)
     v = ch["kcat"] * ch["S0"] / (ch["Km"] + ch["S0"])                          # product molecules per enzyme per s
     nF = ch["n_e"] * FARADAY
-    c_imp = ch["imp"] * ch["S0"]                                              # mol/m^3 free product
-    hyd = ch["k_hyd"] * ch["S0"]                                              # mol/(m^3 s)
+    c_imp, c_hyd_res = _free_product(p, ch)                                   # mol/m^3 in the working solution
+    hyd = ch["k_hyd"] * ch["S0"]                                              # mol/(m^3 s) inside the cell
 
     # 8. read
     mode = rd["mode"]
@@ -685,9 +702,12 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
         # of the inlet-stream conversion (approximation); the floor ring is downstream of the electrode
         col = dict(we=T, floor=0.0, lid=0.5 * eta * T * max(A_we - np.pi * rb ** 2, 0.0) / A_lid, ring=0.0,
                    bore=eta * T, line=eta * T)        # product of upstream walls arrives mixed into the stream
-        q_init = nF * eta * Qr * T                                             # impurity arrives with the stream
-        q_vol = q_init * p("ma.timing.substrate_reservoir_age", "s")           # hydrolysis in the reservoir
+        q_init = nF * eta * Qr * T                                             # free product arrives with the stream
+        q_vol = 0.0                                                            # no residence in the cell
         stopped = False
+        # reference windows in a liquid other than the substrate buffer: the difference in background current
+        # is part of what the pre-run has to carry over (second review, finding M1); 0 for matched buffers
+        other_bg = rd.get("buffer_step_A", 0.0) * T
     elif mode == "accumulate_step":
         t_acc = rd["t_acc_s"]
         _tl, kr = thin_layer_kernels(a, h, R, ch["D_prod"], (("off", t_acc), ("on", T)), regions, rb, Lb)
@@ -721,6 +741,13 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     else:
         raise ValueError(mode)
 
+    # coated electrode (review finding C2): fraction of the transport-limited current that the electrode still
+    # delivers through the monolayer and the protein layer at the read potential.  A lumped factor on every
+    # current through the electrode: signal, non-specific label, impurity and hydrolysis alike; 1 if not coated.
+    f_el = p(el["collection_key"], "fraction") if el.get("collection_key") else 1.0
+    col = {k: val * f_el for k, val in col.items()}
+    q_vol, q_init = q_vol * f_el, q_init * f_el
+
     rate = v / NA                                                              # mol/s per enzyme
     Q_spec = nF * rate * (N_spec_we * col["we"] + N_spec_ring * col["ring"])
     Q_nsb = nF * rate * (N_nsb_we * col["we"] + N_nsb_floor * col["floor"] + N_nsb_lid * col["lid"]
@@ -728,7 +755,7 @@ def evaluate_planar(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResul
     Q_carry = nF * rate * N_carry * col["we"]
     eff_low = N_spec[..., 1:2] / np.maximum(d["N_vial"][..., 1:2], 1e-300)
     Q_cont = nF * rate * d["N_cont_vial"] * eff_low * share_we * col["we"]
-    Q_hyd = hyd * q_vol
+    Q_hyd = hyd * q_vol + c_hyd_res * q_init
     Q_imp = c_imp * q_init
     N_blank_enz = (N_nsb_we + N_nsb_floor * col["floor"] / col["we"] + N_nsb_lid * col["lid"] / col["we"]
                    + N_up_bore * col["bore"] / col["we"] + N_up_line * col["line"] / col["we"] + N_carry)
@@ -820,8 +847,17 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
         D_c = p("chem.antibodies.diffusion_coefficient_IgG_ALP_conjugate", "m^2/s")
         k_m2, _ = tr.wilson_geankoplis_k(D_c, bed["d_p"], bed["eps"], Qp / A_col, nu,
                                          p("ma.correlations.wilson_geankoplis_coefficient", "dimensionless"))
-        recapture = 1.0 - np.exp(-(1.0 / (1.0 / k_m2 + 1.0 / k_r)) * A_bed / Qp)
-        transfer_eff = p(t_["elution_key"], "fraction") * recapture
+        release = p(t_["elution_key"], "fraction")
+        A2 = A_bed * t_.get("bed2_factor", 1.0)                # read bed relative to the capture bed
+        N_u = (1.0 / (1.0 / k_m2 + 1.0 / k_r)) * A2 / Qp       # number of transfer units of the read bed
+        # Every capture antibody carries the tag, with or without analyte, so the read bed has to take all that
+        # is released (second review, finding M3).  Fixed bed with site depletion (Bohart-Adams): fraction of a
+        # finite feed that escapes = ln(exp(N (tau - 1)) + 1 - exp(-N)) / (N tau), tau = feed / sites.
+        n_rel = release * p("chem.surfaces.igg_surface_density_monolayer", "molecules/m^2") / NA \
+            * t_.get("coat", 1.0) * A_bed                      # mol of tagged capture antibody in the eluate
+        tau = n_rel / (gamma * A2)
+        recapture = 1.0 - np.log(np.exp(N_u * (tau - 1.0)) + 1.0 - np.exp(-N_u)) / (N_u * tau)
+        transfer_eff = release * recapture
         N_spec = N_spec * transfer_eff
         f_nsb = p(t_["nsb_factor_key"], "fold")
         N_nsb_bed, N_nsb_extra = N_nsb_bed * f_nsb, N_nsb_extra * f_nsb
@@ -833,7 +869,10 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
 
     ch = _chem(p, chem)
     nF = ch["n_e"] * FARADAY
-    V_acc = bed["eps"] * bed["V_bed"] + bed.get("V_dead", 0.0)
+    read_bed = design["transfer"].get("bed2_factor", 1.0) if design.get("transfer") else 1.0
+    V_acc = bed["eps"] * bed["V_bed"] * read_bed + bed.get("V_dead", 0.0)
+    c_imp, c_hyd_res = _free_product(p, ch)                 # free product of the working substrate solution
+    c_free = c_imp + c_hyd_res
     t_acc = rd["t_acc_s"]
     steps = int(p("ma.numerics.enzyme_ode_steps", "count"))
 
@@ -857,12 +896,36 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
     if rd["mode"] == "swept":
         Qr = rd["Q_read_uL_min"] * ULMIN
         eta = cell_conversion(cell, ch["D_prod"], A_we, Qr)
-        eluted = tr.tanks_in_series_eluted(Qr * T / V_acc, n_eff)
+        v_fresh = ch["kcat"] * ch["S0"] / (ch["Km"] + ch["S0"]) / NA           # mol/s per enzyme, fresh substrate
+        if rd.get("V_transit_uL") is not None:
+            # laminar transit from the bed to the electrode without radial mixing: of a thin slab the fraction
+            # (V_t / 2V)^2 has not arrived after the volume V (second review, finding M5)
+            V_t = rd["V_transit_uL"] * UL
+            eluted = 1.0 - min(1.0, V_t / (2.0 * Qr * T)) ** 2
+        else:
+            V_t = 0.0
+            eluted = tr.tanks_in_series_eluted(Qr * T / V_acc, n_eff)          # as the audited model (cross-check)
+        if rd.get("count_sweep_production", False):
+            # the enzymes keep working in fresh substrate while the plug is swept; what they make in the last
+            # V_t / Q of the window does not arrive in it
+            t_sw = max(T - V_t / Qr, 0.0)
+            n_tot = n_tot + (N_spec + N_blank_enz) * v_fresh * t_sw
+            n_blank = n_blank + N_blank_enz * v_fresh * t_sw
+            n_cont = n_cont + d["N_cont_vial"] * eff_low * v_fresh * t_sw
         q_per_mol = nF * eta * eluted
         stopped = False
-        Q_imp = nF * eta * Qr * ch["imp"] * ch["S0"] * T                       # steady baseline, referenced
+        Q_imp = nF * eta * Qr * c_free * T                                     # steady baseline, referenced
         referenced = True
         cell_blank = 0.0
+        if rd.get("count_steady", False):
+            # steady currents of conjugate that sits on the electrode (collected in full) and on walls that stay
+            # in flowing substrate (collected at eta): removed by the baseline, their relative noise counts
+            # like that of the free-product current (second review, findings M4, M7)
+            steady = nF * v_fresh * per_area * (
+                p(el["we_factor_key"], "fold") * A_we
+                + eta * (p(cell["lid_factor_key"], "fold") * rd.get("steady_bore_area", 0.0)
+                         + p("ma.nsb.surface_factor_tubing", "fold") * rd.get("steady_wall_area", 0.0)))
+            other_bg = steady * T
     elif rd["mode"] == "parked":
         phases = (("on", T),)
         rb, Lb = cell.get("bore_radius", 0.0), cell.get("bore_length", 0.0)
@@ -874,7 +937,7 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
         eta, eluted = frac, 1.0
         q_per_mol = nF * frac
         stopped = True
-        Q_imp = nF * ch["imp"] * ch["S0"] * V_coll                              # impurity in the parked plug
+        Q_imp = nF * c_free * V_coll                                            # free product in the parked plug
         referenced = design.get("preread", False)
         # non-specific enzyme left by the conjugate on the cell surfaces works during the parked read
         g = {k: r["cum"][-1] for k, r in kr.items()}
@@ -892,9 +955,9 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
         q_enz = nF * eta * v * T                                              # C per upstream enzyme
         n_tot, n_blank = (N_spec + N_blank_enz) * q_enz / (nF * eta), N_blank_enz * q_enz / (nF * eta)
         n_cont = d["N_cont_vial"] * eff_low * q_enz / (nF * eta)
-        n_hyd = Qr * T * ch["k_hyd"] * ch["S0"] * p("ma.timing.substrate_reservoir_age", "s")
+        n_hyd = Qr * T * c_hyd_res
         q_per_mol = nF * eta
-        Q_imp = nF * eta * Qr * ch["imp"] * ch["S0"] * T
+        Q_imp = nF * eta * Qr * c_imp * T
         referenced = design.get("preread", False)
         rb = cell.get("bore_radius", 0.0)
         A_lid = np.pi * (R ** 2 - rb ** 2)
@@ -919,7 +982,8 @@ def evaluate_bed(design: dict, ps: ParameterSet, conc_pgml=None) -> TierResult:
                 exposure_nM_min=_sq(lab["exposure"]) * 1e6 / 60.0, loop_transfer=_sq(d["f_transfer"]),
                 n_flush=_sq(d["n_flush"]), cell_conversion=_sq(eta), eluted=_sq(eluted),
                 V_acc_uL=V_acc / UL, V_plug_uL=V_plug / UL, cell_blank_C=_sq(cell_blank),
-                transfer_efficiency=_sq(transfer_eff),
+                transfer_efficiency=_sq(transfer_eff), steady_current_A=_sq(other_bg) / T,
+                free_product_M=_sq(c_free) * 1e-3,
                 mean_current_at_1pg_A=_interp_at(conc, Q_spec + 0.0 * conc, 1.0) / T)
     Qs = dict(spec=Q_spec + 0.0 * conc, nsb=Q_nsb, carry=Q_carry, hyd=Q_hyd, imp=Q_imp, cont=Q_cont,
               other_bg=other_bg)

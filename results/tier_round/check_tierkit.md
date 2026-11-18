@@ -37,6 +37,6 @@
 | X1 bed format: captured fraction equals the model's B-bed-TL/alp_hqdp | 0.78569 | 0.78569 | 1.18e-11 | 2e-02 | PASS |  |
 | X2 bed format: specific enzymes at 1 pg/mL equal the model's | 7825.9 | 7825.9 | 1.22e-09 | 5e-02 | PASS |  |
 | X3 bed format: signal at 1 pg/mL equals the model's | 4.7229e-10 | 4.7229e-10 | 1.54e-09 | 5e-02 | PASS |  |
-| X4 bed format: LOD within 25 % of the model's (unit-to-unit terms and regeneration differ) | 19.875 | 19.38 | 2.56e-02 | 2e-01 | PASS | kit 19.9 vs model 19.4 pg/mL |
+| X4 bed format: LOD within 25 % of the model's (unit-to-unit terms and regeneration differ) | 20.026 | 19.38 | 3.33e-02 | 2e-01 | PASS | kit 20 vs model 19.4 pg/mL |
 
 36 of 36 checks passed.

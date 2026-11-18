@@ -8,8 +8,10 @@ All three tiers are evaluated with scripts/tier_round/tierkit.py (which reuses t
 and blank statistics of the audited model, src/elisa_sim).  Monte Carlo: n = 2000, seed 20261111.
 The earlier valve-and-chamber design of docs/05 is not re-evaluated here; its numbers are in docs/08 section 10.
 
-Revised after the review (docs/31).  One model parameter is given other bounds for this round, without editing
-params/: the half-life of hydroquinone at pH 9.5 (600 s [120-7200] instead of 7200 s [1800-72000]; finding C5).
+Revised after the review and after the second pass (docs/31).  One model parameter is given other bounds for this
+round, without editing params/: the half-life of hydroquinone at pH 9.5 (600 s [120-7200] instead of 7200 s
+[1800-72000]; finding C5).  The same half-life holds in the substrate reservoir (finding M2); the scenario "no
+decay" restores the assumption of the audited model.
 """
 from __future__ import annotations
 
@@ -36,6 +38,11 @@ S0 = "ma.chemistries.alp_hqdp.substrate_concentration"
 IMP = "ma.chemistries.alp_hqdp.free_product_impurity"
 KCAT = "chem.enzymes.alp.kcat_conjugate_assay_conditions"
 HALF = "ma.chemistries.alp_hqdp.product_half_life"
+DECAY = "tr.detection.reservoir_background_decays"
+REL = "tr.transfer.elution_efficiency"
+TNSB = "ma.design_levers.immune_complex_transfer_nsb_factor"
+MONO = "tr.detection.monolayer_collection_efficiency"
+RATIO = "chem.antibodies.enzyme_to_antibody_ratio_ALP"
 
 
 def base_params():
@@ -46,11 +53,12 @@ def base_params():
 # ---- the designs -----------------------------------------------------------------------------------------
 def t1(electrode="AU10", s0=3.0e-4, **kw):
     """Tier 1: capture on a printed strip in the strip cell; the product is read at the electrode while substrate
-    flows at 150 uL/min, between two buffer windows at the same flow.  'AU10': printed gold with a biotin-OEG
-    monolayer (lowest model LOD of the tier); 'C21': printed carbon with adsorbed streptavidin (no thiol chemistry);
-    'SE1': thin-film gold chip in its own cell."""
+    flows at 200 uL/min, between two reference windows at the same flow.  'AU10': printed gold with a biotin-OEG
+    monolayer (lowest model LOD of the tier); 'C21': printed carbon with adsorbed streptavidin (no thiol chemistry;
+    10 nM conjugate, because carbon is limited by non-specific label); 'SE1': thin-film gold chip in its own cell."""
     if electrode == "C21":
         kw.setdefault("site_key", "tr.capture.site_factor_adsorbed")
+        kw.setdefault("C_conj", 10.0)
     d = D.tier1(electrode, **kw)
     d["ps_values"] = {S0: s0}                 # 0.3 mM HQDP: about 3 Km, a third of the impurity current of 1 mM
     return d
@@ -63,8 +71,18 @@ def t2(**kw):
 
 
 def t3(**kw):
-    """Tier 3: two beds in the loops of two valves, immune-complex transfer from the capture bed to the read bed."""
+    """Tier 3 with the transfer: two beds in the loops of two valves, immune-complex transfer from the capture bed
+    to the read bed (three times the beads)."""
     return D.tier3(**kw)
+
+
+def t3v(**kw):
+    """Tier 3, first step: the capture bed in the loop of one valve, no transfer; the time the transfer would
+    take goes into the load (36 min at 3.5 uL/min)."""
+    kw.setdefault("t_load", 40.0)
+    kw.setdefault("Q_load", 3.15)
+    kw.setdefault("t_acc", 180.0)
+    return D.tier3(transfer=False, **kw)
 
 
 # ---- scenarios (parameter-set modifiers) -------------------------------------------------------------------
@@ -98,8 +116,12 @@ def S1(ps):   # non-specific binding at the rate the model assumed before its au
     return L.with_bounds(ps, LF, value=1.0, low=0.3, high=3.0)
 
 
-def S4a(ps):  # substrate lot with 1e-3 free hydroquinone
-    return L.pin(ps, **{IMP: 1e-3})
+def NODECAY(ps):  # the oxidisable background of the working solution does not decay in the reservoir
+    return L.pin(ps, **{DECAY: 0})
+
+
+def S4a(ps):  # working substrate solution with 1e-3 oxidisable background that does not decay
+    return NODECAY(L.pin(ps, **{IMP: 1e-3}))
 
 
 def C1(ps):   # human IgG contamination of blanks up to 1 pg/mL equivalent
@@ -108,6 +130,10 @@ def C1(ps):   # human IgG contamination of blanks up to 1 pg/mL equivalent
 
 def P01(ps):  # only 1 % of the enzyme turnovers give a product the electrode oxidises (review finding C1)
     return scale(ps, KCAT, 0.01)
+
+
+def P001(ps):  # 0.1 %: the upper end of the reviewer's estimate for hydroquinone per turnover
+    return scale(ps, KCAT, 0.001)
 
 
 def chain(*fns):
@@ -123,9 +149,13 @@ SCENARIOS = [("as specified", lambda ps: ps),
              ("credit for the F(ab')2 conjugate (L3)", L3),
              ("L3 + L6 + L7", chain(L3, L6, L7)),
              ("non-specific binding x25 (S1)", S1),
-             ("free hydroquinone 1e-3 in the substrate (S4a)", S4a),
-             ("blank contamination up to 1 pg/mL (C1)", C1),
-             ("only 1 % of the turnovers give an electroactive product (review C1)", P01)]
+             ("no decay in the reservoir: background 1e-5 of the substrate at the time of use", NODECAY),
+             ("no decay and screened reagents (L6 + L7)", chain(NODECAY, L6, L7)),
+             ("background 1e-3 of the substrate, no decay (S4a)", S4a),
+             ("blank contamination up to 1 pg/mL", C1),
+             ("only 1 % of the turnovers give an electroactive product (review C1)", P01),
+             ("only 1 % of the turnovers electroactive, and no decay in the reservoir", chain(P01, NODECAY)),
+             ("only 0.1 % of the turnovers give an electroactive product", P001)]
 
 
 # ---- evaluation ---------------------------------------------------------------------------------------------
@@ -175,12 +205,12 @@ HEAD = ("| Case | LOD nominal (pg/mL) | LOD median [5-95 %] (pg/mL) | P(LOD <= 1
         "min to result |\n|---|---|---|---|---|---|---|---|")
 
 
-def sensitivity(design, ps, top=9):
+def sensitivity(design, ps, top=12):
     evaluate = tk.evaluate_planar if design["tier"] == 1 else tk.evaluate_bed
     if design.get("ps_values"):
         ps = ps.with_values(design["ps_values"])
     base, rows = tk.one_at_a_time(evaluate, design, ps)
-    return base, rows[:top]
+    return base, rows[:top], rows
 
 
 def main(argv=None):
@@ -207,11 +237,12 @@ def main(argv=None):
 
     prim = [("Tier 1: capture on a printed gold strip, read at the electrode under fast substrate flow", t1()),
             ("Tier 2: capillary micro-bed above a printed carbon strip, stop and sweep", t2()),
-            ("Tier 3: two beds behind two valves, immune-complex transfer to the read bed", t3())]
+            ("Tier 3: the capture bed in the loop of one valve", t3v()),
+            ("Tier 3 with the immune-complex transfer to a second bed", t3())]
     table("1. The three implementations, as specified", [(lab, d, ident) for lab, d in prim],
-          f"Monte Carlo n = {n}, seed 20261111. Tier 3 carries the immune-complex transfer as release (0.7 "
-          "[0.2-0.95], UNVERIFIED) x re-capture (bed equation at the push flow) and non-specific label x0.1 "
-          "[0.01-0.5] (ma.design_levers, UNVERIFIED).")
+          f"Monte Carlo n = {n}, seed 20261111. The transfer is carried as release (0.35 [0.05-0.74], UNVERIFIED) x "
+          "re-capture on a read bed of three times the beads (bed equation with site depletion at the push flow) "
+          "and non-specific label x0.1 [0.01-0.5] (ma.design_levers, UNVERIFIED).")
 
     for lab, d in prim:
         cases = [(name, d, fn) for name, fn in SCENARIOS]
@@ -221,20 +252,41 @@ def main(argv=None):
 
     if not args.quick:
         table("3. Tier 1 - alternatives and hardware cases", [
-            ("primary: printed gold AU10, strip-cell gap 0.20 mm, read at 150 uL/min, 0.3 mM substrate", t1(), ident),
+            ("primary: printed gold AU10, strip-cell gap 0.20 mm, read 60 s at 200 uL/min, 0.3 mM substrate, 20 nM "
+             "conjugate", t1(), ident),
             ("printed carbon C21 with adsorbed streptavidin (same cell and read)", t1("C21"), ident),
             ("thin-film gold chip SE1 in the thin-film cell (same read)", t1("SE1"), ident),
             ("strip-cell gap 0.10 mm", t1(h=0.10e-3), ident),
             ("strip-cell gap 0.50 mm", t1(h=0.50e-3), ident),
-            ("read at 80 uL/min", t1(Q_read=80.0, t_load=39.0, Q_load=3.2), ident),
-            ("read at 40 uL/min (load cut to 34 min)", t1(Q_read=40.0, t_load=34.0, Q_load=3.7), ident),
+            ("read at 80 uL/min (load 41 min)", t1(Q_read=80.0, t_load=41.0, Q_load=3.07), ident),
+            ("read at 40 uL/min (load 36 min)", t1(Q_read=40.0, t_load=36.0, Q_load=3.5), ident),
+            ("read at 300 uL/min", t1(Q_read=300.0), ident),
+            ("read 120 s at 150 uL/min, 10 nM conjugate, load 42 min (operating point of Revision B)",
+             t1(Q_read=150.0, t_read=120.0, C_conj=10.0, t_load=42.0, Q_load=3.0), ident),
+            ("conjugate 10 nM", t1(C_conj=10.0), ident),
+            ("conjugate 40 nM", t1(C_conj=40.0), ident),
             ("substrate 0.1 mM", t1(s0=1.0e-4), ident),
             ("substrate 1 mM", t1(s0=1.0e-3), ident),
-            ("stopped read (needs a zero-flow row), 30 s wait + 120 s", t1(read_mode="steady", t_load=37.0, Q_load=3.4),
-             ident),
+            ("stopped read (needs a zero-flow row), 30 s wait + 120 s", t1(read_mode="steady", t_read=120.0,
+                                                                              t_load=37.0, Q_load=3.4), ident),
             ("transfer line 0.127 mm x 20 cm instead of 0.05 mm x 15 cm", t1(line_area=np.pi * 127e-6 * 0.2), ident),
             ("no pre-read on the electrode", t1(preread=False), ident),
-            ("printed carbon C21, stopped read", t1("C21", read_mode="steady", t_load=37.0, Q_load=3.4), ident),
+            ("stop-and-go loading: 13 portions of 10 uL held 190 s each (needs a zero-flow row)",
+             t1(load_mode="stop_go", dwell_s=190.0, Q_load=50.0), ident),
+            ("coated gold delivers 30 % of the transport-limited current",
+             t1(), lambda ps: L.pin(ps, **{"tr.detection.monolayer_collection_efficiency": 0.3})),
+            ("detection conjugate with 5 [2-10] enzymes per antibody (poly-enzyme label, UNVERIFIED reagent; "
+             "binding and non-specific count per conjugate unchanged)",
+             t1(), lambda ps: L.with_bounds(ps, "chem.antibodies.enzyme_to_antibody_ratio_ALP", value=5.0, low=2.0,
+                                            high=10.0)),
+            ("printed carbon C21, stopped read", t1("C21", read_mode="steady", t_read=120.0, t_load=37.0, Q_load=3.4),
+             ident),
+            ("reference windows in wash buffer pH 7.5: background step of 100 pA against the substrate buffer",
+             t1(buffer_step_pA=100.0), ident),
+            ("reference windows in wash buffer pH 7.5: background step of 300 pA", t1(buffer_step_pA=300.0), ident),
+            ("substrate 1 mM, no decay in the reservoir", t1(s0=1.0e-3), NODECAY),
+            ("printed carbon C21, no decay in the reservoir", t1("C21"), NODECAY),
+            ("no pre-read on the electrode, no decay in the reservoir", t1(preread=False), NODECAY),
         ])
         table("4. Tier 2 - alternatives and hardware cases", [
             ("primary (strip-cell gap 0.20 mm)", t2(), ident),
@@ -250,45 +302,63 @@ def main(argv=None):
             ("no conjugate-exposed wall upstream of the bed (bound)", t2(capillary_above_bed_mm=0.0, line_area=0.0),
              ident),
             ("transfer line 0.127 mm x 20 cm", t2(line_area=np.pi * 127e-6 * 0.2), ident),
+            ("transfer line 0.025 mm x 15 cm", t2(line_area=np.pi * 25e-6 * 0.15), ident),
+            ("walls above the bed bind like blocked beads (tubing factor 1, e.g. a coated capillary)",
+             t2(), lambda ps: L.pin(ps, **{"ma.nsb.surface_factor_tubing": 1.0})),
             ("bed in a fitting on the inlet port (whole bore between bed and electrode)", t2(bore_below_tip_mm=5.0),
              ident),
             ("half the beads (5e5)", t2(V_bed_uL=0.0095), ident),
             ("twice the beads (2e6)", t2(V_bed_uL=0.038), ident),
-            ("stop 3 min instead of 7 (load 41 min)", t2(t_acc=180.0, t_load=41.0, Q_load=3.1), ident),
-            ("stop 30 s (range read)", t2(t_acc=30.0), ident),
+            ("stop 7 min instead of 5 (load 35 min)", t2(t_acc=420.0, t_load=35.0, Q_load=3.6), ident),
+            ("stop 3 min instead of 5 (load 39 min)", t2(t_acc=180.0, t_load=39.0, Q_load=3.23), ident),
+            ("stop 30 s", t2(t_acc=30.0), ident),
             ("parked read instead of swept", t2(read_mode="parked", t_read=120.0), ident),
+            ("conjugate 10 nM", t2(C_conj=10.0), ident),
             ("conjugate 3 nM", t2(C_conj=3.0), ident),
+            ("conjugate 3 nM, stop 3 min, load 39 min (lowest nominal)", t2(C_conj=3.0, t_acc=180.0, t_load=39.0,
+                                                                          Q_load=3.23), ident),
+            ("the same, only 1 % of the turnovers electroactive", t2(C_conj=3.0, t_acc=180.0, t_load=39.0, Q_load=3.23),
+             P01),
         ])
         table("5. Tier 3 - alternatives", [
-            ("primary (transfer by a cleavable link, release 0.7 [0.2-0.95])", t3(), ident),
-            ("valves only: the capture bed is read, no transfer", t3(transfer=False, t_load=36.0, Q_load=3.5), ident),
-            ("valves only, screened reagents (L6 + L7)", t3(transfer=False, t_load=36.0, Q_load=3.5), chain(L6, L7)),
+            ("one valve, no transfer (primary of tier 3)", t3v(), ident),
+            ("one valve, accumulation 7 min instead of 3 (load 36 min)", t3v(t_acc=420.0, t_load=36.0, Q_load=3.5),
+             ident),
+            ("one valve, conjugate 10 nM", t3v(C_conj=10.0), ident),
+            ("one valve, conjugate 3 nM", t3v(C_conj=3.0), ident),
+            ("one valve, loop walls 30 mm2 instead of 10 mm2", t3v(line_area=30e-6), ident),
+            ("transfer as specified (release 0.35 [0.05-0.74], read bed of three times the beads)", t3(), ident),
+            ("transfer: release 0.7 in 5 min, as docs/05 assumed for its tube protocol", t3(),
+             lambda ps: L.pin(ps, **{REL: 0.7})),
+            ("transfer: release 0.74, non-specific x0.01 (optimistic bounds)", t3(),
+             lambda ps: L.pin(ps, **{REL: 0.74, TNSB: 0.01})),
+            ("transfer: release 0.05, non-specific x0.5 (pessimistic bounds)", t3(),
+             lambda ps: L.pin(ps, **{REL: 0.05, TNSB: 0.5})),
             ("transfer with desthiobiotin and biotin, 5 min (release 0.1 [0.003-0.26])",
              t3(elution_key="tr.transfer.elution_efficiency_desthiobiotin"), ident),
-            ("transfer: release 0.95, non-specific x0.01 (optimistic bounds)", t3(),
-             lambda ps: L.pin(ps, **{"tr.transfer.elution_efficiency": 0.95,
-                                     "ma.design_levers.immune_complex_transfer_nsb_factor": 0.01})),
-            ("transfer: release 0.2, non-specific x0.5 (pessimistic bounds)", t3(),
-             lambda ps: L.pin(ps, **{"tr.transfer.elution_efficiency": 0.2,
-                                     "ma.design_levers.immune_complex_transfer_nsb_factor": 0.5})),
+            ("transfer, release 0.7, read bed the same size as the capture bed (sites/feed 1.2)",
+             t3(bed2_factor=1.0), lambda ps: L.pin(ps, **{REL: 0.7})),
+            ("transfer, release 0.7, same size, capture bed coated at the vendor's capacity (sites/feed 0.36)",
+             t3(bed2_factor=1.0, coat=3.3), lambda ps: L.pin(ps, **{REL: 0.7})),
+            ("transfer, screened reagents (L6 + L7)", t3(), chain(L6, L7)),
+            ("transfer, release 0.7, screened reagents (L6 + L7)", t3(), chain(L6, L7, lambda ps: L.pin(ps, **{REL: 0.7}))),
             ("transfer + screened reagents + F(ab')2 credit (L3 + L6 + L7)", t3(), chain(L3, L6, L7)),
             ("the same with a reference channel (L5)", t3(), chain(L3, L5, L6, L7)),
-            ("accumulation 12 min instead of 7 (load 20 min)", t3(t_acc=720.0, t_load=20.0, Q_load=6.3), ident),
         ])
 
     md.append("\n## 6. One-at-a-time sensitivity of the three implementations\n")
     md.append("LOD (pg/mL) with one parameter at its low and at its high bound, all others at their best estimate; "
-              "the nine largest swings.\n")
+              "the twelve largest swings.\n")
     for lab, d in prim:
-        base, rows = sensitivity(d, ps0)
+        base, rows, allrows = sensitivity(d, ps0)
         md.append(f"\n**{lab}** (nominal {fmt(base)} pg/mL)\n\n| Parameter | value [low-high] | LOD at low | LOD at high |"
                   "\n|---|---|---|---|")
-        out.setdefault("sensitivity", {})[lab] = []
         for key, lo, hi in rows:
             prm = ps0.params[key]
             md.append(f"| `{key}` | {prm.value:g} [{prm.low:g}-{prm.high:g}] {prm.unit} | {fmt(lo)} | {fmt(hi)} |")
-            out["sensitivity"][lab].append(dict(key=key, value=prm.value, low=prm.low, high=prm.high, unit=prm.unit,
-                                                lod_low=lo, lod_high=hi))
+        out.setdefault("sensitivity", {})[lab] = [                      # every parameter, largest swing first
+            dict(key=key, value=ps0.params[key].value, low=ps0.params[key].low, high=ps0.params[key].high,
+                 unit=ps0.params[key].unit, lod_low=lo, lod_high=hi, base=base) for key, lo, hi in allrows]
 
     md.append("\n## 7. Step tables used for the timing\n")
     for lab, d in prim:

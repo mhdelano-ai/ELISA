@@ -92,11 +92,11 @@ noise:
   preread_residual_cv:
     value: 0.03
     low: 0.01
-    high: 0.06
+    high: 0.10
     unit: fraction
     source: UNVERIFIED
     confidence: low
-    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection. Also applied to the substrate background itself when that pre-read is the only reference for it (review findings N1, N11)."
+    note: "Residual unit-to-unit CV after normalising each electrode by a substrate-background read made on it before the sample injection. Also applied to the substrate background itself when that pre-read is the only reference for it (review findings N1, N11; bounds as proposed in N11)."
   swept_step_residual_cv:
     value: 0.04
     low: 0.01
@@ -147,6 +147,22 @@ detection:
     source: UNVERIFIED
     confidence: low
     note: "Redox-cycling current of an interdigitated array driven by ONE channel (second comb as counter and reference) relative to bipotentiostat operation."
+  monolayer_collection_efficiency:
+    value: 1.0
+    low: 0.1
+    high: 1.0
+    unit: fraction
+    source: "UNVERIFIED (review finding C2: hydroquinone is an inner-sphere couple and may be slowed by a thiol monolayer and the protein layer on it; no measurement on these electrodes)"
+    confidence: low
+    note: "Coated gold electrodes only. Fraction of the transport-limited current that the electrode delivers at the read potential; a lumped factor on every current through the electrode (signal, non-specific label, impurity, hydrolysis). Bench item T1-1 asks for at least 0.7."
+  reservoir_background_decays:
+    value: 1
+    low: 1
+    high: 1
+    unit: boolean (1 = free product in the substrate reservoir decays with the product half-life)
+    source: "consistency (second review, finding M2): the product half-life at pH 9.5 has to hold in the reservoir as well as in the bed"
+    confidence: low
+    note: "1: the free hydroquinone of the substrate lot decays over the reservoir age and the hydrolysis product stands at its steady state k_hyd S0 / k_decay. 0: the oxidisable background of the working solution is free_product_impurity x S0 at the time of use and hydrolysis product accumulates over the reservoir age (the assumption of the audited model and of Revision B)."
   step_background_charge_density:
     value: 0.1
     low: 0.02
@@ -158,11 +174,11 @@ detection:
 
 transfer:
   elution_efficiency:
-    value: 0.7
-    low: 0.2
-    high: 0.95
+    value: 0.35
+    low: 0.05
+    high: 0.74
     unit: fraction
-    source: "UNVERIFIED (release of the captured complex from the first bed in a 5 min hold by cleaving a disulfide linker; no rate checked; review findings C8, F4, N6)"
+    source: "UNVERIFIED (release of the captured complex from the first bed in a 5 min hold by cleaving a linker; no rate known. Bounds as asked by the chemistry review and the second review: overall transfer 0.05-0.7 until measured; findings C8, K7. docs/05 assumed 0.7 for a tube protocol of 15 + 30 min)"
     confidence: low
     note: "Tier 3. The specific transfer is this fraction times the re-capture computed from the bed equation at the push flow."
   elution_efficiency_desthiobiotin:
