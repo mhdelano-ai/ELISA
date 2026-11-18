@@ -152,9 +152,9 @@ screen; non-porous 10–14 µm streptavidin polystyrene beads on the screen alon
 nominal, median 7.9 [0.96–93] against 2.1 and 8.4 for the capillary of docs/30; the retainer's conjugate uptake
 (2.3–11 mm², UNVERIFIED) moves it between 1.7 and 2.4. Working pressure about 1 bar at 80 µL/min; laid out for
 500 psi with a margin of 2.9 on the main screws, but the O-ring seal on a printed strip at 500 psi needs a proof
-test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip dimensions
-now read off MicruX's to-scale drawing (electrode centre 8.26 mm from the free end, print to r 3.64 mm); the
-strip thickness is still to be measured and the rest confirmed with calipers before ordering (docs/34 §5.4). docs/30 is not changed; the
+test. Every hole ≥ 0.5 mm, so the parts suit a machining service such as Xometry; no quote obtained. Strip settled
+by the user: ceramic S1PE strips, 0.38 mm (shim 0.07 mm); positions from MicruX's drawing, confirmed accurate
+(electrode centre 8.26 mm from the free end, print to r 3.64 mm; docs/34 §5.4). docs/30 is not changed; the
 choices for the user are in docs/34 §8.3.
 
 ## Recording bench results

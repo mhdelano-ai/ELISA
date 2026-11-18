@@ -20,7 +20,9 @@ against 27.5 stated, and 2.8–2.9 mm for the 3 mm working electrode. Measured o
 the width, its centre **8.26 mm** from the free end (6.0 had been assumed); printed counter and reference
 electrodes from r = 2.56 to **3.64 mm** (3.3 assumed); printed area ends and the four pads begin 21.78 mm from the
 free end. The strip stop moved, the stack was shortened to x = +12 so that the pads start 1.5 mm clear of it, and
-the strip pocket was deepened to 0.55 mm so that the ceramic strip (0.38 mm) fits as well (section 5.4).
+the strip pocket was deepened to 0.55 mm so that the ceramic strip (0.38 mm) fits as well (section 5.4). The user
+then confirmed that the drawing is accurate and that the cell will use the **ceramic strips, 380 µm thick**; the
+shim is 0.07 mm (0.05 + 0.02).
 
 Where the numbers come from:
 * Dimensions: `cad/elisa_cad/tier2_cell/params.py`, the one file that the CAD model and the calculation read.
@@ -87,8 +89,9 @@ The gain is small (10 %) and comes from the shorter wall above the bed (3.8 mm²
 The cell is not a way to a lower LOD; it is a way to make tier 2 a rigid, repeatable part instead of a sleeved
 capillary. The largest unknown of the cell is the conjugate that the retainer takes up (section 6.1).
 
-**Before anything is ordered**, the strip's thickness has to be measured, and the dimensions read off MicruX's
-drawing confirmed with calipers (section 5.4).
+**Strip dimensions are settled**: ceramic strips, 380 µm (stated by the user), positions from MicruX's drawing,
+which the user confirmed is accurate (section 5.4). What still has to be fixed before an order is the port depth
+of the fitting maker's drawing and a dimensioned drawing for each part (section 8.2).
 
 ## 1. What the request changes
 
@@ -236,10 +239,10 @@ Other views: `cad/out/tier2_cell/assembly_iso.png`, `assembly_exploded.png`, `no
 
 ### 4.3 The gap
 
-Gap = pocket depth − strip thickness − shim = 0.55 − 0.27 − 0.18 = **0.10 mm**. The strip thickness is not
-published (0.27 is PET 0.25 mm [V docs/28 and the vendor drawing] plus an allowance for the print), so the pocket
-is made deep and the gap is set with shim stock under the strip: 0.18 mm (0.10 + 0.05 + 0.03) for a PET strip,
-about 0.05 mm for a ceramic strip (0.38 mm). With ±0.02 on the pocket, an estimated ±0.02 on the strip and ±0.01
+Gap = pocket depth − strip thickness − shim = 0.55 − 0.38 − 0.07 = **0.10 mm**, for the ceramic strip of
+380 µm (stated by the user) with shim stock 0.05 + 0.02 under it. The pocket also takes a PET strip with about
+0.18 mm of shim. The gap is set with the shim rather than the pocket, so that a strip lot of another thickness
+needs only another shim. With ±0.02 on the pocket, an estimated ±0.02 on the strip and ±0.01
 on the shim the gap is 0.10 ± 0.05 at worst.
 
 Why 0.10 and not the 0.05 of docs/33. For tier 2 the model LOD is 1.9 at 0.05, 0.10 and 0.20 mm alike; the gap
@@ -304,26 +307,31 @@ are not known.
 
 | Item | Part | Evidence |
 |---|---|---|
-| Electrode | MicruX ED-S1PE-C21 strip, 27.5 × 10.1 mm, 3 mm carbon working electrode, printed Ag/AgCl reference; ED-SPE-CABLE | docs/28 [V]; in hand |
+| Electrode | MicruX ED-S1PE-C21C strip (ceramic, 0.38 mm), 27.5 × 10.1 mm, 3 mm carbon working electrode, printed Ag/AgCl reference; ED-SPE-CABLE | docs/28 [V]; in hand |
 | Fittings | 1/4-28 flat-bottom, for 1/16 in tubing; the MicruX packs state 1000 psi for their ferrules (docs/28 R6 [V]); IDEX states 2000 psi for its flangeless nut with the P-200 ferrule [V, page of XP-235, a part now marked obsolete] | in hand |
 | Screen | VICI 2SR1-10, 1/16 in, 2 µm, 0.075 mm, pack of 10 | [V] |
 | Washer | FKM (or EPDM) sheet 0.25 mm, 70–75 Shore A; biopsy punches 1.2 and 0.75 mm; one washer per bed | sheet thickness tolerance and punch sizes UNVERIFIED |
 | Membrane | track-etched polycarbonate, 1.0 µm, hydrophilic, 13 mm discs; 1.5 mm biopsy punch (the same punch cuts the washer's outer edge if 1.2 mm cannot be had: the pocket leaves room) | [S]; thickness and pore density of the lot to be read from its certificate |
 | O-rings | 7 × 1 and 12 × 1 mm, 70–75 Shore A (FKM or EPDM) | standard sizes, UNVERIFIED against a catalogue |
 | Screws, pins | 4 × M4 × 20 socket head with small washers (8 mm, DIN 433); 4 × M2.5 × 8 countersunk; 2 × ⌀3 m6 × 16 dowel pins; stainless | standard |
-| Shim | stainless shim stock 0.10, 0.05 and 0.03 mm, cut 10 × 20 mm | standard |
+| Shim | stainless shim stock 0.05 and 0.02 mm (0.01 and 0.03 to trim the gap), cut 10 × 20 mm | standard |
 | Beads | Dynabeads M-280 Streptavidin 11205D | docs/07 |
 
 **Strip dimensions** (`params.py`). Items 2–4 were measured on MicruX's drawing "Thick-film based-electrode
-features" (supplied by the user; to scale, checked by its length, 27.50 mm against 27.5 stated). A drawing is not
-a measured part: confirm them with calipers on a strip in hand.
+features" (supplied by the user, who confirmed it is accurate; to scale, checked by its length, 27.50 mm
+against 27.5 stated). Item 1 is the user's.
 
 | # | Dimension | Used for | Value | Source |
 |---|---|---|---|---|
-| 1 | Thickness of the strip over the dielectric and over the working electrode | shim (the pocket now takes PET and ceramic) | 0.27 mm (PET 0.25 + print) | substrate [V]; print UNVERIFIED: **measure** |
+| 1 | Thickness of the strip | shim | **0.38 mm** (ceramic) | user; MicruX drawing gives the substrate as 380 µm |
 | 2 | Centre of the working electrode from the end without contacts | position of the pocket stop | **8.26 mm** (6.0 assumed before) | drawing |
 | 3 | Outer radius of the printed counter (arc) and reference (sector) electrodes | inner edge of the strip O-ring's contact | **3.64 mm** (3.3 assumed); inner radius 2.56 | drawing |
 | 4 | Where the pads begin | the stack must end before them | 21.78 mm from the free end; the stack ends 1.5 mm before them | drawing |
+
+Ceramic is brittle. The strip carries the O-ring's 25 N and, at 500 psi, about 230 N of pressure, both pushing it
+onto the shim and the pocket floor; it is not bent as long as it lies flat on them. Hence the floor is specified
+flat within 0.02 mm, the shim is cut whole (no stacked offcuts under the electrode) and kept free of burrs, and the
+M4 screws are tightened evenly in a cross pattern.
 
 What item 3 means for the strip seal. The 7 × 1 O-ring has its inner edge at r = 3.5; its contact band starts
 about 0.15 mm further out, at r ≈ 3.65, which is the outer rim of the printed counter and reference electrodes
@@ -498,7 +506,7 @@ pressure in the cell is released through the bed when the flow stops.
 4. **Gap**: 0.10 mm (chosen) or 0.05 mm by a thicker shim?
 5. **Body material**: PEEK (chosen, opaque). A polished polyetherimide body would let the bed be seen from the
    side; its resistance to the pH 9.5 buffer over months was not checked.
-6. Can the strip's thickness be measured, and items 2–4 of section 5.4 checked with calipers, so that the parts can be quoted?
+6. Settled: ceramic strips, 0.38 mm; the drawing's dimensions are accurate (the user, 2026-11-18).
 7. Whether this cell replaces the capillary in docs/30 §4, and whether tests C-1 … C-6 enter the bench plan, is
    the user's decision. docs/30 and docs/06 are not changed.
 

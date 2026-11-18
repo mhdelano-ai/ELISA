@@ -15,11 +15,12 @@ import math
 
 # ---- the electrode strip (MicruX S1PE, e.g. ED-S1PE-C21) ---------------------------------------------------
 STRIP_L, STRIP_W = 27.5, 10.1          # [V docs/28 section 2.1]
-STRIP_T = 0.27                         # UNVERIFIED: PET 0.25 [V docs/28] + printed layers; measure with a micrometer
+STRIP_T = 0.38                         # ceramic (Al2O3) strip, e.g. ED-S1PE-C21C: 380 um, stated by the user 2026-11-18;
+#                                        the substrate thickness is also on MicruX's drawing [V docs/28]
 WE_D = 3.0                             # [V docs/28]
 WE_FROM_FREE_END = 8.26                # MicruX drawing "Thick-film based-electrode features" (user, 2026-11-18),
-#                                        measured to scale: 17.13 px/mm from the 10.1 mm width gives 27.50 mm length.
-#                                        Confirm with calipers (+-0.2 assumed)
+#                                        measured to scale: 17.13 px/mm from the 10.1 mm width gives 27.50 mm length;
+#                                        the user confirmed the drawing is accurate
 PRINT_R_MAX = 3.65                     # same drawing: outer radius of the printed counter (arc) and reference
 #                                        (sector) electrodes, 3.64 mm; inner radius of both 2.56-2.59 mm
 PADS_FROM_FREE_END = 21.78             # same drawing: end of the printed (red) area = start of the four contact pads
@@ -36,8 +37,8 @@ POCKET_W = STRIP_W + 0.2               # CHOICE: strip pocket, open at +x
 POCKET_DEPTH = 0.55                    # CHOICE: strip + shim + gap; deep enough for the ceramic strip (0.38) too
 POCKET_X_END = -(WE_FROM_FREE_END + 0.1)   # Derived: closed end of the pocket is the stop for the strip
 POCKET_RELIEF_D = 1.6                  # CHOICE: corner reliefs at the closed end
-SHIM_T = 0.18                          # CHOICE: shim stock under a PET strip (0.10 + 0.05 + 0.03); sets the gap.
-#                                        Ceramic strip (0.38 + print): 0.05
+SHIM_T = 0.07                          # CHOICE: shim stock under the ceramic strip (0.05 + 0.02); sets the gap.
+#                                        A PET strip (0.25 + print) would take about 0.18
 
 GAP = POCKET_DEPTH - STRIP_T - SHIM_T  # Derived: 0.10 mm liquid layer over the electrode
 GAP_TOL = 0.05                         # Derived (docs/34 section 5.3): pocket, strip and shim tolerances

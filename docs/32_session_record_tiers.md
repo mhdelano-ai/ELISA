@@ -203,4 +203,5 @@ Strip dimensions, same day. The user sent MicruX's drawing of the S1PE strip (im
 three of the four UNVERIFIED strip dimensions were measured on it (electrode centre 8.26 mm from the free end
 instead of 6.0; print to r = 3.64 instead of 3.3; pads from 21.78 mm). `params.py`, docs/34 §5.4 and the project
 guide were updated; the stack was shortened by 1 mm and the strip pocket deepened for ceramic strips.
-
+The user then stated: ceramic strips, 380 µm, and the drawing is accurate. Strip thickness 0.38 mm and shim
+0.07 mm entered; the caliper caveats were removed.
