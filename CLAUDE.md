@@ -56,6 +56,11 @@ marked **UNVERIFIED**. Never invent a citation, part number, price or vendor API
 - `docs/35_tier2_beads.md` — follow-up: alternative capture beads for the docs/34 cell (lowest LOD, mainly lowest
   NSB), five rounds with an independent reviewer until converged. Numbers from `scripts/tier_round/tier2_beads.py`,
   research notes and reviews in `results/tier_round/` (`beads_*.md`, `review_beads_r1–r5.md`).
+- `docs/36_washer_punch_jig.md` — follow-up: a hand punching jig for the docs/34 retainer washer T2C-004 (two SYNEO
+  catheter punches on one axis through Carr Lane slip bushings in one liner, printed base/plate/handles/finger),
+  five review rounds until converged. CAD `cad/elisa_cad/tier2_cell/jig/` (`python -m elisa_cad.tier2_cell.jig.build`
+  from `cad/`, 45 checks), outputs `cad/out/tier2_cell/punch_jig/`, sourcing and reviews in `results/tier_round/`
+  (`punch_jig_sourcing.md`, `review_jig_r1–r5.md`). Nothing ordered.
 - `scripts/tier_round/` — calculation kit and designs behind docs/30 (`README.md` there; `tierkit.py`,
   `designs.py`, `run_tiers.py`, `tier_params.yaml` with the `tr.*` parameters of the round); outputs and the five
   reviewer reports in `results/tier_round/`. The kit imports `elisa_sim` and edits nothing in `src/` or `params/`.
